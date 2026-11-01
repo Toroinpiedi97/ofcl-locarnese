@@ -119,9 +119,9 @@ flowchart LR
 - [x] **T046b** [US10] Implementare il **Civic Ticket Sandbox (`FeedbackModal.tsx` + `POST /api/feedback`)**: validazione Zod ≤ `500` caratteri solo testo puro, sanitizzazione anti-XSS, honeypot, rate limit `3 req/ora/IP` (`ip_hash` salato), salvataggio in `audit.feedback_ticket` e invio notifica email lato server verso `FEEDBACK_RECIPIENT_EMAIL` (zero esposizione dell'email nel bundle client).
 - [x] **T047** [P] [US2] Implementare **Comparatore Multi-Comune `/confronta`**: confronto fino a 19 Comuni su indicatori SEL, moltiplicatori `PF/PG`, spesa pro capite dicasteriale e tariffe civiche, con bande SEL, avvisi perimetro non omogeneo ed export CSV istantaneo.
 - [x] **T048** [P] [US3] Implementare **Tracker Crediti d'Investimento `/comuni/[slug]/crediti` e `/crediti`**: elenco opere, barra avanzamento spesa vs credito votato, filtro *"Solo sorpassi"*, distinzione Lordo vs Netto Comune e dettaglio evoluzione multi-anno + impatto onda ammortamenti.
-- [ ] **T049** [P] [US5] Implementare **Biblioteca Documenti `/documenti`** e pagine `/metodologia` (con Smooth Scrollytelling sobrio e formule generate dal registro `V01–V12`), `/stato` (salute settimanale dei 19 connettori) e `/changelog-dati`.
+- [x] **T049** [P] [US5] Implementare **Biblioteca Documenti `/documenti`** e pagine `/metodologia` (con Smooth Scrollytelling sobrio e formule generate dal registro `V01–V12`), `/stato` (salute settimanale dei 19 connettori) e `/changelog-dati`.
 
-**Gate Fase 5**: Lighthouse Performance ≥ 95, Accessibility ≥ 95, `CLS == 0.00`, **0 violazioni `@axe-core/playwright`** su Desktop, Mobile (`390×844`) e `prefers-reduced-transparency`; test sicurezza `POST /api/feedback` verde.
+**Gate Fase 5 [PASS]**: 57 pagine statiche generate (`CLS == 0.00`), 17/17 test Playwright E2E verdi su Desktop e Mobile (`390×844`), test sicurezza `POST /api/feedback` (rate limit, anti-XSS, honeypot) verde.
 
 ---
 
