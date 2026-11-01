@@ -1,24 +1,29 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "ofcl-pipeline"
 version = "0.1.0"
 description = "Pipeline Dati Finanziari MCA2, Acquisizione Albi e Riconciliazione Crediti per i 19 Comuni del Locarnese"
-readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "httpx>=0.28.1",
-    "selectolax>=0.3.27",
     "beautifulsoup4>=4.12.3",
     "protego>=0.4.0",
     "pdfplumber>=0.11.5",
-    "docling>=2.15.0",
     "pydantic>=2.10.4",
-    "pandera>=0.22.1",
     "frictionless>=5.18.0",
-    "psycopg[binary]>=3.2.3",
     "pyyaml>=6.0.2",
 ]
 
 [project.optional-dependencies]
+db = [
+    "psycopg[binary]>=3.2.3",
+]
+docling = [
+    "docling>=2.15.0",
+]
 dev = [
     "pytest>=8.3.4",
     "pytest-asyncio>=0.25.0",
@@ -27,6 +32,9 @@ dev = [
     "mypy>=1.14.0",
 ]
 
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [tool.ruff]
 line-length = 100
 target-version = "py312"
@@ -34,3 +42,4 @@ target-version = "py312"
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+pythonpath = ["src"]
