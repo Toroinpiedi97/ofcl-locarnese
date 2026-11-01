@@ -478,39 +478,95 @@ INDICATORS_DEF: list[tuple[str, str, str, str, bool]] = [
 INDICATOR_SCALES: list[tuple[str, str, int, str | None, str | None, str, str]] = [
     # 1. Tasso di indebitamento netto
     ("NET_DEBT_RATIO", "2022-01-01", 1, None, "100.0", "Buono", "good"),
-    ("NET_DEBT_RATIO", "2022-01-01", 2, "100.0", "150.0", "Accettabile", "ok"),
-    ("NET_DEBT_RATIO", "2022-01-01", 3, "150.0", None, "Eccessivo", "bad"),
-    # 2. Grado di autofinanziamento
+    ("NET_DEBT_RATIO", "2022-01-01", 2, "100.01", "150.0", "Accettabile", "warning"),
+    ("NET_DEBT_RATIO", "2022-01-01", 3, "150.01", None, "Eccessivo", "critical"),
+    # 2. Grado di autofinanziamento (soglia minima SEL 70.00% con C-03h)
     ("SELF_FINANCING_DEGREE", "2022-01-01", 1, "100.0", None, "Buono", "good"),
-    ("SELF_FINANCING_DEGREE", "2022-01-01", 2, "80.0", "100.0", "Normale", "ok"),
-    ("SELF_FINANCING_DEGREE", "2022-01-01", 3, None, "80.0", "Debole", "bad"),
-    # 3. Quota delle spese per interessi
+    ("SELF_FINANCING_DEGREE", "2022-01-01", 2, "70.0", "99.99", "Accettabile / Medio", "warning"),
+    ("SELF_FINANCING_DEGREE", "2022-01-01", 3, None, "69.99", "Debole", "critical"),
+    # 3. Quota spese per interessi (continuità a 9.00% con C-03g)
     ("INTEREST_BURDEN_RATIO", "2022-01-01", 1, None, "4.0", "Buono", "good"),
-    ("INTEREST_BURDEN_RATIO", "2022-01-01", 2, "4.0", "9.0", "Sufficiente", "ok"),
-    ("INTEREST_BURDEN_RATIO", "2022-01-01", 3, "9.0", None, "Eccessivo", "bad"),
+    ("INTEREST_BURDEN_RATIO", "2022-01-01", 2, "4.01", "9.0", "Sufficiente", "warning"),
+    ("INTEREST_BURDEN_RATIO", "2022-01-01", 3, "9.01", None, "Critico / Eccessivo", "critical"),
     # 4. Debito pubblico netto pro capite
     ("NET_DEBT_PER_CAPITA", "2022-01-01", 1, None, "1000.0", "Basso", "good"),
-    ("NET_DEBT_PER_CAPITA", "2022-01-01", 2, "1000.0", "3000.0", "Medio", "ok"),
-    ("NET_DEBT_PER_CAPITA", "2022-01-01", 3, "3000.0", "5000.0", "Elevato", "warn"),
-    ("NET_DEBT_PER_CAPITA", "2022-01-01", 4, "5000.0", None, "Eccessivo", "bad"),
+    ("NET_DEBT_PER_CAPITA", "2022-01-01", 2, "1000.01", "3000.0", "Medio", "good"),
+    ("NET_DEBT_PER_CAPITA", "2022-01-01", 3, "3000.01", "5000.0", "Elevato", "warning"),
+    ("NET_DEBT_PER_CAPITA", "2022-01-01", 4, "5000.01", None, "Eccessivo / Critico", "critical"),
     # 5. Quota degli investimenti
-    ("INVESTMENT_RATIO", "2022-01-01", 1, None, "10.0", "Ridotta", "ok"),
-    ("INVESTMENT_RATIO", "2022-01-01", 2, "10.0", "20.0", "Media", "good"),
-    ("INVESTMENT_RATIO", "2022-01-01", 3, "20.0", "30.0", "Elevata", "warn"),
-    ("INVESTMENT_RATIO", "2022-01-01", 4, "30.0", None, "Molto elevata", "bad"),
+    ("INVESTMENT_RATIO", "2022-01-01", 1, None, "10.0", "Ridotta", "warning"),
+    ("INVESTMENT_RATIO", "2022-01-01", 2, "10.01", "20.0", "Media", "good"),
+    ("INVESTMENT_RATIO", "2022-01-01", 3, "20.01", "30.0", "Elevata", "warning"),
+    ("INVESTMENT_RATIO", "2022-01-01", 4, "30.01", None, "Molto elevata", "critical"),
     # 6. Quota di capitale proprio
-    ("EQUITY_RATIO", "2022-01-01", 1, None, "10.0", "Debole", "bad"),
-    ("EQUITY_RATIO", "2022-01-01", 2, "10.0", "20.0", "Media", "ok"),
-    ("EQUITY_RATIO", "2022-01-01", 3, "20.0", "40.0", "Buona", "good"),
-    ("EQUITY_RATIO", "2022-01-01", 4, "40.0", None, "Eccessiva", "warn"),
+    ("EQUITY_RATIO", "2022-01-01", 1, None, "10.0", "Debole", "critical"),
+    ("EQUITY_RATIO", "2022-01-01", 2, "10.01", "20.0", "Media", "warning"),
+    ("EQUITY_RATIO", "2022-01-01", 3, "20.01", "40.0", "Buona", "good"),
+    ("EQUITY_RATIO", "2022-01-01", 4, "40.01", None, "Eccessiva / Molto solida", "good"),
     # 7. Quota degli oneri finanziari
-    ("CAPITAL_SERVICE_RATIO", "2022-01-01", 1, None, "5.0", "Debole", "good"),
-    ("CAPITAL_SERVICE_RATIO", "2022-01-01", 2, "5.0", "15.0", "Sopportabile", "ok"),
-    ("CAPITAL_SERVICE_RATIO", "2022-01-01", 3, "15.0", None, "Alto", "bad"),
+    ("CAPITAL_SERVICE_RATIO", "2022-01-01", 1, None, "5.0", "Debole / Basso impatto", "good"),
+    ("CAPITAL_SERVICE_RATIO", "2022-01-01", 2, "5.01", "15.0", "Sopportabile", "warning"),
+    ("CAPITAL_SERVICE_RATIO", "2022-01-01", 3, "15.01", None, "Elevato / Critico", "critical"),
     # 8. Capacità di autofinanziamento
     ("SELF_FINANCING_CAPACITY", "2022-01-01", 1, "20.0", None, "Buona", "good"),
-    ("SELF_FINANCING_CAPACITY", "2022-01-01", 2, "10.0", "20.0", "Media", "ok"),
-    ("SELF_FINANCING_CAPACITY", "2022-01-01", 3, None, "10.0", "Debole", "bad"),
+    ("SELF_FINANCING_CAPACITY", "2022-01-01", 2, "10.0", "19.99", "Media", "warning"),
+    ("SELF_FINANCING_CAPACITY", "2022-01-01", 3, None, "9.99", "Debole", "critical"),
+]
+
+# ==============================================================================
+# 5. CATALOGO CIVIC DEEP DIVE (Quadranti A-E: 09-ux §6.5)
+# ==============================================================================
+CIVIC_BENEFIT_CATALOG: list[tuple[str, str, str, str, int]] = [
+    # Quadrante A: Tariffe di Causalità
+    ("WASTE_BASE_FEE", "A_TARIFFE", "Tassa base rifiuti annuale", "CHF/anno", 10),
+    ("WASTE_BAG_FEE", "A_TARIFFE", "Tassa sul sacco ufficiale 35L", "CHF/sacco", 20),
+    ("WATER_CONSUMPTION", "A_TARIFFE", "Tassa consumo acqua potabile", "CHF/m3", 30),
+    ("WATER_BASE_FEE", "A_TARIFFE", "Tassa base acqua potabile", "CHF/anno", 40),
+    ("SEWER_FEE", "A_TARIFFE", "Tassa smaltimento acque reflue", "CHF/m3", 50),
+    ("IMMOBILIARE_TAX", "A_TARIFFE", "Imposta immobiliare comunale", "%", 60),
+    ("DOG_TAX", "A_TARIFFE", "Tassa tenuta cani", "CHF/anno", 70),
+    ("PARKING_RESIDENT", "A_TARIFFE", "Parcheggio residenti (zona blu/stalli)", "CHF/mese", 80),
+    # Quadrante B: Famiglie & Educazione
+    ("BIRTH_BONUS", "B_FAMIGLIE", "Assegno / Bonus nascita una-tantum", "CHF una-tantum", 110),
+    ("DAYCARE_SUBSIDY", "B_FAMIGLIE", "Sussidio comunale retta nido d'infanzia", "%", 120),
+    ("CANTEEN_SUBSIDY", "B_FAMIGLIE", "Ristorazione e mensa scolastica", "CHF/pasto", 130),
+    ("SPORT_CULTURE_YOUTH", "B_FAMIGLIE", "Sussidio attività sportive e musicali giovanili", "CHF/anno", 140),
+    ("SCHOOL_BOOKS_BONUS", "B_FAMIGLIE", "Borse di studio e sussidio libri scolastici", "CHF/anno", 150),
+    # Quadrante C: Terza Età & Inclusione
+    ("SENIOR_HOME_MEALS", "C_TERZA_ETA", "Servizio pasti a domicilio per anziani", "CHF/pasto", 210),
+    ("SENIOR_LIDO_ACCESS", "C_TERZA_ETA", "Agevolazioni lidi e centri balneari AVS", "% sconto", 220),
+    ("SENIOR_TRANSPORT", "C_TERZA_ETA", "Servizio trasporto sociale anziani", "CHF/corsa", 230),
+    # Quadrante D: Sostenibilità, Clima & Mobilità
+    ("FER_SOLAR_SUBSIDY", "D_CLIMA_MOBILITA", "Incentivo comunale impianti fotovoltaici", "CHF/kWp", 310),
+    ("HEAT_PUMP_SUBSIDY", "D_CLIMA_MOBILITA", "Contributo sostituzione riscaldamento a pompa di calore", "CHF una-tantum", 320),
+    ("ARCOBALENO_YOUTH_SUBSIDY", "D_CLIMA_MOBILITA", "Sussidio abbonamento Arcobaleno giovani / studenti", "%", 330),
+    ("EBIKE_SUBSIDY", "D_CLIMA_MOBILITA", "Incentivo acquisto biciclette elettriche (E-Bike)", "CHF una-tantum", 340),
+    ("GREEN_WASTE_FEE", "D_CLIMA_MOBILITA", "Smaltimento scarti vegetali / bidone verde", "CHF/anno", 350),
+    # Quadrante E: Fisco & Sportello
+    ("TOURIST_TAX", "E_FISCO_SPORTELLO", "Tassa di soggiorno turistica", "CHF/notte", 410),
+    ("CERTIFICATES_FEE", "E_FISCO_SPORTELLO", "Tassa rilascio certificati anagrafici e di domicilio", "CHF", 420),
+    ("OFFICE_HOURS_EXTENDED", "E_FISCO_SPORTELLO", "Sportello comunale con orari estesi / serali", "Descrizione", 430),
+]
+
+# Dati pilota verificati per ref.municipal_civic_item (obbligo source_url e ordinanza)
+# (ust_code, benefit_code, year, status, display, min_chf, max_chf, pct, conditions, ordinance, source_url, verified_at)
+MUNICIPAL_CIVIC_ITEMS_PILOT: list[tuple[int, str, int, str, str, str | None, str | None, str | None, str | None, str | None, str, str]] = [
+    # Ascona (5091)
+    (5091, "WASTE_BASE_FEE", 2026, "ACTIVE", "80.00 CHF/anno", "80.00", "80.00", None, "Per economia domestica", "Regolamento comunale gestione rifiuti", "https://www.ascona.ch", "2026-11-01T12:00:00Z"),
+    (5091, "WASTE_BAG_FEE", 2026, "ACTIVE", "1.30 CHF/sacco 35L", "1.30", "1.30", None, "Sacco ufficiale rosso/bianco", "Ordinanza municipale sui rifiuti", "https://www.ascona.ch", "2026-11-01T12:00:00Z"),
+    (5091, "BIRTH_BONUS", 2026, "ACTIVE", "500.00 CHF una-tantum", "500.00", "500.00", None, "Neonati residenti da almeno 1 anno", "Risoluzione municipale assegni nascita", "https://www.ascona.ch", "2026-11-01T12:00:00Z"),
+    (5091, "IMMOBILIARE_TAX", 2026, "NOT_APPLICABLE", "Non applicata (0.0‰)", "0.00", "0.00", None, "Aliquota azzerata", "Preventivo comunale 2026", "https://www.ascona.ch", "2026-11-01T12:00:00Z"),
+    (5091, "ARCOBALENO_YOUTH_SUBSIDY", 2026, "ACTIVE", "Sconto 50% abbonamento giovani", None, None, "50.00", "Giovani residenti fino a 25 anni", "Regolamento incentivi mobilità sostenibile", "https://www.ascona.ch", "2026-11-01T12:00:00Z"),
+    # Losone (5115)
+    (5115, "WASTE_BASE_FEE", 2026, "ACTIVE", "90.00 CHF/anno", "90.00", "90.00", None, "Abitazione primaria residenti", "Regolamento comunale smaltimento rifiuti", "https://www.losone.ch", "2026-11-01T12:00:00Z"),
+    (5115, "WASTE_BAG_FEE", 2026, "ACTIVE", "1.30 CHF/sacco 35L", "1.30", "1.30", None, "Sacco ufficiale trasparente/blu", "Ordinanza tariffe rifiuti", "https://www.losone.ch", "2026-11-01T12:00:00Z"),
+    (5115, "BIRTH_BONUS", 2026, "ACTIVE", "1'000.00 CHF una-tantum", "1000.00", "1000.00", None, "Nuovi nati con genitori residenti", "Regolamento sociale comunale", "https://www.losone.ch", "2026-11-01T12:00:00Z"),
+    (5115, "IMMOBILIARE_TAX", 2026, "NOT_APPLICABLE", "Non applicata (0.0‰)", "0.00", "0.00", None, "Non prelevata a Losone", "Preventivo comunale 2026", "https://www.losone.ch", "2026-11-01T12:00:00Z"),
+    (5115, "EBIKE_SUBSIDY", 2026, "ACTIVE", "Fino a 300.00 CHF una-tantum", "100.00", "300.00", None, "Max 20% costo acquisto bicicletta", "Fondo comunale energie rinnovabili e mobilità", "https://www.losone.ch", "2026-11-01T12:00:00Z"),
+    # Locarno (5113)
+    (5113, "WASTE_BASE_FEE", 2026, "ACTIVE", "110.00 CHF/anno", "110.00", "110.00", None, "Fuoco domestico standard", "Regolamento comunale gestione rifiuti", "https://www.locarno.ch", "2026-11-01T12:00:00Z"),
+    (5113, "IMMOBILIARE_TAX", 2026, "ACTIVE", "1.5‰ del valore di stima", None, None, "1.50", "Su stima fiscale fabbricati e terreni", "Preventivo della Città di Locarno 2026", "https://www.locarno.ch", "2026-11-01T12:00:00Z"),
+    (5113, "FER_SOLAR_SUBSIDY", 2026, "ACTIVE", "200.00 CHF/kWp installato", "200.00", "200.00", None, "Cumulabile con incentivi cantonali FER", "Regolamento del Fondo per l'Energia", "https://www.locarno.ch", "2026-11-01T12:00:00Z"),
 ]
 
 
@@ -628,6 +684,28 @@ def generate_seed_sql(municipalities: list[MunicipalitySpec]) -> str:
             f"lower_bound = EXCLUDED.lower_bound, upper_bound = EXCLUDED.upper_bound, label_it = EXCLUDED.label_it, color_token = EXCLUDED.color_token;"
         )
 
+    lines.extend(["", "-- 9. Catalogo Civic Deep Dive (Quadranti A-E)"])
+    for code, quad, label, unit_hint, sort_order in CIVIC_BENEFIT_CATALOG:
+        lines.append(
+            f"INSERT INTO ref.civic_benefit_def (code, quadrant, label_it, unit_hint, sort_order) "
+            f"VALUES ({_sql_str(code)}, {_sql_str(quad)}, {_sql_str(label)}, {_sql_str(unit_hint)}, {sort_order}) "
+            f"ON CONFLICT (code) DO UPDATE SET quadrant = EXCLUDED.quadrant, label_it = EXCLUDED.label_it, unit_hint = EXCLUDED.unit_hint, sort_order = EXCLUDED.sort_order;"
+        )
+
+    lines.extend(["", "-- 10. Voci Civiche Pilota Verificate (ref.municipal_civic_item)"])
+    for ust_code, b_code, yr, st_val, disp, min_c, max_c, pct_v, cond, ord_ref, src_url, ver_at in MUNICIPAL_CIVIC_ITEMS_PILOT:
+        min_sql = min_c if min_c is not None else "NULL"
+        max_sql = max_c if max_c is not None else "NULL"
+        pct_sql = pct_v if pct_v is not None else "NULL"
+        lines.append(
+            f"INSERT INTO ref.municipal_civic_item (ust_code, benefit_code, valid_year, status, value_display, amount_min_chf, amount_max_chf, pct_value, conditions_short, ordinance_ref, source_url, verified_at) "
+            f"VALUES ({ust_code}, {_sql_str(b_code)}, {yr}, {_sql_str(st_val)}, {_sql_str(disp)}, {min_sql}, {max_sql}, {pct_sql}, {_sql_str(cond)}, {_sql_str(ord_ref)}, {_sql_str(src_url)}, {_sql_str(ver_at)}) "
+            f"ON CONFLICT (ust_code, benefit_code, valid_year) DO UPDATE SET "
+            f"status = EXCLUDED.status, value_display = EXCLUDED.value_display, amount_min_chf = EXCLUDED.amount_min_chf, "
+            f"amount_max_chf = EXCLUDED.amount_max_chf, pct_value = EXCLUDED.pct_value, conditions_short = EXCLUDED.conditions_short, "
+            f"ordinance_ref = EXCLUDED.ordinance_ref, source_url = EXCLUDED.source_url, verified_at = EXCLUDED.verified_at;"
+        )
+
     lines.extend(["", "COMMIT;", ""])
     return "\n".join(lines)
 
@@ -655,6 +733,8 @@ def main() -> int:
     print(f"  -> Moltiplicatori storici PF/PG (2019-2026): {total_mults}")
     print(f"  -> Popolazione STATPOP (2019-2026): {total_pop}")
     print(f"  -> Indicatori SEL: {len(INDICATORS_DEF)} ({len(INDICATOR_SCALES)} fasce ufficiali)")
+    print(f"  -> Voci Catalogo Civic Deep Dive (ref.civic_benefit_def): {len(CIVIC_BENEFIT_CATALOG)}")
+    print(f"  -> Voci Civiche Pilota (ref.municipal_civic_item): {len(MUNICIPAL_CIVIC_ITEMS_PILOT)}")
     print(f"  -> Scritto file SQL idempotente: {seed_out_path}")
     return 0
 

@@ -68,6 +68,8 @@ def test_load_19_municipalities_and_seed_sql() -> None:
     assert "INSERT INTO ref.municipality" in sql
     assert "ON CONFLICT (ust_code) DO UPDATE" in sql
     assert "INSERT INTO ref.population" in sql
+    assert "INSERT INTO ref.civic_benefit_def" in sql
+    assert "INSERT INTO ref.municipal_civic_item" in sql
 
 
 def test_statpop_population_19_comuni_coverage() -> None:
