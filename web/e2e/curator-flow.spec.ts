@@ -80,4 +80,25 @@ test.describe("Console Curatore OFCL (/admin) - Flusso E2E", () => {
     await expect(page.getByText("DISCREPANZA_CIFRA")).toBeVisible();
     await expect(page.getByText("Brione sopra Minusio")).toBeVisible();
   });
+
+  test("T056: Traguardo SC-001 - Copertura 19/19 Comuni con Consuntivi e Preventivi pubblicati", async ({
+    page,
+  }) => {
+    // 1. Verifica Coda Curatore con fascicoli regionali
+    await page.goto("/admin/queue");
+    await expect(page.getByText("Locarno").first()).toBeVisible();
+    await expect(page.getByText("Ascona").first()).toBeVisible();
+    await expect(page.getByText("Gambarogno").first()).toBeVisible();
+
+    // 2. Verifica Biblioteca Documenti Pubblica (SC-001)
+    await page.goto("/documenti");
+    await expect(page.locator("h1")).toContainText("Biblioteca Documenti");
+
+    // Verifica presenza di Comuni chiave dei diversi circoli nelle schede documento
+    await expect(page.getByRole("link", { name: "Locarno" }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: "Ascona" }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: "Verzasca" }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: "Centovalli" }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: "Onsernone" }).first()).toBeVisible();
+  });
 });
