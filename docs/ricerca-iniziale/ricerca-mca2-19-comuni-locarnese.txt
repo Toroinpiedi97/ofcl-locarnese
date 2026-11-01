@@ -1,0 +1,904 @@
+﻿Pipeline Dati Finanziari MCA2, Preventivi, Consuntivi e Controllo Crediti d'Investimento dei 19 Comuni del Locarnese
+La realizzazione di una pipeline automatizzata per il monitoraggio finanziario dei 19 Comuni del Distretto di Locarno (codice distrettuale UST 2104) richiede l'integrazione tra la struttura contabile prescritta dal Modello contabile armonizzato di seconda generazione (MCA2), i flussi documentali generati dai sistemi informativi comunali (come l'applicativo Ge.Co.Ti. Web sviluppato dal Centro di Calcolo Elettronico CCE di Gordola) e le architetture web eterogenee degli albi comunali locarnesi1. In tutto il Cantone Ticino, la gestione finanziaria comunale è disciplinata dalla Legge organica comunale (LOC) e dal Regolamento sulla gestione finanziaria e sulla contabilità dei comuni (RGFCC) del 30 giugno 1987 (aggiornato con la revisione entrata in vigore il 1° aprile 2022), sotto la vigilanza della Sezione degli enti locali (SEL) del Dipartimento delle istituzioni5. Con l'adozione di MCA2 (introdotta a tappe e completata a livello cantonale nel 2022), ogni comune pubblica annualmente il Preventivo (da trasmettere entro il 31 ottobre dell'anno precedente) e il Consuntivo corredato dagli allegati obbligatori ai sensi dell'art. 22 RGFCC (originariamente 16, ridotti a 15 allegati obbligatori dal 1° aprile 2022 dopo lo stralcio del conto consolidato alla lett. k), tra cui rivestono un ruolo centrale la Tabella dei cespiti dei beni amministrativi (Allegato e) e la Tabella del controllo dei crediti d'investimento (Allegato f)7.
+Dal punto di vista ingegneristico, la sfida principale nella regione locarnese risiede nel fatto che i comuni non espongono API contabili aperte al pubblico: sebbene internamente applicativi come Ge.Co.Ti. Web poggino su database relazionali Oracle (11g/12C) ed esportino flussi XML/Excel certificati verso la SEL e il Centro Sistemi Informativi (CSI), verso i cittadini e i consiglieri comunali i dati vengono distribuiti sotto forma di Messaggi Municipali (MM) e fascicoli contabili in formato PDF pubblicati sui portali comunali1. Mappando l'infrastruttura digitale dei 19 comuni locarnesi al 2026, emergono cinque configurazioni tecnologiche distinte: 13 comuni utilizzano il CMS ticinese Assolo.net / eGov (riconoscibile dagli URL con suffisso esadecimale a 8 caratteri e parametri ?i=1&MasterId=...), 3 comuni utilizzano WordPress (Brissago, Centovalli, Ronco sopra Ascona), 1 comune impiega Joomla con componente jDownloads (Lavertezzo), 1 comune utilizza un portale basato su script PHP ad albero nodale (Orselina) e 1 comune (la Città di Locarno) gestisce un portale suddiviso per cicli di legislatura (2016-2021, 2021-2024, 2024-2028)14.
+L'analisi incrociata dei dati estratti dai consuntivi 2024–2025, dai preventivi 2025–2027, dai piani finanziari della regione locarnese e dalle statistiche sui moltiplicatori evidenzia una marcata polarizzazione strutturale13. Da un lato, i comuni residenziali della sponda lacustre e collinare (Ascona, Ronco sopra Ascona, Muralto, Brione sopra Minusio) mantengono moltiplicatori d'imposta contenuti tra il 75% e il 78%; dall'altro, i comuni di valle (Mergoscia, Lavertezzo, Verzasca, Onsernone, Centovalli) operano tra il 95% e il 100% per le persone fisiche (PF), mentre tre comuni locarnesi applicano tra il 2025 e il 2026 moltiplicatori differenziati più elevati per le persone giuridiche (PG), ossia Locarno (PF 90% / PG 97%), Gambarogno (PF 85% / PG 100%) e Centovalli (PF 95% / PG 120%)24. Inoltre, l'intenso ciclo di investimenti pubblici (edilizia scolastica, palestre multiuso, premunizioni contro pericoli naturali e opere del Programma d'agglomerato del Locarnese PALoc) sta facendo crescere l'indebitamento netto pro capite e gli ammortamenti lineari pianificati, rendendo indispensabile una pipeline rigorosa capace di collegare ogni singolo credito d'investimento votato dal Consiglio comunale con i consuntivi annuali e con le proiezioni dei piani finanziari quadriennali15.
+1. Architettura della Pipeline Regionale di Acquisizione, Estrazione e Normalizzazione MCA2
+Per trasformare i documenti contabili eterogenei dei 19 comuni del Locarnese in un data warehouse interrogabile e conforme allo standard MCA2, la pipeline si articola in quattro stadi sequenziali: Acquisizione (Ingestion & Crawling), Estrazione Strutturale (PDF Layout Parsing), Normalizzazione Relazionale (Data Modeling MCA2) e Riconciliazione e Controllo Automatico (Validation Engine)1.
+
+Stadio 1: Connettori di Acquisizione (Web Crawling e Monitoraggio Albi)
+La raccolta automatizzata deve interrogare periodicamente i 19 portali comunali tenendo conto sia delle scadenze statutarie della LOC e del RGFCC — 31 ottobre per la trasmissione del Messaggio Municipale sul Preventivo dell'anno successivo e primavera (marzo–giugno) per la presentazione del Consuntivo dell'esercizio precedente — sia del flusso continuo dei messaggi municipali di richiesta credito sottoposti durante l'anno alle sessioni ordinarie e straordinarie dei Consigli comunali11. Poiché la pubblicazione online agli albi comunali elettronici è considerata a titolo informativo mentre agli effetti giuridici fa fede il documento cartaceo esposto all'albo principale (con termini di pubblicazione ex art. 192 LOC e invio ai consiglieri almeno 30 giorni prima della seduta), il crawler deve eseguire una scansione settimanale per catturare tempestivamente sia le proposte iniziali sia i conti emendati dopo il voto del Consiglio comunale11.
+Per massimizzare l'affidabilità dello scraping, i connettori vanno parametrizzati sui pattern infrastrutturali rilevati nel Distretto di Locarno:
+Connettore Assolo.net / eGov (13 Comuni): Utilizzato da Ascona, Brione sopra Minusio, Cugnasco-Gerra, Gambarogno, Gordola, Losone, Mergoscia, Minusio, Muralto, Onsernone, Tenero-Contra, Terre di Pedemonte e Verzasca13. Le pagine indice utilizzano parametri di paginazione standardizzati (?param_sla=0&ris_n=...&fric=...&ris_pg=1)46. I documenti PDF sono serviti tramite URL con un hash esadecimale finale a 8 cifre (es. -daf46200 o -26425b00) a cui si aggiunge il parametro ?i=1 (ed eventualmente &MasterId=g1_...) per accedere direttamente al documento PDF23.
+Connettore WordPress (3 Comuni): Utilizzato da Brissago (brissago.ch/documenti/... e brissago.ch/files/...), Centovalli (centovalli.swiss/category/a4-messaggi-municipali/) e Ronco sopra Ascona (ronco-s-ascona.ch/istituzione/conti-consuntivi/ e /albo-comunale/messaggi-municipali/)17. Il connettore monitora gli archivi di categoria e i file caricati in /wp-content/uploads/ o /files/36.
+Connettore Joomla / jDownloads (1 Comune): Utilizzato da Lavertezzo (lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2026), dove gli atti sono organizzati in cartelle annuali (mm-2021 ... mm-2026) e i file binari vengono scaricati tramite l'endpoint /documenti-albo-comunale/send/{cat_id}-{cat_slug}/{doc_id}-{doc_slug}21.
+Connettori Custom PHP / Portale Città (2 Comuni): Per Orselina (orselina.ch/index.php?node=326), lo scraper interroga i nodi documentali (node=327 per la legislazione, node=332 per le risoluzioni) e scarica i file tramite downdoc.php?id_doc={id}&lng=1&i=119. Per la Città di Locarno (locarno.ch/it/messaggi-municipali/2024-2028 e /it/finanze), il crawler monitora gli elenchi per legislatura e preleva i PDF diretti dalla directory /files/documenti/15.
+Stadio 2: Estrazione Strutturale dai Fascicoli PDF (Parser per Tabulati MCA2 / Ge.Co.Ti. Web)
+Nei comuni locarnesi, la documentazione finanziaria viene pubblicata secondo due modalità editoriali che la pipeline deve distinguere in fase di pre-processing. Nella modalità a fascicolo integrato unico, il testo narrativo del Messaggio Municipale e le tabelle contabili generate dal sistema informativo sono uniti in un unico PDF (ad esempio a Brione sopra Minusio nel MM 566, dove la sezione A contiene il messaggio e le sezioni B–E contengono i tabulati contabili)13. Nella modalità a fascicolo sdoppiato (Messaggio + Allegato Conti), il Comune pubblica invece due file distinti: un PDF leggero (circa 200–600 kB) con il Testo del Messaggio Municipale (commento politico-finanziario, analisi degli scostamenti, proposta di risoluzione) e un PDF corposo (da 1,2 MB a oltre 9,7 MB) denominato Conti, Allegato conti o Allegato cifre contenente i tabulati MCA2 (prassi osservata a Locarno, Ascona, Tenero-Contra, Terre di Pedemonte e Lavertezzo)14.
+Sebbene i singoli PDF comunali non riportino esplicitamente il marchio commerciale del software nell'intestazione di stampa13, la soluzione gestionale di riferimento sviluppata nella regione per i comuni ticinesi è Ge.Co.Ti. Web (del CCE di Gordola, accanto ad altri gestionali certificati MCA2), i cui moduli di Contabilità finanziaria e Investimenti generano tabulati conformi alle direttive SEL1. Questi tabulati presentano marcatori strutturali costanti che consentono un parsing deterministico tramite estrazione delle coordinate di testo:
+Header di Sistema: Riporta la dicitura standardizzata Comune di [NOME COMUNE] MCA2, il timestamp di generazione (es. 29.10.2026 08:59:13 a Brione sopra Minusio o 09.04.2025 16:44:14 a Vico Morcote) e la paginazione strutturata per sezione (Pagina X di Y)13.
+Layout a Griglia Multi-Colonna per Conto Economico e Investimenti: Nelle tabelle di dettaglio (Allegato b), ogni riga inizia con il codice funzionale/dicastero e il codice per genere di conto (es. 3010.100), seguito dalla descrizione testuale e da tre coppie di colonne numeriche affiancate (Spese | Ricavi). Nei fascicoli di Preventivo dell'anno T le colonne riportano Preventivo T, Preventivo T-1 e Consuntivo T-213; nei fascicoli di Consuntivo dell'anno T le colonne riportano Consuntivo T, Preventivo T e Consuntivo T-19.
+Regole di Pulizia Lessicale e Numerica: Nei PDF ticinesi il separatore delle migliaia è l'apostrofo (' o ’, es. 15'432'147.41), il separatore decimale è il punto (.), i valori interi nei messaggi hanno spesso il suffisso .-- o .-, e le voci portate in deduzione nelle tabelle riepilogative sono precedute dal simbolo ./.15.
+Stadio 3: Schema Relazionale Normalizzato MCA2
+Per consentire query trasversali fra tutti i 19 comuni e serie storiche multi-anno, i dati estratti confluiscono in cinque tabelle relazionali principali collegate tramite il codice ufficiale UST del Comune (codice_ust, intero a 4 cifre da 5091 a 5399)4:
+
+Tabella Database
+ | Chiave Primaria (PK)
+ | Attributi Principali e Tipi Dati
+ | Fonte Documentale MCA2
+ | dim_comuni_locarnese
+ | codice_ust (INT)
+ | nome_comune, circolo, aggregazioni_storiche, cms_type, url_albo, url_messaggi, url_conti, popolazione_residente
+ | Elenco ufficiale UST / USTAT / Portali comunali4
+ | fact_parametri_fiscali
+ | (codice_ust, anno)
+ | moltiplicatore_pf (DEC), moltiplicatore_pg (DEC), gettito_base_cantonale_pf, gettito_base_cantonale_pg, contributo_livellamento, differenza_ricalcolo, sopravvenienze_accertate
+ | Prospetti moltiplicatori / Piani Finanziari / Allegato m9
+ | fact_movimenti_mca2
+ | (codice_ust, anno, tipo_doc, ente, cod_funzionale, cod_natura, cod_dettaglio)
+ | tipo_doc (PREVENTIVO, CONSUNTIVO, PIANO_FIN), ente (COMUNE, AAP, LEA, AET_ELETTRICA, APONA, CASA_ANZIANI), importo_spesa_dare (DEC), importo_ricavo_avere (DEC), mm_riferimento
+ | Riassunto e Dettaglio CE, CI e Bilancio (Art. 22 lett. a, b, c, d RGFCC)9
+ | fact_cespiti_ba
+ | (codice_ust, anno, cod_cespite)
+ | categoria_ba (1401..1403 e seg.), descrizione_opera, valore_acquisizione_netto, valore_contabile_01_01, tasso_ammortamento_medio, ammortamenti_pianificati, ammortamenti_non_pianificati, valore_contabile_31_12
+ | Tabella dei cespiti dei beni amministrativi (Art. 22 lett. e / Allegati 1 e 2 RGFCC)7
+ | fact_controllo_crediti
+ | (codice_ust, anno_consuntivo, conto_investimento, mm_credito)
+ | descrizione_conto, descrizione_credito, data_credito, tipo_autorizzazione (CC_ORDINARIO, CREDITO_QUADRO, DELEGA_MUNICIPIO, A_POSTERIORE, SUPPLETORIO), credito_votato, investimento_netto_previsto, utilizzato_01_01, uscite_anno, uscite_totali, credito_residuo_bilancio, stato_opera (IN_CORSO, LIQUIDATO, REVOCATO)
+ | Tabella del controllo dei crediti d'investimento (Art. 22 lett. f RGFCC) e MM di credito9
+ | Stadio 4: Motore di Riconciliazione e Controlli di Plausibilità Automatici
+In linea con i controlli bloccanti di plausibilità introdotti in Ge.Co.Ti. Web per garantire la conformità alle direttive della SEL (inclusa la comunicazione automatica alla SEL all'apertura di un nuovo conto a bilancio o di una nuova combinazione funzionale a preventivo), la pipeline esegue cinque verifiche automatiche su ogni consuntivo e preventivo estratto1:
+Quadratura delle Imputazioni Interne e Controllo Conto/Centro Costo: Nel Conto Economico, il totale del gruppo 39 (Addebiti interni, inclusi 3910 prestazioni e 3940 interessi interni) deve coincidere con il totale del gruppo 49 (Accrediti interni), così che il Conto Economico riassuntivo senza imputazioni interne mantenga lo stesso saldo del conto dettagliato13.
+Riconciliazione dei Finanziamenti Speciali (Servizi a copertura dei costi): Per i servizi comunali gestiti tramite fondi del Capitale Proprio — Servizio approvvigionamento idrico (710 / fondo 2910.100), Servizio depurazione acque (720 / fondo 2910.200) e Servizio gestione dei rifiuti (730 / fondo 2910.300), oltre al Fondo Energie Rinnovabili (FER / prelievi su conto 4500.500) — i versamenti registrati nel gruppo 35 e i prelievi registrati nel gruppo 45 del Conto Economico vengono verificati rispetto alla variazione dei fondi nel Capitale Proprio (29)13.
+Ponte tra Conto degli Investimenti, Tabella Cespiti e Bilancio: L'onere netto per investimenti sui Beni Amministrativi dell'anno T (Uscite per investimenti meno Entrate per investimenti), raccordato con il valore contabile iniziale dei Beni Amministrativi al 01.01.T e al netto degli ammortamenti pianificati e non pianificati contabilizzati nel gruppo 33 (3300 / 3320) e 366, viene riconciliato con la voce Beni amministrativi a Bilancio al 31.12.T e con la Tabella dei cespiti (Allegato e)13.
+Quadratura del Debito Pubblico e del Conto dei Flussi di Mezzi Liquidi: Il motore verifica la quadratura del debito pubblico (secondo le indicazioni del capitolo 5.2.4 del Manuale MCA2) e controlla che nel Conto dei flussi dei mezzi liquidi (art. 22 lett. l RGFCC, calcolato con metodo indiretto) la somma del flusso dell'attività operativa (basato sull'autofinanziamento rettificato per le variazioni del capitale circolante e degli accantonamenti), del flusso dell'attività d'investimento (beni amministrativi BA e beni patrimoniali BP) e del flusso dell'attività di finanziamento corrisponda esattamente alla variazione totale della liquidità a bilancio7.
+Controllo di Congruità dei Crediti Votati (Art. 15 e Art. 22 lett. f RGFCC): Poiché il preventivo del conto degli investimenti ha valore programmatico e non viene votato come credito d'opera, il Municipio può procedere a una spesa d'investimento unicamente sino a concorrenza del relativo credito formale votato dal Consiglio comunale (o entro la soglia di delega esecutiva prevista dal Regolamento comunale, come i 70'000 CHF per singolo progetto a Losone)8. La pipeline segnala automaticamente ogni posizione nella Tabella del controllo dei crediti in cui uscite totali > credito votato (credito residuo bilancio < 0), identificando i sorpassi di spesa che richiedono un credito suppletorio o una ratifica formale in sede di liquidazione del consuntivo27.
+2. Mappatura Ufficiale Completa e Raccolta Link dei 19 Comuni del Distretto di Locarno
+A seguito delle aggregazioni comunali ticinesi — culminate nella regione con la nascita del Comune di Verzasca il 18 ottobre 2020 (operativo nella statistica finanziaria dal 2021 mediante fusione di Brione Verzasca, Corippo, Frasco, Sonogno, Vogorno e dei comprensori di valle di Cugnasco-Gerra e Lavertezzo) — il Distretto di Locarno conta 19 Comuni politici distribuiti in 7 Circoli (Locarno, Isole, Navegna, Gambarogno, Melezza, Onsernone, Verzasca)4.
+Tabella Master di Mappatura Tecnica e Documentale dei 19 Comuni Locarnesi
+La tabella seguente sintetizza per ciascuno dei 19 comuni il codice ufficiale UST/BFS, il circolo d'appartenenza, la storia aggregativa (essenziale per raccordare le serie storiche pre-fusione nella pipeline), il CMS impiegato, gli URL diretti agli albi e alle sezioni finanziarie, e i riferimenti esatti agli ultimi Messaggi Municipali (MM) di Preventivo, Consuntivo e Piano Finanziario rilevati fino a ottobre 20264.
+
+Codice UST
+ | Comune (e Sede Cancelleria)
+ | Circolo
+ | Storia Aggregativa (Raccordo Serie Storiche)
+ | Piattaforma CMS / Pattern URL
+ | Link Diretto Albo Comunale e Atti Ufficiali
+ | Link Diretto Messaggi Municipali e Conti (Preventivi / Consuntivi)
+ | Ultimi Atti Contabili Rilevati (2024–2027)
+ | 5091
+ | Ascona
+ | Isole
+ | Non aggregato
+ | Assolo.net / eGov
+ | https://www.ascona.ch/Albo-comunale-65d3e000
+ | https://www.ascona.ch/Messaggi-municipali
+ | Cons. 2025: MM 08/2026 (Comune), MM 09/2026 (Azienda elettrica), MM 10/2026 (AAP); Prev. 2026: MM 36/2025 e MM 37/20254
+ | 5096
+ | Brione sopra Minusio
+ | Navegna
+ | Non aggregato
+ | Assolo.net / eGov
+ | https://www.brione.ch/Albo-comunale
+ | https://www.brione.ch/Messaggi-municipali-di-nuova-promulgazione-a459ef00
+ | Prev. 2027: MM 566 (29.10.2026); Cons. 2025: MM 562; Cons. 2024: MM 550; Prev. 2025: MM 5454
+ | 5097
+ | Brissago
+ | Isole
+ | Non aggregato
+ | WordPress
+ | https://www.brissago.ch/comune/amministrazione/
+ | https://www.brissago.ch/comune/amministrazione/consiglio-comunale/documenti-consiglio-comunale/
+ | Cons. 2024: MM 1557 (12.05.2025); Crediti 2026: MM 1572, MM 1575 (17.09.2026); Prev.: MM 14784
+ | 5108
+ | Gordola
+ | Navegna
+ | Non aggregato
+ | Assolo.net / eGov
+ | https://www.gordola.ch/Albo-comunale-0cbcc300
+ | https://www.gordola.ch/Messaggi-municipali-f3c97f00
+ | Prev. 2022: MM 1506; Cons. AAP 2020: MM 1492; Cons. Comune 2019: MM 1462 (Archivio paginato)4
+ | 5112
+ | Lavertezzo
+ | Verzasca
+ | Cessione territorio in valle a Verzasca (2020/2021)
+ | Joomla + jDownloads
+ | https://www.lavertezzo.ch/documenti-albo-comunale
+ | https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2026
+ | Prev. ACAP 2027: MM 2026-13 (09.10.2026); Cons. 2025: MM 2026-07 (Comune) e MM 2026-04 (ACAP); Prev. 2026: MM 2025-094
+ | 5113
+ | Locarno
+ | Locarno
+ | Non aggregato
+ | Custom CMS Città
+ | https://www.locarno.ch/it/albo-comunale
+ | https://www.locarno.ch/it/messaggi-municipali/2024-2028 e https://www.locarno.ch/it/finanze
+ | Cons. 2025: MM 36 (Comune, San Carlo, LEA - 01.09.2026); Cons. 2024: MM 20; Prev. 2025: Preventivi_2025_Conti_1.pdf4
+ | 5115
+ | Losone
+ | Isole
+ | Non aggregato
+ | Assolo.net / eGov
+ | https://www.losone.ch/Albo-comunale-3b480000
+ | https://www.losone.ch/Conti-del-Comune-519c1a00 e https://www.losone.ch/Documenti-del-Consiglio-comunale-b1cb9e00
+ | Prev. 2026: pubbl. online; Cons. 2025: MM 060; PF 2025–2028: MM 034; Cons. 2024: MM 030 (serie 2006–2026)23
+ | 5117
+ | Mergoscia
+ | Navegna
+ | Non aggregato
+ | Assolo.net / eGov
+ | https://www.comune-mergoscia.ch/Albo-comunale-04399800
+ | https://www.comune-mergoscia.ch/Messaggi-municipali-861f7d00
+ | Prev. 2027: MM 08-2026 (29.10.2026); Cons. 2025: MM 03-2026 (19.05.2026); Prev. 2026: MM 08-2025; Cons. 2024: MM 02-20254
+ | 5118
+ | Minusio
+ | Navegna
+ | Non aggregato
+ | Assolo.net / eGov
+ | https://www.minusio.ch/Albo-comunale-c3dfab00
+ | https://www.minusio.ch/Messaggi-municipali-584f1a00
+ | Prev. 2027: MM 2026/37 (21.10.2026); Cons. 2025: MM 2026/15 (27.04.2026); Prev. 2026: MM 41/2025; PF 2022–2026: MM 9/20224
+ | 5120
+ | Muralto
+ | Locarno
+ | Non aggregato
+ | Assolo.net / eGov
+ | https://www.muralto.ch/Albo-comunale/IT-c3dfab00
+ | https://www.muralto.ch/Messaggi-municipali/IT-ac4d1f00
+ | Cons. 2024: MM 2025/08 (18.04.2025, con rapporti di maggioranza e minoranza della Gestione)4
+ | 5121
+ | Orselina
+ | Locarno
+ | Non aggregato
+ | Custom PHP (node=)
+ | https://www.orselina.ch/index.php?node=326&lng=1
+ | https://www.orselina.ch/index.php?node=326&lng=1&vis=2&rif=b07ebc24cc
+ | Cons. 2022: MM 4/2023 (id_doc=3255); Prev. 2022–2023 / Cons.: id_doc=35934
+ | 5125
+ | Ronco sopra Ascona
+ | Isole
+ | Non aggregato
+ | WordPress
+ | https://ronco-s-ascona.ch/albo-comunale/messaggi-municipali/
+ | https://ronco-s-ascona.ch/istituzione/conti-consuntivi/
+ | Prev. 2026: Comune, ACAP, APONA (approvati CC 22.12.2025); Cons. 2025: Comune, ACAP, APONA; PF 2023–2027 (serie 2017–2026)4
+ | 5131
+ | Tenero-Contra
+ | Navegna
+ | Non aggregato
+ | Assolo.net / eGov
+ | https://www.tenero-contra.ch/Atti-pubblici-e-amministrativi-478eac00
+ | https://www.tenero-contra.ch/Messaggi-municipali-43c4a500
+ | Cons. 2025: MM 7 del 2026 (04.05.2026); Cons. 2024: MM 13 del 2025; Prev. 2025: MM 15 del 202427
+ | 5136
+ | Onsernone (Sede: Russo)
+ | Onsernone
+ | Fino al 2005: Comologno, Crana, Russo; 2017: +Gresso, Isorno (2002: Auressio, Berzona, Loco), Mosogno, Vergeletto
+ | Assolo.net / eGov
+ | https://www.onsernone.swiss/Albo-comunale-04399800
+ | https://www.onsernone.swiss/Messaggi-861f7d00
+ | Seduta CC 06.12.2024 (Cons. 2023 e dati parziali 2024); Cons. 2022: MM 1/2023 (Comune) e MM 2/2023 (AAP)24
+ | 5138
+ | Cugnasco-Gerra
+ | Navegna
+ | 2008/2009: Cugnasco + Gerra Verzasca; 2020/2021: cessione valle a Verzasca
+ | Assolo.net / eGov
+ | https://cugnasco-gerra.ch/Albo-comunale-3e117300
+ | https://www.cugnasco-gerra.ch/I-conti-del-Comune-43c4a500
+ | Prev. 2027: MM 33 (26.10.2026); Cons. 2025: MM 23 (13.04.2026); Prev. 2026: MM 18; PF 2025–2030: MM 64
+ | 5396
+ | Terre di Pedemonte (Sede: Tegna)
+ | Melezza
+ | 2014: Cavigliano + Tegna + Verscio
+ | Assolo.net / eGov
+ | https://www.pedemonte.ch/Sedute-di-Consiglio-comunale-5af21900
+ | https://www.pedemonte.ch/Messaggi-861f7d00
+ | Cons. 2025: MM 06/2026 (Comune) e MM 05/2026 (AAP); Prev. 2026: MM 11-25 (Comune) e MM 10-25 (AAP)4
+ | 5397
+ | Centovalli (Sede: Intragna)
+ | Melezza
+ | 2010: Borgnone + Intragna + Palagnedra
+ | WordPress
+ | https://centovalli.swiss/category/albo-comunale/
+ | https://centovalli.swiss/category/a4-messaggi-municipali/ e /preventivi/
+ | Cons. 2025: MM 294; Prev. 2026: MM 290; Prev. 2025: MM 276; PF 2025–2028: MM 27510
+ | 5398
+ | Gambarogno (Sede: Magadino)
+ | Gambarogno
+ | 2011: 9 comuni (Caviano, Contone, Gerra G., Indemini, Magadino, Piazzogna, S. Nazzaro, S. Abbondio, Vira G.)
+ | Assolo.net / eGov
+ | https://www.gambarogno.ch/Albo-comunale-04399800
+ | https://www.gambarogno.ch/Messaggi-861f7d00
+ | Cons. 2024: MM 470 (Rapporto CG); Prev. 2025: MM 466; Crediti PALoc: MM 43526
+ | 5399
+ | Verzasca (Sede: Vogorno)
+ | Verzasca
+ | 18.10.2020 (op. 2021): Brione V., Corippo, Frasco, Sonogno, Vogorno + valli Cugnasco-Gerra e Lavertezzo
+ | Assolo.net / eGov
+ | https://www.verzasca.swiss/Albo-comunale-5af21900
+ | https://www.verzasca.swiss/Documenti-Consiglio-comunale-d5961d00 e https://www.verzasca.swiss/Economia
+ | PF 2026–2029: MM 78-2026; Cons. 2025: MM 75-2026 (27.04.2026); Prev. 2026 e Piano opere 202629
+ | Specifiche di Estrazione e Link Diretti ai Documenti per Singolo Comune e Aziende Municipalizzate
+Ai sensi delle norme RGFCC sulle aziende municipalizzate, la contabilità delle aziende comunali (Acqua Potabile, Elettricità, Porto Natanti, Istituti per Anziani) è tenuta separatamente da quella del Comune ma deve essere presentata in modo conforme al piano contabile MCA2 e sottoposta alle stesse regole di allestimento di preventivo e consuntivo (applicando l'Allegato 2 RGFCC per gli ammortamenti del settore idrico e le raccomandazioni settoriali per gli altri servizi)7. Di seguito si riportano le rotte di estrazione specifiche per ciascun comune locarnese:
+Locarno (5113): Sulla pagina Finanze (https://www.locarno.ch/it/finanze) sono esposti i PDF integrali dei conti, tra cui il Consuntivo 2024 (https://www.locarno.ch/files/documenti/MM20_Consuntivi_2024_2.pdf, 9,6 MB) e il Preventivo 2025 (https://www.locarno.ch/files/documenti/Preventivi_2025_Conti_1.pdf, 2,5 MB)59. L'archivio dei Messaggi Municipali è ripartito su tre URL per legislatura: https://www.locarno.ch/it/messaggi-municipali/2016-2021, https://www.locarno.ch/it/messaggi-municipali/2021-2024 e https://www.locarno.ch/it/messaggi-municipali/2024-202814. Oltre ai conti della Città, i messaggi sui consuntivi e preventivi (es. il Rapporto della Commissione della Gestione sul MM 36 pubblicato il 01.09.2026 per i conti consuntivi 2025; MM 71 per il Preventivo 2024) includono i conti dell'Istituto per anziani San Carlo e del Locarnese Ente Acqua (LEA)14. Nella sezione https://www.locarno.ch/it/documentazione-comunale sono inoltre pubblicati gli elenchi annuali delle commesse pubbliche sopra i 5'000 CHF dal 2010 al 2025 (l'elenco 2025 è stato pubblicato il 02.04.2026), utili per incrociare gli appalti con i crediti d'investimento59.
+Losone (5115): La pagina https://www.losone.ch/Conti-del-Comune-519c1a00 costituisce uno degli archivi più estesi del Cantone, esponendo tutti i Bilanci preventivi dal 2008 al 2026 (es. Preventivo 2026: https://www.losone.ch/Bilancio-preventivo-2026-af227700; Preventivo 2025: https://www.losone.ch/Bilancio-preventivo-2025-dd804200; Preventivo 2024: https://www.losone.ch/Bilancio-preventivo-2024-bcb81e00) e tutti i Bilanci consuntivi dal 2006 al 2025 (es. Consuntivo 2025: https://www.losone.ch/Bilancio-consuntivo-2025-e2df4200; Consuntivo 2024: https://www.losone.ch/Bilancio-consuntivo-2024-4f041800; Consuntivo 2023: https://www.losone.ch/Bilancio-consuntivo-2023-cf9e2700; Consuntivo 2022: https://www.losone.ch/Bilancio-consuntivo-2022-baa63300)78. I testi integrali dei Messaggi Municipali e Piani Finanziari sono accessibili su URL dedicati: MM 060 Consuntivo 2025 (https://www.losone.ch/Mm060-Consuntivo-2025-b1609700?i=1&MasterId=g1_18479), MM 034 Piano finanziario 2025–2028 (https://www.losone.ch/Mm034-Piano-finanziario-2025-2028pdf-ab433000?i=1&MasterId=g1_17797), MM 030 Consuntivo 2024 (https://www.losone.ch/Mm030-Consuntivo-2024-daf46200?i=1&MasterId=g1_17752), MM 069 Consuntivo 2023 (https://www.losone.ch/Mm069-Consuntivo-2023pdf-d938c700), MM 046 Consuntivo 2022 (https://www.losone.ch/Mm046-Bilancio-consuntivo-2022-046e6400) e MM 021 Consuntivo 2021 (https://www.losone.ch/MM-no-021-Bilancio-consuntivo-2021-del-Comune-di-Losone-2d5f8600?i=1&MasterId=g1_16177)9.
+Ascona (5091): Sulla pagina https://www.ascona.ch/Messaggi-municipali (paginata da pagina 1 a pagina 8 con parametro fric=6430&ris_pg=...), Ascona pubblica messaggi distinti per il Comune, l'Azienda elettrica comunale e l'Azienda acqua potabile (AAP)46. I link diretti ai conti 2025–2026 includono: Consuntivo 2025 del Comune (MM 08/2026 dell'11.05.2026: https://www.ascona.ch/Conti-del-Comune-454d6500?i=1&MasterId=g1_3779), Consuntivo 2025 Azienda elettrica (MM 09/2026: https://www.ascona.ch/Testo-messaggio-e-conti-72846600?i=1&MasterId=g1_3780), Consuntivo 2025 AAP (MM 10/2026: https://www.ascona.ch/Testo-messaggio-e-conti-9c77de00?i=1&MasterId=g1_3781), Preventivo 2026 Comune (MM 36/2025: https://www.ascona.ch/Conti-a5ca8400?i=1&MasterId=g1_3619) e Preventivo 2026 Aziende comunali (MM 37/2025: https://www.ascona.ch/Conti-7be16e00?i=1&MasterId=g1_3620)46.
+Minusio (5118): La sezione https://www.minusio.ch/Messaggi-municipali-584f1a00 consente il filtraggio annuale ininterrotto dal 2008 al 2026 e indica per ogni messaggio lo stato procedurale (All'esame o Approvato)47. Tra gli atti principali figurano il MM 2026/37 del 21.10.2026 (Preventivo 2027 Amministrazione comunale + Azienda acqua potabile ACAP + moltiplicatori 2027), il MM 2026/15 del 27.04.2026 (Consuntivo 2025 Comune + ACAP), il MM 41/2025 (Preventivo 2026 Comune + ACAP) e il MM 9/2022 Piano economico-finanziario 2022–2026 (https://www.minusio.ch/MM-N-92022-accompagnante-il-Piano-economico-finanziario-2022-2026-8abf3000?i=1&MasterId=g1_2223)47. Con il MM 2026/09 (approvato il 30.03.2026) Minusio ha inoltre costituito un Ente autonomo di diritto comunale per la gestione operativa del Centro anziani Casa Rea Minusio47.
+Gambarogno (5398): I messaggi e rapporti commissionali sono accessibili da https://www.gambarogno.ch/Messaggi-861f7d00 (paginato su 8 pagine con fric=3676)95. I link diretti includono il Preventivo 2025 (MM 466: https://www.gambarogno.ch/MM-466-Preventivo-2025-367e9000?i=1), il Rapporto della Commissione della Gestione sul Consuntivo 2024 (MM 470: https://www.gambarogno.ch/Rapporto-CG-MM-470-Conti-consuntivi-2024-37d93c00?i=1&MasterId=g1_3357) e la rendicontazione degli investimenti PALoc (MM 435: https://www.gambarogno.ch/MM-435-Credito-CHF-81-00000-progetto-di-massima-per-mobilit-lenta-T1-PALoc-656d8d00?i=1)26.
+Gordola (5108): I Messaggi Municipali sono archiviati su https://www.gordola.ch/Messaggi-municipali-f3c97f00 (fric=4261), dove i conti del Comune sono separati da quelli dell'Azienda Acqua Potabile (AAP), es. MM 1506 Bilanci Preventivi 2022 (https://www.gordola.ch/MM-no-1506-Bilanci-Preventivi-2022-del-Comune-di-Gordola-040cfb00?i=1&G2cid=4), MM 1492 Consuntivo AAP 2020 e MM 1462 Consuntivo Comune 201938. Gordola è inoltre il Comune sede della Polizia intercomunale del Piano e, in base alla convenzione intercomunale (es. MM 1317), trasmette agli altri comuni convenzionati (tra cui Tenero-Contra e Brione sopra Minusio) il preventivo entro il 30 settembre e il consuntivo entro il 28 febbraio27.
+Tenero-Contra (5131): Su https://www.tenero-contra.ch/Messaggi-municipali-43c4a500 e https://www.tenero-contra.ch/Atti-pubblici-e-amministrativi-478eac00 (fric=4257), il Comune pubblica sia il testo del Messaggio Municipale (ca. 410–462 kB) sia il fascicolo integrale dei conti (ca. 6,4–8,4 MB)49. I link diretti comprendono il Consuntivo 2025 (MM 7 del 2026: https://www.tenero-contra.ch/MM-7-del-2026-Consuntivo-2025pdf-26425b00?i=1), il Consuntivo 2024 (MM 13 del 2025: https://www.tenero-contra.ch/MM-13-del-2025-Consuntivo-2024-da2dbd00?i=1) e il Preventivo 2025 (MM 15 del 2024: https://www.tenero-contra.ch/MM-15-del-2024-Preventivo-2025-ebce6c00?i=1)27. Il servizio idrico, la depurazione acque e la gestione rifiuti sono integrati nel bilancio comunale tramite i fondi del capitale proprio 2910.100, 2910.200 e 2910.30027.
+Cugnasco-Gerra (5138): L'URL https://www.cugnasco-gerra.ch/I-conti-del-Comune-43c4a500 organizza la produzione contabile in cinque sezioni: Piani Finanziari (fric=5634, tra cui MM 6 Piano Finanziario 2025–2030: https://www.cugnasco-gerra.ch/MM-no-6-Piano-Finanziario-2025-2030-del-Comune-di-Cugnasco-Gerra-6ba7fe00?i=1 e MM 10 PF 2022–2026), Preventivi del Comune (fric=4047, tra cui MM 33 Preventivo 2027 del 26.10.2026: https://www.cugnasco-gerra.ch/MM-no-33-Preventivo-2027-del-Comune-di-Cugnasco-Gerra-50be8200?i=1, MM 18 Prev. 2026 e MM 5 Prev. 2025), Consuntivi del Comune (fric=4048, tra cui MM 23 Consuntivo 2025 del 13.04.2026: https://www.cugnasco-gerra.ch/MM-no-23-Consuntivo-205-del-Comune-di-Cugnasco-Gerra-8d9d2100?i=1, MM 8 Cons. 2024, MM 32 Cons. 2023, MM 25 Cons. 2022 e MM 13 Cons. 2021 con bilancio d'apertura al 01.01.2022), oltre alle serie storiche di Preventivi e Consuntivi dell'Azienda acqua potabile (fric=4049 e fric=4050, pubblicati separatamente fino al 2021 con MM 86 e MM 14)30.
+Terre di Pedemonte (5396): I documenti sono esposti sia nell'elenco generale https://www.pedemonte.ch/Messaggi-861f7d00 sia raggruppati per singola sessione legislativa in https://www.pedemonte.ch/Sedute-di-Consiglio-comunale-5af21900, dove compaiono anche i conti dopo emendamento votati dal Consiglio comunale (es. Preventivo 2025 e Preventivo 2024 dopo emendamenti)31. I link diretti includono il Consuntivo 2025 del Comune (MM 06/2026: https://www.pedemonte.ch/Consuntivo-Comune-2025-7d69d700?i=1&pannorg=3676&panntime=1791936991), il Consuntivo 2025 AAP (MM 05/2026), il Preventivo 2026 Comune (MM 11-25 + Allegato conti) e AAP (MM 10-25), nonché il Consuntivo 2024 Comune (MM 08-2025 + Allegato cifre) e AAP (MM 07-2025)25.
+Centovalli (5397): Il portale https://centovalli.swiss/category/a4-messaggi-municipali/ offre sottocategorie dedicate come https://centovalli.swiss/category/a4-messaggi-municipali/preventivi/20. Gli atti principali comprendono il MM 294 Consuntivo 2025, il MM 290 Preventivo 2026 e moltiplicatori, il MM 276 Preventivo 2025 (https://centovalli.swiss/2024/10/24/mm276-esame-e-approvazione-del-preventivo-2025-del-comune-e-dei-relativi-moltiplicatori-dimposta-comunale/) e il MM 275 Piano finanziario 2025–2028 (https://centovalli.swiss/2024/10/10/mm275-piano-finanziario-del-comune-delle-centovalli-per-il-periodo-2025-2028/)10.
+Ronco sopra Ascona (5125): Sulla pagina https://ronco-s-ascona.ch/istituzione/conti-consuntivi/ è pubblicata la serie storica dal 2017 al 2026 per tre entità distinte: Comune, Azienda Comunale Acqua Potabile (ACAP) e Azienda Comunale Porto Natanti (APONA), inclusi i tre Piani finanziari 2023–202717. Per ogni esercizio dal 2023 al 2026, Ronco sopra Ascona pubblica sia il Preventivo iniziale sia il documento definitivo Preventivo ... – conti approvati CC [data] (es. conti 2026 approvati dal CC il 22.12.2025; conti 2025 approvati il 20.01.2025; conti 2024 approvati il 25.03.2024), mentre i messaggi municipali puntuali sono su https://ronco-s-ascona.ch/albo-comunale/messaggi-municipali/17.
+Muralto (5120), Orselina (5121), Brione sopra Minusio (5096) e Brissago (5097): A Muralto (https://www.muralto.ch/Messaggi-municipali/IT-ac4d1f00, fric=4665), ogni trattanda raggruppa l'avviso di pubblicazione, il testo del Messaggio Municipale e i rapporti commissionali (es. MM 2025/08 Consuntivo 2024 del 18.04.2025, con rapporto di maggioranza del 27.05.2025 e di minoranza del 10.06.2025)40. A Orselina (https://www.orselina.ch/index.php?node=326&lng=1&vis=2&rif=b07ebc24cc), i documenti si scaricano tramite downdoc.php?id_doc=3255 (MM 4/2023 Consuntivo 2022) e id_doc=3593 (confronti preventivi/consuntivi 2022–2023)19. Brione sopra Minusio distingue tra i nuovi messaggi su https://www.brione.ch/Messaggi-municipali-di-nuova-promulgazione-a459ef00 (dove figurano il MM 566 Preventivo 2027 del 29.10.2026: https://www.brione.ch/MM-566-Conto-preventivo-comunale-e-definizione-del-moltiplicatore-politico-per-il-prelievo-dell-imposta-comunale-per-l-anno-2027pdf-ba6ae700?i=1&pannorg=4587&panntime=1793289455&MasterId=g1_4065 e il MM 562 Consuntivo 2025) e l'archivio https://www.brione.ch/Messaggi-municipali-2013-2024-465cc300 (con MM 550 Consuntivo 2024: https://www.brione.ch/MM-550-Conto-consuntivo-comunale-2024-3d8a9400?i=1&pannorg=3790&panntime=1790058417 e MM 545 Preventivo 2025)13. Brissago pubblica su https://www.brissago.ch/comune/amministrazione/consiglio-comunale/documenti-consiglio-comunale/ sia pagine documento (https://www.brissago.ch/documenti/mm-1557-consuntivo-2024/ del 12.05.2025) sia PDF diretti (https://www.brissago.ch/files/mm_1478_-_preventivo_comune.pdf)22.
+Lavertezzo (5112), Verzasca (5399), Mergoscia (5117) e Onsernone (5136): Lavertezzo organizza gli atti per anno (https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2026), pubblicando separatamente il documento pre-ratifica, i rapporti commissionali e la ratifica del Consiglio comunale (es. MM 2025-09 Preventivo 2026 emendato del 17.12.2025; MM 2026-07 Consuntivo comunale 2025 del 16.04.2026; MM 2026-04 Consuntivo ACAP 2025; MM 2026-13 Preventivo ACAP 2027 del 09.10.2026)21. Verzasca pubblica su https://www.verzasca.swiss/Documenti-Consiglio-comunale-d5961d00 e https://www.verzasca.swiss/Economia il MM 78-2026 Piano finanziario 2026–2029 (https://www.verzasca.swiss/Messaggio-municipale-no-78-2026-Piano-finanziario-2026-2029-821eb700?i=1) e il MM 75-2026 Conto consuntivo 2025 del 27.04.202629. Mergoscia (https://www.comune-mergoscia.ch/Messaggi-municipali-861f7d00) espone il MM 08-2026 Preventivo 2027 (29.10.2026, 5'536 kB), il MM 03-2026 Consuntivo 2025 (19.05.2026, 9'155 kB), il MM 08-2025 Preventivo 2026 (03.11.2025, 2'673 kB) e il MM 02-2025 Consuntivo 2024 (15.05.2025, 7'847 kB)45. Onsernone (https://www.onsernone.swiss/Messaggi-861f7d00) pubblica sia i fascicoli di seduta (es. https://www.onsernone.swiss/Consiglio-Comunale-seduta-del-6122024-Messaggi-Municipali-09a27500?i=1) sia i singoli messaggi del Comune (MM 1/2023: https://onsernone.swiss/MM-1-2023-Consuntivo-Comune-2022pdf-6506e400?i=1&MasterId=g1_256) e dell'AAP (MM 2/2023: https://onsernone.swiss/MM-2-2023-Consuntivo-AAP-2022pdf-4b881e00?i=1&MasterId=g1_275)43.
+3. Fonti Ufficiali Cantonali e Federali: Banche Dati SEL, USTAT e Moltiplicatori Comunali
+Per contestualizzare i bilanci comunali locarnesi, verificare la quadratura delle quote di riparto cantonali e calcolare indicatori pro capite omogenei, la pipeline integra le fonti ufficiali del Cantone Ticino (Sezione degli enti locali - SEL e Ufficio di statistica - USTAT) e della Confederazione (UST / BFS e opendata.swiss).
+Directory delle Fonti Ufficiali Cantonali e Federali
+
+Ente Ufficiale
+ | Ambito e Contenuto del Dataset / Manuale
+ | URL Ufficiale Diretto
+ | Formato e Frequenza
+ | Sezione degli enti locali (SEL) – Dip. Istituzioni
+ | Portale principale di vigilanza amministrativa e finanziaria sui Comuni ticinesi
+ | https://www.ti.ch/sel
+ | Portale Web7
+ | SEL – Portale MCA2
+ | Manuale di contabilità e gestione finanziaria MCA2 (versione consolidata e versione con modifiche evidenziate in rosso), piano dei conti e tabelle parametri
+ | https://www4.ti.ch/di/sel/comuni/mca2/
+ | PDF / Documentazione tecnica7
+ | SEL – Dati Finanziari e Statistica Finanziaria
+ | Serie storiche dei conti comunali, indicatori finanziari cantonali, debito pubblico medio pro capite (6'004 CHF nel 2024 secondo il rapporto I conti dei comuni nel 2024; 7'604 CHF nel confronto cantonale 2025 citato da Terre di Pedemonte)
+ | https://www4.ti.ch/di/sel/comuni/dati-finanziari/ e https://www4.ti.ch/di/sel/comuni/dati-finanziari/statistica-finanziaria
+ | Tabelle comparative / Pubblicazioni annuali10
+ | SEL – Circolari e Direttive
+ | Circolari operative (es. Circ. 4/2022 Modifiche RGFCC e Manuale MCA2; Circ. 7/2022 Capitale proprio e autofinanziamento; Direttiva Organo di controllo esterno/revisione)
+ | https://www4.ti.ch/di/sel/comuni/circolari-e-direttive/
+ | PDF in /fileadmin/DI/DI_DI/SEL/Comuni/Circolari/6
+ | SEL / USTAT – Rassegna "I conti dei comuni"
+ | Analisi annuale ufficiale dei bilanci comunali curata da John Derighetti e Daniela Baroni (SEL) nella rivista Dati – Statistiche e società (USTAT)
+ | https://m3.ti.ch/DFE/DR/USTAT/allegati/articolo/2584dss_2019-1_3.pdf (e volumi annuali dss_YYYY-1)
+ | PDF analitico annuale111
+ | USTAT – Tabelle Interattive e Cubi Dati
+ | Bilancio demografico, popolazione residente permanente, grafici interattivi per comune e cubi statistici in formato CSV, XLSX e PX
+ | https://www3.ti.ch/DFE/DR/USTAT/index.php?fuseaction=interattivi.tabelle_interattive&ricerca=&area=&fonte=8&tema=
+ | Portale interattivo / ZIP (CSV, XLSX, PX)67
+ | Opendata.swiss / USTAT
+ | Dataset Bilancio demografico, secondo il sesso e la nazionalità, per distretto e comune di residenza, in Ticino, dal 1981 (STATPOP / ESPOP)
+ | https://opendata.swiss/en/dataset/bilancio-demografico-secondo-il-sesso-e-la-nazionalita-per-distretto-e-comune-di-residenza-2022
+ | Archivi ZIP (CSV formato lungo 3,1 MB; XLSX a 3 fogli 3,5 MB; API JSON/XML)67
+ | Ufficio federale di statistica (UST / BFS)
+ | STAT-TAB PX-Web (Popolazione e mutazioni comunali per il Distretto di Locarno 5091–5399) e Elenco ufficiale dei Comuni (AGVCH)
+ | https://www.pxweb-admin-a.bfs.admin.ch/pxweb/it/px-x-0103010000_201/-/px-x-0103010000_201.px/ e https://www.agvchapp.bfs.admin.ch/
+ | Cubi .px / Web API4
+ | DFE – Divisione delle Contribuzioni
+ | Moltiplicatori comunali ufficiali ed eTax
+ | https://www4.ti.ch/dfe/cosa-facciamo/servizi
+ | Servizio web / Tabelle ufficiali118
+ | Evoluzione dei Moltiplicatori d'Imposta Comunali nel Locarnese (2019–2026)
+In Ticino l'imposta comunale viene calcolata applicando all'imposta cantonale base il moltiplicatore politico votato annualmente dal Consiglio comunale con il Preventivo119. L'analisi del prospetto storico 2019–2026 dei moltiplicatori comunali (pubblicato da Fiduciaria Mega sulla base delle statistiche dell'ufficio cantonale competente, incrociato con i messaggi municipali dei comuni locarnesi) evidenzia due fenomeni strutturali di rilievo per l'analisi finanziaria regionale24:
+Divario strutturale Sopraceneri vs. Sottoceneri: Nel 2026 la media cantonale dei moltiplicatori per le persone fisiche (PF) si attesta all'82,7% (mediana 85%), ma mentre il Sottoceneri presenta una media del 78,3% (mediana 79%), il Sopraceneri registra una media dell'88,0% e una mediana del 90%24. Nel Locarnese, solo 4 comuni su 19 si collocano sotto l'80% nel 2026 (Ascona 75%, Muralto 75%, Ronco sopra Ascona 75%, Brione sopra Minusio 78%), mentre 10 comuni applicano un moltiplicatore PF pari o superiore al 90%24.
+Sdoppiamento del moltiplicatore tra Persone Fisiche (PF) e Persone Giuridiche (PG): In seguito alle modifiche della Legge tributaria cantonale (tra cui la riduzione dell'aliquota sull'utile delle persone giuridiche dall'8% al 5,5%, citata nei consuntivi di Tenero-Contra e Terre di Pedemonte) e alla facoltà di differenziare il moltiplicatore PG da quello PF, i comuni ticinesi con doppio moltiplicatore sono saliti da 11 nel 2025 a 17 nel 202624. Nel Locarnese hanno adottato questa misura Locarno (PF 90% / PG 97% dal 2025), Gambarogno (PF 85% / PG 100% dal 2025) e Centovalli (che nel 2026 ha mantenuto il 95% per le PF innalzando al 120% il moltiplicatore PG, il secondo più alto del Cantone dopo il 126% di Maggia)24.
+
+Tabella Storica Integrale dei Moltiplicatori Comunali PF e PG (2019–2026)
+Per alimentare la tabella fact_parametri_fiscali della pipeline, si riporta il quadro completo dei moltiplicatori politici d'imposta dal 2019 al 2026 per tutti i 19 comuni del Distretto di Locarno13:
+
+Codice UST
+ | Comune
+ | 2019 (%)
+ | 2020 (%)
+ | 2021 (%)
+ | 2022 (%)
+ | 2023 (%)
+ | 2024 (%)
+ | 2025 (PF / PG %)
+ | 2026 (PF / PG %)
+ | Tendenza 2019–2026
+ | 5091
+ | Ascona
+ | 75
+ | 75
+ | 75
+ | 75
+ | 75
+ | 75
+ | 75 / 75
+ | 75 / 75
+ | Stabile (minimo distrettuale)24
+ | 5096
+ | Brione sopra Minusio
+ | 78
+ | 78
+ | 78
+ | 78
+ | 78
+ | 78
+ | 78 / 78
+ | 78 / 78
+ | Stabile (78% anche nel Prev. 2027)13
+ | 5097
+ | Brissago
+ | 85
+ | 85
+ | 85
+ | 85
+ | 85
+ | 85
+ | 85 / 85
+ | 85 / 85
+ | Stabile24
+ | 5108
+ | Gordola
+ | 84
+ | 84
+ | 84
+ | 84
+ | 88
+ | 86
+ | 86 / 86
+ | 88 / 88
+ | +4 punti sul 2019 (+2 punti nel 2026)24
+ | 5112
+ | Lavertezzo
+ | 100
+ | 100
+ | 100
+ | 100
+ | 100
+ | 100
+ | 100 / 100
+ | 100 / 100
+ | Stabile al 100%24
+ | 5113
+ | Locarno
+ | 90
+ | 90
+ | 90
+ | 90
+ | 90
+ | 90
+ | 90 / 97
+ | 90 / 97
+ | PF stabile; PG al 97% dal 202524
+ | 5115
+ | Losone
+ | 90
+ | 90
+ | 90
+ | 90
+ | 90
+ | 90
+ | 90 / 90
+ | 90 / 90
+ | Stabile (90% confermato nel PF 2025–2028)23
+ | 5117
+ | Mergoscia
+ | 100
+ | 100
+ | 100
+ | 100
+ | 100
+ | 100
+ | 100 / 100
+ | 100 / 100
+ | Stabile al 100%24
+ | 5118
+ | Minusio
+ | 78
+ | 78
+ | 78
+ | 78
+ | 78
+ | 78
+ | 82 / 82
+ | 82 / 82
+ | +4 punti dal 202524
+ | 5120
+ | Muralto
+ | 80
+ | 80
+ | 80
+ | 78
+ | 78
+ | 73
+ | 75 / 75
+ | 75 / 75
+ | -5 punti rispetto al 2019 (+2 sul minimo 2024)24
+ | 5121
+ | Orselina
+ | 70
+ | 75
+ | 75
+ | 75
+ | 75
+ | 82
+ | 82 / 82
+ | 82 / 82
+ | +12 punti cumulati dal 201924
+ | 5125
+ | Ronco sopra Ascona
+ | 75
+ | 75
+ | 75
+ | 75
+ | 75
+ | 75
+ | 75 / 75
+ | 75 / 75
+ | Stabile (minimo distrettuale)24
+ | 5131
+ | Tenero-Contra
+ | 93
+ | 93
+ | 93
+ | 93
+ | 93
+ | 93
+ | 93 / 93
+ | 93 / 93
+ | Stabile24
+ | 5136
+ | Onsernone
+ | 95
+ | 95
+ | 95
+ | 95
+ | 95
+ | 95
+ | 95 / 95
+ | 95 / 95
+ | Stabile post-aggregazione 201724
+ | 5138
+ | Cugnasco-Gerra
+ | 90
+ | 90
+ | 90
+ | 86
+ | 86
+ | 88
+ | 90 / 90
+ | 90 / 90
+ | Discesa all'86% (2022–23) e ritorno al 90%24
+ | 5396
+ | Terre di Pedemonte
+ | 90
+ | 90
+ | 90
+ | 85
+ | 85
+ | 85
+ | 85 / 85
+ | 85 / 85
+ | -5 punti dal 2022 (stabile all'85%)24
+ | 5397
+ | Centovalli
+ | 95
+ | 95
+ | 95
+ | 95
+ | 95
+ | 95
+ | 95 / 95
+ | 95 / 120
+ | PF stabile; PG innalzato al 120% nel 202624
+ | 5398
+ | Gambarogno
+ | 85
+ | 85
+ | 85
+ | 85
+ | 85
+ | 85
+ | 85 / 100
+ | 85 / 100
+ | PF stabile; PG al 100% dal 202524
+ | 5399
+ | Verzasca
+ | n.a.
+ | n.a.
+ | 95
+ | 95
+ | 95
+ | 100
+ | 100 / 100
+ | 100 / 100
+ | Operativo dal 2021 al 95%; salito al 100% dal 202424
+ | 4. Standard Contabile MCA2: Struttura dei Conti, Allegati Art. 22 RGFCC e Benchmark Finanziari Regionali
+L'implementazione di MCA2 ha trasformato la contabilità comunale ticinese da un modello prevalentemente camerale (in cui gli ammortamenti erano calcolati sul valore residuo con una soglia minima globale dell'8% della sostanza ammortizzabile registrata a bilancio al 31 dicembre dell'anno precedente) a una contabilità economico-patrimoniale fondata sul principio dell'ammortamento lineare sul valore di acquisizione netto in funzione della durata di utilizzazione di ogni singola opera, calcolato a partire dall'anno successivo all'entrata in funzione del bene (con parametri fissati negli Allegati 1 e 2 dell'art. 17 RGFCC)7.
+Architettura degli Allegati Obbligatori al Consuntivo (Art. 22 RGFCC)
+Quando la pipeline analizza un fascicolo di Consuntivo (come documentato nei consuntivi di Losone, Brione sopra Minusio, Tenero-Contra e Terre di Pedemonte), verifica la presenza e la coerenza delle sezioni regolamentari prescritte dall'art. 22 RGFCC7:
+Riassunto generale (art. 22 cpv. 1 lett. a RGFCC): Prospetto sintetico (pagine 2A e 2B nei report standard) che espone il Conto economico articolato nei 3 stadi previsti dall'art. 156 cpv. 2 LOC (senza imputazioni interne): il primo stadio mostra il Risultato operativo (Spese operative 30+31+33+35+36+37 meno Ricavi operativi 40+41+42+43+45+46); il secondo stadio mostra il Risultato finanziario (Spese finanziarie 34 meno Ricavi finanziari 44) che sommato al primo dà il Risultato ordinario; il terzo stadio mostra il Risultato straordinario (Spese straordinarie 38 meno Ricavi straordinari 48) determinando il Risultato totale d'esercizio9. Seguono il Conto degli investimenti (Uscite per investimenti meno Entrate per investimenti = Onere netto per investimenti), il Conto di finanziamento (che confronta l'Onere netto per investimenti con l'Autofinanziamento, calcolato partendo dal risultato d'esercizio e sommando/deducendo gli ammortamenti 33, i versamenti 35 e prelievi 45 dai finanziamenti speciali, le rettifiche di valore 364/365, gli ammortamenti su contributi d'investimento 366 e i movimenti sul capitale proprio 389/489) e il Bilancio9.
+Dettaglio del Conto economico, del Conto degli investimenti e del Bilancio (lett. b): Elenco integrale di ogni singola voce contabile presentato a confronto con il preventivo del medesimo anno e con il consuntivo dell'anno precedente per CE e CI, e a confronto con il consuntivo dell'anno precedente per il Bilancio9.
+Ricapitolazione per genere di conto a 4 cifre (lett. c): Riepilogo per natura contabile a 4 cifre con subtotali a 3 e 2 cifre per Conto economico, Conto degli investimenti e Bilancio9.
+Ricapitolazione per dicasteri / ripartizione funzionale (lett. d): Ripartizione per dicastero con subtotali fino all'ultimo livello di suddivisione secondo i 10 Dicasteri MCA2: 0 Amministrazione generale (011 Legislativo, 012 Esecutivo, 021 Amministrazione finanze e contribuzioni, 022 Servizi generali, 029 Immobili comunali), 1 Ordine e sicurezza pubblica, difesa (111 Polizia, 150/151 Corpo Pompieri urbano e montagna, 162 Protezione civile), 2 Educazione, 3 Cultura, sport e tempo libero (343 Lidi comunali), 4 Salute pubblica / Sanità (412 Case medicalizzate/anziani, 421 Cure a domicilio), 5 Previdenza sociale, 6 Traffico e trasporti (615 Strade comunali, 622 Traffico regionale e d'agglomerato, 629 Trasporti pubblici), 7 Protezione dell'ambiente e pianificazione del territorio (710 Servizio approvvigionamento idrico, 720 Depurazione acque, 730 Gestione rifiuti, 790 Pianificazione del territorio), 8 Economia pubblica (incluso 863 Energia/FER), 9 Finanze e imposte9.
+Tabella dei cespiti (lett. e) e Tabella del controllo dei crediti di investimento (lett. f): Documentano rispettivamente i beni amministrativi con i relativi ammortamenti e lo stato di utilizzo dei crediti votati dal legislativo9.
+Prospetti patrimoniali, fiscali e indicatori finanziari (lett. g – p): Comprendono la Tabella dei debiti a breve e lungo termine (lett. g), la Tabella di dettaglio degli accantonamenti (lett. h), l'Elenco degli impegni eventuali (lett. i), la Tabella delle partecipazioni (lett. j), il Conto dei flussi dei mezzi liquidi (lett. l), la Tabella riassuntiva dei debitori d'imposta (lett. m), il Dettaglio quadriennale delle rivalutazioni sui beni patrimoniali materiali (lett. n), l'Analisi finanziaria con gli indicatori ufficiali (lett. o) e le Indicazioni supplementari sui rischi finanziari (lett. p), mentre il Consolidato con le aziende comunali (ex lett. k) è stato stralciato dal 1° aprile 20227.
+Benchmark Finanziari Regionali e Dinamica degli Indicatori MCA2
+Per comprendere come la pipeline interpreti i dati estratti, è utile esaminare la traiettoria reale dei comuni locarnesi attraverso i parametri di valutazione della Sezione degli enti locali (SEL). I dati estratti dai documenti ufficiali di Losone (Consuntivi 2023–2024 e Piano Finanziario 2025–2028, MM 034), Terre di Pedemonte (Consuntivo 2025, MM 06/2026 con serie 2022–2025) e Tenero-Contra (Consuntivi 2024–2025, MM 13/2025 e MM 7/2026) mostrano con chiarezza l'impatto degli investimenti infrastrutturali sui bilanci comunali della regione23.
+
+Analisi Approfondita dei Meccanismi Contabili e delle Sopravvenienze Fiscali nel Locarnese
+L'esame incrociato dei dati estratti dai consuntivi e piani finanziari di Losone, Terre di Pedemonte, Tenero-Contra, Minusio e Gambarogno mette in luce quattro dinamiche fondamentali che la pipeline deve monitorare sistematicamente:
+Il Meccanismo delle Sopravvenienze d'Imposta e del Ricalcolo del Gettito: I comuni locarnesi registrano regolarmente a consuntivo un risultato d'esercizio più favorevole rispetto al preventivo: a Terre di Pedemonte il Consuntivo 2025 ha chiuso con un avanzo di +322'862,32 CHF contro una previsione negativa di -301'480,00 CHF (un miglioramento effettivo di +624'342,32 CHF)25; a Losone il Consuntivo 2024 ha chiuso con un avanzo di +1'175'787,52 CHF e la proiezione 2025 nel Piano Finanziario è passata da un disavanzo preventivato di -564'390 CHF a un avanzo stimato di +375'731 CHF23; a Tenero-Contra il Consuntivo 2024 ha chiuso con un avanzo di +210'210,64 CHF (entrate 15'449'136,62 CHF, uscite 15'238'925,98 CHF) e il Consuntivo 2025 con un avanzo di +2'636,80 CHF (entrate 15'432'147,41 CHF, uscite 15'429'510,61 CHF)27. La causa primaria di questo scostamento risiede nella valutazione prudenziale del gettito fiscale a preventivo (come evidenziato nei messaggi di Gambarogno e Brissago) e nella contabilizzazione a consuntivo delle sopravvenienze d'imposta (conto 990.4000.101) derivanti dall'emissione definitiva delle tassazioni degli anni precedenti23. A Tenero-Contra le sopravvenienze d'imposta sono ammontate a 1,465 milioni di CHF nel 2024 e a 1,033 milioni di CHF nel 202527; a Terre di Pedemonte le sopravvenienze nette nel 2025 hanno raggiunto 578'136,93 CHF (lordo 584'754,38 CHF meno rettifiche di 6'617,45 CHF, segnando uno scostamento positivo di +158'136,93 CHF rispetto al preventivo)25. Come documentato nel Piano Finanziario 2025–2028 di Losone (MM 034), la pipeline può stimare le sopravvenienze future estraendo la tabella dello stato di emissione delle partite fiscali (aggiornata ad aprile 2025): su 5'631–5'781 partite di persone fisiche (PF) e 405–423 partite di persone giuridiche (PG), mentre gli anni 2020–2022 sono emessi tra il 96,09% e il 99,61% per le PF (con sopravvenienze al 90% in larga parte già liberate per 1'090'491 CHF sul 2020, 1'100'000 CHF sul 2021 e 600'000 CHF sul 2022), l'anno 2023 (emesso all'89,07% PF e 64,20% PG) presenta una sopravvenienza attesa al moltiplicatore del 90% ancora tutta da liberare pari a +771'096 CHF per le PF e +167'984 CHF per le PG, mentre per l'anno 2024 (emesso solo al 10,75% PF e 3,78% PG) la valutazione prudenziale indica una differenza di -433'371 CHF PF e -10'600 CHF PG rispetto ai valori iscritti a preventivo (15,0 milioni di base PF e 1,3 milioni PG)23.
+
+Rigidità delle Spese di Trasferimento (Gruppo 36) e Plafonamento dei Contributi Cantonali: Come emerge dai conti per dicastero di Losone e Terre di Pedemonte, oltre il 55% dell'onere netto dei dicasteri operativi (0–8) è assorbito dai dicasteri 5 Previdenza sociale (6'088'149,47 CHF a Losone nel 2024; 2'181'471,06 CHF a Terre di Pedemonte nel 2025) e 2 Educazione (4'363'433,70 CHF a Losone; 1'709'732,44 CHF a Terre di Pedemonte)25. Si tratta in larga parte di spese di trasferimento vincolate (gruppo 36) su cui i Municipi hanno un margine d'intervento ridotto39. Nel conto 3632.100 (Contributo comunale finanziamento case anziani), come documentato nel Consuntivo 2024 di Tenero-Contra (MM 13/2025), il Comune registra i 4 acconti trimestrali versati al Cantone più il conguaglio dell'anno precedente sulla base dei parametri dell'Ufficio degli anziani e delle cure a domicilio (a Tenero-Contra: 1'154'771 CHF di acconti 2024 più 94'797 CHF di conguaglio 2023)39. Con 17'642 giornate di presenza registrate nel 2023, l'importo atteso per Tenero-Contra supera il limite del 6% del gettito d'imposta cantonale 2021 e viene pertanto plafonato, aggiungendovi il 6,15% del gettito d'imposta cantonale 202139. Analogamente incidono sul gruppo 36 i contributi al trasporto pubblico regionale (3631.006), alle linee urbane FART (3631.007), alla Comunità tariffale Arcobaleno CTA (3631.005), a Ticino 2020 (3631.004) e ai consorzi o convenzioni regionali come la Protezione Civile Locarno e Vallemaggia e la Polizia intercomunale del Piano (il cui costo pro capite a carico dei comuni convenzionati è stato di 117,99 CHF a consuntivo 2024 e 119,39 CHF a consuntivo 2025, con un costo netto a carico di Tenero-Contra sul conto 3612.105 di 387'305,35 CHF nel 2025 su spese totali del corpo di 3'912'138,16 CHF e ricavi di 1'162'556,56 CHF)27.
+L'Impatto degli Ammortamenti Lineari MCA2 (Gruppo 33): Sotto il regime MCA2, l'entrata in funzione di nuove opere pubbliche genera dall'anno successivo un incremento degli ammortamenti pianificati (3300 / 3320). A Terre di Pedemonte, il conto 33 Ammortamenti a Conto Economico è salito a 533'867,75 CHF nel 2025 (+76,19% rispetto al 2024; gli ammortamenti lineari pianificati 2025 sui beni amministrativi ammontano a 546'136,10 CHF, pari al 3,45% del valore contabile al 01.01.2025 di 15'807'468,47 CHF), e il Municipio segnala nel MM 06/2026 che una volta conclusa la nuova Palestra Multiuso il relativo ammortamento aggiungerà circa 250'000 CHF all'anno ai costi ordinari25. A Losone, il Piano Finanziario 2025–2028 (MM 034) mostra che gli ammortamenti (3300/3320) sono previsti in crescita da 1'197'251,75 CHF nel 2025 a 1'832'440,85 CHF nel 2026, 1'990'502,90 CHF nel 2027 e 2'237'562,45 CHF nel 2028 per effetto del completamento degli investimenti; questo aumento degli ammortamenti porta il risultato d'esercizio preventivato di Losone da +375'731 CHF nel 2025 a disavanzi d'esercizio di -974'567 CHF nel 2026, -1'198'929 CHF nel 2027 e -1'333'889 CHF nel 2028, pur restando positivo l'autofinanziamento annuale (tra 1'350'500 CHF e 1'420'200 CHF nel triennio 2026–2028)23.
+Quadro Comparativo degli Indicatori Finanziari MCA2: La tabella seguente mette a confronto i valori puntuali degli indicatori finanziari ufficiali estratti dai documenti comunali di Losone, Terre di Pedemonte e Tenero-Contra con le scale di valutazione della SEL23:
+
+Indicatore Finanziario Ufficiale MCA2 (Art. 22 lett. o RGFCC)
+ | Formula di Calcolo MCA2
+ | Scala di Valutazione SEL (Soglie Ufficiali)
+ | Media Cantonale SEL
+ | Losone (Cons. 2024 / Prev. 2025 / PF 2027)
+ | Terre di Pedemonte (Cons. 2024 / Cons. 2025)
+ | Tenero-Contra (Cons. 2024 / Cons. 2025)
+ | 1. Tasso di indebitamento netto
+ | Debito pubblico netto / Gettito fiscale
+ | < 100% Buono
+
+100–150% Accettabile
+
+> 150% Eccessivo
+ | 146,0% (Accettabile)
+ | 128,6% (2024)
+
+190,1% (2025)
+
+230,9% (2027 - Eccessivo)
+ | 106,2% (2024)
+
+109,8% (2025 - Accettabile)
+ | In aumento per nuovi investimenti23
+ | 2. Grado di autofinanziamento
+ | Autofinanziamento / Investimenti netti BA
+ | > 100% Buono
+
+80–100% Normale
+
+< 80% Debole
+ | 82,5% (Normale)
+ | 66,4% (2024)
+
+15,4% (2025)
+
+29,5% (2027) / 125,7% (2028)
+ | 2,2% (2024)
+
+54,5% (2025 - Debole)
+ | Condizionato dalla fase d'investimento23
+ | 3. Quota delle spese per interessi
+ | Interessi netti / Ricavi correnti
+ | 0–4% Buono
+
+4–9% Sufficiente
+
+> 10% Insopportabile / Eccessivo
+ | 1,0% (Buono)
+ | 1,2% (2024)
+
+1,5% (2025)
+
+1,7% (2027 - Buono)
+ | 1,0% (2024)
+
+1,4% (2025 - Buono)
+ | Buono23
+ | 4. Debito pubblico netto pro capite
+ | Debito pubblico netto / Popolazione
+ | < 1'000 Basso
+
+1'000–3'000 Medio
+
+3'000–5'000 Elevato
+
+> 5'000 Eccessivo
+ | 6'004 CHF (2024)
+
+7'604 CHF (2025)
+ | Debito netto totale: 24,96 mio CHF (2024, fascia inferiore Elevato) e 44,55 mio CHF (2027)
+ | 2'881 CHF (2024)
+
+3'226 CHF (2025 - Elevato)
+ | 4'864 CHF (2024)
+
+5'663 CHF (2025, < media TI)23
+ | 5. Quota degli investimenti
+ | Investimenti lordi BA / Uscite consolidate
+ | < 10% Ridotta
+
+10–20% Media
+
+20–30% Elevata
+
+> 30% Molto elevata
+ | Variabile per ciclo
+ | Investimenti BA lordi: 5,23 mio CHF (2024) e 15,37 mio CHF (2025)
+ | 37,2% (2024)
+
+25,1% (2025 - Elevata)
+ | Beni amministrativi a bilancio da 26,72 a 29,95 mio CHF nel 202523
+ | 6. Quota di capitale proprio
+ | Capitale proprio / Totale dei passivi
+ | < 10% Debole
+
+10–20% Media
+
+20–40% Buona
+
+> 40% Eccessiva
+ | Buona
+ | Giudicata Buona nel Consuntivo 2024
+ | 32,3% (2024)
+
+31,2% (2025 - Buona, 7,88 mio su 26,35 mio)
+ | 29,2% (2025 - Buona, risultati cumulati 5,97 mio CHF)25
+ | 7. Quota degli oneri finanziari
+ | (Interessi netti + Ammortamenti) / Ricavi correnti
+ | < 5% Debole
+
+5–15% Sopportabile
+
+> 15% Alto
+ | Sopportabile
+ | Interessi netti + ammortamenti in crescita da 1,63 mio (2025) a 2,77 mio CHF (2028)
+ | 4,1% (2024)
+
+6,5% (2025 - Sopportabile)
+ | Sopportabile23
+ | 8. Capacità di autofinanziamento
+ | Autofinanziamento / Ricavi correnti
+ | > 20% Buona
+
+10–20% Media
+
+< 10% Debole
+ | Media / Debole
+ | Autofinanziamento: 2,87 mio CHF (2024) su 28,10 mio di ricavi correnti
+ | 1,2% (2024)
+
+8,9% (2025 - Debole)
+ | Condizionata dalla spesa corrente23
+ | 5. Pipeline Specifica per il Controllo dei Crediti d'Investimento (Allegato f) e la Tabella dei Cespiti (Allegato e)
+Il nucleo più delicato della pipeline richiesta riguarda il controllo dei crediti d'investimento lungo il loro intero ciclo di vita amministrativo e contabile, che si estende dal voto iniziale del Consiglio comunale, attraverso l'esecuzione pluriennale dei lavori e l'incasso dei sussidi o contributi, fino alla liquidazione finale del credito e all'ammortamento lineare del cespite8.
+Tracciato Record Ufficiale dell'Allegato f (Tabella del controllo dei crediti d'investimento) e dell'Allegato e (Tabella dei cespiti)
+Dai tabulati MCA2 (verificati sui consuntivi e preventivi comunali ticinesi, inclusi Brione sopra Minusio MM 566, Tenero-Contra MM 7/2026 e i prospetti standard dell'Allegato f), la pipeline estrae le seguenti colonne esatte per popolare le tabelle fact_controllo_crediti e fact_cespiti_ba13:
+Struttura della Tabella del controllo dei crediti d'investimento (Art. 22 cpv. 1 lett. f RGFCC): Il prospetto di controllo dei crediti (riportato in appendice ai consuntivi comunali) è strutturato sulle seguenti nove colonne standardizzate: conto (codice completo del conto d'investimento secondo il piano MCA2, es. 615.5010.011 o 720.5290.013), descrizione conto (denominazione contabile del conto), descrizione credito (riferimento al Messaggio Municipale MM XX/YYYY e oggetto della delibera), data credito (data della risoluzione del Consiglio comunale che ha votato il credito, es. 12.12.2022), uscite anno (spesa contabilizzata nell'esercizio di consuntivo T), utilizzato all'1.1 (spesa cumulata già contabilizzata negli esercizi precedenti fino al 01.01.T), uscite totali (somma di utilizzato all'1.1 e uscite anno al 31.12.T), credito votato (importo autorizzato dal Consiglio comunale) e credito residuo bilancio (differenza tra credito votato e uscite totali, indicata anche come +Residuo / -sorpasso nelle tabelle dei crediti liquidati sottoposti al Legislativo in sede di consuntivo)27.
+Struttura della Tabella dei cespiti dei beni amministrativi (Art. 22 cpv. 1 lett. e RGFCC): La tabella dei cespiti dei beni amministrativi (classe di conto 14) identifica ciascuna opera tramite un codice a 4 cifre seguito dal progressivo progetto (ad esempio nel MM 566 di Brione sopra Minusio: 1401.009 Sistemazione ponte vetro, 1401.011 Potenziamento illuminazione pubblica, 1401.031 Sistemazione strada Val Resa, 1401.033 Sistemazione strada Via Panoramica, 1401.034 Analisi del traffico, 1402.000 Manutenzione corsi d'acqua, 1402.002 Gestione acque meteoriche Zotte, 1402.004 Sistemazione briglia Tendrasca, 1402.005 Svuotamento briglia Val Crosa, 1403.001 Ristrutturazione cimitero comunale, 1403.002 Ristrutturazione parco giochi, 1403.003 Nuovo sistema gestione autosilo)13. Le colonne espongono il Valore di acquisizione netto, i valori contabili al 01.01 e al 31.12, il Tasso di ammortamento (medio), gli Ammortamenti non pianificati e gli Ammortamenti pianificati13.
+Registro Regionale dei Principali Crediti d'Investimento Attivi o Liquidati nel Locarnese (Casi Reali Estratti 2022–2026)
+La tabella seguente raccoglie un campione significativo di crediti d'investimento, crediti quadro, crediti a posteriori, crediti suppletori e liquidazioni d'opera estratti direttamente dai Messaggi Municipali dei comuni locarnesi tra il 2022 e l'ottobre 202615:
+
+Comune (Codice UST)
+ | Riferimento Atto / Conto MCA2
+ | Tipologia di Credito
+ | Oggetto dell'Opera / Investimento Pubblico
+ | Credito Lordo Votato (CHF)
+ | Investimento Netto Comune / Sussidi o Stato di Liquidazione
+ | Locarno (5113)
+ | MM 42 (27.10.2026)
+ | Credito d'opera
+ | Progettazione e realizzazione infrastrutture sportive presso Stadio Lido e Morettina
+ | Credito lordo con IVA 8,1%
+ | 5'971'040,00 CHF netti a carico della Città (IVA 8,1% incl.)15
+ | Locarno (5113)
+ | MM 42 (27.07.2026)
+ | Credito quadro quadriennale
+ | Manutenzione straordinaria delle strade comunali per il quadriennio 2027–2030
+ | 1'480'000,00 CHF
+ | IVA inclusa, ripartito sul quadriennio 2027–203015
+ | Locarno (5113)
+ | MM 15 (13.02.2025)
+ | Credito a posteriori
+ | Opere di ripristino di stabili, veicoli e infrastrutture comunali danneggiate dalla grandinata del 25 agosto 2023
+ | 9'750'000,00 CHF
+ | 2'007'624,00 CHF netti a carico della Città (IVA inclusa)15
+ | Locarno (5113)
+ | MM 17 (Rapporto CG 27.08.2025)
+ | Credito d'opera
+ | Incanalamento del riale Arbivecchio (premunizione e smaltimento) e completamento pavimentazioni pregiate a nord della Contrada Maggiore
+ | 1'750'000,00 CHF
+ | Esaminato con rapporto della Commissione della Gestione15
+ | Locarno (5113)
+ | MM 41 e MM 30 (30.12.2025)
+ | Crediti d'investimento
+ | Allacciamento Palexpo-Fevi al teleriscaldamento Morettina e sostituzione impianti (391'000 CHF) + Acquisto apparecchio Multaphot semafori (350'000 CHF)
+ | 391'000,00 CHF + 350'000,00 CHF
+ | Investimento netto Palexpo-Fevi a carico della Città: 351'000,00 CHF15
+ | Losone (5115)
+ | PF 2025–2028 (MM 034) e MM 030
+ | Programma investimenti + Deleghe
+ | Progetti edilizi (Scuole, Ex Asilo, Ex Municipio; crediti votati nel 2024: 7,5 mio CHF; investimenti impegnati residui: 21,3 mio CHF) + 13 investimenti in delega 2024 (max 70'000 CHF/opera, es. 710.3143.002 canalizzazione Vicolo S. Antonio: 41'635,95 CHF; 210.3131.001 fattibilità scuole/palestra: 44'780,45 CHF)
+ | 15'367'700,00 CHF (Investimenti BA Prev. 2025)
+ | Investimenti amministrativi netti 2025: 13'836'800,00 CHF (dedotti 1'530'900 CHF di accantonamento contributi di costruzione)23
+ | Minusio (5118)
+ | MM 2026/32, MM 2026/25, MM 2026/03
+ | Crediti d'opera
+ | Risanamento copertura e ammodernamento Centro anziani Casa Rea (2'760'000 CHF, approvato); ristrutturazione Villa Parco d'Usignoli (MM 2026/25, all'esame); opere by-pass serbatoio Ciossi (260'000 CHF, approvato); sostituzione condotte AAP e pavimentazione Via alla Riva (MM 2026/16, approvato)
+ | 2'760'000,00 CHF + 260'000,00 CHF
+ | Stato tracciato direttamente nell'indice dei Messaggi Municipali47
+ | Ascona (5091)
+ | MM 14/2026, MM 15/2026, MM 39/2025
+ | Crediti quadro Azienda Elettrica
+ | Rinnovo di 4 cabine di trasformazione (900'000 CHF), sostituzione 5 tratte cavi MT (262'000 CHF) e digitalizzazione rete BT (265'000 CHF)
+ | 1'427'000,00 CHF (totale 3 crediti)
+ | A carico dell'Azienda elettrica comunale di Ascona46
+ | Ascona (5091)
+ | MM 16/2026, MM 17/2026, MM 26/2026
+ | Crediti d'opera comunali
+ | Rifacimento strato d'usura Viale B. Papio (105'000 CHF), posa 13 dissuasori amovibili nel Borgo (55'000 CHF), sottostrutture Via delle Scuole nord e lite cautelare per difetti copertura Pista di ghiaccio Siberia (MM 18/2026)
+ | 160'000,00 CHF (+ Via delle Scuole)
+ | Via delle Scuole ripartita tra Comune, Azienda elettrica e AAP46
+ | Gambarogno (5398)
+ | MM 435 (Progetti PALoc 2 e PALoc 4)
+ | Crediti progettazione e opere PALoc
+ | Credito progetto di massima mobilità lenta T1 (81'000 CHF); consuntivi collegamenti ciclopedonali PALoc2 (930'000 CHF e 900'000 CHF IVA escl.); stima misure PALoc4 ML 8.5 (1'650'000 CHF) e ML 10 (4'097'000 CHF IVA e rincari escl.)
+ | 81'000,00 CHF (+ opere PALoc)
+ | Per i due progetti PALoc2 realizzati, partecipazione comunale tramite il contributo annuale alla CIT26
+ | Terre di Pedemonte (5396)
+ | MM 02-2026, MM 01-2026, MM 06-2023
+ | Credito d'opera e Credito suppletorio
+ | Richiesta credito Sala multiuso Cavigliano (420'000 CHF); credito suppletorio sorpasso spese riscaldamento (35'032 CHF); credito intervento PGA 121 (490'000 CHF); Palestra multiuso (in completamento)
+ | 420'000,00 CHF + 35'032,00 CHF + 490'000,00 CHF
+ | La Palestra multiuso ha generato una quota investimenti del 37,2% (2024) e 25,1% (2025)25
+ | Tenero-Contra (5131)
+ | MM 10/2025, MM 16/2025, MM 2/2025 + Liquidazioni MM 7/2026
+ | Crediti d'opera e Liquidazioni a Consuntivo
+ | Bosco di protezione e messa in sicurezza strada Contra–Mergoscia (410'000 CHF); riscaldamento e LED Casa comunale Tenero (250'000 CHF); loculi cimitero (157'000 CHF). Liquidati nel Cons. 2025: 615.5010.000 Via dei Fiori/Vigne (MM 3/15), 615.5010.011 Strade 2023–25 (MM 6/23), 720.5290.013 GIS canalizzazioni, 790.5290.004/007 Pianificazioni
+ | 817'000,00 CHF (nuovi 2025)
+ | Rimborsi cantonali piste ciclabili PALoc3 a bilancio 2025; sorpassi di manutenzione serramenti Casa comunale Contra (23'000 CHF) e ascensore Tenero (12'099 CHF) imputati a CE27
+ | Lavertezzo (5112)
+ | MM 2023-08, MM 2023-09, MM 2022-07, MM 2025-10/11/13
+ | Crediti d'opera, a posteriori, suppletori e revoche
+ | Ripristino riale Valegia (1'060'000 CHF dopo progetto definitivo a posteriori di 80'000 CHF); collegamento AAP Locarno–SE Montedato a posteriori (206'000 CHF); credito suppletorio MM 17-2020 (291'076 CHF); progetto Gioca Natura ISC (165'000 CHF); muro e barriera mapp. 2024 (80'000 CHF); pentole RIO (65'000 CHF)
+ | 1'060'000,00 CHF + 206'000,00 CHF + 291'076,00 CHF
+ | Tracciamento anche delle revoche di credito (MM 2022-15 revoca 93'000 CHF RVCS ISC; MM 2023-10 revoca 35'000 CHF mapp. 2142)32
+ | Mergoscia (5117)
+ | MM 07-2026, MM 04-2026, MM 10-2025, MM 01-2025
+ | Crediti d'opera e suppletorio
+ | Risanamento Via Cantonitt (MM 09-2025 e MM 07-2026 doc. 82,4 MB); credito Acquedotto Perdell (MM 04-2026); perizia strade (MM 05-2026); acquisto Smart Meter acqua potabile (MM 10-2025); credito suppletorio PGS (MM 01-2025)
+ | Vari crediti infrastrutturali
+ | Fascicoli tecnici integrali pubblicati all'albo45
+ | Brissago (5097)
+ | MM 1575 (17.09.2026)
+ | Credito d'opera
+ | Progetto "Brissago Memoria Viva"
+ | 220'000,00 CHF
+ | Pubblicato nei documenti del Consiglio comunale22
+ | Protocollo Operativo in 6 Passi per l'Implementazione e l'Esecuzione della Pipeline
+Per mettere in produzione questa architettura e garantire l'aggiornamento continuo dei dati per l'intera regione locarnese, il flusso operativo segue sei passaggi sequenziali:
+Inizializzazione dell'Anagrafica Territoriale (dim_comuni_locarnese): Caricare i 19 codici UST (5091–5399) associando le regole di raccordo storico per i comuni aggregati (Verzasca 5399 formato nel 2020/2021 da Brione Verzasca, Corippo, Frasco, Sonogno, Vogorno e dai territori in valle di Cugnasco-Gerra e Lavertezzo; Onsernone 5136; Terre di Pedemonte 5396; Centovalli 5397; Gambarogno 5398) e sincronizzare annualmente la popolazione residente permanente tramite i pacchetti ZIP (CSV / XLSX) pubblicati da USTAT su opendata.swiss4.
+Acquisizione Schedulata dei Messaggi Municipali (Cronjob Settimanale): Eseguire i connettori web sulle 19 URL dei Messaggi Municipali catalogate nella Sezione 2, scaricando ogni nuovo file PDF e classificandolo in base al titolo e ai metadati in quattro code di lavorazione: PREVENTIVO, CONSUNTIVO, PIANO_FINANZIARIO e CREDITO_INVESTIMENTO (includendo le sottocategorie CREDITO_SUPPLETORIO, A_POSTERIORE e REVOCA)15.
+Estrazione Separata di Amministrazione Comunale e Aziende Municipalizzate: Quando il comune gestisce aziende separate o enti autonomi — segnatamente Locarno (Comune, LEA, Istituto San Carlo), Ascona (Comune, Azienda Elettrica, AAP), Ronco sopra Ascona (Comune, ACAP, APONA), Minusio (Comune, ACAP, Casa Rea), Lavertezzo (Comune, ACAP), Terre di Pedemonte (Comune, AAP), Gordola (Comune, AAP) e Onsernone (Comune, AAP) — registrare ogni flusso nella colonna ente per mantenere distinte le contabilità aziendali da quelle del Comune conformemente alle norme RGFCC8.
+Parsing dei Tabulati MCA2 e Costruzione del Libro Mastro Regionale: Estrarre dai fascicoli contabili il Riassunto generale (Allegato a), la Ricapitolazione per genere di conto a 4 cifre (Allegato c) e la Ricapitolazione per dicasteri (Allegato d), facendo sì che per ogni esercizio i conti Consuntivo T affianchino i valori di Preventivo T (inclusi gli eventuali conti approvati dopo emendamento dal Consiglio comunale, come a Terre di Pedemonte, Lavertezzo e Ronco sopra Ascona) per il calcolo automatico degli scostamenti (Variazione Assoluta e Variazione % Cons./Prev.)9.
+Tracking Continuo del Ciclo di Vita dei Crediti d'Investimento (Allegato f e Allegato e): All'atto della pubblicazione di un nuovo Messaggio Municipale di richiesta credito (es. MM 42 Stadio Lido a Locarno o MM 2026/32 Casa Rea a Minusio), aprire il record con il credito lordo votato e l'investimento netto a carico del Comune15. Alla pubblicazione di ciascun Consuntivo annuale, aggiornare il record tramite la Tabella del controllo dei crediti (Allegato f: utilizzato all'1.1, uscite anno, uscite totali, credito residuo bilancio) fino alla liquidazione finale dell'opera, verificando dall'anno successivo l'iscrizione del cespite nella Tabella dei cespiti dei beni amministrativi (Allegato e, classe 14) e l'avvio del relativo ammortamento lineare sul conto 3300/332013.
+Calcolo Automatico degli Indicatori SEL e Alerting Precoce: Calcolare per tutti i 19 comuni gli indicatori finanziari ufficiali (art. 22 lett. o RGFCC) e monitorare lo stato di emissione delle partite fiscali per le sopravvenienze d'imposta, generando avvisi automatici quando un comune supera la soglia del 150% nel tasso di indebitamento netto, scende sotto l'80% nel grado di autofinanziamento o presenta sorpassi di spesa nella tabella di controllo dei crediti9.
+Bibliografia
+https://www.cce.ch/Elenco-migliorie-GeCoTi-Web-Release-Aprile-2020-97882c00
+https://www.cce.ch/Descrizione-della-soluzione-GeCoTiWeb-v3pdf-187b4d00?i=1
+I14Y Interoperability platform, https://www.i14y.admin.ch/en/catalog/concepts/08dad795-919b-00e0-b917-916e8f2221c3/content/8100/TI/B_2104/5108
+Selezione delle variabili - STAT-TAB – interaktive Tabellen (BFS), https://www.pxweb-admin-a.bfs.admin.ch/pxweb/it/px-x-0103010000_201/-/px-x-0103010000_201.px/
+CAN - Raccolta delle leggi vigenti del Cantone Ticino, https://m3.ti.ch/CAN/RLeggi/public/index.php/raccolta-leggi/legge-piatta/num/76
+Untitled - Repubblica e Cantone Ticino, https://m4.ti.ch/fileadmin/DI/DI_DI/SEL/Comuni/Circolari/2015/20151126DIR-Direttiva_Organo_di_controllo_esterno-Revisione.pdf
+Sezione degli enti locali 6501 Bellinzona, https://m4.ti.ch/fileadmin/DI/DI_DI/SEL/Comuni/Circolari/2022/CIR20220323-Modifiche_RGFCC_e_Manuale_MCA2-4.pdf
+2.1.2.1 Regolamento sulla gestione finanziaria e sulla contabilità dei, https://www.lexfind.ch/tolv/100943/it
+https://www.losone.ch/MM-no-021-Bilancio-consuntivo-2021-del-Comune-di-Losone-2d5f8600?i=1&MasterId=g1_16177
+MESSAGGIO MUNICIPALE NO. 275 Piano finanziario del Comune, https://centovalli.swiss/2024/10/10/mm275-piano-finanziario-del-comune-delle-centovalli-per-il-periodo-2025-2028/
+Regolamento comunale della Città di Lugano, https://www.lugano.ch/law/16371942/1-1-1-Regolamento-comunale-della-Citta-di-Lugano-del-14-marzo-1989
+CONSUNTIVO 2023 - tresa.ch, https://www.tresa.ch/wp-content/uploads/2024/03/MM-14-2024-Consuntivo-2023-comp.pdf
+preventivo comunale 2027 - Brione sopra Minusio, https://www.brione.ch/MM-566-Conto-preventivo-comunale-e-definizione-del-moltiplicatore-politico-per-il-prelievo-dell-imposta-comunale-per-l-anno-2027pdf-ba6ae700?i=1&pannorg=4587&panntime=1793289455&MasterId=g1_4065
+Messaggi municipali 2021 - 2024 - - Città di Locarno -, https://www.locarno.ch/it/messaggi-municipali/2021-2024
+Messaggi municipali / 2024 - 2028 - - Città di Locarno -, https://www.locarno.ch/it/messaggi-municipali/2024-2028
+Messaggi municipali 2016 - 2021 - - Città di Locarno -, https://www.locarno.ch/it/messaggi-municipali/2016-2021
+Conti consuntivi – Il Comune di Ronco sopra Ascona, https://ronco-s-ascona.ch/istituzione/conti-consuntivi/
+Messaggi - Sito Ufficiale Terre di Pedemonte, https://ecommdevel.assolo.net/Messaggi-861f7d00
+municipio - Comune di Orselina, https://www.orselina.ch/downdoc.php?id_doc=3255&lng=1&i=1&vis=2&rif=8b6362cd70
+Messaggi Archivi - Comune delle Centovalli, https://centovalli.swiss/category/a4-messaggi-municipali/
+MM 2026-07 - consuntivo comunale 2025 - Lavertezzo, https://www.lavertezzo.ch/documenti-albo-comunale/download/80-mm-2026/864-mm-2026-07-consuntivo-comunale-2025
+Documenti del Consiglio comunale - Comune di Brissago, https://www.brissago.ch/comune/amministrazione/consiglio-comunale/documenti-consiglio-comunale/
+Comune di Losone - Piano finanziario 2025 – 2028, https://www.losone.ch/Mm034-Piano-finanziario-2025-2028pdf-ab433000?i=1&MasterId=g1_17797
+I moltiplicatori d'imposta nel Canton Ticino 2019—2026, https://www.fiduciariamega.ch/wp-content/uploads/2026/09/Opuscolo-moltiplicatori-2026-web.pdf
+Conto consuntivo comunale 2025 - Terre di Pedemonte, https://www.pedemonte.ch/Consuntivo-Comune-2025-7d69d700?i=1&pannorg=3676&panntime=1791936991
+MESSAGGIO MUNICIPALE NO. 435 - Comune di Gambarogno, https://www.gambarogno.ch/MM-435-Credito-CHF-81-00000-progetto-di-massima-per-mobilit-lenta-T1-PALoc-656d8d00?i=1
+MESSAGGIO MUNICIPALE 7 DEL 2026 - Tenero Contra, https://www.tenero-contra.ch/MM-7-del-2026-Consuntivo-2025pdf-26425b00?i=1
+Regolamento comunale - Comune di Brissago, https://www.brissago.ch/files/regolamento_comunale.pdf
+Economia - Comune Verzasca, https://www.verzasca.swiss/Economia
+I conti del Comune - Comune di Cugnasco-Gerra – Sito ufficiale dell, https://www.cugnasco-gerra.ch/I-conti-del-Comune-43c4a500
+Sedute di CC - Sito Ufficiale Terre di Pedemonte, https://www.pedemonte.ch/Sedute-di-Consiglio-comunale-5af21900
+MM 2022 - Lavertezzo, https://www.lavertezzo.ch/documenti-albo-comunale/category/62-mm-2022
+Untitled - Comune di Brissago, https://www.brissago.ch/files/mm_1484_-_revisione_alcuni_regolamenti_comunali.pdf
+Policy - - Città di Locarno -, https://www.locarno.ch/it/policy
+Albo comunale - - Città di Locarno -, https://www.locarno.ch/it/albo-comunale
+Comune di Brissago, https://www.brissago.ch/sito/wp-content/uploads/2025/03/3.1.2-OM-distribuzione-acqua-26.pdf
+Preventivo 2025 - Comune di Gambarogno, https://www.gambarogno.ch/MM-466-Preventivo-2025-367e9000?i=1
+Messaggi municipali - Comune del Canton Ticino - Gordola, https://www.gordola.ch/Messaggi-municipali-f3c97f00
+MESSAGGIO MUNICIPALE 13 DEL 2025 - Tenero Contra, https://www.tenero-contra.ch/MM-13-del-2025-Consuntivo-2024-da2dbd00?i=1
+Messaggi municipali - Sito ufficiale dell'amministrazione comunale, https://www.muralto.ch/Messaggi-municipali/IT-ac4d1f00?param_sla=&ris_n=72&ric_caller=0&fric=4665&ris_pg=1¶m_cat0=0¶m_cat1=0¶m_textsearch=¶m_data=0000-00-00¶m_data1=0000-00-00¶m_data2=0000-00-00¶m_parint=0&catinv=
+Messaggi - Sito Ufficiale Terre di Pedemonte, https://www.pedemonte.ch/Messaggi-861f7d00
+Messaggi municipali - Comune di Minusio - Amministrazione, https://minusio.assolo.net/Messaggi-municipali-584f1a00?param_sla=&ris_n=346&ric_caller=0&fric=5420&ris_pg=6¶m_cat0=0¶m_cat1=0¶m_textsearch=¶m_data=0000-00-00¶m_data1=0000-00-00¶m_data2=0000-00-00¶m_parint=0&catinv=&MasterId=g1_3349
+Untitled - onsernone.swiss, https://onsernone.swiss/MM-1-2023-Consuntivo-Comune-2022pdf-6506e400?i=1&MasterId=g1_256
+Messaggio municipale no. 78-2026 Piano finanziario 2026-2029, https://www.verzasca.swiss/Messaggio-municipale-no-78-2026-Piano-finanziario-2026-2029-821eb700?i=1
+Messaggi municipali - Comune di Mergoscia, https://www.comune-mergoscia.ch/Messaggi-municipali-861f7d00
+Messaggi municipali - Comune di Ascona, https://www.ascona.ch/Messaggi-municipali
+Messaggi municipali - Comune di Minusio - Minusio, https://www.minusio.ch/Messaggi-municipali-584f1a00
+Messaggi municipali - Comune del Canton Ticino, https://gordola.ch/Messaggi-municipali-f3c97f00?param_sla=0&ris_n=316&ric_caller=0&fric=4261&ris_pg=8¶m_cat0=0¶m_cat1=0¶m_textsearch=¶m_data=0000-00-00¶m_data1=0000-00-00¶m_data2=0000-00-00¶m_parint=0&catinv=
+Atti pubblici e amministrativi - Comune di Tenero-Contra, https://www.tenero-contra.ch/Atti-pubblici-e-amministrativi-478eac00?param_sla=0&ris_n=408&ric_caller=0&fric=4257&ris_pg=10¶m_cat0=0¶m_cat1=0¶m_textsearch=¶m_data=0000-00-00¶m_data1=0000-00-00¶m_data2=0000-00-00¶m_parint=0&catinv=0&vis=1
+Comune di Losone, https://www.losone.ch/Mm030-Consuntivo-2024-daf46200?i=1&MasterId=g1_17752
+communitatis brissagensis - 1521 - Comune di Brissago, https://www.brissago.ch/files/mm_1478_-_preventivo_comune.pdf
+MM 1557 - Consuntivo 2024 - Comune di Brissago, https://www.brissago.ch/documenti/mm-1557-consuntivo-2024/
+Messaggi Municipali - Il Comune di Ronco sopra Ascona, https://ronco-s-ascona.ch/albo-comunale/messaggi-municipali/
+MM 04/2025 concernente il consuntivo comunale per l'anno 2024, https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2025/send/77-mm-2025/786-mm-2025-04-concernente-il-consuntivo-comunale-per-l-anno-2024-rapporti
+MM 2026 - Lavertezzo, https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2026
+Regolamenti e atti pubblici - Comune di Orselina, https://www.orselina.ch/index.php?node=326&lng=1&vis=2&rif=b07ebc24cc
+Legislazione vigente - Comune di Orselina, https://www.orselina.ch/index.php?node=327¶m_sla=&ris_n=37&ric_caller=&lng=1&fric=3674&ris_pg=1¶m_cat0=0¶m_cat1=0¶m_textsearch=¶m_data=0000-00-00¶m_data1=0000-00-00¶m_data2=0000-00-00¶m_parint=0&catinv=&vis=1&rif=8f9c23f12e
+Risoluzioni del Consiglio Comunale - Comune di Orselina, https://orselina.ch/index.php?node=332¶m_sla=&ris_n=32&ric_caller=&lng=1&fric=3679&ris_pg=1¶m_cat0=0¶m_cat1=0¶m_textsearch=¶m_data=0000-00-00¶m_data1=0000-00-00¶m_data2=0000-00-00¶m_parint=0&catinv=&vis=2&rif=c02533b84c
+Finanze - - Città di Locarno -, https://www.locarno.ch/it/finanze
+Messaggi municipali - Tenero Contra, https://www.tenero-contra.ch/Messaggi-municipali-43c4a500
+Messaggio Municipale N° 527/2022 - Arbedo-Castione, https://arbedocastione.assolo.net/MM-n-5272022-Preventivo-2023-02953c00?i=1
+Untitled - Brione sopra Minusio, https://www.brione.ch/MM-550-Conto-consuntivo-comunale-2024-3d8a9400?i=1&pannorg=3790&panntime=1790058417
+2024 CONSUNTIVO - Vico Morcote, https://www.vicomorcote.ch/MM-022025-Consuntivo-2024-67533b00?i=1&pannorg=3646&panntime=1793058635
+Bilanci Preventivi 2022 del Comune di Gordola, https://www.gordola.ch/MM-no-1506-Bilanci-Preventivi-2022-del-Comune-di-Gordola-040cfb00?i=1&G2cid=4
+MESSAGGIO MUNICIPALE 15 DEL 2024 - Tenero Contra, https://www.tenero-contra.ch/MM-15-del-2024-Preventivo-2025-ebce6c00?i=1
+consuntivo secondo la classificazione istituzionale = funzionale per l, https://www.cugnasco-gerra.ch/MM-no-14-Consuntivo-2021-dell-Azienda-comunale-acqua-potabile-di-Cugnasco-Gerra-2c3eee00?i=1
+Bilancio demografico, secondo il sesso e la nazionalità, per distretto, https://opendata.swiss/en/dataset/bilancio-demografico-secondo-il-sesso-e-la-nazionalita-per-distretto-e-comune-di-residenza-2022
+Locarno District - Wikipedia, https://en.wikipedia.org/wiki/Locarno_District
+Distretto di Locarno - Wikipedia, https://it.wikipedia.org/wiki/Distretto_di_Locarno
+MESSAGGIO MUNICIPALE 3 DEL 2026 - Tenero Contra, https://www.tenero-contra.ch/MM-3-del-2026-Convenzione-poligono-di-tiro-Quartinopdf-827f3b00?i=1
+District de Locarno - Wikipédia, https://fr.wikipedia.org/wiki/District_de_Locarno
+G0ruffiDImnffsrilruslo - Comune di Brione sopra Minusio, https://www.brione.ch/MM-545-Conto-preventivo-comunale-e-definizione-del-moltiplicatore-politico-per-il-prelievo-dell-imposta-comunale-per-l-anno-2025-7892ef00?i=1&pannorg=3790&panntime=1789770422
+Messaggi municipali di nuova promulgazione - Brione sopra Minusio, https://www.brione.ch/Messaggi-municipali-di-nuova-promulgazione-a459ef00
+Richiesta di approvazione del contratto di prestazione con le FART, https://www.brissago.ch/documenti/mm-1572-richiesta-di-approvazione-del-contratto-di-prestazione-con-le-fart-per-lesecuzione-del-servizio-nelle-frazioni-linea-8/
+Albo comunale - Comune del Canton Ticino - Gordola, https://www.gordola.ch/Albo-comunale-0cbcc300
+MM 2025 - Lavertezzo, https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2025
+Comune di Losone - Albo comunale - Comune di Losone, https://www.losone.ch/Albo-comunale-3b480000
+Comune di Losone - Servizi comunali - Conti del Comune, https://www.losone.ch/Conti-del-Comune-519c1a00
+MUNICIPIO DI LOSONE - Comune di Losone, https://www.losone.ch/Mm060-Consuntivo-2025-b1609700?i=1&MasterId=g1_18479
+Albo comunale - Comune di Mergoscia, https://www.comune-mergoscia.ch/Albo-comunale-04399800
+municipio di minusio, https://www.minusio.ch/MM-N-92022-accompagnante-il-Piano-economico-finanziario-2022-2026-8abf3000?i=1&MasterId=g1_2223
+Albo comunale - Comune di Minusio, https://www.minusio.ch/Albo-comunale-c3dfab00
+Albo comunale - Comune di Muralto - Muralto, https://www.muralto.ch/Albo-comunale/IT-c3dfab00
+MM 3-2024 Consuntivo 2023 del Comune di Orselina, https://www.orselina.ch/downdoc.php?id_doc=3593&lng=1&i=1&vis=2&rif=c1b05871c1
+Messaggio Municipale Preventivo 2025 - onsernone.swiss, https://www.onsernone.swiss/Consiglio-Comunale-seduta-del-6122024-Messaggi-Municipali-09a27500?i=1
+Untitled - onsernone.swiss, https://onsernone.swiss/MM-2-2023-Consuntivo-AAP-2022pdf-4b881e00?i=1&MasterId=g1_275
+Messaggi - onsernone.swiss, https://www.onsernone.swiss/Messaggi-861f7d00
+Albo comunale - Comune di Cugnasco-Gerra – Sito ufficiale dell, https://cugnasco-gerra.ch/Albo-comunale-3e117300?param_sla=&ris_n=518&ric_caller=&fric=6229&ris_pg=4¶m_cat0=0¶m_cat1=0¶m_textsearch=¶m_data=0000-00-00¶m_data1=0000-00-00¶m_data2=0000-00-00¶m_parint=0&catinv=
+BFS Gemeinde-Nummer 5138 - Gemeinde Cugnasco-Gerra, https://www.schweizer-regionen.ch/bfs/5138
+Comune delle Centovalli, https://centovalli.swiss/
+Intragna, 18 ottobre 2024 MESSAGGIO MUNICIPALE NO. 276, https://centovalli.swiss/2024/10/24/mm276-esame-e-approvazione-del-preventivo-2025-del-comune-e-dei-relativi-moltiplicatori-dimposta-comunale/
+Albo comunale Archivi - Pagina 2 di 18 - Comune delle Centovalli, https://centovalli.swiss/category/albo-comunale/page/2/
+Comune di Gambarogno - Commissione della Gestione, https://www.gambarogno.ch/Rapporto-CG-MM-470-Conti-consuntivi-2024-37d93c00?i=1&MasterId=g1_3357
+Albo comunale - Comune di Gambarogno, https://www.gambarogno.ch/Albo-comunale-04399800
+Messaggi - Comune di Gambarogno, https://www.gambarogno.ch/Messaggi-861f7d00
+Albo comunale - Comune di Verzasca, https://www.verzasca.swiss/Albo-comunale-5af21900
+Documenti Consiglio comunale - Comune Verzasca, https://www.verzasca.swiss/Documenti-Consiglio-comunale-d5961d00
+MUNICIPIO DI LOSONE, https://www.losone.ch/Mm046-Bilancio-consuntivo-2022-046e6400
+MUNICIPIO DI LOSONE, https://www.losone.ch/Mm069-Consuntivo-2023pdf-d938c700
+Messaggi - Comune di Gambarogno, https://www.gambarogno.ch/Messaggi-861f7d00?param_sla=&ris_n=413&ric_caller=&fric=3676&ris_pg=2¶m_cat0=0¶m_cat1=0¶m_textsearch=¶m_data=0000-00-00¶m_data1=0000-00-00¶m_data2=0000-00-00¶m_parint=0&catinv=
+Messaggi municipali - Comune del Canton Ticino - Gordola, https://gordola.ch/Messaggi-municipali-f3c97f00?param_sla=0&ris_n=316&ric_caller=0&fric=4261&ris_pg=9¶m_cat0=0¶m_cat1=0¶m_textsearch=¶m_data=0000-00-00¶m_data1=0000-00-00¶m_data2=0000-00-00¶m_parint=0&catinv=
+Approvazione della convenzione che regola la collaborazione, https://www.gordola.ch/MM-no-1317-Approvazione-della-convenzione-che-regola-la-collaborazione-intercomunale-in-materia-di-polizia-locale-tra-il-Comune-di-Gordola-Comune-sede-della-Polizia-intercomunale-del-Piano-ed-il-Comune-di-Brione-sMinusio-d95d4100?i=1&G2cid=4749
+Preventivi Archivi - Comune delle Centovalli, https://centovalli.swiss/category/a4-messaggi-municipali/preventivi/
+Messaggi municipali - Comune di Brione s/Minusio, https://www.brione.ch/Messaggi-municipali-2013-2024-465cc300?param_sla=&ris_n=128&ric_caller=0&fric=3790&ris_pg=3¶m_cat0=0¶m_cat1=0¶m_textsearch=¶m_data=0000-00-00¶m_data1=0000-00-00¶m_data2=2025-12-31¶m_parint=0&catinv=
+Manuale di contabilità e gestione finanziaria per i comuni ticinesi, https://m4.ti.ch/tich/area-media/comunicati/dettaglio-comunicato?NEWS_ID=188704&cHash=7d8bed6f2d4deb4501a8529d3ad6a517
+PREVENTIVO 2022 - Comune di Massagno, https://www.massagno.ch/MM-2599-Preventivo-2022-7fd3a400
+Seagate Crystal Reports - Tabel - Lavertezzo, https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2021/send/53-mm-2021/456-mm-2021-11-preventivo-comunale-2022
+Vico Morcote, https://www.vicomorcote.ch/MM-no-07-2026-concernente-il-Preventivo-del-Comune-per-l-anno-2027-e-la-fissazione-del-moltiplicatore-d-imposta-per-il-2027-ca722000?i=1&pannorg=3646&panntime=1793202544
+MM 414 Credito di costruzione per ristrutturazione Stabile ex, https://www.comano.ch/MM-414-Credito-di-costruzione-per-ristrutturazione-Stabile-ex-Raiffeisen-Rapporto-di-minoranza-Gestione-7355eb00?i=1
+Sezione degli enti locali 6501 Bellinzona - Repubblica e Cantone, https://m4.ti.ch/fileadmin/DI/DI_DI/SEL/Comuni/Circolari/2022/CIR20220902-Capitale_proprio_e_autofinanziamento-7.pdf
+Presentazione articoli DATI 1/2022 - Repubblica e Cantone Ticino, https://m3.ti.ch/DFE/DR/USTAT/allegati/volume/dss_2022-1_presentazione.pdf
+Presentazione degli articoli DATI 2021-1, https://m3.ti.ch/DFE/DR/USTAT/allegati/volume/dss_2021-1_presentazione.pdf
+Untitled - Repubblica e Cantone Ticino, https://m3.ti.ch/DFE/DR/USTAT/allegati/articolo/2584dss_2019-1_3.pdf
+Dati fondati da 90 anni - Repubblica e Cantone Ticino, https://m3.ti.ch/DFE/cartellastampa/pdf-cartella-stampa-7804399244.pdf
+Schede valide e seggi ottenuti alle elezioni del Consiglio di Stato, https://opendata.swiss/en/dataset/schede-valide-e-seggi-ottenuti-alle-elezioni-del-consiglio-di-stato-secondo-la-lista-in-ti-1921/resource/104ce0aa-0c87-4e4f-90e6-8414e748db7b
+57-2020 - Briccola-Käppeli - Visione over 65 - Città di Bellinzona, https://www.bellinzona.ch/Interrogazione-572020-Risposta-del-Municipio-f0d86d00?i=1&MasterId=g1_468
+Notifiche di mutazioni - Risultato | Applicazione dei Comuni svizzeri, https://www.agvchapp.bfs.admin.ch/it/mutations/results?BfsNr=5119&EntriesFrom=12.09.1848&EntriesTo=06.04.2025
+Servizi - DFE (DFE) - Repubblica e Cantone Ticino, https://www4.ti.ch/dfe/cosa-facciamo/servizi?noMobile=1&cHash=3ea473e224599cbd9c7c7cda72022607
+7684-R1 - maggioranza - Repubblica e Cantone Ticino, https://m4.ti.ch/fileadmin/POTERI/GC/allegati/rapporti/23913_7684R-magg.pdf
+Stipendio netto Svizzera 2026: calcolo per comune e Cantone, https://lohnnetto.ch/it/
+I moltiplicatori d'imposta nel Canton Ticino 2017—2024, https://www.fiduciariamega.ch/wp-content/uploads/2024/10/FM_Moltiplicatori_2024.pdf
+Consiglio Comunale - Comune di Origlio, https://origlio.ch/files/133/Consuntivi/662/MM-2024-5-Consuntivo-2023-Comune.pdf
+Untitled - Vico Morcote, https://www.vicomorcote.ch/Messaggio-municipale-no-222022-Concernente-l-approvazione-dei-conti-preventivi-2022-del-Comune-di-Vico-Morcote-con-l-integrazione-dell-Azienda-comunale-Acqua-Potabile-e-la-definizione-del-moltiplicatore-d-imposta-6acf3300?i=1&pannorg=4002&panntime=1771521072&MasterId=g1_29
+Interrogazione 40 /202 5 “Dismissioni, ossia cessioni di proprietà, https://www.bellinzona.ch/Interrogazione-402025-Risposta-del-Municipio-cbe0da00
+consiglio comunale mezzovico-vira - seduta ordinaria del 23 giugno, https://www.mezzovico-vira.ch/DOC171121-17112021083504pdf-bf89d400?i=1&MasterId=g1_980
+MM 08-2021 Preventivo comune 2022 - Manno, https://www.manno.ch/data/manno/political-activities/untitled0/untitled/MM-08-2021-Preventivo-2022-Amministrazione-comunale/file/MM%2008-2021%20Preventivo%20comune%202022%20con%20allegati.pdf.pdf
+COMUNE DI TERRE DI PEDEMONTE, https://www.pedemonte.ch/Preventivo-Comune-2024-987e3f00
+MM 2023 - Lavertezzo, https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2023
+Convocazione I Ass 2025 - ALVAD Locarnese e Vallemaggia, https://www.alvad.ch/files/I1CZ48M/assemblea_13.5.2025.pdf
+
