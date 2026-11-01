@@ -231,9 +231,15 @@ class WordPressConnector:
                         continue
                     seen_urls.add(full_url)
 
-                    doc_title = title or a.get_text(separator=" ", strip=True)
-                    if not doc_title or len(doc_title) < 5:
-                        doc_title = a.get_text(separator=" ", strip=True)
+                    link_text = a.get_text(separator=" ", strip=True)
+                    generic_titles = {"scarica", "download", "leggi", "apri", "allegato", "pdf", "file", "link"}
+                    if link_text and len(link_text) >= 5 and link_text.lower() not in generic_titles:
+                        doc_title = link_text
+                    elif title:
+                        doc_title = title
+                    else:
+                        file_stem = urlparse(full_url).path.split("/")[-1].replace(".pdf", "").replace("-", " ").replace("_", " ")
+                        doc_title = file_stem if len(file_stem) > 4 else (link_text or href)
 
                     doc_kind = classify_doc_kind(doc_title)
                     year, mm_num = extract_year_and_mm(doc_title)
