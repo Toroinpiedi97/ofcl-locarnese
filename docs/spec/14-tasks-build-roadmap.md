@@ -92,14 +92,14 @@ flowchart LR
 
 ## Fase 4 · Console Curatore (`/admin`) & Gestione Civic Tickets — US6, US10
 
-- [ ] **T038** Configurare autenticazione Supabase Auth con **MFA TOTP obbligatoria** su `/admin/*` (middleware Next.js + verifica server-side `app_metadata.role === 'curator'`).
-- [ ] **T039** Implementare `/admin/queue`: tabella estrazioni filtrabile per Comune, stato (`NEEDS_REVIEW`, `VALIDATED`), numero di `BLOCKING`/`WARNING` e confidenza.
-- [ ] **T040** Implementare **Split-View `/admin/review/[versionId]`** (`09-ux-portale-admin-opendata.md` §2.2): generazione server-side di **Presigned URL Cloudflare R2 (15 min)** + PDF viewer client-side sincronizzato su `page` + `bbox` + scorciatoie tastiera (`J`/`K`, `A`, `R`, `P`).
-- [ ] **T041** Implementare Server Actions protette di rettifica cella, flag `contains_personal_data`, sospensione rapida 24h (`UNPUBLISH`), approvazione e pubblicazione con scrittura atomica in `audit.curator_action` + ricalcolo immediato `V01`–`V12`.
-- [ ] **T042** [P] Implementare `/admin/upload` per il caricamento manuale tracciato su R2 dei fascicoli della Città di Locarno (`MANUAL_UPLOAD`) e risposte LIT.
-- [ ] **T042b** [P] Implementare `/admin/tickets` per consultare e chiudere (`NEW` → `IN_REVIEW` → `RESOLVED` / `DISMISSED`) le segnalazioni civiche provenienti da `audit.feedback_ticket`.
+- [x] **T038** Configurare autenticazione Supabase Auth con **MFA TOTP obbligatoria** su `/admin/*` (middleware Next.js + verifica server-side `app_metadata.role === 'curator'`).
+- [x] **T039** Implementare `/admin/queue`: tabella estrazioni filtrabile per Comune, stato (`NEEDS_REVIEW`, `VALIDATED`), numero di `BLOCKING`/`WARNING` e confidenza.
+- [x] **T040** Implementare **Split-View `/admin/review/[versionId]`** (`09-ux-portale-admin-opendata.md` §2.2): generazione server-side di **Presigned URL Cloudflare R2 (15 min)** + PDF viewer client-side sincronizzato su `page` + `bbox` + scorciatoie tastiera (`J`/`K`, `A`, `R`, `P`).
+- [x] **T041** Implementare Server Actions protette di rettifica cella, flag `contains_personal_data`, sospensione rapida 24h (`UNPUBLISH`), approvazione e pubblicazione con scrittura atomica in `audit.curator_action` + ricalcolo immediato `V01`–`V12`.
+- [x] **T042** [P] Implementare `/admin/upload` per il caricamento manuale tracciato su R2 dei fascicoli della Città di Locarno (`MANUAL_UPLOAD`) e risposte LIT.
+- [x] **T042b** [P] Implementare `/admin/tickets` per consultare e chiudere (`NEW` → `IN_REVIEW` → `RESOLVED` / `DISMISSED`) le segnalazioni civiche provenienti da `audit.feedback_ticket`.
 
-**Gate Fase 4**: test E2E Playwright del flusso curatore completo (`NEEDS_REVIEW` → correzione → `V10` OK → `PUBLISHED` + riga `audit`).
+**Gate Fase 4**: test E2E Playwright del flusso curatore completo (`NEEDS_REVIEW` → correzione → `V10` OK → `PUBLISHED` + riga `audit`) [SUPERATO - 4/4 test verdi].
 
 ---
 

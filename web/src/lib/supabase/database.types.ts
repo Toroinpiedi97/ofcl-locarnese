@@ -7,6 +7,143 @@ export type Json =
   | Json[];
 
 export type Database = {
+  raw: {
+    Tables: {
+      document: {
+        Row: {
+          id: string;
+          ust_code: number;
+          origin_url: string;
+          title_raw: string | null;
+          acquisition: "CRAWLER" | "MANUAL_UPLOAD" | "LIT_REQUEST";
+          contains_personal_data: boolean;
+          first_seen_at: string;
+        };
+        Insert: {
+          id?: string;
+          ust_code: number;
+          origin_url: string;
+          title_raw?: string | null;
+          acquisition?: "CRAWLER" | "MANUAL_UPLOAD" | "LIT_REQUEST";
+          contains_personal_data?: boolean;
+          first_seen_at?: string;
+        };
+        Update: Partial<Database["raw"]["Tables"]["document"]["Insert"]>;
+      };
+      document_version: {
+        Row: {
+          id: string;
+          raw_document_id: string;
+          sha256: string;
+          file_size_bytes: number;
+          storage_path: string;
+          etag: string | null;
+          fetched_at: string;
+          status: "DOWNLOADED" | "CLASSIFIED" | "EXTRACTED" | "VALIDATED" | "NEEDS_REVIEW" | "APPROVED" | "PUBLISHED" | "REJECTED" | "SUPERSEDED";
+          confidence: number | null;
+          extractor_version: string | null;
+        };
+        Insert: {
+          id?: string;
+          raw_document_id: string;
+          sha256: string;
+          file_size_bytes: number;
+          storage_path: string;
+          etag?: string | null;
+          fetched_at?: string;
+          status?: "DOWNLOADED" | "CLASSIFIED" | "EXTRACTED" | "VALIDATED" | "NEEDS_REVIEW" | "APPROVED" | "PUBLISHED" | "REJECTED" | "SUPERSEDED";
+          confidence?: number | null;
+          extractor_version?: string | null;
+        };
+        Update: Partial<Database["raw"]["Tables"]["document_version"]["Insert"]>;
+      };
+      pipeline_run: {
+        Row: {
+          id: string;
+          stage: string;
+          git_sha: string;
+          started_at: string;
+          finished_at: string | null;
+          status: "OK" | "PARTIAL" | "ERROR";
+          report: Json;
+        };
+        Insert: {
+          id?: string;
+          stage: string;
+          git_sha: string;
+          started_at: string;
+          finished_at?: string | null;
+          status: "OK" | "PARTIAL" | "ERROR";
+          report: Json;
+        };
+        Update: Partial<Database["raw"]["Tables"]["pipeline_run"]["Insert"]>;
+      };
+    };
+  };
+  core: {
+    Tables: {
+      ledger_value: {
+        Row: {
+          id: string;
+          document_version_id: string;
+          entity_id: string;
+          statement: "CE" | "CI" | "BIL";
+          side: "USCITA" | "RICAVO" | "ATTIVO" | "PASSIVO" | "SALDO";
+          account_code: string;
+          amount_chf: number;
+          amount_raw: string;
+          page: number;
+          bbox: Json;
+          status: "NEEDS_REVIEW" | "VALIDATED" | "APPROVED" | "PUBLISHED";
+          verified_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          document_version_id: string;
+          entity_id: string;
+          statement: "CE" | "CI" | "BIL";
+          side: "USCITA" | "RICAVO" | "ATTIVO" | "PASSIVO" | "SALDO";
+          account_code: string;
+          amount_chf: number;
+          amount_raw: string;
+          page: number;
+          bbox: Json;
+          status?: "NEEDS_REVIEW" | "VALIDATED" | "APPROVED" | "PUBLISHED";
+          verified_at?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<Database["core"]["Tables"]["ledger_value"]["Insert"]>;
+      };
+      investment_credit: {
+        Row: {
+          id: string;
+          ust_code: number;
+          entity_id: string;
+          account_full: string;
+          title: string;
+          canonical_mm: string | null;
+          vote_date: string | null;
+          amount_voted: number;
+          net_expected: number | null;
+          status: "VOTED" | "IN_PROGRESS" | "CLOSED" | "REVOKED";
+        };
+        Insert: {
+          id?: string;
+          ust_code: number;
+          entity_id: string;
+          account_full: string;
+          title: string;
+          canonical_mm?: string | null;
+          vote_date?: string | null;
+          amount_voted: number;
+          net_expected?: number | null;
+          status?: "VOTED" | "IN_PROGRESS" | "CLOSED" | "REVOKED";
+        };
+        Update: Partial<Database["core"]["Tables"]["investment_credit"]["Insert"]>;
+      };
+    };
+  };
   ref: {
     Tables: {
       municipality: {
