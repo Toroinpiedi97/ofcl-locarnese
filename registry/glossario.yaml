@@ -1,0 +1,156 @@
+# ==============================================================================
+# Glossario, Sinonimi Enti, Mapping Sezioni RGFCC e Blacklist Privacy nLPD
+# Specifiche OFCL (docs/spec/05-fonti-connettori.md e 06-estrazione-pdf.md)
+# ==============================================================================
+
+entities:
+  COMUNE:
+    canonical: "Amministrazione Generale / Comune"
+    aliases:
+      - "Comune"
+      - "Amministrazione Comunale"
+      - "Gestione Generale"
+      - "Municipio"
+  AAP:
+    canonical: "Azienda Acqua Potabile"
+    aliases:
+      - "AAP"
+      - "ACAP"
+      - "Azienda Comunale Acqua Potabile"
+      - "Azienda Acqua Potabile e Canalizzazioni"
+      - "Acqua Potabile"
+  AE:
+    canonical: "Azienda Elettrica Comunale"
+    aliases:
+      - "AE"
+      - "Azienda Elettrica"
+      - "Azienda Elettrica Comunale di Ascona"
+  APONA:
+    canonical: "Azienda Porto Natanti"
+    aliases:
+      - "APONA"
+      - "Azienda Porto Comunale"
+      - "Porto Patriziale / Comunale"
+  LEA:
+    canonical: "Laboratorio / Ente Elettro-Acqua"
+    aliases:
+      - "LEA"
+      - "Azienda Elettrica ed Acqua Losone"
+  CASA_ANZIANI:
+    canonical: "Casa per Anziani / Strutture Residenziali"
+    aliases:
+      - "Casa San Carlo"
+      - "San Carlo"
+      - "Casa Rea"
+      - "Casa per Anziani"
+      - "Residenza Terza Età"
+  CONSORZIO:
+    canonical: "Consorzio Intercomunale"
+    aliases:
+      - "Polizia Intercomunale"
+      - "Protezione Civile Locarno e Vallemaggia"
+      - "Consorzio Depurazione Acque"
+      - "CDALED"
+
+rgfcc_sections:
+  riassunto_generale:
+    code: "lett_a"
+    canonical: "Riassunto generale"
+    aliases:
+      - "Riassunto generale"
+      - "Quadro generale"
+      - "Sintesi dei conti"
+      - "Riassunto del preventivo"
+      - "Riassunto del consuntivo"
+      - "Prospetto generale"
+  conto_economico_natura:
+    code: "lett_b"
+    canonical: "Ricapitolazione per genere di conto"
+    aliases:
+      - "Ricapitolazione per genere di conto"
+      - "Conto economico per genere"
+      - "Conto economico per natura"
+      - "Articolazione per natura"
+  conto_economico_funzione:
+    code: "lett_c"
+    canonical: "Ricapitolazione per dicastero"
+    aliases:
+      - "Ricapitolazione per dicastero"
+      - "Conto economico per dicasteri"
+      - "Conto economico per funzione"
+      - "Articolazione per funzioni"
+      - "Articolazione per dicasteri"
+  conto_investimenti:
+    code: "lett_d"
+    canonical: "Conto degli investimenti"
+    aliases:
+      - "Conto degli investimenti"
+      - "Conto investimenti per genere"
+      - "Conto investimenti per funzione"
+      - "Investimenti beni amministrativi"
+  tabella_cespiti:
+    code: "lett_e"
+    canonical: "Tabella dei cespiti dei beni amministrativi"
+    aliases:
+      - "Tabella dei cespiti"
+      - "Beni amministrativi e cespiti"
+      - "Allegato e"
+      - "Elenco cespiti"
+  controllo_crediti:
+    code: "lett_f"
+    canonical: "Tabella del controllo dei crediti d'investimento"
+    aliases:
+      - "Controllo dei crediti"
+      - "Controllo crediti d'investimento"
+      - "Allegato f"
+      - "Crediti d'opera e d'investimento"
+      - "Stato dei crediti votati"
+  bilancio:
+    code: "lett_g"
+    canonical: "Bilancio (Stato patrimoniale)"
+    aliases:
+      - "Bilancio"
+      - "Stato patrimoniale"
+      - "Attivi e passivi"
+  indicatori_finanziari:
+    code: "lett_o"
+    canonical: "Indicatori finanziari ufficiali SEL"
+    aliases:
+      - "Indicatori finanziari"
+      - "Analisi finanziaria"
+      - "Indicatori SEL"
+      - "8 indicatori finanziari"
+      - "Allegato o"
+
+dicasteri:
+  0: "Amministrazione generale"
+  1: "Ordine pubblico e sicurezza, difesa"
+  2: "Formazione"
+  3: "Cultura, sport e tempo libero, Chiesa"
+  4: "Sanità"
+  5: "Socialità"
+  6: "Traffico e trasporti"
+  7: "Protezione dell'ambiente e assetto del territorio"
+  8: "Economia pubblica"
+  9: "Finanze e imposte"
+
+privacy_blacklist:
+  keywords:
+    - "naturalizzazione"
+    - "attinenza"
+    - "cittadinanza"
+    - "esproprio"
+    - "espropriazione"
+    - "ricorso"
+    - "lite"
+    - "contenzioso"
+    - "sanzione"
+    - "procedimento disciplinare"
+    - "assistenza sociale"
+    - "tutela"
+    - "curatela"
+    - "sgravio fiscale individuale"
+    - "condono d'imposta"
+    - "multa"
+    - "dati personali"
+    - "domanda di grazia"

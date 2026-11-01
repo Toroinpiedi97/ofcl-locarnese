@@ -7,9 +7,10 @@ Test live del CorteseCrawler su 3 Comuni del Locarnese con famiglie CMS distinte
 
 import asyncio
 from pathlib import Path
+
 import httpx
 
-from ofcl.fetch.crawler import CorteseCrawler, USER_AGENT
+from ofcl.fetch.crawler import USER_AGENT, CorteseCrawler
 from ofcl.seed_ref import enforce_corfin_guardrail
 
 

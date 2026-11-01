@@ -12,13 +12,15 @@ from decimal import Decimal
 from pathlib import Path
 
 import pytest
-from hypothesis import given, strategies as st
+from hypothesis import given
+from hypothesis import strategies as st
 
 from ofcl.extract.chf_parser import format_chf_swiss, parse_chf
 from ofcl.seed_ref import (
     ACCOUNTS_MCA2,
     FUNCTIONS_MCA2,
     INDICATORS_DEF,
+    POPULATION_STATPOP_2019_2026,
     TAX_MULTIPLIERS_2019_2026,
     enforce_corfin_guardrail,
     generate_seed_sql,
@@ -65,6 +67,22 @@ def test_load_19_municipalities_and_seed_sql() -> None:
     sql = generate_seed_sql(municipalities)
     assert "INSERT INTO ref.municipality" in sql
     assert "ON CONFLICT (ust_code) DO UPDATE" in sql
+    assert "INSERT INTO ref.population" in sql
+
+
+def test_statpop_population_19_comuni_coverage() -> None:
+    """Verifica che la popolazione permanente STATPOP copra tutti i 19 Comuni per gli anni 2019-2026."""
+    assert len(POPULATION_STATPOP_2019_2026) == 19
+    for years_map in POPULATION_STATPOP_2019_2026.values():
+        assert len(years_map) == 8  # 2019..2026
+        for year in range(2019, 2027):
+            assert year in years_map
+            assert years_map[year] > 0
+
+    # Sanity check su comuni chiave
+    assert POPULATION_STATPOP_2019_2026[5113][2025] == 16463  # Locarno
+    assert POPULATION_STATPOP_2019_2026[5091][2025] == 5290   # Ascona
+    assert POPULATION_STATPOP_2019_2026[5115][2025] == 6780   # Losone
 
 
 def test_parse_chf_exact_formats() -> None:

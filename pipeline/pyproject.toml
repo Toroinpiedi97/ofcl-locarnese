@@ -44,3 +44,9 @@ target-version = "py312"
 asyncio_mode = "auto"
 testpaths = ["tests"]
 pythonpath = ["src"]
+
+[dependency-groups]
+dev = [
+    "boto3-stubs>=1.43.123",
+    "types-pyyaml>=6.0.12.20261030",
+]

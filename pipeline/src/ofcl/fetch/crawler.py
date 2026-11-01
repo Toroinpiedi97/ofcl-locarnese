@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import asyncio
 import hashlib
-from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -81,7 +80,7 @@ class CorteseCrawler:
 
                 discovered.extend(docs[:max_docs_per_source])
 
-            except Exception:
+            except Exception:  # noqa: BLE001, S112
                 continue
 
         return discovered
@@ -122,5 +121,5 @@ class CorteseCrawler:
             target_path.write_bytes(content)
 
             return target_path, sha256, size_bytes
-        except Exception:
+        except Exception:  # noqa: BLE001
             return None

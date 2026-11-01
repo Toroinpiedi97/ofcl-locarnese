@@ -292,7 +292,7 @@ def main() -> int:
                 f"Righe contabili con BBox: {report['total_ledger_rows_with_bbox']} | "
                 f"Righe Cespiti (Allegato e): {report['total_cespiti_rows_with_bbox']}"
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             print(f"  [WARN] Errore su {doc_info['doc_id']}: {exc}")
 
     validation_results = run_deterministic_validation_showcase()

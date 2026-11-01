@@ -6,6 +6,7 @@ Include verifica rigorosa del guardrail C-01.
 import os
 import sys
 from pathlib import Path
+
 import psycopg
 
 FORBIDDEN_CORFIN_REF = "vrqnbdcsavgpdgijpiic"
@@ -41,27 +42,26 @@ def main() -> None:
     sql_content = seed_file.read_text(encoding="utf-8")
 
     print("Connessione a Supabase ofcl-prod...")
-    with psycopg.connect(db_url, autocommit=True) as conn:
-        with conn.cursor() as cur:
-            print("Esecuzione seed.sql...")
-            cur.execute(sql_content)
-            print("Seed completato con successo!")
+    with psycopg.connect(db_url, autocommit=True) as conn, conn.cursor() as cur:
+        print("Esecuzione seed.sql...")
+        cur.execute(sql_content)
+        print("Seed completato con successo!")
 
-            # Verifica conteggi
-            cur.execute("SELECT count(*) FROM ref.municipality;")
-            mun_count = cur.fetchone()[0]
-            cur.execute("SELECT count(*) FROM ref.account_mca2;")
-            acc_count = cur.fetchone()[0]
-            cur.execute("SELECT count(*) FROM ref.tax_multiplier;")
-            mult_count = cur.fetchone()[0]
-            cur.execute("SELECT count(*) FROM ref.indicator_def;")
-            ind_count = cur.fetchone()[0]
+        # Verifica conteggi
+        cur.execute("SELECT count(*) FROM ref.municipality;")
+        mun_count = cur.fetchone()[0]
+        cur.execute("SELECT count(*) FROM ref.account_mca2;")
+        acc_count = cur.fetchone()[0]
+        cur.execute("SELECT count(*) FROM ref.tax_multiplier;")
+        mult_count = cur.fetchone()[0]
+        cur.execute("SELECT count(*) FROM ref.indicator_def;")
+        ind_count = cur.fetchone()[0]
 
-            print(f"\n--- VERIFICA DATI CARICATI ---")
-            print(f"Comuni Locarnese (ref.municipality): {mun_count}/19")
-            print(f"Conti Piano MCA2 (ref.account_mca2): {acc_count}")
-            print(f"Moltiplicatori Fiscali (ref.tax_multiplier): {mult_count}")
-            print(f"Indicatori Ufficiali SEL (ref.indicator_def): {ind_count}/8")
+        print("\n--- VERIFICA DATI CARICATI ---")
+        print(f"Comuni Locarnese (ref.municipality): {mun_count}/19")
+        print(f"Conti Piano MCA2 (ref.account_mca2): {acc_count}")
+        print(f"Moltiplicatori Fiscali (ref.tax_multiplier): {mult_count}")
+        print(f"Indicatori Ufficiali SEL (ref.indicator_def): {ind_count}/8")
 
 
 if __name__ == "__main__":

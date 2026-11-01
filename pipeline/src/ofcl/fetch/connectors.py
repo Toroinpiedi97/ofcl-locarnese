@@ -29,6 +29,13 @@ _FISCAL_YEAR_PATTERNS = [
 _MM_NUM_RE = re.compile(r"\bMM\s*(?:N[°o.]?\s*)?(\d{1,4}(?:[-/]\d{2,4})?)\b", re.IGNORECASE)
 
 
+def _clean_href(tag: Any) -> str:
+    raw = tag.get("href", "")
+    if isinstance(raw, list):
+        return " ".join(raw).strip()
+    return str(raw).strip()
+
+
 def classify_doc_kind(title: str) -> DocKind:
     """Classifica il documento dal titolo."""
     low = title.lower()
@@ -92,7 +99,7 @@ class AssoloConnector:
         seen_urls: set[str] = set()
 
         for a in soup.find_all("a", href=True):
-            href = a["href"].strip()
+            href = _clean_href(a)
             if not cls._ASSOLO_HEX_RE.search(href):
                 continue
 
@@ -161,7 +168,7 @@ class WordPressConnector:
         seen_urls: set[str] = set()
 
         for a in soup.find_all("a", href=True):
-            href = a["href"].strip()
+            href = _clean_href(a)
             low_href = href.lower()
 
             # Link diretto a file PDF
@@ -231,7 +238,7 @@ class JoomlaConnector:
         seen_urls: set[str] = set()
 
         for a in soup.find_all("a", href=True):
-            href = a["href"].strip()
+            href = _clean_href(a)
             if "/send/" not in href and "/download/" not in href and not href.lower().endswith(".pdf"):
                 continue
 
@@ -300,7 +307,7 @@ class OrselinaConnector:
         active_rif = rif_match.group(1) if rif_match else None
 
         for a in soup.find_all("a", href=True):
-            href = a["href"].strip()
+            href = _clean_href(a)
             if "downdoc.php" not in href and "id_doc=" not in href and not href.lower().endswith(".pdf"):
                 continue
 
@@ -361,7 +368,7 @@ class LocarnoConnector:
         seen_urls: set[str] = set()
 
         for a in soup.find_all("a", href=True):
-            href = a["href"].strip()
+            href = _clean_href(a)
             low_href = href.lower()
             if not (low_href.endswith(".pdf") or "messaggi-municipali" in low_href or "finanze" in low_href):
                 continue
