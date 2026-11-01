@@ -1,26 +1,179 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* =========================================================================
+     SWISS DESIGN SYSTEM - PALETTE ACQUA CALMA & PAESAGGIO LOCARNESE
+     Conformità: docs/spec/09-ux §6.1, WCAG 2.1 AA (contrasto >= 7:1)
+     ========================================================================= */
+  --color-verbano: #0F3854;        /* Blu Verbano Profondo (Istituzionale) */
+  --color-verbano-dark: #082132;
+  --color-verzasca: #00A3C4;       /* Azzurro Ciano Verzasca (Accento interattivo) */
+  --color-verzasca-light: #38BDF8;
+  --color-brissago: #10B981;       /* Verde Smeraldo Isole di Brissago (Indicatori OK) */
+  --color-cardada: #D97706;        /* Oro Solare Cardada / Gambarogno (Attenzione SEL) */
+  --color-rubino: #DC2626;         /* Rosso Rubino (Sorpassi e criticità) */
+  --color-granito: #1E293B;        /* Granito Maggiatale / Ardesia */
+  --color-neve: #F8FAFC;           /* Bianco Neve Basodino */
+
+  --background: #F8FAFC;
+  --foreground: #0F172A;
+
+  /* Font settings: Tabular numbers per MCA2 0.01 CHF precision */
+  --font-features-mca2: "tnum" 1, "cv05" 1, "zero" 1;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-verbano: var(--color-verbano);
+  --color-verzasca: var(--color-verzasca);
+  --color-brissago: var(--color-brissago);
+  --color-cardada: var(--color-cardada);
+  --color-rubino: var(--color-rubino);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #090D16;
+    --foreground: #F1F5F9;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-feature-settings: var(--font-features-mca2);
+}
+
+/* =========================================================================
+   1. ALPINE FROSTED GLASS (Glassmorphism Istituzionale Svizzero)
+   ========================================================================= */
+.glass-alpine {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 10px 30px -10px rgba(15, 56, 84, 0.08);
+}
+
+.dark .glass-alpine,
+@media (prefers-color-scheme: dark) {
+  .glass-alpine {
+    background: rgba(15, 23, 42, 0.82);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.45);
+  }
+}
+
+.glass-alpine-header {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px) saturate(190%);
+  -webkit-backdrop-filter: blur(20px) saturate(190%);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.dark .glass-alpine-header,
+@media (prefers-color-scheme: dark) {
+  .glass-alpine-header {
+    background: rgba(9, 13, 22, 0.88);
+    backdrop-filter: blur(20px) saturate(190%);
+    -webkit-backdrop-filter: blur(20px) saturate(190%);
+    border-bottom: 1px solid rgba(30, 41, 59, 0.8);
+  }
+}
+
+/* =========================================================================
+   2. BENTO CARD & ELASTIC SPRING PHYSICS MICRO-INTERACTIONS
+   ========================================================================= */
+.bento-card {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 1rem;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s ease,
+              border-color 0.2s ease;
+}
+
+.bento-card:hover {
+  transform: translateY(-2px) scale(1.004);
+  box-shadow: 0 12px 24px -8px rgba(15, 56, 84, 0.12);
+  border-color: rgba(0, 163, 196, 0.35);
+}
+
+.dark .bento-card,
+@media (prefers-color-scheme: dark) {
+  .bento-card {
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(51, 65, 85, 0.7);
+  }
+  .bento-card:hover {
+    border-color: rgba(0, 163, 196, 0.5);
+    box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* =========================================================================
+   3. TABULAR NUMBERS (MCA2 0.01 CHF Centesimi Precisi)
+   ========================================================================= */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* =========================================================================
+   4. DIVISORI FLUIDI SVG "ACQUA CALMA"
+   ========================================================================= */
+.wave-divider {
+  overflow: hidden;
+  position: relative;
+  line-height: 0;
+}
+
+.wave-divider svg {
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 48px;
+}
+
+/* =========================================================================
+   5. ACCESSIBILITY GUARDS (WCAG 2.1 AA / eCH-0059)
+   Fallback obbligatori per preferenze di accessibilità di sistema
+   ========================================================================= */
+@media (prefers-reduced-transparency: reduce) {
+  .glass-alpine,
+  .glass-alpine-header {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: #ffffff !important;
+    border-color: #CBD5E1 !important;
+  }
+
+  .dark .glass-alpine,
+  .dark .glass-alpine-header,
+  @media (prefers-color-scheme: dark) {
+    .glass-alpine,
+    .glass-alpine-header {
+      background: #0F172A !important;
+      border-color: #334155 !important;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .bento-card:hover {
+    transform: none !important;
+  }
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { LegalBanner } from "@/components/LegalBanner";
+import { HeaderAlpine } from "@/components/HeaderAlpine";
 import { Footer } from "@/components/Footer";
 
 const geistSans = Geist({
@@ -32,6 +33,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-zinc-50 font-sans text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50">
         <LegalBanner />
+        <HeaderAlpine />
         <div className="flex-1 flex flex-col">{children}</div>
         <Footer />
       </body>
