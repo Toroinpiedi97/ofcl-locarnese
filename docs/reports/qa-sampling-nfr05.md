@@ -18,9 +18,9 @@ In conformità al requisito **NFR-05** (campionamento casuale stratificato ≥ 5
   1. *Circolo di Locarno:* Locarno (5113), Muralto (5120), Orselina (5121)
   2. *Circolo delle Isole:* Ascona (5091), Brissago (5097), Losone (5115), Ronco sopra Ascona (5125)
   3. *Circolo della Melezza:* Centovalli (5397), Terre di Pedemonte (5396)
-  4. *Circolo della Verzasca:* Verzasca (5399), Gordola (5108), Tenero-Contra (5131), Mergoscia (5117), Cugnasco-Gerra (5138)
+  4. *Circolo della Verzasca:* Verzasca (5399)
   5. *Circolo del Gambarogno:* Gambarogno (5398)
-  6. *Circolo della Navegna:* Minusio (5118), Brione sopra Minusio (5096)
+  6. *Circolo della Navegna:* Minusio (5118), Brione sopra Minusio (5096), Gordola (5108), Tenero-Contra (5131), Mergoscia (5117), Cugnasco-Gerra (5138)
   7. *Circolo dell'Onsernone:* Onsernone (5136)
 
 ---
@@ -47,7 +47,7 @@ In conformità al requisito **NFR-05** (campionamento casuale stratificato ≥ 5
 | 5125 | Ronco s/Ascona | Moltiplicatore PF | Preventivo 2026 MM 2025/08 | p. 1 | 75.00% | 75.00% | 0.00 | PASS |
 | 5398 | Gambarogno | Risultato Ordinario 2025 | MM 2025/31 Consuntivo 2025 | p. 10 | 680'000.00 CHF | 680'000.00 CHF | 0.00 CHF | PASS |
 | 5398 | Gambarogno | Tassa base rifiuti | Regolamento Rifiuti Gambarogno | p. 5 | 120.00 CHF | 120.00 CHF | 0.00 CHF | PASS |
-| 5398 | Gambarogno | Sorpasso Credito Porto | MM 2022/41 / Consuntivo 2025 f | p. 94 | -120'000.00 CHF | -120'000.00 CHF | 0.00 CHF | PASS |
+| 5398 | Gambarogno | Sorpasso Credito Indemini | MM 2023/15 / Consuntivo 2025 f | p. 112 | -90'000.00 CHF | -90'000.00 CHF | 0.00 CHF | PASS |
 | 5108 | Gordola | Autofinanziamento 2025 | MM 2025/09 Consuntivo 2025 | p. 15 | 1'890'000.00 CHF | 1'890'000.00 CHF | 0.00 CHF | PASS |
 | 5108 | Gordola | Sacco rifiuti 35L | Ordinanza Gestione Rifiuti | p. 2 | 1.25 CHF | 1.25 CHF | 0.00 CHF | PASS |
 | 5131 | Tenero-Contra | Moltiplicatore PF | Preventivo 2026 MM 2025/19 | p. 1 | 85.00% | 85.00% | 0.00 | PASS |

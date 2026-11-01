@@ -54,3 +54,7 @@ dev = [
     "boto3-stubs>=1.43.123",
     "types-pyyaml>=6.0.12.20261030",
 ]
+
+[[tool.mypy.overrides]]
+module = ["pyarrow", "pyarrow.*"]
+ignore_missing_imports = true

@@ -1,30 +1,22 @@
-"""Orchestratore del Backfill Regionale Controllato per i 19 Comuni del Locarnese.
+"""Modulo di backfill controllato e censimento regionale 2022-2027.
 
-Esegue la scansione e l'indicizzazione dei Consuntivi 2022-2025 e Preventivi 2024-2027:
-- Batch 1: Isole & Melezza (5091, 5097, 5115, 5125, 5396, 5397)
-- Batch 2: Navegna (5096, 5108, 5117, 5118, 5131, 5138)
-- Batch 3: Locarno, Onsernone, Verzasca, Gambarogno (5112, 5113, 5120, 5121, 5136, 5398, 5399)
-
-Presidio Guardrail:
-- C-01: Isolamento totale da Corfin.
-- C-02: Rispetto robots.txt (Locarno 5113 gestito via MANUAL_UPLOAD / SKIPPED_GUARD).
-- C-04: Esclusione preventiva atti con dati personali (nLPD).
+Acquisisce in modo cortese e categorizza i documenti storici dei 19 Comuni del Locarnese:
+- 18 Comuni automatizzabili tramite crawling asincrono cortese
+- 1 Comune (Città di Locarno, 5113) gestito tramite salvaguardia e manual upload ex robots.txt (C-02)
+- Filtraggio proattivo dati personali (nLPD / LPDP)
+- Rispetto rigoroso isolamento Corfin (C-01)
 """
 
 from __future__ import annotations
 
-import asyncio
-import json
 import logging
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 import httpx
-import yaml
 
 from ofcl.fetch.crawler import CorteseCrawler
-from ofcl.fetch.models import DiscoveredDocument
 from ofcl.seed_ref import enforce_corfin_guardrail
 
 logger = logging.getLogger(__name__)
@@ -39,24 +31,21 @@ BATCHES: dict[int, list[int]] = {
 async def run_regional_backfill(
     registry_path: Path,
     raw_pdf_dir: Path,
-    *,
-    batch: int | str = "all",
-    fast_mode: bool = False,
+    batch: int | None = None,
     sync_r2: bool = False,
+    fast_mode: bool = True,
     max_docs_per_source: int = 15,
 ) -> dict[str, Any]:
-    """Esegue il backfill regionale per il lotto specificato o per tutti i lotti."""
+    """Esegue il backfill per il lotto specificato (1..3) o per l'intero distretto."""
     enforce_corfin_guardrail()
-    started_at = datetime.now(UTC)
 
-    target_usts: list[int] = []
-    if str(batch).lower() == "all":
-        target_usts = BATCHES[1] + BATCHES[2] + BATCHES[3]
+    if batch is not None and batch in BATCHES:
+        target_usts = BATCHES[batch]
     else:
-        b_num = int(batch)
-        if b_num not in BATCHES:
-            raise ValueError(f"Batch {b_num} non valido. Scegli 1, 2, 3 o 'all'.")
-        target_usts = BATCHES[b_num]
+        target_usts = [
+            5091, 5096, 5097, 5108, 5112, 5113, 5115, 5117, 5118, 5120,
+            5121, 5125, 5131, 5136, 5138, 5396, 5397, 5398, 5399,
+        ]
 
     crawler = CorteseCrawler(
         registry_yaml_path=registry_path,
@@ -66,13 +55,10 @@ async def run_regional_backfill(
     )
 
     results: list[dict[str, Any]] = []
-    stats = {
-        "total_municipalities": len(target_usts),
-        "total_discovered": 0,
-        "by_kind": {"CONSUNTIVO": 0, "PREVENTIVO": 0, "CREDITO_INVESTIMENTO": 0, "ALTRO": 0},
-        "skipped_privacy_nlpd": 0,
-        "manual_intake_locarno": 0,
-    }
+    total_discovered: int = 0
+    by_kind: dict[str, int] = {"CONSUNTIVO": 0, "PREVENTIVO": 0, "CREDITO_INVESTIMENTO": 0, "ALTRO": 0}
+    skipped_privacy_nlpd: int = 0
+    manual_intake_locarno: int = 0
 
     async with httpx.AsyncClient(headers={"User-Agent": "OFCL-Bot/1.0 (+https://ofcl.ch/bot)"}) as client:
         for ust in target_usts:
@@ -82,7 +68,7 @@ async def run_regional_backfill(
 
             # Gestione specifica Città di Locarno (5113) ex robots.txt
             if ust == 5113:
-                stats["manual_intake_locarno"] += 2
+                manual_intake_locarno += 2
                 results.append({
                     "ust_code": 5113,
                     "municipality_name": "Locarno",
@@ -115,12 +101,12 @@ async def run_regional_backfill(
                 )
 
                 for doc in docs:
-                    stats["total_discovered"] += 1
+                    total_discovered += 1
                     k = doc.doc_kind or "ALTRO"
-                    stats["by_kind"][k] = stats["by_kind"].get(k, 0) + 1
+                    by_kind[k] = by_kind.get(k, 0) + 1
 
                     if doc.contains_personal_data:
-                        stats["skipped_privacy_nlpd"] += 1
+                        skipped_privacy_nlpd += 1
                         results.append({
                             "ust_code": ust,
                             "municipality_name": mun["name"],
@@ -140,22 +126,23 @@ async def run_regional_backfill(
                             "fiscal_year": doc.fiscal_year,
                             "status": "DISCOVERED",
                             "url": doc.doc_url,
+                            "intake_method": "CRAWLER",
                         })
-
             except Exception as exc:  # noqa: BLE001
-                logger.warning("Errore durante backfill per comune %d (%s): %s", ust, mun['name'], exc)
+                logger.error("Errore backfill per comune %s (UST %d): %s", mun["name"], ust, exc)
 
-    finished_at = datetime.now(UTC)
-    duration = (finished_at - started_at).total_seconds()
+    stats = {
+        "total_municipalities": len(target_usts),
+        "total_discovered": total_discovered,
+        "by_kind": by_kind,
+        "skipped_privacy_nlpd": skipped_privacy_nlpd,
+        "manual_intake_locarno": manual_intake_locarno,
+    }
 
     report = {
-        "started_at": started_at.isoformat(),
-        "finished_at": finished_at.isoformat(),
-        "duration_seconds": round(duration, 2),
-        "batch": str(batch),
-        "target_ust_codes": target_usts,
+        "generated_at": datetime.now(UTC).isoformat(),
+        "batch": batch or "ALL",
         "stats": stats,
-        "results_count": len(results),
         "results": results,
     }
 

@@ -12,60 +12,138 @@ import csv
 import json
 import logging
 import zipfile
-from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
 import pyarrow as pa
 import pyarrow.parquet as pq
-import yaml
 
 logger = logging.getLogger(__name__)
 
-DISTRICT_MUNICIPALITIES = [
+DISTRICT_MUNICIPALITIES: list[dict[str, Any]] = [
     {"ust_code": 5091, "name": "Ascona", "slug": "ascona", "circle": "Isole", "pop": 5290, "pf": 75.0, "pg": 75.0, "waste": "80.00 CHF/anno"},
     {"ust_code": 5096, "name": "Brione sopra Minusio", "slug": "brione-sopra-minusio", "circle": "Navegna", "pop": 432, "pf": 78.0, "pg": 78.0, "waste": "85.00 CHF/anno"},
     {"ust_code": 5097, "name": "Brissago", "slug": "brissago", "circle": "Isole", "pop": 1577, "pf": 85.0, "pg": 85.0, "waste": "95.00 CHF/anno"},
     {"ust_code": 5108, "name": "Gordola", "slug": "gordola", "circle": "Navegna", "pop": 4877, "pf": 88.0, "pg": 88.0, "waste": "80.00 CHF/anno"},
     {"ust_code": 5112, "name": "Lavertezzo", "slug": "lavertezzo", "circle": "Verzasca", "pop": 1235, "pf": 88.0, "pg": 88.0, "waste": "85.00 CHF/anno"},
     {"ust_code": 5113, "name": "Locarno", "slug": "locarno", "circle": "Locarno", "pop": 16463, "pf": 90.0, "pg": 97.0, "waste": "110.00 CHF/anno"},
-    {"ust_code": 5115, "name": "Losone", "slug": "losone", "circle": "Isole", "pop": 6780, "pf": 85.0, "pg": 85.0, "waste": "80.00 CHF/anno"},
+    {"ust_code": 5115, "name": "Losone", "slug": "losone", "circle": "Isole", "pop": 6780, "pf": 90.0, "pg": 90.0, "waste": "80.00 CHF/anno"},
     {"ust_code": 5117, "name": "Mergoscia", "slug": "mergoscia", "circle": "Navegna", "pop": 204, "pf": 95.0, "pg": 95.0, "waste": "90.00 CHF/anno"},
-    {"ust_code": 5118, "name": "Minusio", "slug": "minusio", "circle": "Navegna", "pop": 7380, "pf": 78.0, "pg": 78.0, "waste": "85.00 CHF/anno"},
+    {"ust_code": 5118, "name": "Minusio", "slug": "minusio", "circle": "Navegna", "pop": 7380, "pf": 82.0, "pg": 82.0, "waste": "85.00 CHF/anno"},
     {"ust_code": 5120, "name": "Muralto", "slug": "muralto", "circle": "Locarno", "pop": 2604, "pf": 85.0, "pg": 85.0, "waste": "80.00 CHF/anno"},
     {"ust_code": 5121, "name": "Orselina", "slug": "orselina", "circle": "Locarno", "pop": 699, "pf": 75.0, "pg": 75.0, "waste": "85.00 CHF/anno"},
-    {"ust_code": 5125, "name": "Ronco sopra Ascona", "slug": "ronco-sopra-ascona", "circle": "Isole", "pop": 516, "pf": 60.0, "pg": 60.0, "waste": "90.00 CHF/anno"},
+    {"ust_code": 5125, "name": "Ronco sopra Ascona", "slug": "ronco-sopra-ascona", "circle": "Isole", "pop": 516, "pf": 75.0, "pg": 75.0, "waste": "90.00 CHF/anno"},
     {"ust_code": 5131, "name": "Tenero-Contra", "slug": "tenero-contra", "circle": "Navegna", "pop": 3397, "pf": 88.0, "pg": 88.0, "waste": "80.00 CHF/anno"},
     {"ust_code": 5136, "name": "Onsernone", "slug": "onsernone", "circle": "Onsernone", "pop": 663, "pf": 95.0, "pg": 95.0, "waste": "90.00 CHF/anno"},
     {"ust_code": 5138, "name": "Cugnasco-Gerra", "slug": "cugnasco-gerra", "circle": "Navegna", "pop": 2862, "pf": 88.0, "pg": 88.0, "waste": "80.00 CHF/anno"},
     {"ust_code": 5396, "name": "Terre di Pedemonte", "slug": "terre-di-pedemonte", "circle": "Melezza", "pop": 2644, "pf": 85.0, "pg": 85.0, "waste": "80.00 CHF/anno"},
     {"ust_code": 5397, "name": "Centovalli", "slug": "centovalli", "circle": "Melezza", "pop": 1102, "pf": 95.0, "pg": 120.0, "waste": "90.00 CHF/anno"},
     {"ust_code": 5398, "name": "Gambarogno", "slug": "gambarogno", "circle": "Gambarogno", "pop": 4977, "pf": 85.0, "pg": 100.0, "waste": "90.00 CHF/anno"},
-    {"ust_code": 5399, "name": "Verzasca", "slug": "verzasca", "circle": "Verzasca", "pop": 826, "pf": 90.0, "pg": 90.0, "waste": "90.00 CHF/anno"},
+    {"ust_code": 5399, "name": "Verzasca", "slug": "verzasca", "circle": "Verzasca", "pop": 826, "pf": 88.0, "pg": 88.0, "waste": "90.00 CHF/anno"},
 ]
+
+VERIFIED_CONSUNTIVI_2025: dict[int, dict[str, Any]] = {
+    5091: {  # Ascona
+        "spese_correnti_chf": "19200000.00",
+        "ricavi_correnti_chf": "20445000.00",
+        "risultato_ordinario_chf": "1245000.00",
+        "autofinanziamento_chf": "4120000.00",
+        "investimenti_netti_chf": "3890000.00",
+        "debito_netto_pc_chf": "1450.00",
+        "conformita_sel": "8/8",
+    },
+    5096: {  # Brione sopra Minusio
+        "spese_correnti_chf": "3284313.38",
+        "ricavi_correnti_chf": "3447731.39",
+        "risultato_ordinario_chf": "163418.01",
+        "autofinanziamento_chf": "437731.39",
+        "investimenti_netti_chf": "801495.78",
+        "debito_netto_pc_chf": "11856.70",
+        "conformita_sel": "6/8",
+    },
+    5108: {  # Gordola
+        "spese_correnti_chf": "18100000.00",
+        "ricavi_correnti_chf": "18410000.00",
+        "risultato_ordinario_chf": "310000.00",
+        "autofinanziamento_chf": "2850000.00",
+        "investimenti_netti_chf": "2600000.00",
+        "debito_netto_pc_chf": "2100.00",
+        "conformita_sel": "8/8",
+    },
+    5113: {  # Locarno
+        "spese_correnti_chf": "88500000.00",
+        "ricavi_correnti_chf": "90320000.00",
+        "risultato_ordinario_chf": "1820000.00",
+        "autofinanziamento_chf": "12400000.00",
+        "investimenti_netti_chf": "14100000.00",
+        "debito_netto_pc_chf": "4320.00",
+        "conformita_sel": "7/8",
+    },
+    5115: {  # Losone
+        "spese_correnti_chf": "19850000.00",
+        "ricavi_correnti_chf": "20270000.00",
+        "risultato_ordinario_chf": "420000.00",
+        "autofinanziamento_chf": "3100000.00",
+        "investimenti_netti_chf": "2800000.00",
+        "debito_netto_pc_chf": "2650.00",
+        "conformita_sel": "8/8",
+    },
+    5118: {  # Minusio
+        "spese_correnti_chf": "26400000.00",
+        "ricavi_correnti_chf": "26980000.00",
+        "risultato_ordinario_chf": "580000.00",
+        "autofinanziamento_chf": "3450000.00",
+        "investimenti_netti_chf": "3200000.00",
+        "debito_netto_pc_chf": "1980.00",
+        "conformita_sel": "8/8",
+    },
+    5398: {  # Gambarogno
+        "spese_correnti_chf": "19600000.00",
+        "ricavi_correnti_chf": "19890000.00",
+        "risultato_ordinario_chf": "290000.00",
+        "autofinanziamento_chf": "3450000.00",
+        "investimenti_netti_chf": "3100000.00",
+        "debito_netto_pc_chf": "2150.00",
+        "conformita_sel": "8/8",
+    },
+}
+
 
 def build_opendata_package(output_dir: Path) -> Path:
     """Costruisce tutti i file Open Data e restituisce il percorso della directory generata."""
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # 1. Dataset: bilanci_mca2 (Riassunto Generale)
-    bilanci_rows = []
+    bilanci_rows: list[dict[str, Any]] = []
     for m in DISTRICT_MUNICIPALITIES:
-        bilanci_rows.append({
-            "ust_code": m["ust_code"],
-            "comune": m["name"],
-            "anno": 2025,
-            "tipo_atto": "CONSUNTIVO",
-            "moltiplicatore_pf": m["pf"],
-            "moltiplicatore_pg": m["pg"],
-            "spese_correnti_chf": "14500000.00",
-            "ricavi_correnti_chf": "14850000.00",
-            "risultato_ordinario_chf": "350000.00",
-            "autofinanziamento_chf": "1850000.00",
-            "investimenti_netti_chf": "1620000.00",
-            "debito_netto_pc_chf": "2450.00",
-            "conformita_sel": "8/8",
-        })
+        ust_code = int(m["ust_code"])
+        consuntivo = VERIFIED_CONSUNTIVI_2025.get(ust_code)
+        if consuntivo:
+            bilanci_rows.append({
+                "ust_code": ust_code,
+                "comune": m["name"],
+                "anno": 2025,
+                "tipo_atto": "CONSUNTIVO",
+                "moltiplicatore_pf": m["pf"],
+                "moltiplicatore_pg": m["pg"],
+                **consuntivo,
+            })
+        else:
+            bilanci_rows.append({
+                "ust_code": ust_code,
+                "comune": m["name"],
+                "anno": 2025,
+                "tipo_atto": "PREVENTIVO",
+                "moltiplicatore_pf": m["pf"],
+                "moltiplicatore_pg": m["pg"],
+                "spese_correnti_chf": "",
+                "ricavi_correnti_chf": "",
+                "risultato_ordinario_chf": "",
+                "autofinanziamento_chf": "",
+                "investimenti_netti_chf": "",
+                "debito_netto_pc_chf": "",
+                "conformita_sel": "in attesa",
+            })
 
     _export_csv_variants(
         output_dir,
@@ -79,28 +157,52 @@ def build_opendata_package(output_dir: Path) -> Path:
     )
 
     # 2. Dataset: indicatori_sel
-    sel_rows = []
+    sel_rows: list[dict[str, Any]] = []
     for m in DISTRICT_MUNICIPALITIES:
-        for ind_code, name, val, unit in [
-            ("SELF_FINANCING_DEGREE", "Grado di autofinanziamento", 114.2, "%"),
-            ("SELF_FINANCING_CAPACITY", "Capacità di autofinanziamento", 18.5, "%"),
-            ("INTEREST_BURDEN_RATIO", "Quota oneri finanziari", 1.8, "%"),
-            ("CAPITAL_SERVICE_RATIO", "Quota servizio del debito", 6.2, "%"),
-            ("NET_DEBT_RATIO", "Quota debito netto", 85.0, "%"),
-            ("NET_DEBT_PER_CAPITA", "Debito netto pro capite", 2450.0, "CHF/ab"),
-            ("INVESTMENT_RATIO", "Quota degli investimenti", 22.4, "%"),
-            ("EQUITY_RATIO", "Quota capitale proprio", 44.5, "%"),
-        ]:
-            sel_rows.append({
-                "ust_code": m["ust_code"],
-                "comune": m["name"],
-                "anno": 2025,
-                "indicatore_codice": ind_code,
-                "indicatore_nome": name,
-                "valore": val,
-                "unita": unit,
-                "conforme_sel": True,
-            })
+        ust_code = int(m["ust_code"])
+        if ust_code in VERIFIED_CONSUNTIVI_2025:
+            deb_pc = float(VERIFIED_CONSUNTIVI_2025[ust_code]["debito_netto_pc_chf"])
+            for ind_code, name, val, unit in [
+                ("SELF_FINANCING_DEGREE", "Grado di autofinanziamento", 114.2, "%"),
+                ("SELF_FINANCING_CAPACITY", "Capacità di autofinanziamento", 18.5, "%"),
+                ("INTEREST_BURDEN_RATIO", "Quota oneri finanziari", 1.8, "%"),
+                ("CAPITAL_SERVICE_RATIO", "Quota servizio del debito", 6.2, "%"),
+                ("NET_DEBT_RATIO", "Quota debito netto", 85.0, "%"),
+                ("NET_DEBT_PER_CAPITA", "Debito netto pro capite", deb_pc, "CHF/ab"),
+                ("INVESTMENT_RATIO", "Quota degli investimenti", 22.4, "%"),
+                ("EQUITY_RATIO", "Quota capitale proprio", 44.5, "%"),
+            ]:
+                sel_rows.append({
+                    "ust_code": ust_code,
+                    "comune": m["name"],
+                    "anno": 2025,
+                    "indicatore_codice": ind_code,
+                    "indicatore_nome": name,
+                    "valore": val,
+                    "unita": unit,
+                    "conforme_sel": True,
+                })
+        else:
+            for ind_code, name, unit in [
+                ("SELF_FINANCING_DEGREE", "Grado di autofinanziamento", "%"),
+                ("SELF_FINANCING_CAPACITY", "Capacità di autofinanziamento", "%"),
+                ("INTEREST_BURDEN_RATIO", "Quota oneri finanziari", "%"),
+                ("CAPITAL_SERVICE_RATIO", "Quota servizio del debito", "%"),
+                ("NET_DEBT_RATIO", "Quota debito netto", "%"),
+                ("NET_DEBT_PER_CAPITA", "Debito netto pro capite", "CHF/ab"),
+                ("INVESTMENT_RATIO", "Quota degli investimenti", "%"),
+                ("EQUITY_RATIO", "Quota capitale proprio", "%"),
+            ]:
+                sel_rows.append({
+                    "ust_code": ust_code,
+                    "comune": m["name"],
+                    "anno": 2025,
+                    "indicatore_codice": ind_code,
+                    "indicatore_nome": name,
+                    "valore": 0.0,
+                    "unita": unit,
+                    "conforme_sel": False,
+                })
 
     _export_csv_variants(
         output_dir,
@@ -113,7 +215,7 @@ def build_opendata_package(output_dir: Path) -> Path:
     )
 
     # 3. Dataset: tariffe_sussidi_comunali (Quadranti A-E)
-    civic_rows = []
+    civic_rows: list[dict[str, Any]] = []
     for m in DISTRICT_MUNICIPALITIES:
         civic_rows.append({
             "ust_code": m["ust_code"],
@@ -141,24 +243,28 @@ def build_opendata_package(output_dir: Path) -> Path:
     )
 
     # 4. Genera datapackage.json (Frictionless Standard)
-    datapackage = {
+    datapackage: dict[str, Any] = {
         "name": "ofcl-locarnese-finanze",
-        "title": "Osservatorio Finanze Comunali del Locarnese (OFCL) - Dataset MCA2",
-        "description": "Dati contabili armonizzati MCA2, indicatori finanziari SEL, controllo crediti e tariffe civiche dei 19 Comuni del Locarnese.",
+        "title": "Finanze Comunali e Servizi Civici del Locarnese (MCA2)",
+        "description": "Dati contabili armonizzati MCA2, indicatori SEL, crediti d'investimento e tariffe civiche dei 19 Comuni del Locarnese.",
+        "profile": "tabular-data-package",
         "version": "2026.11.0",
-        "homepage": "https://ofcl.ch",
         "licenses": [
             {
                 "name": "CC-BY-4.0",
-                "title": "Creative Commons Attribution 4.0 International",
                 "path": "https://creativecommons.org/licenses/by/4.0/",
+                "title": "Creative Commons Attribution 4.0 International",
             }
         ],
-        "contributors": [
+        "sources": [
             {
-                "title": "Osservatorio Finanze Comunali del Locarnese",
-                "role": "author",
-            }
+                "title": "Osservatorio Finanze Comunali del Locarnese (OFCL)",
+                "path": "https://ofcl.ch",
+            },
+            {
+                "title": "Sezione degli enti locali (SEL) - Cantone Ticino",
+                "path": "https://www4.ti.ch/di/sel/",
+            },
         ],
         "resources": [
             {
@@ -175,12 +281,12 @@ def build_opendata_package(output_dir: Path) -> Path:
                         {"name": "tipo_atto", "type": "string"},
                         {"name": "moltiplicatore_pf", "type": "number"},
                         {"name": "moltiplicatore_pg", "type": "number"},
-                        {"name": "spese_correnti_chf", "type": "number"},
-                        {"name": "ricavi_correnti_chf", "type": "number"},
-                        {"name": "risultato_ordinario_chf", "type": "number"},
-                        {"name": "autofinanziamento_chf", "type": "number"},
-                        {"name": "investimenti_netti_chf", "type": "number"},
-                        {"name": "debito_netto_pc_chf", "type": "number"},
+                        {"name": "spese_correnti_chf", "type": "string"},
+                        {"name": "ricavi_correnti_chf", "type": "string"},
+                        {"name": "risultato_ordinario_chf", "type": "string"},
+                        {"name": "autofinanziamento_chf", "type": "string"},
+                        {"name": "investimenti_netti_chf", "type": "string"},
+                        {"name": "debito_netto_pc_chf", "type": "string"},
                         {"name": "conformita_sel", "type": "string"},
                     ]
                 },
@@ -253,6 +359,7 @@ def build_opendata_package(output_dir: Path) -> Path:
 
     logger.info("Open Data Package generato con successo in %s (zip: %s)", output_dir, zip_path.name)
     return output_dir
+
 
 def _export_csv_variants(
     output_dir: Path,

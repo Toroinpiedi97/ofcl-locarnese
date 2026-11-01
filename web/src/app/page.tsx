@@ -69,53 +69,53 @@ export default function HomePage() {
           {/* Griglia 4 Grandi Cifre Distrettuali */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 pt-6">
             <div className="bento-card p-4 bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800">
-              <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 font-medium">
+              <div className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
                 <Building2 className="w-4 h-4 text-[#00A3C4]" />
                 <span>Comuni Monitorati</span>
               </div>
               <div className="font-mono text-2xl font-bold tabular-nums text-slate-900 dark:text-white mt-1">
                 {MUNICIPALITIES.length} / 19
               </div>
-              <div className="text-[11px] text-slate-400 mt-0.5">
+              <div className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">
                 100% Distretto di Locarno
               </div>
             </div>
 
             <div className="bento-card p-4 bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800">
-              <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 font-medium">
-                <Users className="w-4 h-4 text-emerald-500" />
+              <div className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
+                <Users className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>Popolazione Residente</span>
               </div>
               <div className="font-mono text-2xl font-bold tabular-nums text-slate-900 dark:text-white mt-1">
                 {totalPop.toLocaleString("de-CH")}
               </div>
-              <div className="text-[11px] text-slate-400 mt-0.5">
+              <div className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">
                 Abitanti (STATPOP 2025/2026)
               </div>
             </div>
 
             <div className="bento-card p-4 bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800">
-              <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 font-medium">
-                <Percent className="w-4 h-4 text-amber-500" />
+              <div className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
+                <Percent className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                 <span>Moltiplicatore Medio</span>
               </div>
               <div className="font-mono text-2xl font-bold tabular-nums text-slate-900 dark:text-white mt-1">
                 {avgMultiplier}%
               </div>
-              <div className="text-[11px] text-slate-400 mt-0.5">
-                Range: 60% (Ronco) – 95%
+              <div className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">
+                Range: 75% (Ronco) – 95%
               </div>
             </div>
 
             <div className="bento-card p-4 bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800">
-              <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 font-medium">
+              <div className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
                 <Coins className="w-4 h-4 text-[#0F3854] dark:text-cyan-400" />
                 <span>Investimenti Netti</span>
               </div>
               <div className="font-mono text-2xl font-bold tabular-nums text-slate-900 dark:text-white mt-1">
                 {totalInvestments} M
               </div>
-              <div className="text-[11px] text-slate-400 mt-0.5">
+              <div className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">
                 CHF consuntivati / anno
               </div>
             </div>

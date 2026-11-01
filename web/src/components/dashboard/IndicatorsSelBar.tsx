@@ -169,7 +169,7 @@ export function IndicatorsSelBar({
   return (
     <div className="flex flex-col gap-1.5 w-full">
       <div className="flex items-center justify-between text-[11px]">
-        <span className="text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1">
+        <span className="text-slate-700 dark:text-slate-300 font-medium flex items-center gap-1">
           <span>Indicatori SEL (Art. 22 RGFCC)</span>
         </span>
         <span

@@ -233,7 +233,7 @@ export const INVESTMENT_CREDITS: InvestmentCredit[] = [
     municipality_name: "Gambarogno",
     account_code: "640.5010.050",
     description: "Messa in sicurezza versante montano e regimazione acque Indemini",
-    mm_reference: "MM 2023/45",
+    mm_reference: "MM 2023/15",
     vote_date: "2023-11-27",
     fiscal_year: 2025,
     voted_credit_chf: 1600000.0,

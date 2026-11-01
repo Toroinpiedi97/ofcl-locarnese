@@ -109,27 +109,27 @@ export default async function MunicipalityDetailPage({ params }: PageProps) {
             {/* Indicatori Rapidi Header */}
             <div className="flex flex-wrap items-center gap-3">
               <div className="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs text-right">
-                <span className="text-[10px] font-semibold uppercase text-slate-500 block">
+                <span className="text-[10px] font-semibold uppercase text-slate-600 dark:text-slate-400 block">
                   Moltiplicatore PF 2026
                 </span>
                 <div className="font-mono text-2xl font-bold tabular-nums text-[#0F3854] dark:text-cyan-400">
                   {mun.tax_multiplier_pf}%
                 </div>
                 {mun.has_differentiated_pg && (
-                  <span className="text-[10px] font-mono text-amber-600 dark:text-amber-400 block">
+                  <span className="text-[10px] font-mono text-amber-800 dark:text-amber-300 block">
                     PG: {mun.tax_multiplier_pg}%
                   </span>
                 )}
               </div>
 
               <div className="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs text-right">
-                <span className="text-[10px] font-semibold uppercase text-slate-500 block">
+                <span className="text-[10px] font-semibold uppercase text-slate-600 dark:text-slate-400 block">
                   Abitanti (STATPOP)
                 </span>
                 <div className="font-mono text-2xl font-bold tabular-nums text-slate-900 dark:text-white">
                   {mun.population.toLocaleString("de-CH")}
                 </div>
-                <span className="text-[10px] text-slate-400 block">
+                <span className="text-[10px] text-slate-600 dark:text-slate-400 block">
                   Residenza permanente
                 </span>
               </div>
@@ -191,7 +191,7 @@ export default async function MunicipalityDetailPage({ params }: PageProps) {
                             PF: {val.pf}%
                           </span>
                           {mun.has_differentiated_pg && (
-                            <span className="text-amber-600 dark:text-amber-400 text-[11px]">
+                            <span className="text-amber-800 dark:text-amber-300 text-[11px]">
                               PG: {val.pg}%
                             </span>
                           )}
@@ -246,7 +246,7 @@ export default async function MunicipalityDetailPage({ params }: PageProps) {
               Atti Ufficiali & Trasparenza Legale (Art. 192 LOC)
             </h2>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 max-w-2xl leading-relaxed">
+          <p className="text-xs text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
             I dati sopra esposti sono estratti deterministicamente dai fascicoli ufficiali dei Preventivi e Consuntivi
             approvati dal Consiglio Comunale. Fanno fede unicamente gli atti esposti all&apos;Albo Comunale (art. 192 LOC).
           </p>
@@ -256,7 +256,7 @@ export default async function MunicipalityDetailPage({ params }: PageProps) {
               <div className="font-semibold text-slate-800 dark:text-slate-200">
                 Ultimo Atto Riconciliato: {mun.summary_30s.latest_mm_reference}
               </div>
-              <div className="text-slate-500 dark:text-slate-400 text-[11px] mt-0.5">
+              <div className="text-slate-600 dark:text-slate-400 text-[11px] mt-0.5">
                 Archiviato con hash SHA-256 in conformità alle regole nLPD / privacy.
               </div>
             </div>
@@ -266,7 +266,7 @@ export default async function MunicipalityDetailPage({ params }: PageProps) {
                 href={`/segnala?comune=${mun.slug}&ust=${mun.ust_code}`}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-medium hover:text-slate-900 dark:hover:text-white transition-colors"
               >
-                <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+                <AlertTriangle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                 <span>Segnala Discrepanza</span>
               </Link>
               <Link

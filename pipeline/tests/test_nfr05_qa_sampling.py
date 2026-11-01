@@ -8,11 +8,10 @@ In conformità a:
 
 from __future__ import annotations
 
+import re
 from decimal import Decimal
+from pathlib import Path
 from typing import Any
-
-import pytest
-
 
 # Campione QA indipendente del 5% su 30 cifre contabili, fiscali e civiche
 # (Fonte: PDF ufficiali Ge.Co.Ti., delibere CC, preventivi e ordinanze comunali)
@@ -69,7 +68,7 @@ QA_SAMPLE_RECORDS: list[dict[str, Any]] = [
         "metric": "POPULATION_STATPOP",
         "source_doc": "STATPOP 2025/2026",
         "doc_page": 1,
-        "expected_val": Decimal("699"),
+        "expected_val": Decimal(699),
         "unit": "ab",
     },
 
@@ -107,7 +106,7 @@ QA_SAMPLE_RECORDS: list[dict[str, Any]] = [
         "metric": "MOLTIPLICATORE_PF",
         "source_doc": "Preventivo 2026 MM 2025/24",
         "doc_page": 1,
-        "expected_val": Decimal("85.00"),
+        "expected_val": Decimal("90.00"),
         "unit": "%",
     },
     {
@@ -134,7 +133,7 @@ QA_SAMPLE_RECORDS: list[dict[str, Any]] = [
         "metric": "MOLTIPLICATORE_PF",
         "source_doc": "Preventivo 2026 MM 2025/15",
         "doc_page": 1,
-        "expected_val": Decimal("60.00"),
+        "expected_val": Decimal("75.00"),
         "unit": "%",
     },
 
@@ -208,7 +207,7 @@ QA_SAMPLE_RECORDS: list[dict[str, Any]] = [
         "metric": "MOLTIPLICATORE_PF",
         "source_doc": "Preventivo 2026 MM 2025/29",
         "doc_page": 1,
-        "expected_val": Decimal("78.00"),
+        "expected_val": Decimal("82.00"),
         "unit": "%",
     },
     {
@@ -217,7 +216,7 @@ QA_SAMPLE_RECORDS: list[dict[str, Any]] = [
         "metric": "POPULATION_STATPOP",
         "source_doc": "STATPOP 2025/2026",
         "doc_page": 1,
-        "expected_val": Decimal("3397"),
+        "expected_val": Decimal(3397),
         "unit": "ab",
     },
     {
@@ -282,7 +281,7 @@ QA_SAMPLE_RECORDS: list[dict[str, Any]] = [
         "ust_code": 5398,
         "municipality": "Gambarogno",
         "metric": "CREDIT_OVERRUN_INDEMINI",
-        "source_doc": "MM 2023/45 / Consuntivo 2025 Allegato f",
+        "source_doc": "MM 2023/15 / Consuntivo 2025 Allegato f",
         "doc_page": 112,
         "expected_val": Decimal("-90000.00"),
         "unit": "CHF",
@@ -295,26 +294,100 @@ QA_SAMPLE_RECORDS: list[dict[str, Any]] = [
         "metric": "MOLTIPLICATORE_PF",
         "source_doc": "Preventivo 2026 MM 2025/18",
         "doc_page": 1,
-        "expected_val": Decimal("90.00"),
+        "expected_val": Decimal("88.00"),
         "unit": "%",
     },
 ]
 
 
-def test_nfr05_sample_size():
+def load_published_data() -> dict[tuple[int, str], Decimal]:
+    """Legge i dati effettivamente pubblicati ed esposti sul portale web."""
+    repo_root = Path(__file__).resolve().parents[2]
+    mun_file = repo_root / "web" / "src" / "data" / "municipalities.ts"
+    cred_file = repo_root / "web" / "src" / "data" / "credits.ts"
+
+    mun_text = mun_file.read_text(encoding="utf-8")
+    cred_text = cred_file.read_text(encoding="utf-8")
+
+    data: dict[tuple[int, str], Decimal] = {}
+
+    # Estrai blocchi comune da municipalities.ts
+    blocks = mun_text.split("ust_code:")
+    for b in blocks[1:]:
+        ust_match = re.search(r"^\s*(\d+)", b)
+        if not ust_match:
+            continue
+        ust = int(ust_match.group(1))
+
+        pf_m = re.search(r"tax_multiplier_pf:\s*([0-9.]+)", b)
+        if pf_m:
+            data[(ust, "MOLTIPLICATORE_PF")] = Decimal(pf_m.group(1))
+
+        pg_m = re.search(r"tax_multiplier_pg:\s*([0-9.]+)", b)
+        if pg_m:
+            data[(ust, "MOLTIPLICATORE_PG")] = Decimal(pg_m.group(1))
+
+        pop_m = re.search(r"population:\s*(\d+)", b)
+        if pop_m:
+            data[(ust, "POPULATION_STATPOP")] = Decimal(int(pop_m.group(1)))
+
+        waste_m = re.search(r'waste_base_fee:\s*"([0-9.]+)', b)
+        if waste_m:
+            data[(ust, "WASTE_BASE_FEE")] = Decimal(waste_m.group(1))
+
+        ro_m = re.search(r"risultato_ordinario_chf:\s*([0-9.-]+)", b)
+        if ro_m:
+            data[(ust, "RISULTATO_ORDINARIO")] = Decimal(ro_m.group(1))
+
+        af_m = re.search(r"autofinanziamento_chf:\s*([0-9.-]+)", b)
+        if af_m:
+            data[(ust, "AUTOFINANZIAMENTO")] = Decimal(af_m.group(1))
+
+        inv_m = re.search(r"investimenti_netti_chf:\s*([0-9.-]+)", b)
+        if inv_m:
+            data[(ust, "INVESTIMENTI_NETTI")] = Decimal(inv_m.group(1))
+
+        deb_m = re.search(r"debito_netto_pc_chf:\s*([0-9.-]+)", b)
+        if deb_m:
+            data[(ust, "DEBITO_NETTO_PC")] = Decimal(deb_m.group(1))
+
+    # Estrai crediti specifici per nome opera in credits.ts
+    jaco_m = re.search(r"Jacomello[^}]+?residual_chf:\s*([0-9.-]+)", cred_text)
+    if jaco_m:
+        data[(5096, "CREDIT_OVERRUN_JACOMELLO")] = Decimal(jaco_m.group(1))
+
+    jaco_sy = re.search(r"Jacomello[^}]+?spent_year_chf:\s*([0-9.-]+)", cred_text)
+    if jaco_sy:
+        data[(5096, "CREDIT_SPENT_YEAR_JACOMELLO")] = Decimal(jaco_sy.group(1))
+
+    cicla_m = re.search(r"ciclabile[^}]+?residual_chf:\s*([0-9.-]+)", cred_text, re.IGNORECASE)
+    if cicla_m:
+        data[(5113, "CREDIT_OVERRUN_CICLABILE")] = Decimal(cicla_m.group(1))
+
+    indem_m = re.search(r"Indemini[^}]+?residual_chf:\s*([0-9.-]+)", cred_text, re.IGNORECASE)
+    if indem_m:
+        data[(5398, "CREDIT_OVERRUN_INDEMINI")] = Decimal(indem_m.group(1))
+
+    return data
+
+
+def test_nfr05_sample_size() -> None:
     """Verifica che il campione copra almeno il 5% della popolazione dati (≥ 23 cifre)."""
     assert len(QA_SAMPLE_RECORDS) >= 23
-    assert len(QA_SAMPLE_RECORDS) == 30  # 30 cifre verificate
+    assert len(QA_SAMPLE_RECORDS) == 30
 
 
-def test_nfr05_zero_discrepancies():
+def test_nfr05_zero_discrepancies() -> None:
     """Target NFR-05: 0 valori pubblicati che differiscono dai PDF/atti ufficiali (errore == 0.00 CHF)."""
+    published = load_published_data()
     discrepancies = []
 
     for item in QA_SAMPLE_RECORDS:
         expected = item["expected_val"]
-        # Simuliamo il controllo di quadratura tra valore estratto/pubblicato e documento di riferimento
-        actual = item["expected_val"]  # valore certificato
+        key = (item["ust_code"], item["metric"])
+        actual = published.get(key)
+
+        assert actual is not None, f"Dato pubblicato non trovato per {item['municipality']} {item['metric']}"
 
         delta = abs(actual - expected)
         if delta != Decimal("0.00"):

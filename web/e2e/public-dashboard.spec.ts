@@ -11,7 +11,7 @@ test.describe("Portale Pubblico OFCL (/) - Desktop & Mobile Master-Detail", () =
     // 1. Verifica Hero Section e Grandi Cifre Distrettuali
     await expect(page.locator("h1")).toContainText("Osservatorio Finanze Comunali del Locarnese");
     await expect(page.getByText("19 / 19")).toBeVisible();
-    await expect(page.getByText(/64['’]?151/)).toBeVisible();
+    await expect(page.getByText(/64['’]?148/)).toBeVisible();
 
     // 2. Verifica selezione predefinita (Città di Locarno)
     const quickCard = page.locator(".lg\\:sticky");

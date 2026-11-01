@@ -121,7 +121,7 @@ export default async function MunicipalityCreditsPage({ params }: PageProps) {
                 </span>
                 <div
                   className={`font-mono text-xl font-bold tabular-nums ${
-                    overruns.length > 0 ? "text-red-600" : "text-emerald-600"
+                    overruns.length > 0 ? "text-red-700 dark:text-red-400" : "text-emerald-700 dark:text-emerald-400"
                   }`}
                 >
                   {overruns.length > 0 ? `${overruns.length} Rilevati` : "Nessuno (0)"}
@@ -172,10 +172,10 @@ export default async function MunicipalityCreditsPage({ params }: PageProps) {
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                   <div className="space-y-1 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-mono text-[11px] px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium">
+                      <span className="font-mono text-[11px] px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium">
                         Conto {credit.account_code}
                       </span>
-                      <span className="font-mono text-[11px] text-slate-400">
+                      <span className="font-mono text-[11px] text-slate-600 dark:text-slate-400">
                         {credit.mm_reference}
                       </span>
                     </div>
@@ -186,7 +186,7 @@ export default async function MunicipalityCreditsPage({ params }: PageProps) {
 
                   <div className="flex items-center gap-4 shrink-0">
                     <div className="text-right">
-                      <span className="text-[10px] uppercase font-semibold text-slate-400 block">
+                      <span className="text-[10px] uppercase font-semibold text-slate-600 dark:text-slate-400 block">
                         Credito Votato
                       </span>
                       <div className="font-mono text-base font-bold tabular-nums text-slate-800 dark:text-slate-200">
@@ -199,12 +199,12 @@ export default async function MunicipalityCreditsPage({ params }: PageProps) {
                     </div>
 
                     <div className="text-right">
-                      <span className="text-[10px] uppercase font-semibold text-slate-400 block">
+                      <span className="text-[10px] uppercase font-semibold text-slate-600 dark:text-slate-400 block">
                         {isOverrun ? "Sorpasso (Residuo)" : "Credito Residuo"}
                       </span>
                       <div
                         className={`font-mono text-base font-bold tabular-nums ${
-                          isOverrun ? "text-red-600" : "text-emerald-600"
+                          isOverrun ? "text-red-700 dark:text-red-400" : "text-emerald-700 dark:text-emerald-400"
                         }`}
                       >
                         {credit.residual_chf.toLocaleString("de-CH", {
@@ -226,7 +226,7 @@ export default async function MunicipalityCreditsPage({ params }: PageProps) {
 
                 <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
                   <div className="flex items-center justify-between text-xs font-mono mb-1.5">
-                    <span className="text-slate-500">
+                    <span className="text-slate-600 dark:text-slate-400">
                       Speso a oggi:{" "}
                       <strong className="text-slate-800 dark:text-slate-200">
                         {credit.spent_total_chf.toLocaleString("de-CH", {
@@ -238,7 +238,7 @@ export default async function MunicipalityCreditsPage({ params }: PageProps) {
                     </span>
                     <span
                       className={`font-bold tabular-nums ${
-                        isOverrun ? "text-red-600" : "text-slate-700 dark:text-slate-300"
+                        isOverrun ? "text-red-700 dark:text-red-400" : "text-slate-700 dark:text-slate-300"
                       }`}
                     >
                       {pct.toFixed(1)}% del credito
@@ -253,7 +253,7 @@ export default async function MunicipalityCreditsPage({ params }: PageProps) {
                   </div>
                 </div>
 
-                <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400">
+                <div className="mt-3 flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-400">
                   <span className="flex items-center gap-1">
                     <FileText className="w-3 h-3" />
                     <span>Allegato f · Pagina {credit.page_ref}</span>

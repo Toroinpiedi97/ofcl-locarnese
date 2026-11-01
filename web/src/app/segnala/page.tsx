@@ -198,10 +198,10 @@ function SegnalaContent() {
                   <span
                     className={`text-[10px] font-mono ${
                       message.length > 500
-                        ? "text-red-500 font-bold"
+                        ? "text-red-600 font-bold"
                         : message.length >= 10
-                        ? "text-emerald-600 dark:text-emerald-400"
-                        : "text-slate-400"
+                        ? "text-emerald-700 dark:text-emerald-400"
+                        : "text-slate-600 dark:text-slate-400"
                     }`}
                   >
                     {message.length} / 500 caratteri
@@ -246,8 +246,8 @@ function SegnalaContent() {
               )}
 
               <div className="pt-3 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="text-[11px] text-slate-400 flex items-center gap-1.5 self-start sm:self-auto">
-                  <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
+                <div className="text-[11px] text-slate-600 dark:text-slate-400 flex items-center gap-1.5 self-start sm:self-auto">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <span>Tutela nLPD: massimo 3 ticket/ora/IP, hashing SHA-256</span>
                 </div>
 

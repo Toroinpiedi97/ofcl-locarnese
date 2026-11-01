@@ -10,6 +10,9 @@ jobs:
   scheduled-crawl:
     name: Crawl Cortese & Pipeline MCA2
     runs-on: ubuntu-latest
+    env:
+      REVALIDATE_SECRET: ${{ secrets.REVALIDATE_SECRET }}
+      SITE_URL: ${{ secrets.SITE_URL }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -52,10 +55,7 @@ jobs:
       - name: Trigger Webhook Revalidation
         if: env.REVALIDATE_SECRET != '' && env.SITE_URL != ''
         run: |
-          curl -X POST "${{ env.SITE_URL }}/api/revalidate" \
+          curl -fsS -X POST "${{ env.SITE_URL }}/api/revalidate" \
             -H "Authorization: Bearer ${{ secrets.REVALIDATE_SECRET }}" \
             -H "Content-Type: application/json" \
             -d '{"tag": "mca2-data"}'
-        env:
-          REVALIDATE_SECRET: ${{ secrets.REVALIDATE_SECRET }}
-          SITE_URL: ${{ secrets.SITE_URL }}

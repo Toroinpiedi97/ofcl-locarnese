@@ -1,20 +1,24 @@
 {
   "name": "ofcl-locarnese-finanze",
-  "title": "Osservatorio Finanze Comunali del Locarnese (OFCL) - Dataset MCA2",
-  "description": "Dati contabili armonizzati MCA2, indicatori finanziari SEL, controllo crediti e tariffe civiche dei 19 Comuni del Locarnese.",
+  "title": "Finanze Comunali e Servizi Civici del Locarnese (MCA2)",
+  "description": "Dati contabili armonizzati MCA2, indicatori SEL, crediti d'investimento e tariffe civiche dei 19 Comuni del Locarnese.",
+  "profile": "tabular-data-package",
   "version": "2026.11.0",
-  "homepage": "https://ofcl.ch",
   "licenses": [
     {
       "name": "CC-BY-4.0",
-      "title": "Creative Commons Attribution 4.0 International",
-      "path": "https://creativecommons.org/licenses/by/4.0/"
+      "path": "https://creativecommons.org/licenses/by/4.0/",
+      "title": "Creative Commons Attribution 4.0 International"
     }
   ],
-  "contributors": [
+  "sources": [
     {
-      "title": "Osservatorio Finanze Comunali del Locarnese",
-      "role": "author"
+      "title": "Osservatorio Finanze Comunali del Locarnese (OFCL)",
+      "path": "https://ofcl.ch"
+    },
+    {
+      "title": "Sezione degli enti locali (SEL) - Cantone Ticino",
+      "path": "https://www4.ti.ch/di/sel/"
     }
   ],
   "resources": [
@@ -52,27 +56,27 @@
           },
           {
             "name": "spese_correnti_chf",
-            "type": "number"
+            "type": "string"
           },
           {
             "name": "ricavi_correnti_chf",
-            "type": "number"
+            "type": "string"
           },
           {
             "name": "risultato_ordinario_chf",
-            "type": "number"
+            "type": "string"
           },
           {
             "name": "autofinanziamento_chf",
-            "type": "number"
+            "type": "string"
           },
           {
             "name": "investimenti_netti_chf",
-            "type": "number"
+            "type": "string"
           },
           {
             "name": "debito_netto_pc_chf",
-            "type": "number"
+            "type": "string"
           },
           {
             "name": "conformita_sel",

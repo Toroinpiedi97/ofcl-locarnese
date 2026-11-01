@@ -85,7 +85,7 @@ export function CivicDeepDiveBento({ municipality }: CivicDeepDiveBentoProps) {
               </li>
             </ul>
           </div>
-          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-400">
+          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-600 dark:text-slate-400">
             Regolamento tariffe di causalità approvato
           </div>
         </div>
@@ -105,7 +105,7 @@ export function CivicDeepDiveBento({ municipality }: CivicDeepDiveBentoProps) {
             <ul className="space-y-2.5 text-xs">
               <li className="flex items-start justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2">
                 <span className="text-slate-600 dark:text-slate-400">Assegno Comunale di Nascita</span>
-                <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                <span className="font-mono font-bold text-emerald-700 dark:text-emerald-400">
                   500.00 CHF / neonato
                 </span>
               </li>
@@ -119,13 +119,13 @@ export function CivicDeepDiveBento({ municipality }: CivicDeepDiveBentoProps) {
               </li>
               <li className="flex items-start justify-between gap-2">
                 <span className="text-slate-600 dark:text-slate-400">Sussidi Attività Sport & Musica</span>
-                <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                <span className="font-mono font-bold text-emerald-700 dark:text-emerald-400">
                   Fino a 200 CHF / giovane
                 </span>
               </li>
             </ul>
           </div>
-          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-400">
+          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-600 dark:text-slate-400">
             Contributi integrativi ai sussidi cantonali
           </div>
         </div>
@@ -149,7 +149,7 @@ export function CivicDeepDiveBento({ municipality }: CivicDeepDiveBentoProps) {
               </li>
               <li className="flex items-start justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2">
                 <span className="text-slate-600 dark:text-slate-400">Agevolazioni Lidi & Balneazione</span>
-                <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                <span className="font-semibold text-emerald-700 dark:text-emerald-400">
                   Sconti per residenti AVS/AI
                 </span>
               </li>
@@ -159,7 +159,7 @@ export function CivicDeepDiveBento({ municipality }: CivicDeepDiveBentoProps) {
               </li>
             </ul>
           </div>
-          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-400">
+          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-600 dark:text-slate-400">
             In collaborazione con i consorzi sanitari regionali
           </div>
         </div>
@@ -179,7 +179,7 @@ export function CivicDeepDiveBento({ municipality }: CivicDeepDiveBentoProps) {
             <ul className="space-y-2.5 text-xs">
               <li className="flex items-start justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2">
                 <span className="text-slate-600 dark:text-slate-400">Fondo Comunale per l&apos;Energia</span>
-                <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                <span className="font-semibold text-emerald-700 dark:text-emerald-400">
                   Incentivi solare & termopompe
                 </span>
               </li>
@@ -195,7 +195,7 @@ export function CivicDeepDiveBento({ municipality }: CivicDeepDiveBentoProps) {
               </li>
             </ul>
           </div>
-          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-400">
+          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-600 dark:text-slate-400">
             Cumulabile con incentivi cantonali FER Ticino
           </div>
         </div>
@@ -214,17 +214,17 @@ export function CivicDeepDiveBento({ municipality }: CivicDeepDiveBentoProps) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               <div>
-                <span className="text-slate-400 block mb-0.5">Sede Municipale</span>
+                <span className="text-slate-600 dark:text-slate-400 block mb-0.5">Sede Municipale</span>
                 <p className="font-semibold text-slate-800 dark:text-slate-200">
                   {municipality.seat}
                 </p>
-                <div className="mt-2 text-slate-500">
+                <div className="mt-2 text-slate-600 dark:text-slate-400">
                   Circolo elettorale e giudiziario di {municipality.circle}
                 </div>
               </div>
 
               <div>
-                <span className="text-slate-400 block mb-0.5">Enti & Aziende Amministrate</span>
+                <span className="text-slate-600 dark:text-slate-400 block mb-0.5">Enti & Aziende Amministrate</span>
                 <ul className="space-y-1">
                   {municipality.entities.map((e, idx) => (
                     <li key={idx} className="font-mono text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
@@ -237,7 +237,7 @@ export function CivicDeepDiveBento({ municipality }: CivicDeepDiveBentoProps) {
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
+          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-400">
             <span>Fanno fede gli atti esposti all&apos;Albo ex art. 192 LOC</span>
             <span className="font-mono">Codice UST {municipality.ust_code}</span>
           </div>

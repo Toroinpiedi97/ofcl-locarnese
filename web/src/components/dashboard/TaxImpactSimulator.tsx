@@ -214,7 +214,7 @@ export function TaxImpactSimulator({
                 aria-label="Imposta cantonale base in CHF"
                 className="w-full py-1.5 px-2.5 rounded-lg text-xs font-mono font-bold tabular-nums bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-right text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#00A3C4]"
               />
-              <span className="absolute right-8 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 pointer-events-none">
+              <span className="absolute right-8 top-1/2 -translate-y-1/2 text-[10px] text-slate-600 dark:text-slate-400 pointer-events-none">
                 CHF
               </span>
             </div>
@@ -244,7 +244,7 @@ export function TaxImpactSimulator({
       {/* Griglia Risultati Simulazione */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 mb-4">
         <div>
-          <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 block">
+          <span className="text-[11px] font-medium text-slate-700 dark:text-slate-300 block">
             Imposta Comunale Annua
           </span>
           <div className="font-mono text-2xl font-bold tabular-nums text-slate-900 dark:text-white mt-0.5">
@@ -254,28 +254,28 @@ export function TaxImpactSimulator({
             })}{" "}
             <span className="text-xs font-normal">CHF</span>
           </div>
-          <div className="text-[10px] font-mono text-slate-400 mt-0.5">
+          <div className="text-[10px] font-mono text-slate-600 dark:text-slate-400 mt-0.5">
             ~ {municipalMonthlyChf.toFixed(2)} CHF / mese
           </div>
         </div>
 
         <div>
-          <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 block">
+          <span className="text-[11px] font-medium text-slate-700 dark:text-slate-300 block">
             Scostamento vs Media Distretto
           </span>
           <div
             className={`font-mono text-xl font-bold tabular-nums flex items-center gap-1 mt-0.5 ${
               deltaFromAvgChf < 0
-                ? "text-emerald-600 dark:text-emerald-400"
+                ? "text-emerald-700 dark:text-emerald-400"
                 : deltaFromAvgChf > 0
-                ? "text-red-600 dark:text-red-400"
+                ? "text-red-700 dark:text-red-400"
                 : "text-slate-700 dark:text-slate-300"
             }`}
           >
             {deltaFromAvgChf < 0 ? (
-              <TrendingDown className="w-4 h-4" />
+              <TrendingDown className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
             ) : deltaFromAvgChf > 0 ? (
-              <TrendingUp className="w-4 h-4" />
+              <TrendingUp className="w-4 h-4 text-red-700 dark:text-red-400" />
             ) : null}
             <span>
               {deltaFromAvgChf > 0 ? "+" : ""}
@@ -286,7 +286,7 @@ export function TaxImpactSimulator({
               CHF
             </span>
           </div>
-          <div className="text-[10px] text-slate-400 mt-0.5">
+          <div className="text-[10px] text-slate-600 dark:text-slate-400 mt-0.5">
             {deltaFromAvgChf < 0
               ? "Più conveniente della media locarnese"
               : deltaFromAvgChf > 0
@@ -296,22 +296,22 @@ export function TaxImpactSimulator({
         </div>
 
         <div>
-          <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 block">
+          <span className="text-[11px] font-medium text-slate-700 dark:text-slate-300 block">
             Classifica Pressione Fiscale
           </span>
           <div className="font-mono text-xl font-bold tabular-nums text-[#0F3854] dark:text-cyan-400 mt-0.5">
             {rankIndex}°{" "}
-            <span className="text-xs text-slate-500 font-normal">su 19 Comuni</span>
+            <span className="text-xs text-slate-600 dark:text-slate-400 font-normal">su 19 Comuni</span>
           </div>
-          <div className="text-[10px] text-slate-400 mt-0.5">
+          <div className="text-[10px] text-slate-600 dark:text-slate-400 mt-0.5">
             Moltiplicatore {activeMultiplier}% ({subjectType})
           </div>
         </div>
       </div>
 
       {/* Nota Legale & Privacy-by-Design */}
-      <div className="text-[11px] text-slate-400 dark:text-slate-500 leading-relaxed border-t border-slate-200/60 dark:border-slate-800/60 pt-3 flex items-start gap-2">
-        <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
+      <div className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed border-t border-slate-200/60 dark:border-slate-800/60 pt-3 flex items-start gap-2">
+        <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
         <p>
           Simulazione indicativa sulla sola imposta comunale ordinaria (art. 292 segg. LT).
           Esclude imposta cantonale, imposta immobiliare, imposta ecclesiastica e riparti intercomunali.

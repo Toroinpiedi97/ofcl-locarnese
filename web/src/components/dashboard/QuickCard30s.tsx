@@ -46,14 +46,14 @@ export function QuickCard30s({ municipality, year = 2025 }: QuickCard30sProps) {
           </div>
 
           <div className="text-right">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 block">
               Moltiplicatore 2026
             </span>
             <div className="font-mono text-xl font-bold tabular-nums text-[#0F3854] dark:text-cyan-400">
               {municipality.tax_multiplier_pf}%
             </div>
             {municipality.has_differentiated_pg && (
-              <span className="text-[10px] font-mono text-amber-600 dark:text-amber-400 block">
+              <span className="text-[10px] font-mono text-amber-800 dark:text-amber-300 block">
                 PG: {municipality.tax_multiplier_pg}%
               </span>
             )}
@@ -64,17 +64,17 @@ export function QuickCard30s({ municipality, year = 2025 }: QuickCard30sProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 my-4">
           {/* 1. Risultato Ordinario (Avanzo / Disavanzo) */}
           <div className="p-3.5 rounded-xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800/80">
-            <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
+            <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 mb-1">
               <span className="flex items-center gap-1.5 font-medium">
                 {isAvanzo ? (
-                  <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
+                  <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
                 ) : (
-                  <TrendingDown className="w-3.5 h-3.5 text-red-500" />
+                  <TrendingDown className="w-3.5 h-3.5 text-red-600" />
                 )}
                 <span>Risultato Ordinario</span>
               </span>
               <span
-                className="text-[10px] font-mono text-slate-400 underline decoration-dotted cursor-help"
+                className="text-[10px] font-mono text-slate-600 dark:text-slate-400 underline decoration-dotted cursor-help"
                 title="Citazione: Pagina 5 del Conto Economico MCA2 (CE)"
               >
                 CE p.5 ↗
@@ -82,7 +82,7 @@ export function QuickCard30s({ municipality, year = 2025 }: QuickCard30sProps) {
             </div>
             <div
               className={`font-mono text-lg font-bold tabular-nums ${
-                isAvanzo ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
+                isAvanzo ? "text-emerald-700 dark:text-emerald-400" : "text-red-700 dark:text-red-400"
               }`}
             >
               {isAvanzo ? "+" : ""}
@@ -92,20 +92,20 @@ export function QuickCard30s({ municipality, year = 2025 }: QuickCard30sProps) {
               })}{" "}
               <span className="text-xs font-normal">CHF</span>
             </div>
-            <div className="text-[10px] text-slate-400 mt-0.5">
+            <div className="text-[10px] text-slate-600 dark:text-slate-400 mt-0.5">
               {isAvanzo ? "Avanzo d'esercizio" : "Disavanzo d'esercizio"}
             </div>
           </div>
 
           {/* 2. Autofinanziamento Indiretto */}
           <div className="p-3.5 rounded-xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800/80">
-            <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
+            <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 mb-1">
               <span className="flex items-center gap-1.5 font-medium">
-                <PiggyBank className="w-3.5 h-3.5 text-cyan-500" />
+                <PiggyBank className="w-3.5 h-3.5 text-cyan-600" />
                 <span>Autofinanziamento</span>
               </span>
               <span
-                className="text-[10px] font-mono text-slate-400 underline decoration-dotted cursor-help"
+                className="text-[10px] font-mono text-slate-600 dark:text-slate-400 underline decoration-dotted cursor-help"
                 title="Citazione: Prospetto del Flusso di Finanziamento MCA2 (CF)"
               >
                 CF p.5 ↗
@@ -118,18 +118,18 @@ export function QuickCard30s({ municipality, year = 2025 }: QuickCard30sProps) {
               })}{" "}
               <span className="text-xs font-normal">CHF</span>
             </div>
-            <div className="text-[10px] text-slate-400 mt-0.5">Risorse proprie generate</div>
+            <div className="text-[10px] text-slate-600 dark:text-slate-400 mt-0.5">Risorse proprie generate</div>
           </div>
 
           {/* 3. Investimenti Netti BA */}
           <div className="p-3.5 rounded-xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800/80">
-            <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
+            <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 mb-1">
               <span className="flex items-center gap-1.5 font-medium">
-                <Building2 className="w-3.5 h-3.5 text-indigo-500" />
+                <Building2 className="w-3.5 h-3.5 text-indigo-600" />
                 <span>Investimenti Netti</span>
               </span>
               <span
-                className="text-[10px] font-mono text-slate-400 underline decoration-dotted cursor-help"
+                className="text-[10px] font-mono text-slate-600 dark:text-slate-400 underline decoration-dotted cursor-help"
                 title="Citazione: Conto degli Investimenti MCA2 (CI, Onere netto)"
               >
                 CI p.5 ↗
@@ -142,18 +142,18 @@ export function QuickCard30s({ municipality, year = 2025 }: QuickCard30sProps) {
               })}{" "}
               <span className="text-xs font-normal">CHF</span>
             </div>
-            <div className="text-[10px] text-slate-400 mt-0.5">Beni amministrativi (BA)</div>
+            <div className="text-[10px] text-slate-600 dark:text-slate-400 mt-0.5">Beni amministrativi (BA)</div>
           </div>
 
           {/* 4. Debito Pubblico Netto pro Capite */}
           <div className="p-3.5 rounded-xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800/80">
-            <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
+            <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 mb-1">
               <span className="flex items-center gap-1.5 font-medium">
-                <Wallet className="w-3.5 h-3.5 text-amber-500" />
+                <Wallet className="w-3.5 h-3.5 text-amber-600" />
                 <span>Debito Netto p.c.</span>
               </span>
               <span
-                className="text-[10px] font-mono text-slate-400 underline decoration-dotted cursor-help"
+                className="text-[10px] font-mono text-slate-600 dark:text-slate-400 underline decoration-dotted cursor-help"
                 title="Citazione: Bilancio MCA2 (Capitale terzi - Beni patrimoniali) / Abitanti"
               >
                 BIL/ab ↗
@@ -166,7 +166,7 @@ export function QuickCard30s({ municipality, year = 2025 }: QuickCard30sProps) {
               })}{" "}
               <span className="text-xs font-normal">CHF/ab</span>
             </div>
-            <div className="text-[10px] text-slate-400 mt-0.5">
+            <div className="text-[10px] text-slate-600 dark:text-slate-400 mt-0.5">
               Popolazione: {municipality.population.toLocaleString("de-CH")} ab.
             </div>
           </div>
@@ -180,8 +180,8 @@ export function QuickCard30s({ municipality, year = 2025 }: QuickCard30sProps) {
 
       {/* Footer Scheda & Azione Principale */}
       <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between text-xs">
-        <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
-          <ShieldCheck className="w-4 h-4 text-emerald-500" />
+        <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+          <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           <span className="text-[11px]">
             Atto Ufficiale: <strong className="text-slate-700 dark:text-slate-300">{summary_30s.latest_mm_reference}</strong>
           </span>

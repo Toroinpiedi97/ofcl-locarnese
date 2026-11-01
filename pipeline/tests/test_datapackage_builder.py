@@ -15,7 +15,6 @@ import json
 from pathlib import Path
 
 import pyarrow.parquet as pq
-import pytest
 
 from ofcl.export.datapackage_builder import DISTRICT_MUNICIPALITIES, build_opendata_package
 

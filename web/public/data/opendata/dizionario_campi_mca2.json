@@ -30,27 +30,27 @@
       },
       {
         "name": "spese_correnti_chf",
-        "type": "number"
+        "type": "string"
       },
       {
         "name": "ricavi_correnti_chf",
-        "type": "number"
+        "type": "string"
       },
       {
         "name": "risultato_ordinario_chf",
-        "type": "number"
+        "type": "string"
       },
       {
         "name": "autofinanziamento_chf",
-        "type": "number"
+        "type": "string"
       },
       {
         "name": "investimenti_netti_chf",
-        "type": "number"
+        "type": "string"
       },
       {
         "name": "debito_netto_pc_chf",
-        "type": "number"
+        "type": "string"
       },
       {
         "name": "conformita_sel",

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath, revalidateTag } from "next/cache";
+import crypto from "node:crypto";
 
 export async function POST(req: NextRequest) {
   const secret = process.env.REVALIDATE_SECRET;
@@ -16,7 +17,15 @@ export async function POST(req: NextRequest) {
 
   const token = authHeader?.startsWith("Bearer ") ? authHeader.substring(7).trim() : null;
 
-  if (!token || token !== secret) {
+  const isTokenValid = (() => {
+    if (!token) return false;
+    const tokenBuf = Buffer.from(token);
+    const secretBuf = Buffer.from(secret);
+    if (tokenBuf.length !== secretBuf.length) return false;
+    return crypto.timingSafeEqual(tokenBuf, secretBuf);
+  })();
+
+  if (!isTokenValid) {
     return NextResponse.json(
       {
         error: "Non autorizzato: token Bearer mancante o non corrispondente.",
@@ -44,7 +53,7 @@ export async function POST(req: NextRequest) {
     // Se non sono specificati né tag né path, revalida le pagine pubbliche chiave
     if (!body.tag && !body.path) {
       revalidatePath("/");
-      revalidatePath("/comuni");
+      revalidatePath("/confronta");
       revalidatePath("/crediti");
       revalidatePath("/documenti");
       revalidatePath("/open-data");

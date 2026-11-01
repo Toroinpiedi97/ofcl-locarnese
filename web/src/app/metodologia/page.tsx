@@ -273,11 +273,11 @@ export default function MetodologiaPage() {
                 2. Le 12 Verifiche Deterministiche di Quadratura (V01–V12)
               </h2>
             </div>
-            <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
+            <span className="text-xs font-mono text-emerald-700 dark:text-emerald-400 font-semibold">
               Tolleranza 0.00 CHF
             </span>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+          <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
             Ogni fascicolo contabile importato nella piattaforma OFCL deve soddisfare matematicamente tutte le seguenti relazioni
             prima di poter essere pubblicato. Nessun arrotondamento commerciale a 0.05 CHF è ammesso.
           </p>
@@ -285,7 +285,7 @@ export default function MetodologiaPage() {
           <div className="overflow-x-auto pt-2">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 text-[11px] font-semibold uppercase text-slate-500">
+                <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 text-[11px] font-semibold uppercase text-slate-600 dark:text-slate-400">
                   <th className="py-2.5 px-3">Codice</th>
                   <th className="py-2.5 px-3">Regola di Verifica</th>
                   <th className="py-2.5 px-3">Formula Matematica</th>
@@ -301,12 +301,12 @@ export default function MetodologiaPage() {
                     </td>
                     <td className="py-3 px-3 font-sans">
                       <div className="font-bold text-slate-900 dark:text-white">{rule.name}</div>
-                      <div className="text-[11px] text-slate-500 font-normal mt-0.5">{rule.desc}</div>
+                      <div className="text-[11px] text-slate-600 dark:text-slate-400 font-normal mt-0.5">{rule.desc}</div>
                     </td>
                     <td className="py-3 px-3 font-mono text-[11px] text-slate-700 dark:text-slate-300">
                       <code>{rule.formula}</code>
                     </td>
-                    <td className="py-3 px-3 text-emerald-600 dark:text-emerald-400 font-semibold">
+                    <td className="py-3 px-3 text-emerald-700 dark:text-emerald-400 font-semibold">
                       {rule.tolerance}
                     </td>
                     <td className="py-3 px-3 text-center">
@@ -314,7 +314,7 @@ export default function MetodologiaPage() {
                         className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                           rule.severity === "BLOCKING"
                             ? "bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300"
-                            : "bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300"
+                            : "bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300"
                         }`}
                       >
                         {rule.severity}
@@ -330,7 +330,7 @@ export default function MetodologiaPage() {
         {/* Sezione 3: Gli 8 Indicatori Finanziari SEL */}
         <section className="bento-card p-6 bg-white/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800 space-y-4">
           <div className="flex items-center gap-2 mb-1">
-            <TrendingUp className="w-5 h-5 text-emerald-500" />
+            <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             <h2 className="text-lg font-bold text-slate-900 dark:text-white">
               3. Gli 8 Indicatori Finanziari Ufficiali SEL (Art. 22 lett. o RGFCC)
             </h2>
@@ -350,12 +350,12 @@ export default function MetodologiaPage() {
                   <span className="font-mono text-[10px] font-bold px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
                     {ind.code}
                   </span>
-                  <span className="font-mono font-bold text-slate-500">{ind.unit}</span>
+                  <span className="font-mono font-bold text-slate-600 dark:text-slate-400">{ind.unit}</span>
                 </div>
                 <h3 className="font-bold text-sm text-slate-900 dark:text-white">{ind.name}</h3>
-                <p className="text-slate-500 text-[11px] leading-relaxed">{ind.desc}</p>
+                <p className="text-slate-600 dark:text-slate-400 text-[11px] leading-relaxed">{ind.desc}</p>
                 <div className="pt-2 border-t border-slate-200 dark:border-slate-700/60">
-                  <span className="text-[10px] font-semibold uppercase text-slate-400 block mb-0.5">
+                  <span className="text-[10px] font-semibold uppercase text-slate-600 dark:text-slate-400 block mb-0.5">
                     Soglie Ufficiali SEL
                   </span>
                   <div className="font-mono text-[11px] text-slate-800 dark:text-slate-200 font-medium">

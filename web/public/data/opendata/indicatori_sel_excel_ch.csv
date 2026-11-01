@@ -4,7 +4,7 @@
 5091;Ascona;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;1.8;%;True
 5091;Ascona;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;6.2;%;True
 5091;Ascona;2025;NET_DEBT_RATIO;Quota debito netto;85.0;%;True
-5091;Ascona;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;2450.0;CHF/ab;True
+5091;Ascona;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;1450.0;CHF/ab;True
 5091;Ascona;2025;INVESTMENT_RATIO;Quota degli investimenti;22.4;%;True
 5091;Ascona;2025;EQUITY_RATIO;Quota capitale proprio;44.5;%;True
 5096;Brione sopra Minusio;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;114.2;%;True
@@ -12,39 +12,39 @@
 5096;Brione sopra Minusio;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;1.8;%;True
 5096;Brione sopra Minusio;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;6.2;%;True
 5096;Brione sopra Minusio;2025;NET_DEBT_RATIO;Quota debito netto;85.0;%;True
-5096;Brione sopra Minusio;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;2450.0;CHF/ab;True
+5096;Brione sopra Minusio;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;11856.7;CHF/ab;True
 5096;Brione sopra Minusio;2025;INVESTMENT_RATIO;Quota degli investimenti;22.4;%;True
 5096;Brione sopra Minusio;2025;EQUITY_RATIO;Quota capitale proprio;44.5;%;True
-5097;Brissago;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;114.2;%;True
-5097;Brissago;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;18.5;%;True
-5097;Brissago;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;1.8;%;True
-5097;Brissago;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;6.2;%;True
-5097;Brissago;2025;NET_DEBT_RATIO;Quota debito netto;85.0;%;True
-5097;Brissago;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;2450.0;CHF/ab;True
-5097;Brissago;2025;INVESTMENT_RATIO;Quota degli investimenti;22.4;%;True
-5097;Brissago;2025;EQUITY_RATIO;Quota capitale proprio;44.5;%;True
+5097;Brissago;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;0.0;%;False
+5097;Brissago;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;0.0;%;False
+5097;Brissago;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;0.0;%;False
+5097;Brissago;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;0.0;%;False
+5097;Brissago;2025;NET_DEBT_RATIO;Quota debito netto;0.0;%;False
+5097;Brissago;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;0.0;CHF/ab;False
+5097;Brissago;2025;INVESTMENT_RATIO;Quota degli investimenti;0.0;%;False
+5097;Brissago;2025;EQUITY_RATIO;Quota capitale proprio;0.0;%;False
 5108;Gordola;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;114.2;%;True
 5108;Gordola;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;18.5;%;True
 5108;Gordola;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;1.8;%;True
 5108;Gordola;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;6.2;%;True
 5108;Gordola;2025;NET_DEBT_RATIO;Quota debito netto;85.0;%;True
-5108;Gordola;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;2450.0;CHF/ab;True
+5108;Gordola;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;2100.0;CHF/ab;True
 5108;Gordola;2025;INVESTMENT_RATIO;Quota degli investimenti;22.4;%;True
 5108;Gordola;2025;EQUITY_RATIO;Quota capitale proprio;44.5;%;True
-5112;Lavertezzo;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;114.2;%;True
-5112;Lavertezzo;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;18.5;%;True
-5112;Lavertezzo;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;1.8;%;True
-5112;Lavertezzo;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;6.2;%;True
-5112;Lavertezzo;2025;NET_DEBT_RATIO;Quota debito netto;85.0;%;True
-5112;Lavertezzo;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;2450.0;CHF/ab;True
-5112;Lavertezzo;2025;INVESTMENT_RATIO;Quota degli investimenti;22.4;%;True
-5112;Lavertezzo;2025;EQUITY_RATIO;Quota capitale proprio;44.5;%;True
+5112;Lavertezzo;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;0.0;%;False
+5112;Lavertezzo;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;0.0;%;False
+5112;Lavertezzo;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;0.0;%;False
+5112;Lavertezzo;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;0.0;%;False
+5112;Lavertezzo;2025;NET_DEBT_RATIO;Quota debito netto;0.0;%;False
+5112;Lavertezzo;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;0.0;CHF/ab;False
+5112;Lavertezzo;2025;INVESTMENT_RATIO;Quota degli investimenti;0.0;%;False
+5112;Lavertezzo;2025;EQUITY_RATIO;Quota capitale proprio;0.0;%;False
 5113;Locarno;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;114.2;%;True
 5113;Locarno;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;18.5;%;True
 5113;Locarno;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;1.8;%;True
 5113;Locarno;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;6.2;%;True
 5113;Locarno;2025;NET_DEBT_RATIO;Quota debito netto;85.0;%;True
-5113;Locarno;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;2450.0;CHF/ab;True
+5113;Locarno;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;4320.0;CHF/ab;True
 5113;Locarno;2025;INVESTMENT_RATIO;Quota degli investimenti;22.4;%;True
 5113;Locarno;2025;EQUITY_RATIO;Quota capitale proprio;44.5;%;True
 5115;Losone;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;114.2;%;True
@@ -52,102 +52,102 @@
 5115;Losone;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;1.8;%;True
 5115;Losone;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;6.2;%;True
 5115;Losone;2025;NET_DEBT_RATIO;Quota debito netto;85.0;%;True
-5115;Losone;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;2450.0;CHF/ab;True
+5115;Losone;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;2650.0;CHF/ab;True
 5115;Losone;2025;INVESTMENT_RATIO;Quota degli investimenti;22.4;%;True
 5115;Losone;2025;EQUITY_RATIO;Quota capitale proprio;44.5;%;True
-5117;Mergoscia;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;114.2;%;True
-5117;Mergoscia;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;18.5;%;True
-5117;Mergoscia;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;1.8;%;True
-5117;Mergoscia;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;6.2;%;True
-5117;Mergoscia;2025;NET_DEBT_RATIO;Quota debito netto;85.0;%;True
-5117;Mergoscia;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;2450.0;CHF/ab;True
-5117;Mergoscia;2025;INVESTMENT_RATIO;Quota degli investimenti;22.4;%;True
-5117;Mergoscia;2025;EQUITY_RATIO;Quota capitale proprio;44.5;%;True
+5117;Mergoscia;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;0.0;%;False
+5117;Mergoscia;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;0.0;%;False
+5117;Mergoscia;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;0.0;%;False
+5117;Mergoscia;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;0.0;%;False
+5117;Mergoscia;2025;NET_DEBT_RATIO;Quota debito netto;0.0;%;False
+5117;Mergoscia;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;0.0;CHF/ab;False
+5117;Mergoscia;2025;INVESTMENT_RATIO;Quota degli investimenti;0.0;%;False
+5117;Mergoscia;2025;EQUITY_RATIO;Quota capitale proprio;0.0;%;False
 5118;Minusio;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;114.2;%;True
 5118;Minusio;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;18.5;%;True
 5118;Minusio;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;1.8;%;True
 5118;Minusio;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;6.2;%;True
 5118;Minusio;2025;NET_DEBT_RATIO;Quota debito netto;85.0;%;True
-5118;Minusio;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;2450.0;CHF/ab;True
+5118;Minusio;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;1980.0;CHF/ab;True
 5118;Minusio;2025;INVESTMENT_RATIO;Quota degli investimenti;22.4;%;True
 5118;Minusio;2025;EQUITY_RATIO;Quota capitale proprio;44.5;%;True
-5120;Muralto;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;114.2;%;True
-5120;Muralto;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;18.5;%;True
-5120;Muralto;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;1.8;%;True
-5120;Muralto;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;6.2;%;True
-5120;Muralto;2025;NET_DEBT_RATIO;Quota debito netto;85.0;%;True
-5120;Muralto;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;2450.0;CHF/ab;True
-5120;Muralto;2025;INVESTMENT_RATIO;Quota degli investimenti;22.4;%;True
-5120;Muralto;2025;EQUITY_RATIO;Quota capitale proprio;44.5;%;True
-5121;Orselina;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;114.2;%;True
-5121;Orselina;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;18.5;%;True
-5121;Orselina;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;1.8;%;True
-5121;Orselina;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;6.2;%;True
-5121;Orselina;2025;NET_DEBT_RATIO;Quota debito netto;85.0;%;True
-5121;Orselina;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;2450.0;CHF/ab;True
-5121;Orselina;2025;INVESTMENT_RATIO;Quota degli investimenti;22.4;%;True
-5121;Orselina;2025;EQUITY_RATIO;Quota capitale proprio;44.5;%;True
-5125;Ronco sopra Ascona;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;114.2;%;True
-5125;Ronco sopra Ascona;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;18.5;%;True
-5125;Ronco sopra Ascona;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;1.8;%;True
-5125;Ronco sopra Ascona;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;6.2;%;True
-5125;Ronco sopra Ascona;2025;NET_DEBT_RATIO;Quota debito netto;85.0;%;True
-5125;Ronco sopra Ascona;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;2450.0;CHF/ab;True
-5125;Ronco sopra Ascona;2025;INVESTMENT_RATIO;Quota degli investimenti;22.4;%;True
-5125;Ronco sopra Ascona;2025;EQUITY_RATIO;Quota capitale proprio;44.5;%;True
-5131;Tenero-Contra;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;114.2;%;True
-5131;Tenero-Contra;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;18.5;%;True
-5131;Tenero-Contra;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;1.8;%;True
-5131;Tenero-Contra;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;6.2;%;True
-5131;Tenero-Contra;2025;NET_DEBT_RATIO;Quota debito netto;85.0;%;True
-5131;Tenero-Contra;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;2450.0;CHF/ab;True
-5131;Tenero-Contra;2025;INVESTMENT_RATIO;Quota degli investimenti;22.4;%;True
-5131;Tenero-Contra;2025;EQUITY_RATIO;Quota capitale proprio;44.5;%;True
-5136;Onsernone;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;114.2;%;True
-5136;Onsernone;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;18.5;%;True
-5136;Onsernone;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;1.8;%;True
-5136;Onsernone;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;6.2;%;True
-5136;Onsernone;2025;NET_DEBT_RATIO;Quota debito netto;85.0;%;True
-5136;Onsernone;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;2450.0;CHF/ab;True
-5136;Onsernone;2025;INVESTMENT_RATIO;Quota degli investimenti;22.4;%;True
-5136;Onsernone;2025;EQUITY_RATIO;Quota capitale proprio;44.5;%;True
-5138;Cugnasco-Gerra;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;114.2;%;True
-5138;Cugnasco-Gerra;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;18.5;%;True
-5138;Cugnasco-Gerra;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;1.8;%;True
-5138;Cugnasco-Gerra;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;6.2;%;True
-5138;Cugnasco-Gerra;2025;NET_DEBT_RATIO;Quota debito netto;85.0;%;True
-5138;Cugnasco-Gerra;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;2450.0;CHF/ab;True
-5138;Cugnasco-Gerra;2025;INVESTMENT_RATIO;Quota degli investimenti;22.4;%;True
-5138;Cugnasco-Gerra;2025;EQUITY_RATIO;Quota capitale proprio;44.5;%;True
-5396;Terre di Pedemonte;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;114.2;%;True
-5396;Terre di Pedemonte;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;18.5;%;True
-5396;Terre di Pedemonte;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;1.8;%;True
-5396;Terre di Pedemonte;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;6.2;%;True
-5396;Terre di Pedemonte;2025;NET_DEBT_RATIO;Quota debito netto;85.0;%;True
-5396;Terre di Pedemonte;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;2450.0;CHF/ab;True
-5396;Terre di Pedemonte;2025;INVESTMENT_RATIO;Quota degli investimenti;22.4;%;True
-5396;Terre di Pedemonte;2025;EQUITY_RATIO;Quota capitale proprio;44.5;%;True
-5397;Centovalli;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;114.2;%;True
-5397;Centovalli;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;18.5;%;True
-5397;Centovalli;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;1.8;%;True
-5397;Centovalli;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;6.2;%;True
-5397;Centovalli;2025;NET_DEBT_RATIO;Quota debito netto;85.0;%;True
-5397;Centovalli;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;2450.0;CHF/ab;True
-5397;Centovalli;2025;INVESTMENT_RATIO;Quota degli investimenti;22.4;%;True
-5397;Centovalli;2025;EQUITY_RATIO;Quota capitale proprio;44.5;%;True
+5120;Muralto;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;0.0;%;False
+5120;Muralto;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;0.0;%;False
+5120;Muralto;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;0.0;%;False
+5120;Muralto;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;0.0;%;False
+5120;Muralto;2025;NET_DEBT_RATIO;Quota debito netto;0.0;%;False
+5120;Muralto;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;0.0;CHF/ab;False
+5120;Muralto;2025;INVESTMENT_RATIO;Quota degli investimenti;0.0;%;False
+5120;Muralto;2025;EQUITY_RATIO;Quota capitale proprio;0.0;%;False
+5121;Orselina;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;0.0;%;False
+5121;Orselina;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;0.0;%;False
+5121;Orselina;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;0.0;%;False
+5121;Orselina;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;0.0;%;False
+5121;Orselina;2025;NET_DEBT_RATIO;Quota debito netto;0.0;%;False
+5121;Orselina;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;0.0;CHF/ab;False
+5121;Orselina;2025;INVESTMENT_RATIO;Quota degli investimenti;0.0;%;False
+5121;Orselina;2025;EQUITY_RATIO;Quota capitale proprio;0.0;%;False
+5125;Ronco sopra Ascona;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;0.0;%;False
+5125;Ronco sopra Ascona;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;0.0;%;False
+5125;Ronco sopra Ascona;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;0.0;%;False
+5125;Ronco sopra Ascona;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;0.0;%;False
+5125;Ronco sopra Ascona;2025;NET_DEBT_RATIO;Quota debito netto;0.0;%;False
+5125;Ronco sopra Ascona;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;0.0;CHF/ab;False
+5125;Ronco sopra Ascona;2025;INVESTMENT_RATIO;Quota degli investimenti;0.0;%;False
+5125;Ronco sopra Ascona;2025;EQUITY_RATIO;Quota capitale proprio;0.0;%;False
+5131;Tenero-Contra;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;0.0;%;False
+5131;Tenero-Contra;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;0.0;%;False
+5131;Tenero-Contra;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;0.0;%;False
+5131;Tenero-Contra;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;0.0;%;False
+5131;Tenero-Contra;2025;NET_DEBT_RATIO;Quota debito netto;0.0;%;False
+5131;Tenero-Contra;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;0.0;CHF/ab;False
+5131;Tenero-Contra;2025;INVESTMENT_RATIO;Quota degli investimenti;0.0;%;False
+5131;Tenero-Contra;2025;EQUITY_RATIO;Quota capitale proprio;0.0;%;False
+5136;Onsernone;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;0.0;%;False
+5136;Onsernone;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;0.0;%;False
+5136;Onsernone;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;0.0;%;False
+5136;Onsernone;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;0.0;%;False
+5136;Onsernone;2025;NET_DEBT_RATIO;Quota debito netto;0.0;%;False
+5136;Onsernone;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;0.0;CHF/ab;False
+5136;Onsernone;2025;INVESTMENT_RATIO;Quota degli investimenti;0.0;%;False
+5136;Onsernone;2025;EQUITY_RATIO;Quota capitale proprio;0.0;%;False
+5138;Cugnasco-Gerra;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;0.0;%;False
+5138;Cugnasco-Gerra;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;0.0;%;False
+5138;Cugnasco-Gerra;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;0.0;%;False
+5138;Cugnasco-Gerra;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;0.0;%;False
+5138;Cugnasco-Gerra;2025;NET_DEBT_RATIO;Quota debito netto;0.0;%;False
+5138;Cugnasco-Gerra;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;0.0;CHF/ab;False
+5138;Cugnasco-Gerra;2025;INVESTMENT_RATIO;Quota degli investimenti;0.0;%;False
+5138;Cugnasco-Gerra;2025;EQUITY_RATIO;Quota capitale proprio;0.0;%;False
+5396;Terre di Pedemonte;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;0.0;%;False
+5396;Terre di Pedemonte;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;0.0;%;False
+5396;Terre di Pedemonte;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;0.0;%;False
+5396;Terre di Pedemonte;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;0.0;%;False
+5396;Terre di Pedemonte;2025;NET_DEBT_RATIO;Quota debito netto;0.0;%;False
+5396;Terre di Pedemonte;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;0.0;CHF/ab;False
+5396;Terre di Pedemonte;2025;INVESTMENT_RATIO;Quota degli investimenti;0.0;%;False
+5396;Terre di Pedemonte;2025;EQUITY_RATIO;Quota capitale proprio;0.0;%;False
+5397;Centovalli;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;0.0;%;False
+5397;Centovalli;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;0.0;%;False
+5397;Centovalli;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;0.0;%;False
+5397;Centovalli;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;0.0;%;False
+5397;Centovalli;2025;NET_DEBT_RATIO;Quota debito netto;0.0;%;False
+5397;Centovalli;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;0.0;CHF/ab;False
+5397;Centovalli;2025;INVESTMENT_RATIO;Quota degli investimenti;0.0;%;False
+5397;Centovalli;2025;EQUITY_RATIO;Quota capitale proprio;0.0;%;False
 5398;Gambarogno;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;114.2;%;True
 5398;Gambarogno;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;18.5;%;True
 5398;Gambarogno;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;1.8;%;True
 5398;Gambarogno;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;6.2;%;True
 5398;Gambarogno;2025;NET_DEBT_RATIO;Quota debito netto;85.0;%;True
-5398;Gambarogno;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;2450.0;CHF/ab;True
+5398;Gambarogno;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;2150.0;CHF/ab;True
 5398;Gambarogno;2025;INVESTMENT_RATIO;Quota degli investimenti;22.4;%;True
 5398;Gambarogno;2025;EQUITY_RATIO;Quota capitale proprio;44.5;%;True
-5399;Verzasca;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;114.2;%;True
-5399;Verzasca;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;18.5;%;True
-5399;Verzasca;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;1.8;%;True
-5399;Verzasca;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;6.2;%;True
-5399;Verzasca;2025;NET_DEBT_RATIO;Quota debito netto;85.0;%;True
-5399;Verzasca;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;2450.0;CHF/ab;True
-5399;Verzasca;2025;INVESTMENT_RATIO;Quota degli investimenti;22.4;%;True
-5399;Verzasca;2025;EQUITY_RATIO;Quota capitale proprio;44.5;%;True
+5399;Verzasca;2025;SELF_FINANCING_DEGREE;Grado di autofinanziamento;0.0;%;False
+5399;Verzasca;2025;SELF_FINANCING_CAPACITY;Capacità di autofinanziamento;0.0;%;False
+5399;Verzasca;2025;INTEREST_BURDEN_RATIO;Quota oneri finanziari;0.0;%;False
+5399;Verzasca;2025;CAPITAL_SERVICE_RATIO;Quota servizio del debito;0.0;%;False
+5399;Verzasca;2025;NET_DEBT_RATIO;Quota debito netto;0.0;%;False
+5399;Verzasca;2025;NET_DEBT_PER_CAPITA;Debito netto pro capite;0.0;CHF/ab;False
+5399;Verzasca;2025;INVESTMENT_RATIO;Quota degli investimenti;0.0;%;False
+5399;Verzasca;2025;EQUITY_RATIO;Quota capitale proprio;0.0;%;False

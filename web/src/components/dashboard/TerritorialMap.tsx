@@ -223,7 +223,7 @@ export function TerritorialMap({
       {/* Intestazione Mappa */}
       <div className="flex items-center justify-between mb-2">
         <div>
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
             Mappa Georeferenziata Vettoriale
           </span>
           <h4 className="text-xs font-bold text-slate-900 dark:text-white">
@@ -232,7 +232,7 @@ export function TerritorialMap({
         </div>
 
         {/* Mini Legenda Cromatica */}
-        <div className="flex items-center gap-2 text-[10px] font-mono text-slate-500 dark:text-slate-400">
+        <div className="flex items-center gap-2 text-[10px] font-mono text-slate-700 dark:text-slate-300">
           <span className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" /> ≤75%
           </span>
@@ -340,7 +340,7 @@ export function TerritorialMap({
         )}
       </div>
 
-      <div className="text-[10px] text-slate-400 mt-2 flex items-center justify-between">
+      <div className="text-[10px] text-slate-600 dark:text-slate-400 mt-2 flex items-center justify-between">
         <span>Fai clic su un comune per selezionarlo</span>
         <span className="font-mono">swissBOUNDARIES3D (MCA2)</span>
       </div>

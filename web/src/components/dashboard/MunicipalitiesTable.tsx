@@ -191,7 +191,7 @@ export function MunicipalitiesTable({
                   {/* Nome & UST */}
                   <td className="py-2.5 px-3">
                     <div className="flex items-center gap-2">
-                      <span className="font-mono text-[10px] px-1 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-semibold">
+                      <span className="font-mono text-[10px] px-1 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold">
                         {m.ust_code}
                       </span>
                       <span className="font-semibold">{m.name}</span>
@@ -208,7 +208,7 @@ export function MunicipalitiesTable({
                     <div className="flex items-center gap-1.5 font-mono font-bold tabular-nums text-slate-900 dark:text-white">
                       <span>{m.tax_multiplier_pf}%</span>
                       {m.has_differentiated_pg && (
-                        <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-400 font-normal">
+                        <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 font-medium">
                           PG: {m.tax_multiplier_pg}%
                         </span>
                       )}
@@ -217,7 +217,7 @@ export function MunicipalitiesTable({
 
                   {/* Risultato Ordinario */}
                   <td className="py-2.5 px-3 font-mono tabular-nums font-semibold">
-                    <span className={isAvanzo ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}>
+                    <span className={isAvanzo ? "text-emerald-700 dark:text-emerald-400" : "text-red-700 dark:text-red-400"}>
                       {isAvanzo ? "+" : ""}
                       {(m.summary_30s.risultato_ordinario_chf / 1000).toLocaleString("de-CH", {
                         maximumFractionDigits: 1,
@@ -246,7 +246,7 @@ export function MunicipalitiesTable({
       </div>
 
       {/* Footer Griglia */}
-      <div className="p-2.5 border-t border-slate-200 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-950/30 flex items-center justify-between text-[11px] text-slate-400">
+      <div className="p-2.5 border-t border-slate-200 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-950/30 flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-400">
         <div>Mostrati {sorted.length} su 19 comuni</div>
         <div>Tutti i dati espressi in CHF (MCA2 al centesimo esatto)</div>
       </div>
