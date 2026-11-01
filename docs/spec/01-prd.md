@@ -85,6 +85,9 @@ Come **famiglia o residente del Locarnese**, voglio consultare nella scheda del 
 ### US10 — Segnalazione Civica & Rettifica Rapida ("Civic Ticket Sandbox") (P1)
 Come **cittadino, consigliere o funzionario comunale**, voglio poter segnalare in meno di 30 secondi un dato dubbio o un refuso tramite una finestra sicura (solo testo semplice ≤ 500 caratteri), così che il curatore riceva notifica immediata e verifichi sul PDF originale entro 24 ore.
 
+### US11 — Simulatore Istantaneo d'Impatto Fiscale Comunale PF/PG (P2)
+Come **contribuente o piccola impresa del Locarnese**, voglio inserire (o selezionare con uno slider) la mia *imposta cantonale base* e vedere istantaneamente al centesimo (`0.01 CHF`) quanto pago d'imposta comunale nel mio Comune rispetto alla media distrettuale e agli altri 18 Comuni (sia come Persona Fisica `PF` sia come Persona Giuridica `PG`), senza che alcun dato personale lasci mai il mio browser.
+
 ### Edge Cases (obbligatori da gestire)
 - Preventivo **emendato** dal Consiglio comunale dopo la pubblicazione (Terre di Pedemonte, Lavertezzo, Ronco s/A) → due versioni dello stesso preventivo; il portale mostra la versione *approvata* e conserva quella iniziale.
 - Preventivo approvato **dopo** l'inizio dell'esercizio (es. Ronco s/A: preventivo 2025 approvato il 20.01.2025).
@@ -127,6 +130,7 @@ Come **cittadino, consigliere o funzionario comunale**, voglio poter segnalare i
 - **FR-035** Il frontend DEVE adottare il sistema visivo **Alpine Frosted Glass & Bento Grid** (`09-ux-portale-admin-opendata.md` §6) con **doppia pipeline responsiva disaccoppiata** (`DashboardDesktop` master-detail a 2 colonne e `DashboardMobile` con Bottom Sheet scorrevole e tap target ≥ `44px`) e fallback automatico ad alta opacità per `prefers-reduced-transparency`.
 - **FR-036** Il portale DEVE offrire un modulo **Civic Ticket Sandbox** (`POST /api/feedback`) protetto da sanitizzazione testo puro, limite rigido di `500` caratteri, honeypot e rate limit (`3 req/ora/IP`), con registrazione in `audit.feedback_ticket` e notifica email server-side (senza mai esporre l'indirizzo email del curatore nel bundle client).
 - **FR-037** Ogni Scheda Comune DEVE esporre la sezione strutturata **"Vivere nel Comune: Tasse, Tariffe, Famiglie & Servizi"** (Quadranti A–E), dove ogni parametro pubblicato richiede obbligatoriamente `source_url` al regolamento/ordinanza comunale e stato di verifica esplicito.
+- **FR-038** La Scheda Comune e la pagina `/confronta` DEVONO includere il componente **Simulatore d'Imposta Comunale (`TaxImpactSimulator`)** 100% client-side (zero invio dati al server per tutela nLPD), con aritmetica intera al centesimo (`0.01 CHF`), toggle `PF` (Persone Fisiche) / `PG` (Persone Giuridiche), confronto col range dei 19 Comuni e avvertenza ex art. 292 segg. LT / art. 192 LOC.
 
 ### Open data / API
 - **FR-040** Release dati versionate (SemVer dati `YYYY.MM.patch`) in CSV (UTF-8, `;` opzionale per Excel CH), Parquet e `datapackage.json`.

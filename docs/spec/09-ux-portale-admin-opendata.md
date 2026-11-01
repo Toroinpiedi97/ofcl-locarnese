@@ -188,9 +188,12 @@ web/src/
 │   │   ├── QuickCard30s.tsx       # Scheda sintetica 4 Grandi Cifre + link MM
 │   │   ├── TerritorialMap.tsx     # Mappa vettoriale interattiva dei 19 comuni
 │   │   ├── CreditAlertBanner.tsx  # Smart alert per art. 15 LOC (sforamento > 10%)
-│   │   └── IndicatorsSelBar.tsx   # Micro-cruscotto a 8 segmenti (🟢/🟡/🔴)
+│   │   ├── IndicatorsSelBar.tsx   # Micro-cruscotto a 8 segmenti (🟢/🟡/🔴)
+│   │   ├── CivicDeepDiveBento.tsx # 5 Quadranti Bento (A-E: tariffe, famiglie, AVS, clima, sportello)
+│   │   └── TaxImpactSimulator.tsx # Simulatore 100% client-side PF/PG al centesimo (0.01 CHF)
 │   └── shared/
 │       ├── HeaderAlpine.tsx       # Navbar fissa con disclaimer art. 192 LOC
+│       ├── FeedbackModal.tsx      # Civic Ticket Sandbox (max 500 car. -> POST /api/feedback)
 │       └── FooterOpenData.tsx     # Footer con licenza CC-BY-4.0 e download
 ```
 
@@ -261,3 +264,20 @@ Oltre ai tabulati contabili e alla "Regola dei 30 Secondi", la scheda di ciascun
 - **Moltiplicatore Fiscale Differenziato:** Quota PF (Persone Fisiche) e quota PG (Persone Giuridiche).
 - **Tassa di Soggiorno Turistica:** Costo per notte applicato nei comuni turistici (es. Ascona, Brissago, Locarno).
 - **Cancelleria & Pratiche:** Costo di rilascio certificati anagrafici (es. certificato di domicilio o stato di famiglia) e canali di sportello.
+
+---
+
+### 6.6 Simulatore Istantaneo d'Impatto Fiscale Comunale (`TaxImpactSimulator.tsx`)
+Per tradurre immediatamente le percentuali astratte dei moltiplicatori (`75%..120%`) in franchi reali per famiglie e PMI locali, la Scheda Comune e la vista `/confronta` integrano una card interattiva Bento **"Quanto incide il Moltiplicatore sulla mia tasca?"**:
+- **Formula Tributaria Ticinese (art. 292 segg. LT — RL 640.100):**
+  $$\text{Imposta Comunale Annua} = \text{Imposta Cantonale Base} \times \frac{\text{Moltiplicatore Comunale (PF o PG)}}{100}$$
+- **Interfaccia & Usabilità in 5 Secondi:**
+  - **Toggle Soggetto:** `Privato / Famiglia (PF)` vs `Azienda SA/Sagl (PG)` (valorizza subito lo sdoppiamento 2025–2026 di Comuni come Locarno `90/97%`, Gambarogno `85/100%` e Centovalli `95/120%`).
+  - **Preset + Slider + Input Esatto:** 4 pulsanti rapidi d'imposta cantonale base (`2'000 CHF`, `4'000 CHF`, `7'500 CHF`, `12'000 CHF`) + cursore continuo e campo numerico libero, accompagnati dal suggerimento pratico: *"Inserisci l'Imposta cantonale base riportata sulla tua ultima notifica di tassazione"*.
+  - **Output Comparativo Immediato:**
+    1. Importo annuo e mensile nel Comune attivo al centesimo esatto (`0.01 CHF`, calcolato in centesimi interi per evitare errori floating-point IEEE 754).
+    2. Scostamento `Δ CHF/anno` rispetto alla **media del Distretto di Locarno** e posizionamento nella classifica `1°..19°` dei Comuni locarnesi.
+    3. Opzione checkbox *"Includi Tassa Base Rifiuti annua verificata"*: attiva **solo** quando `WASTE_BASE_FEE` è presente e `VERIFIED` per i Comuni confrontati (mai stimata se `n.d.`).
+- **Privacy-by-Design Assoluta (nLPD) & Nota Legale:**
+  - Il calcolo avviene **al 100% in memoria nel browser** (`zero network requests`, zero salvataggio in `localStorage` o telemetria): nessuno può sapere quale imposta base l'utente ha simulato.
+  - Micro-nota fissa sotto il risultato: *"Simulazione indicativa sulla sola imposta comunale ordinaria (art. 292 segg. LT). Esclude imposta cantonale, immobiliare, ecclesiastica e riparti intercomunali; fanno fede gli atti ufficiali (art. 192 LOC)."*
