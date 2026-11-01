@@ -1,0 +1,37 @@
+layout_family: "GECOTI_V3"
+section: "lett_o"
+title_pattern: "indicatori\\s+finanziari"
+
+indicators:
+  tasso_indebitamento_netto_pct:
+    label: "Tasso di indebitamento netto"
+    pattern: "tasso\\s+(?:di\\s+)?indebitamento\\s+netto"
+    unit: "%"
+  grado_autofinanziamento_pct:
+    label: "Grado di autofinanziamento"
+    pattern: "grado\\s+di\\s+autofinanziamento"
+    unit: "%"
+  quota_spese_interessi_pct:
+    label: "Quota delle spese per interessi"
+    pattern: "quota\\s+(?:delle\\s+)?spese\\s+per\\s+interessi"
+    unit: "%"
+  debito_netto_pro_capite_chf:
+    label: "Debito pubblico netto pro capite"
+    pattern: "debito\\s+pubblico\\s+netto.*pro\\s+capite"
+    unit: "CHF/ab"
+  quota_investimenti_pct:
+    label: "Quota degli investimenti"
+    pattern: "quota\\s+degli\\s+investimenti"
+    unit: "%"
+  quota_capitale_proprio_pct:
+    label: "Quota di capitale proprio"
+    pattern: "quota\\s+di\\s+capitale\\s+proprio"
+    unit: "%"
+  quota_indebitamento_lordo_pct:
+    label: "Quota di indebitamento lordo"
+    pattern: "quota\\s+di\\s+indebitamento\\s+lordo"
+    unit: "%"
+  quota_oneri_finanziari_pct:
+    label: "Quota degli oneri finanziari"
+    pattern: "quota\\s+degli\\s+oneri\\s+finanziari"
+    unit: "%"

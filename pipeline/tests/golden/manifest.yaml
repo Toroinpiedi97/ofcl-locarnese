@@ -1,0 +1,310 @@
+# Manifest ufficiale del Golden Set MCA2 (25 Documenti)
+# Rif: docs/spec/11-testing-qa-goldenset.md §L3
+
+golden_set:
+  # 13 Documenti da Comuni Assolo
+  - id: GS-01
+    ust_code: 5096
+    municipality_name: "Brione sopra Minusio"
+    year: 2025
+    type: "CONSUNTIVO"
+    cms_archetype: "ASSOLO"
+    layout_family: "GECOTI_V3"
+    category: "ASSOLO_UNICO"
+    sha256: "168f1f85c51701560f1cb3d06cb74f9ce981337517ba6ff1c7f5b26047505aee"
+    expected_file: "expected/168f1f85c51701560f1cb3d06cb74f9ce981337517ba6ff1c7f5b26047505aee.json"
+    available_locally: true
+
+  - id: GS-02
+    ust_code: 5096
+    municipality_name: "Brione sopra Minusio"
+    year: 2027
+    type: "PREVENTIVO"
+    cms_archetype: "ASSOLO"
+    layout_family: "GECOTI_V3"
+    category: "ASSOLO_UNICO"
+    sha256: "0b23416435f8609a414f94911c1bdbde05bc2f2b2ad336458399e527ec3c3c1e"
+    expected_file: "expected/0b23416435f8609a414f94911c1bdbde05bc2f2b2ad336458399e527ec3c3c1e.json"
+    available_locally: true
+
+  - id: GS-03
+    ust_code: 5118
+    municipality_name: "Losone"
+    year: 2024
+    type: "CONSUNTIVO"
+    cms_archetype: "ASSOLO"
+    layout_family: "GECOTI_V3"
+    category: "ASSOLO_SDOPPIATO"
+    sha256: "losone_c_2024_placeholder_hash"
+    expected_file: "expected/losone_c_2024.json"
+    available_locally: false
+
+  - id: GS-04
+    ust_code: 5118
+    municipality_name: "Losone"
+    year: 2025
+    type: "PREVENTIVO"
+    cms_archetype: "ASSOLO"
+    layout_family: "GECOTI_V3"
+    category: "ASSOLO_SDOPPIATO"
+    sha256: "losone_p_2025_placeholder_hash"
+    expected_file: "expected/losone_p_2025.json"
+    available_locally: false
+
+  - id: GS-05
+    ust_code: 5091
+    municipality_name: "Ascona"
+    year: 2024
+    type: "CONSUNTIVO"
+    cms_archetype: "ASSOLO"
+    layout_family: "GECOTI_V3"
+    category: "ASSOLO_SDOPPIATO"
+    sha256: "ascona_c_2024_placeholder_hash"
+    expected_file: "expected/ascona_c_2024.json"
+    available_locally: false
+
+  - id: GS-06
+    ust_code: 5091
+    municipality_name: "Ascona"
+    year: 2025
+    type: "PREVENTIVO"
+    cms_archetype: "ASSOLO"
+    layout_family: "GECOTI_V3"
+    category: "ASSOLO_SDOPPIATO"
+    sha256: "ascona_p_2025_placeholder_hash"
+    expected_file: "expected/ascona_p_2025.json"
+    available_locally: false
+
+  - id: GS-07
+    ust_code: 5130
+    municipality_name: "Tenero-Contra"
+    year: 2024
+    type: "CONSUNTIVO"
+    cms_archetype: "ASSOLO"
+    layout_family: "GECOTI_V3"
+    category: "ASSOLO_SDOPPIATO"
+    sha256: "tenero_c_2024_placeholder_hash"
+    expected_file: "expected/tenero_c_2024.json"
+    available_locally: false
+
+  - id: GS-08
+    ust_code: 5130
+    municipality_name: "Tenero-Contra"
+    year: 2025
+    type: "PREVENTIVO"
+    cms_archetype: "ASSOLO"
+    layout_family: "GECOTI_V3"
+    category: "ASSOLO_SDOPPIATO"
+    sha256: "tenero_p_2025_placeholder_hash"
+    expected_file: "expected/tenero_p_2025.json"
+    available_locally: false
+
+  - id: GS-09
+    ust_code: 5131
+    municipality_name: "Terre di Pedemonte"
+    year: 2024
+    type: "CONSUNTIVO"
+    cms_archetype: "ASSOLO"
+    layout_family: "GECOTI_V3"
+    category: "ASSOLO_SDOPPIATO"
+    sha256: "tdp_c_2024_placeholder_hash"
+    expected_file: "expected/tdp_c_2024.json"
+    available_locally: false
+
+  - id: GS-10
+    ust_code: 5109
+    municipality_name: "Gambarogno"
+    year: 2024
+    type: "CONSUNTIVO"
+    cms_archetype: "ASSOLO"
+    layout_family: "GECOTI_V3"
+    category: "ASSOLO_SDOPPIATO"
+    sha256: "gambarogno_c_2024_placeholder_hash"
+    expected_file: "expected/gambarogno_c_2024.json"
+    available_locally: false
+
+  - id: GS-11
+    ust_code: 5119
+    municipality_name: "Minusio"
+    year: 2024
+    type: "CONSUNTIVO"
+    cms_archetype: "ASSOLO"
+    layout_family: "GECOTI_V3"
+    category: "ASSOLO_SDOPPIATO"
+    sha256: "minusio_c_2024_placeholder_hash"
+    expected_file: "expected/minusio_c_2024.json"
+    available_locally: false
+
+  - id: GS-12
+    ust_code: 5111
+    municipality_name: "Gordola"
+    year: 2024
+    type: "CONSUNTIVO"
+    cms_archetype: "ASSOLO"
+    layout_family: "GECOTI_V3"
+    category: "ASSOLO_SDOPPIATO"
+    sha256: "gordola_c_2024_placeholder_hash"
+    expected_file: "expected/gordola_c_2024.json"
+    available_locally: false
+
+  - id: GS-13
+    ust_code: 5121
+    municipality_name: "Muralto"
+    year: 2024
+    type: "CONSUNTIVO"
+    cms_archetype: "ASSOLO"
+    layout_family: "GECOTI_V3"
+    category: "ASSOLO_SDOPPIATO"
+    sha256: "muralto_c_2024_placeholder_hash"
+    expected_file: "expected/muralto_c_2024.json"
+    available_locally: false
+
+  # 3 Documenti da WordPress
+  - id: GS-14
+    ust_code: 5097
+    municipality_name: "Brissago"
+    year: 2024
+    type: "CONSUNTIVO"
+    cms_archetype: "WORDPRESS"
+    layout_family: "GECOTI_V3"
+    category: "WP_STANDARD"
+    sha256: "brissago_c_2024_placeholder_hash"
+    expected_file: "expected/brissago_c_2024.json"
+    available_locally: false
+
+  - id: GS-15
+    ust_code: 5105
+    municipality_name: "Centovalli"
+    year: 2024
+    type: "CONSUNTIVO"
+    cms_archetype: "WORDPRESS"
+    layout_family: "GECOTI_V3"
+    category: "WP_EMENDATO"
+    sha256: "centovalli_c_2024_placeholder_hash"
+    expected_file: "expected/centovalli_c_2024.json"
+    available_locally: false
+
+  - id: GS-16
+    ust_code: 5125
+    municipality_name: "Ronco sopra Ascona"
+    year: 2024
+    type: "CONSUNTIVO"
+    cms_archetype: "WORDPRESS"
+    layout_family: "GECOTI_V3"
+    category: "WP_HISTORICAL"
+    sha256: "ronco_c_2024_placeholder_hash"
+    expected_file: "expected/ronco_c_2024.json"
+    available_locally: false
+
+  # 2 Documenti da Joomla Lavertezzo
+  - id: GS-17
+    ust_code: 5112
+    municipality_name: "Lavertezzo"
+    year: 2024
+    type: "CONSUNTIVO"
+    cms_archetype: "JOOMLA"
+    layout_family: "GECOTI_V3"
+    category: "JOOMLA_GECOTI"
+    sha256: "lavertezzo_c_2024_placeholder_hash"
+    expected_file: "expected/lavertezzo_c_2024.json"
+    available_locally: false
+
+  - id: GS-18
+    ust_code: 5112
+    municipality_name: "Lavertezzo"
+    year: 2022
+    type: "CONSUNTIVO"
+    cms_archetype: "JOOMLA"
+    layout_family: "CRYSTAL_REPORTS"
+    category: "JOOMLA_CRYSTAL"
+    sha256: "lavertezzo_c_2022_placeholder_hash"
+    expected_file: "expected/lavertezzo_c_2022.json"
+    available_locally: false
+
+  # 2 Documenti da Città di Locarno (Manuali)
+  - id: GS-19
+    ust_code: 5115
+    municipality_name: "Locarno"
+    year: 2024
+    type: "CONSUNTIVO"
+    cms_archetype: "LOCARNO_MANUAL"
+    layout_family: "GECOTI_V3"
+    category: "LOCARNO_MULTI_ENTE"
+    sha256: "locarno_c_2024_placeholder_hash"
+    expected_file: "expected/locarno_c_2024.json"
+    available_locally: false
+
+  - id: GS-20
+    ust_code: 5115
+    municipality_name: "Locarno"
+    year: 2025
+    type: "PREVENTIVO"
+    cms_archetype: "LOCARNO_MANUAL"
+    layout_family: "GECOTI_V3"
+    category: "LOCARNO_MULTI_ENTE"
+    sha256: "locarno_p_2025_placeholder_hash"
+    expected_file: "expected/locarno_p_2025.json"
+    available_locally: false
+
+  # 2 Aziende Municipalizzate Separate
+  - id: GS-21
+    ust_code: 5131
+    municipality_name: "Azienda Acqua Potabile Terre di Pedemonte"
+    year: 2024
+    type: "CONSUNTIVO"
+    cms_archetype: "ASSOLO"
+    layout_family: "GECOTI_V3"
+    category: "AZIENDA_SEPARATA"
+    sha256: "aap_tdp_c_2024_placeholder_hash"
+    expected_file: "expected/aap_tdp_c_2024.json"
+    available_locally: false
+
+  - id: GS-22
+    ust_code: 5091
+    municipality_name: "Azienda Elettrica Ascona"
+    year: 2024
+    type: "CONSUNTIVO"
+    cms_archetype: "ASSOLO"
+    layout_family: "GECOTI_V3"
+    category: "AZIENDA_SEPARATA"
+    sha256: "aea_c_2024_placeholder_hash"
+    expected_file: "expected/aea_c_2024.json"
+    available_locally: false
+
+  # 2 PDF Scansionati/Degradati (OCR)
+  - id: GS-23
+    ust_code: 5128
+    municipality_name: "Verzasca"
+    year: 2022
+    type: "CONSUNTIVO"
+    cms_archetype: "ASSOLO"
+    layout_family: "SCAN_IMAGE"
+    category: "OCR_SCANNED"
+    sha256: "verzasca_c_2022_placeholder_hash"
+    expected_file: "expected/verzasca_c_2022.json"
+    available_locally: false
+
+  - id: GS-24
+    ust_code: 5102
+    municipality_name: "Campo (Vallemaggia)"
+    year: 2023
+    type: "CONSUNTIVO"
+    cms_archetype: "ASSOLO"
+    layout_family: "SCAN_IMAGE"
+    category: "OCR_SCANNED"
+    sha256: "campo_c_2023_placeholder_hash"
+    expected_file: "expected/campo_c_2023.json"
+    available_locally: false
+
+  # 1 Messaggio di Credito Complesso (Sussidi PALoc / Grandinata)
+  - id: GS-25
+    ust_code: 5096
+    municipality_name: "Brione sopra Minusio"
+    year: 2025
+    type: "CREDITO"
+    cms_archetype: "ASSOLO"
+    layout_family: "GECOTI_V3"
+    category: "CREDITO_SUSSIDIO"
+    sha256: "168f1f85c51701560f1cb3d06cb74f9ce981337517ba6ff1c7f5b26047505aee"
+    expected_file: "expected/168f1f85c51701560f1cb3d06cb74f9ce981337517ba6ff1c7f5b26047505aee.json"
+    available_locally: true

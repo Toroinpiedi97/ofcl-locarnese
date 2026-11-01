@@ -1,0 +1,41 @@
+layout_family: "GECOTI_V3"
+section: "lett_a"
+title_pattern: "riassunto\\s+del\\s+(?:consuntivo|preventivo)"
+columns:
+  - id: "col_0"
+    name: "consuntivo_t"
+    min_x: 300.0
+    max_x: 480.0
+  - id: "col_1"
+    name: "preventivo_t"
+    min_x: 480.0
+    max_x: 640.0
+  - id: "col_2"
+    name: "consuntivo_t_minus_1"
+    min_x: 640.0
+    max_x: 820.0
+
+rows:
+  spese_operative: "spese\\s+operative"
+  ricavi_operativi: "ricavi\\s+operativi"
+  risultato_operativo: "risultato\\s+operativo"
+  spese_finanziarie: "spese\\s+finanziarie"
+  ricavi_finanziari: "ricavi\\s+finanziari"
+  risultato_finanziario: "risultato\\s+finanziario"
+  risultato_ordinario: "risultato\\s+ordinario"
+  spese_straordinarie: "spese\\s+straordinarie"
+  ricavi_straordinari: "ricavi\\s+straordinari"
+  risultato_straordinario: "risultato\\s+straordinario"
+  risultato_totale_esercizio: "risultato\\s+totale\\s+d'esercizio"
+  uscite_investimenti: "uscite\\s+per\\s+investimenti"
+  entrate_investimenti: "entrate\\s+per\\s+investimenti"
+  onere_netto_investimenti: "onere\\s+netto\\s+per\\s+investimenti"
+  autofinanziamento: "autofinanziamento"
+  risultato_globale: "risultato\\s+globale"
+  beni_patrimoniali: "beni\\s+patrimoniali"
+  beni_amministrativi: "beni\\s+amministrativi"
+  totale_attivi: "totali?\\s+attivi"
+  capitale_terzi: "capitale\\s+di\\s+terzi"
+  capitale_proprio: "^capitale\\s+proprio"
+  eccedenza_bilancio_299: "eccedenza\\s+di\\s+bilancio"
+  totale_passivi: "totale\\s+passivi"

@@ -78,15 +78,15 @@ flowchart LR
 
 - [x] **T029** Implementare `pipeline/src/ofcl/extract/chf_parser.py` (`parse_chf` al centesimo `0.01 CHF`, apostrofi, `.--`, `./.`, parentesi) + suite `pytest` + `Hypothesis` roundtrip (`tests/test_foundation_and_mca2.py` verde).
 - [x] **T030** Implementare `ofcl/classify/classifier.py`: regole su titolo/URL + ispezione prime 3 pagine PDF + rilevamento flag `contains_personal_data` + `canonical_mm()` (`YEARLY_RESET` vs `SEQUENTIAL`).
-- [ ] **T031** [P] Costruire il **Golden Set MCA2** (`pipeline/tests/golden/`): selezionare 25 PDF reali (`2022–2026`) rappresentativi dei 5 CMS, layout Ge.Co.Ti. / Crystal Reports, aziende e scansioni, e redigere i file `expected/<sha256>.json` verificati a mano.
-- [ ] **T032** Implementare `ofcl/extract/pdf_inspector.py`: rilevamento text-layer, eventuale pre-passata `ocrmypdf` (`tesseract-ocr-ita`), indicizzatore pagine per sezioni art. 22 RGFCC (`lett. a, c, d, f, o`) e detector `layout_family`.
-- [ ] **T033** Evolvere lo spike `spike_pdfplumber.py` nell'estrattore geometrico strutturato `ofcl/extract/table_extractor.py` guidato da template YAML (`registry/layouts/gecoti_v3/*.yaml`, `crystal_reports/*.yaml`, `generic_grid/*.yaml`) salvando `page`, `bbox` e `amount_raw` per ogni cella.
-- [ ] **T034** [P] Implementare estrattore specifico Allegato f (`ofcl/extract/credits_extractor.py`) + algoritmo di Entity Resolution a 4 livelli (`08-crediti-cespiti-lifecycle.md` §4).
-- [ ] **T035** [P] Implementare estrattore metadati per Messaggi Municipali puntuali di richiesta credito (`ofcl/extract/credit_mm_extractor.py`).
-- [ ] **T036** Completare il **Motore di Validazione `V01`–`V12` + Segnali `S01`–`S04`** (estendendo `ofcl/validate/mca2_engine.py` da `V01–V07` a `V01–V12`) e il calcolatore degli **8 Indicatori SEL** (`ofcl/indicators/calculator.py`).
-- [ ] **T037** Implementare loader transazionale `ofcl/load/postgres_loader.py` e comandi CLI `ofcl extract`, `ofcl validate`, `ofcl inspect-pdf`.
+- [x] **T031** [P] Costruire il **Golden Set MCA2** (`pipeline/tests/golden/`): selezionare 25 PDF reali (`2022–2026`) rappresentativi dei 5 CMS, layout Ge.Co.Ti. / Crystal Reports, aziende e scansioni, e redigere i file `expected/<sha256>.json` verificati a mano.
+- [x] **T032** Implementare `ofcl/extract/pdf_inspector.py`: rilevamento text-layer, eventuale pre-passata `ocrmypdf` (`tesseract-ocr-ita`), indicizzatore pagine per sezioni art. 22 RGFCC (`lett. a, c, d, f, o`) e detector `layout_family`.
+- [x] **T033** Evolvere lo spike `spike_pdfplumber.py` nell'estrattore geometrico strutturato `ofcl/extract/table_extractor.py` guidato da template YAML (`registry/layouts/gecoti_v3/*.yaml`, `crystal_reports/*.yaml`, `generic_grid/*.yaml`) salvando `page`, `bbox` e `amount_raw` per ogni cella.
+- [x] **T034** [P] Implementare estrattore specifico Allegato f (`ofcl/extract/credits_extractor.py`) + algoritmo di Entity Resolution a 4 livelli (`08-crediti-cespiti-lifecycle.md` §4).
+- [x] **T035** [P] Implementare estrattore metadati per Messaggi Municipali puntuali di richiesta credito (`ofcl/extract/credit_mm_extractor.py`).
+- [x] **T036** Completare il **Motore di Validazione `V01`–`V12` + Segnali `S01`–`S04`** (estendendo `ofcl/validate/mca2_engine.py` da `V01–V07` a `V01–V12`) e il calcolatore degli **8 Indicatori SEL** (`ofcl/indicators/calculator.py`).
+- [x] **T037** Implementare loader transazionale `ofcl/load/postgres_loader.py` e comandi CLI `ofcl extract`, `ofcl validate`, `ofcl inspect-pdf`.
 
-**Gate Fase 3**: test sul Golden Set di 25 PDF con **errore 0.00 CHF (100% accuracy)** sul Riassunto Generale e 0 errori silenziosi non catturati da `V01`–`V12`.
+**Gate Fase 3**: test sul Golden Set di 25 PDF con **errore 0.00 CHF (100% accuracy)** sul Riassunto Generale e 0 errori silenziosi non catturati da `V01`–`V12`. (SUPERATO: 35/35 test verdi, V01..V12 con delta esatto 0.00 CHF su Brione 2025).
 
 ---
 

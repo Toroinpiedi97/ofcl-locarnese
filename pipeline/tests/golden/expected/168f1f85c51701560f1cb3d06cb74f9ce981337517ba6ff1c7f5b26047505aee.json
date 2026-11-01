@@ -1,0 +1,74 @@
+{
+  "sha256": "168f1f85c51701560f1cb3d06cb74f9ce981337517ba6ff1c7f5b26047505aee",
+  "ust_code": 5096,
+  "municipality_name": "Brione sopra Minusio",
+  "year": 2025,
+  "statement_type": "CONSUNTIVO",
+  "tax_multiplier_pct": 78.0,
+  "sections_pages": {
+    "lett_a": [5, 6],
+    "lett_o": [12, 13],
+    "lett_f": [126, 127]
+  },
+  "riassunto_generale": {
+    "conto_economico": {
+      "spese_operative": "3057410.26",
+      "ricavi_operativi": "2991727.57",
+      "risultato_operativo": "-65682.69",
+      "spese_finanziarie": "37743.82",
+      "ricavi_finanziari": "266844.52",
+      "risultato_finanziario": "229100.70",
+      "risultato_ordinario": "163418.01",
+      "spese_straordinarie": "0.00",
+      "ricavi_straordinari": "0.00",
+      "risultato_straordinario": "0.00",
+      "risultato_totale_esercizio": "163418.01"
+    },
+    "conto_investimenti": {
+      "uscite_investimenti": "823840.43",
+      "entrate_investimenti": "22344.65",
+      "onere_netto_investimenti": "801495.78"
+    },
+    "conto_finanziamento": {
+      "onere_netto_investimenti": "801495.78",
+      "autofinanziamento": "437731.39",
+      "risultato_globale": "-363764.39"
+    },
+    "bilancio": {
+      "beni_patrimoniali": "3189910.20",
+      "beni_amministrativi": "6532296.64",
+      "totale_attivi": "9722206.84",
+      "capitale_terzi": "8312008.43",
+      "capitale_proprio": "1410198.41",
+      "eccedenza_bilancio_299": "1417911.25",
+      "totale_passivi": "9722206.84"
+    }
+  },
+  "indicatori_sel": {
+    "tasso_indebitamento_netto_pct": 228.5,
+    "grado_autofinanziamento_pct": 54.6,
+    "quota_spese_interessi_pct": -2.6,
+    "debito_netto_pro_capite_chf": 11775.0,
+    "quota_investimenti_pct": 23.0,
+    "quota_capitale_proprio_pct": 14.5,
+    "quota_indebitamento_lordo_pct": 246.8,
+    "quota_oneri_finanziari_pct": 4.8
+  },
+  "controllo_crediti": {
+    "totale_investimenti_votati": "6919889.75",
+    "totale_crediti_consumati_01_01": "3168583.15",
+    "totale_spese_lorde_esercizio": "823840.43",
+    "totale_crediti_consumati_31_12": "3992423.58",
+    "tornante_jacomello": {
+      "conto": "615.5010.200",
+      "descrizione": "Messa in sicurezza tornante Jacomello",
+      "credito_votato": "361000.00",
+      "credito_consumato_01_01": "346781.30",
+      "spese_lorde_2025": "30349.35",
+      "credito_consumato_31_12": "377130.65",
+      "credito_residuo": "-16130.65",
+      "stato": "LIQUIDATO",
+      "has_overrun": true
+    }
+  }
+}
