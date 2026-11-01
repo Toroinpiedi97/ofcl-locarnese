@@ -52,11 +52,14 @@ Verifica formale delle policy Row Level Security su istanza locale Supabase:
    - Qualsiasi `INSERT / UPDATE / DELETE` su qualunque schema → **PERMESSO NEGATO**.
 2. Ruolo `authenticated` normale (senza `app_metadata.role == 'curator'`) → identico ad `anon` (impedisce privilege escalation registrandosi via Supabase Auth).
 3. Ruolo `curator`: ogni correzione su `core.ledger_value` senza riga corrispondente in `audit.curator_action` (con `reason` ≥ 10 caratteri) fallisce via trigger transazionale.
+4. Sicurezza `audit.feedback_ticket` & `api.municipal_civic_guide`: `anon` non può leggere né inserire direttamente in `audit.feedback_ticket` via PostgREST (scrittura riservata a `POST /api/feedback` con `service_role`); `api.municipal_civic_guide` espone esclusivamente voci con `verified_at is not null` e `source_url` valido.
 
 ### L5 · E2E Portale, Split-View Curatore & Accessibilità (`web/e2e/`)
-Suite Playwright su 5 flussi critici:
+Suite Playwright su 7 flussi critici:
 1. **Regola dei 30 secondi (US1)**: navigazione `/` → `/comuni/losone` → apertura popover fonte su KPI → verifica URL PDF `#page=N`.
-2. **Comparatore & Export CSV (US2)**: selezione 5 Comuni su `NET_DEBT_PC` → ordinamento → download CSV → verifica corrispondenza esatta numeri UI vs CSV.
-3. **Filtro Sorpassi Crediti (US3)**: apertura `/crediti?only_overruns=true` → verifica badge rosso + icona testuale + dettaglio storico multi-anno.
-4. **Workflow Curatore completo (US6)**: login curatore → apertura documento `NEEDS_REVIEW` con `V10` fallito → rettifica cifra con motivazione → riesecuzione `V10` verde → `APPROVE` → `PUBLISH` → verifica comparsa immediata sulla vista pubblica.
-5. **Audit automatico `@axe-core/playwright`**: **0 violazioni WCAG 2.1 AA** su tutte le pagine pubbliche (desktop e mobile 375×812).
+2. **Doppia Pipeline Responsiva (Desktop vs Mobile)**: verifica viewport Desktop `1440×900` (`DashboardDesktop` master-detail reattivo in-place senza reload + cruscotto 8 micro-tacche SEL) e viewport Mobile `390×844` (`DashboardMobile` apertura Bottom Sheet scorrevole + verifica tap target ≥ `44px` e `CLS == 0.00`).
+3. **Comparatore & Export CSV (US2)**: selezione 5 Comuni su `NET_DEBT_PC` → ordinamento → download CSV → verifica corrispondenza esatta numeri UI vs CSV.
+4. **Filtro Sorpassi Crediti (US3)**: apertura `/crediti?only_overruns=true` → verifica badge rosso + icona testuale + dettaglio storico multi-anno.
+5. **Civic Deep Dive & Civic Ticket Sandbox (US9, US10)**: apertura tab Tasse/Sussidi con verifica link ordinanza `source_url`; invio segnalazione su `/api/feedback` → test sanitizzazione payload `<script>alert(1)</script>`, blocco > 500 caratteri e HTTP `429` alla 4ª richiesta dalla stessa origine.
+6. **Workflow Curatore completo (US6)**: login curatore → apertura documento `NEEDS_REVIEW` con `V10` fallito → rettifica cifra con motivazione → riesecuzione `V10` verde → `APPROVE` → `PUBLISH` → verifica comparsa immediata sulla vista pubblica.
+7. **Audit automatico `@axe-core/playwright`**: **0 violazioni WCAG 2.1 AA** su tutte le pagine pubbliche (desktop, mobile `375×812` e modalità `prefers-reduced-transparency: reduce`).

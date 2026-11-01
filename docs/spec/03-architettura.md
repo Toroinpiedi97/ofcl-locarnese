@@ -49,15 +49,16 @@ flowchart LR
 | Area | Scelta | Alternativa scartata | Perché |
 |---|---|---|---|
 | **ADR-01 Linguaggio pipeline** | **Python 3.12** + `uv` | Node/TS | Ecosistema PDF superiore: `pdfplumber`, `PyMuPDF`, `camelot`, OCR `ocrmypdf`/Tesseract, `pandas`/`polars`, `pandera` |
-| **ADR-02 Linguaggio portale** | **Next.js 15 (App Router) + TypeScript + Tailwind v4** | Astro, SvelteKit | Coerente con le competenze già dimostrate nel progetto Corfin; SSG/ISR per performance |
-| **ADR-03 Database** | **Postgres su Supabase (progetto NUOVO, regione Zurigo)** | DuckDB+file statici | Serve area curatore con auth + RLS + API; Supabase già familiare e con MCP |
-| **ADR-04 Storage PDF** | **Supabase Storage** (bucket privato) in v1; **Cloudflare R2** se > 10 GB | S3 | Semplicità in v1; R2 per egress gratuito se l'archivio diventa pubblico |
-| **ADR-05 Orchestrazione** | **GitHub Actions cron** (repo pubblico → minuti gratis) | Vercel cron, Cloudflare Workers | Job lunghi (fino a 6 h), Python nativo, log pubblici = trasparenza |
+| **ADR-02 Linguaggio portale** | **Next.js 16 (App Router) + React 19 + TypeScript + Tailwind v4** | Astro, SvelteKit | Coerente con lo stack moderno; SSG/ISR per performance e Server Routes sicure |
+| **ADR-03 Database** | **Postgres su Supabase (progetto NUOVO `ofcl-prod`, regione Zurigo)** | DuckDB+file statici | Serve area curatore con auth + RLS + API; isolamento totale dal DB Corfin (`C-01`) |
+| **ADR-04 Storage PDF** | **Cloudflare R2 (`ofcl-raw-pdfs`, bucket privato S3-compatibile)** | Supabase Storage / S3 | Già attivo e configurato: egress `0.00 CHF`, chiave immutabile `pdf/{ust}/{sha256}.pdf` e Presigned URL temporanei (15 min) per lo Split-View `/admin` |
+| **ADR-05 Orchestrazione** | **GitHub Actions cron settimanale (`Lun 04:00 CET`)** | Vercel cron, Cloudflare Workers | Job lunghi (fino a 6 h), Python nativo, carico minimo sui server comunali, log pubblici = trasparenza |
 | **ADR-06 HTTP crawling** | `httpx` async + `selectolax` + `protego` (robots) ; Playwright solo fallback | Scrapy | Più semplice da testare; nessun framework pesante per 19 host |
 | **ADR-07 Validazione dati** | `pydantic` v2 (record) + `pandera` (dataframe) + SQL constraints | Great Expectations | Leggero, tipizzato, testabile con pytest |
 | **ADR-08 Contratto dati** | Migrazioni **SQL** versionate (Supabase CLI) come *source of truth*; tipi TS generati (`supabase gen types`) | ORM condiviso | Due linguaggi → il contratto è lo schema DB |
-| **ADR-09 Grafici** | `Observable Plot` o `Recharts` + mappa `MapLibre` con confini comunali swisstopo | D3 custom | Accessibili, leggeri |
-| **ADR-10 Open data** | Export Parquet/CSV + `datapackage.json` pubblicati come **GitHub Release** + mirror su storage | Solo API | Riproducibile, citabile (DOI via Zenodo opzionale) |
+| **ADR-09 Grafici & Mappa** | Mappa vettoriale SVG georeferenziata ultra-leggera (`swissBOUNDARIES3D`) + barre/grafici CSS/SVG nativi | Librerie WebGL/3D pesanti | Zero latenza mobile, accessibile da tastiera, Lighthouse 100 |
+| **ADR-10 Open data** | Export Parquet/CSV + `datapackage.json` pubblicati come **GitHub Release** + mirror su R2 | Solo API | Riproducibile, citabile (DOI via Zenodo opzionale) |
+| **ADR-11 Design & Responsive** | **Alpine Frosted Glass + Bento Grid + Doppia Pipeline (`DashboardDesktop` / `DashboardMobile`)** | Singolo layout con breakpoint complessi | Zero conflitti CSS, zero layout shift (`CLS = 0`), Bottom Sheet mobile con tap target ≥ `44px` e fallback `prefers-reduced-transparency` |
 
 ## 3. Struttura del repository (nuovo, separato)
 
@@ -121,10 +122,10 @@ sequenceDiagram
     participant U as Curatore
     participant W as Portale
 
-    GH->>C: cron settimanale (lun 03:00 CET)
-    C->>C: legge robots.txt + crawl-delay per host
+    GH->>C: cron settimanale (lun 04:00 CET)
+    C->>C: legge robots.txt + crawl-delay per host + filtro privacy nLPD
     C->>DB: upsert raw.source_page / raw.document_candidate
-    C->>S: download nuovi PDF (SHA-256)
+    C->>S: upload nuovi PDF su Cloudflare R2 privato (pdf/{ust}/{sha256}.pdf)
     C->>DB: raw.document (hash, url, meta)
     GH->>X: job extract (documenti status=DOWNLOADED)
     X->>DB: core.document_classification

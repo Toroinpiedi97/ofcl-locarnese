@@ -23,7 +23,7 @@ Tutti i job girano su runner `ubuntu-latest` con `uv` cache abilitata e **concur
 2. **`crawl-scheduled.yml` (`cron` + `workflow_dispatch` con input `ust_code` opzionale)**:
    - Esegue i 19 host **in parallelo controllato** (`asyncio.Semaphore(6)` tra domini diversi, ma **1 singola coda sequenziale per dominio** con rispetto rigoroso di `Crawl-delay: 30s`).
    - Timeout job: `90 minuti` per scansione incrementale; per il **backfill storico iniziale** (`--backfill`), un matrix job dedicato per singolo `ust_code` evita il limite di 6 ore e salva checkpoint dopo ogni pagina.
-   - Se trova nuovi PDF → carica su Supabase Storage privato (`pdf/{ust}/{sha256}.pdf`) → innesca `extract-validate.yml`.
+   - Se trova nuovi PDF → carica su **Cloudflare R2 privato (`ofcl-raw-pdfs`, chiave `pdf/{ust}/{sha256}.pdf`)** → innesca `extract-validate.yml`.
 3. **`extract-validate.yml`**:
    - Preleva tutti i `raw.document_version` in stato `DOWNLOADED`.
    - Esegue classificazione → estrazione → controlli `V01`–`V12` → calcolo indicatori `COMPUTED`.

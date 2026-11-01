@@ -79,6 +79,12 @@ Come **cittadino**, voglio un feed RSS/Atom (e in futuro email) per "nuovo preve
 ### US8 — Piani finanziari e sopravvenienze (P3)
 Proiezioni dei Piani Finanziari quadriennali e monitoraggio sopravvenienze d'imposta (conto 990.4000.101 / tabelle di emissione partite fiscali).
 
+### US9 — Guida Civica Comunale: Tasse, Tariffe, Famiglie & Sussidi (P2)
+Come **famiglia o residente del Locarnese**, voglio consultare nella scheda del mio Comune (e confrontare tra Comuni) i costi pratici annuali (tassa base e sacco rifiuti, acqua potabile, imposta immobiliare, tassa cani, parcheggi residenti) e i sussidi comunali attivi (bonus nascita, rette nidi e mense, contributi sport/musica giovani, agevolazioni AVS terza età, incentivi fotovoltaico/e-bike e abbonamento Arcobaleno), sempre con link all'ordinanza o regolamento ufficiale.
+
+### US10 — Segnalazione Civica & Rettifica Rapida ("Civic Ticket Sandbox") (P1)
+Come **cittadino, consigliere o funzionario comunale**, voglio poter segnalare in meno di 30 secondi un dato dubbio o un refuso tramite una finestra sicura (solo testo semplice ≤ 500 caratteri), così che il curatore riceva notifica immediata e verifichi sul PDF originale entro 24 ore.
+
 ### Edge Cases (obbligatori da gestire)
 - Preventivo **emendato** dal Consiglio comunale dopo la pubblicazione (Terre di Pedemonte, Lavertezzo, Ronco s/A) → due versioni dello stesso preventivo; il portale mostra la versione *approvata* e conserva quella iniziale.
 - Preventivo approvato **dopo** l'inizio dell'esercizio (es. Ronco s/A: preventivo 2025 approvato il 20.01.2025).
@@ -116,8 +122,11 @@ Proiezioni dei Piani Finanziari quadriennali e monitoraggio sopravvenienze d'imp
 - **FR-030** Pagine: Home (mappa + KPI distretto), Scheda Comune, Confronta, Crediti, Documenti, Open Data, Metodologia, Note legali, Changelog dati.
 - **FR-031** Ogni cifra pubblica DEVE avere un link "fonte" verso il PDF (originale + copia d'archivio).
 - **FR-032** Il portale DEVE essere **WCAG 2.1 AA**, mobile-first, utilizzabile senza JavaScript per i contenuti principali (SSR/SSG).
-- **FR-033** Il portale DEVE mostrare in modo permanente il disclaimer: *"Fanno fede i documenti ufficiali esposti all'albo comunale (art. 192 LOC). OFCL non è un servizio ufficiale."*
-- **FR-034** Area **curatore** protetta da autenticazione (Supabase Auth, MFA) con coda di revisione (US6).
+- **FR-033** Il portale DEVE mostrare in modo permanente nell'header e nel footer il micro-disclaimer istituzionale: *"Dati aggiornati settimanalmente (ogni lunedì alle 04:00 CET). Fanno fede gli atti esposti ex art. 192 LOC."*, affiancato dalla pagina integrale `/note-legali`.
+- **FR-034** Area **curatore** protetta da autenticazione (Supabase Auth, MFA) con coda di revisione (US6) e gestione segnalazioni civiche.
+- **FR-035** Il frontend DEVE adottare il sistema visivo **Alpine Frosted Glass & Bento Grid** (`09-ux-portale-admin-opendata.md` §6) con **doppia pipeline responsiva disaccoppiata** (`DashboardDesktop` master-detail a 2 colonne e `DashboardMobile` con Bottom Sheet scorrevole e tap target ≥ `44px`) e fallback automatico ad alta opacità per `prefers-reduced-transparency`.
+- **FR-036** Il portale DEVE offrire un modulo **Civic Ticket Sandbox** (`POST /api/feedback`) protetto da sanitizzazione testo puro, limite rigido di `500` caratteri, honeypot e rate limit (`3 req/ora/IP`), con registrazione in `audit.feedback_ticket` e notifica email server-side (senza mai esporre l'indirizzo email del curatore nel bundle client).
+- **FR-037** Ogni Scheda Comune DEVE esporre la sezione strutturata **"Vivere nel Comune: Tasse, Tariffe, Famiglie & Servizi"** (Quadranti A–E), dove ogni parametro pubblicato richiede obbligatoriamente `source_url` al regolamento/ordinanza comunale e stato di verifica esplicito.
 
 ### Open data / API
 - **FR-040** Release dati versionate (SemVer dati `YYYY.MM.patch`) in CSV (UTF-8, `;` opzionale per Excel CH), Parquet e `datapackage.json`.
@@ -130,7 +139,7 @@ Proiezioni dei Piani Finanziari quadriennali e monitoraggio sopravvenienze d'imp
 |---|---|---|
 | NFR-01 | Performance portale | LCP < 2.0 s su 4G, TTFB < 300 ms (pagine statiche/ISR) |
 | NFR-02 | Disponibilità | 99.5% mensile (hosting gestito) |
-| NFR-03 | Freschezza dati | Nuovo documento rilevato ≤ 7 giorni dalla pubblicazione (≤ 2 giorni nei periodi ott–nov e mar–giu) |
+| NFR-03 | Freschezza dati | Scansione massiva settimanale ogni **lunedì alle 04:00 CET** (≤ 7 giorni dalla pubblicazione + dispatch manuale post-sedute CC nei picchi ott–dic e mar–giu) |
 | NFR-04 | Cortesia crawling | Rispetto 100% di robots.txt; max 1 richiesta / `crawl-delay` per host; User-Agent identificabile con email di contatto |
 | NFR-05 | Accuratezza | 0 valori pubblicati che differiscono dal PDF (verifica a campione 5% per release) |
 | NFR-06 | Tracciabilità | 100% dei valori pubblici con documento+pagina |

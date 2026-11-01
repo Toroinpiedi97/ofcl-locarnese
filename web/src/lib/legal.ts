@@ -24,7 +24,7 @@ export const OFFICIAL_SOURCES = [
   {
     name: "Albi pretori ufficiali dei 19 Comuni del Locarnese",
     description:
-      "Albi fisici e digitali dei 19 Comuni del Distretto di Locarno (Ascona, Brione sopra Minusio, Brione Verzasca, Cugnasco-Gerra, Gambarogno, Gordola, Lavertezzo, Locarno, Losone, Mergoscia, Minusio, Muralto, Onsernone, Orselina, Ronco sopra Ascona, San Nazzaro/Gambarogno, Tenero-Contra, Terre di Pedemonte, Verzasca).",
+      "Albi fisici e digitali dei 19 Comuni del Distretto di Locarno (Ascona, Brione sopra Minusio, Brissago, Centovalli, Cugnasco-Gerra, Gambarogno, Gordola, Lavertezzo, Locarno, Losone, Mergoscia, Minusio, Muralto, Onsernone, Orselina, Ronco sopra Ascona, Tenero-Contra, Terre di Pedemonte, Verzasca).",
   },
   {
     name: "Fascicoli di Contabilità Comunale Armonizzata (MCA2)",

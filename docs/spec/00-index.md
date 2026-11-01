@@ -24,7 +24,7 @@
 | **11** | [11-testing-qa-goldenset.md](./11-testing-qa-goldenset.md) | **Strategia QA & Golden Set**: 5 livelli di test (`Hypothesis`, fixture HTML, 25 PDF reali a errore `0.00 CHF`, RLS negative tests, Playwright) | QA & SDD Verifier |
 | **12** | [12-legal-compliance.md](./12-legal-compliance.md) | **Quadro Legale Svizzero/Ticinese**: art. 5 LDA, LPSt stemmi, nLPD/LPDP, art. 192 LOC, LIT + **Template A (Locarno)** e **Template B (LIT)** | Domain & Legal |
 | **13** | [13-operations-runbook.md](./13-operations-runbook.md) | **CI/CD, Calendario Fiscale & Runbook**: workflow GitHub Actions, picchi ott/mag, canary anti-drift HTML e Disaster Recovery riproducibile | Architect & Ops |
-| **14** | [14-tasks-build-roadmap.md](./14-tasks-build-roadmap.md) | **Roadmap di Build A→Z (`T001–T059`)**: 8 fasi sequenziali con dipendenze, file esatti e gate bloccanti di qualità | Tutti |
+| **14** | [14-tasks-build-roadmap.md](./14-tasks-build-roadmap.md) | **Roadmap di Build A→Z (`T001–T060` + sotto-task UI/DB)**: 8 fasi con stato QA verificato, doppia pipeline Desktop/Mobile, Civic Deep Dive e Civic Ticket | Tutti |
 
 ---
 

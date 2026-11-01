@@ -13,8 +13,9 @@
 | `/open-data` | Pubblico | SSG | Download release versionate (ZIP CSV/Parquet + `datapackage.json`), documentazione API `/api/v1` |
 | `/metodologia` & `/stato` | Pubblico | SSG / ISR | Formule MCA2, regole V01–V12 generate da codice, salute settimanale dei 19 connettori, note legali art. 192 LOC |
 | `/admin/queue` | `curator` (MFA) | Dynamic (`no-store`) | Coda estrazioni da revisionare ordinata per severità (`BLOCKING` → `WARNING` → `VALIDATED`) |
-| `/admin/review/[versionId]` | `curator` (MFA) | Dynamic (`no-store`) | **Split-View di Revisione**: PDF viewer sincronizzato su `page` + `bbox` a sinistra, griglia editabile con audit obbligatorio a destra |
+| `/admin/review/[versionId]` | `curator` (MFA) | Dynamic (`no-store`) | **Split-View di Revisione**: PDF viewer sincronizzato su `page` + `bbox` (via Presigned URL Cloudflare R2 15 min) a sinistra, griglia editabile con audit obbligatorio a destra |
 | `/admin/upload` | `curator` (MFA) | Dynamic (`no-store`) | Caricamento manuale PDF (es. Città di Locarno `MANUAL_UPLOAD` per C-02 o atti ottenuti via LIT) |
+| `/admin/tickets` | `curator` (MFA) | Dynamic (`no-store`) | Coda segnalazioni civiche da `audit.feedback_ticket` (`NEW` → `IN_REVIEW` → `RESOLVED` / `DISMISSED`) con salto diretto al dato contestato |
 
 ---
 
@@ -86,6 +87,9 @@ Tutte le rotte API sono `GET` pubbliche, servite con `Cache-Control: public, s-m
 - `GET /api/v1/indicatori?comune=5115&anno=2025` — gli 8 indicatori SEL (`reported` e `computed`), fascia ufficiale e input del calcolo.
 - `GET /api/v1/crediti?comune=5113&only_overruns=true&stato=IN_CORSO` — crediti d'investimento paginati (`limit<=200`, `cursor`).
 - `GET /api/v1/documenti?comune=5396&tipo=CONSUNTIVO` — catalogo atti con metadati e stato online/offline.
+- `GET /api/v1/comuni/{ust_or_slug}/servizi-tariffe?anno=2026` — guida civica strutturata per i Quadranti A–E (tasse rifiuti/acqua, bonus famiglie, terza età, incentivi clima/mobilità) con `ordinance_ref` e `source_url` verificati.
+
+*(Nota: l'unico endpoint di scrittura dell'applicazione pubblica è `POST /api/feedback` descritto in §6.4, rigorosamente separato dal namespace read-only `/api/v1`).*
 
 Formato risposta standardizzato:
 ```json
@@ -111,6 +115,7 @@ Ad ogni pubblicazione mensile o stagionale, il workflow `release-opendata.yml` g
 - `conti_riassunto_natura_funzione.csv` / `.parquet` (con colonne `origin_url`, `mm_number`, `page`, `sha256`)
 - `indicatori_sel.csv` / `.parquet`
 - `crediti_investimento_storico.csv` / `.parquet`
+- `tariffe_sussidi_comunali.csv` / `.parquet` (Quadranti A–E con `ordinance_ref` e `source_url`)
 - `CHANGELOG.md` e `LICENSE.txt` (`CC BY 4.0`).
 
 > **Dettaglio pratico Svizzera/Ticino**: oltre al CSV standard UTF-8 con virgola (`,`), viene generata una variante `*-excel-ch.csv` con **BOM UTF-8 e separatore punto e virgola (`;`)**, così che consiglieri comunali, segretari e giornalisti possano aprirlo con doppio clic in Microsoft Excel svizzero senza corrompere accenti o decimali!
@@ -136,6 +141,10 @@ A integrazione delle linee guida di accessibilità (`WCAG 2.1 AA`) e della neutr
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
   ```
   Sulle cifre contabili viene applicato colore solido ad alto contrasto (`#0F172A` / `#000000`, `font-semibold`), garantendo un rapporto di contrasto superiore a 7:1 (superando il requisito minimo 4.5:1 di WCAG AA).
+- **Guardrail di Accessibilità & Prestazioni (`eCH-0059` / `WCAG 2.1 AA`):**
+  - Quando il sistema operativo dell'utente segnala `@media (prefers-reduced-transparency: reduce)`, il foglio di stile disattiva il filtro blur e porta l'opacità della card a `rgba(255, 255, 255, 0.97)` su bordo solido `#CBD5E1`.
+  - Quando è attivo `@media (prefers-reduced-motion: reduce)`, le micro-interazioni elastiche, onde SVG e transizioni parallax vengono istantaneamente neutralizzate.
+  - Il `backdrop-filter` è applicato **solo ai contenitori primari** (mai annidato su singole celle tabellari) per preservare 60 fps costanti su smartphone di fascia media.
 
 #### 2. Bento Grid con Micro-Interazioni Elastiche (Spring Physics)
 - **Concetto:** Disposizione delle card a scatole modulari "Bento Box" in puro Swiss Design contemporaneo, con gerarchia chiara e densità informativa bilanciata.
@@ -194,6 +203,7 @@ web/src/
 - **Layout:** Flusso verticale a card singola con ricerca in evidenza e lista comuni a blocchi touch-friendly.
 - **Bottom Sheet / Drawer Scorrevole:** Il tocco su un comune apre un cassetto scorrevole dal basso (trascinabile o espandibile con gesture) che presenta le 4 Grandi Cifre, i semafori SEL e l'eventuale allerta crediti d'opera.
 - **Ergonomia One-Hand:** Tutti i target interattivi hanno altezza minima di `44px` conformemente alle linee guida Apple HIG e WCAG 2.1 AA, permettendo la consultazione rapida da smartphone con una sola mano.
+- **Strategia SSR Senza Hydration Mismatch (`CLS = 0.00`):** Il Server Component `page.tsx` serializza un'unica volta il payload dati tipizzato e monta i wrapper `DashboardDesktop` (`hidden lg:grid`) e `DashboardMobile` (`block lg:hidden`) tramite isolamento CSS puro (con caricamento `dynamic` del solo `BottomSheet` interattivo al primo tocco), evitando sia il flash bianco da `window.innerWidth` al primo caricamento sia qualsiasi errore di idratazione React 19.
 
 ---
 

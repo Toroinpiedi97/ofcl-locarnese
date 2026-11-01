@@ -28,6 +28,9 @@ erDiagram
     MUNICIPALITY ||--o{ INVESTMENT_CREDIT : "vota"
     MUNICIPALITY ||--o{ TAX_MULTIPLIER : "fissa"
     MUNICIPALITY ||--o{ POPULATION : "abitanti"
+    MUNICIPALITY ||--o{ MUNICIPAL_CIVIC_ITEM : "tariffe e sussidi"
+    CIVIC_BENEFIT_DEF ||--o{ MUNICIPAL_CIVIC_ITEM : "catalogo"
+    MUNICIPALITY ||--o{ FEEDBACK_TICKET : "segnalazioni"
     ENTITY ||--o{ INDICATOR_VALUE : "indicatori"
     INDICATOR_DEF ||--o{ INDICATOR_VALUE : "definisce"
     INDICATOR_DEF ||--o{ INDICATOR_SCALE : "soglie"
@@ -129,6 +132,32 @@ create table ref.indicator_scale (
   color_token     text not null,                         -- 'good','ok','warn','bad'
   source_url      text not null,
   primary key (indicator_code, valid_from, band_order)
+);
+
+-- Catalogo standardizzato per il Civic Deep Dive ("Vivere nel Comune" - 09-ux §6.5)
+create table ref.civic_benefit_def (
+  code            text primary key,                      -- 'WASTE_BASE_FEE', 'BIRTH_BONUS', 'ARCOBALENO_YOUTH_SUBSIDY'
+  quadrant        text not null check (quadrant in ('A_TARIFFE','B_FAMIGLIE','C_TERZA_ETA','D_CLIMA_MOBILITA','E_FISCO_SPORTELLO')),
+  label_it        text not null,
+  unit_hint       text not null,                         -- 'CHF/anno', 'CHF/m3', '%', 'CHF una-tantum'
+  sort_order      smallint not null default 100
+);
+
+-- Valori comunali di tasse, tariffe e sussidi (obbligo di link a ordinanza/regolamento ufficiale)
+create table ref.municipal_civic_item (
+  ust_code        smallint not null references ref.municipality,
+  benefit_code    text not null references ref.civic_benefit_def,
+  valid_year      smallint not null,
+  status          text not null default 'UNVERIFIED' check (status in ('ACTIVE','NOT_APPLICABLE','UNVERIFIED')),
+  value_display   text not null,                         -- es. '500.00 CHF una-tantum' oppure 'Non previsto'
+  amount_min_chf  numeric(12,2),                         -- estremo inferiore strutturato per filtri/confronti
+  amount_max_chf  numeric(12,2),                         -- estremo superiore strutturato
+  pct_value       numeric(5,2),                          -- es. 30.00 per rimborso 30%
+  conditions_short text,                                 -- es. 'Giovani residenti < 25 anni'
+  ordinance_ref   text,                                  -- es. 'Regolamento comunale rifiuti art. 14'
+  source_url      text not null,                         -- link obbligatorio al regolamento/pagina ufficiale
+  verified_at     timestamptz,
+  primary key (ust_code, benefit_code, valid_year)
 );
 
 -- =========================================================
@@ -313,6 +342,24 @@ create table audit.curator_action (
   reason          text not null check (length(reason) >= 10),
   at              timestamptz not null default now()
 );
+
+-- Segnalazioni civiche dal modulo Civic Ticket Sandbox (POST /api/feedback - 09-ux §6.4)
+-- Scrittura esclusiva tramite service_role lato server (rate-limited e sanitizzata); lettura solo ruolo 'curator'
+create table audit.feedback_ticket (
+  id              uuid primary key default gen_random_uuid(),
+  ust_code        smallint references ref.municipality,
+  version_id      uuid references raw.document_version,
+  target_metric   text,                                  -- es. 'NET_DEBT_PC 2025' o 'BIRTH_BONUS'
+  page_path       text not null,                         -- es. '/comuni/losone'
+  message_clean   text not null check (char_length(message_clean) between 10 and 500),
+  reporter_email  text check (reporter_email is null or char_length(reporter_email) <= 254),
+  ip_hash         char(64) not null,                     -- SHA-256(IP + daily_salt) per rate-limit privacy-preserving (nLPD)
+  status          text not null default 'NEW' check (status in ('NEW','IN_REVIEW','RESOLVED','DISMISSED')),
+  resolution_note text,
+  resolved_by     uuid,
+  created_at      timestamptz not null default now(),
+  resolved_at     timestamptz
+);
 ```
 
 ## 4. Vista "golden" (versione autorevole)
@@ -352,6 +399,7 @@ create policy curator_rw on core.ledger_value for all to authenticated
 ```
 
 > Le viste `api.*` filtrano **sempre** `status = 'PUBLISHED'` e `contains_personal_data = false`.
+> **Completezza RLS Curatore**: la policy `curator_rw` (`app_metadata.role = 'curator'`) deve essere applicata esplicitamente a **tutte** le tabelle degli schemi `raw.*`, `core.*` e `audit.*` (inclusa `audit.feedback_ticket`, sulla quale `anon` non ha né `SELECT` né `INSERT` diretto via PostgREST).
 
 ## 6. Viste pubbliche previste (contratto API)
 
@@ -364,3 +412,4 @@ create policy curator_rw on core.ledger_value for all to authenticated
 | `api.documents` | biblioteca documenti (metadati + link originale) |
 | `api.coverage` | matrice Comune × anno × tipo |
 | `api.ledger_golden` | dati per natura/funzione (open data) |
+| `api.municipal_civic_guide` | tasse di causalità, tariffe e sussidi comunali verificati (Quadranti A–E, filtro `verified_at is not null`) |
