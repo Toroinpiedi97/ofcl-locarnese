@@ -1,0 +1,2650 @@
+{
+  "started_at": "2026-11-01T21:40:03.663670+00:00",
+  "finished_at": "2026-11-01T21:40:44.945966+00:00",
+  "duration_seconds": 41.28,
+  "batch": "all",
+  "target_ust_codes": [
+    5091,
+    5097,
+    5115,
+    5125,
+    5396,
+    5397,
+    5096,
+    5108,
+    5117,
+    5118,
+    5131,
+    5138,
+    5112,
+    5113,
+    5120,
+    5121,
+    5136,
+    5398,
+    5399
+  ],
+  "stats": {
+    "total_municipalities": 19,
+    "total_discovered": 287,
+    "by_kind": {
+      "CONSUNTIVO": 42,
+      "PREVENTIVO": 36,
+      "CREDITO_INVESTIMENTO": 87,
+      "ALTRO": 107,
+      "RAPPORTO_COMMISSIONE": 11,
+      "PIANO_FINANZIARIO": 4
+    },
+    "skipped_privacy_nlpd": 3,
+    "manual_intake_locarno": 2
+  },
+  "results_count": 289,
+  "results": [
+    {
+      "ust_code": 5091,
+      "municipality_name": "Ascona",
+      "title": "MM 30/2026 - Modifica dell'art. 15 del Regolamento comunale sulla gestione dei rifiuti (Testo messaggio)",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.ascona.ch/Testo-messaggio-f129e800?i=1&MasterId=g1_3804"
+    },
+    {
+      "ust_code": 5091,
+      "municipality_name": "Ascona",
+      "title": "MM 26/2026 - Richiesta di credito di fr. 55'000.00 per la messa in sicurezza della Piazza mediante la posa di 13 dissuasori amovibili nel Borgo (Testo messaggio)",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.ascona.ch/Testo-messaggio-99f60e00?i=1&MasterId=g1_3803"
+    },
+    {
+      "ust_code": 5091,
+      "municipality_name": "Ascona",
+      "title": "MM 18/2026 - Richiesta di autorizzazione a stare in lite per l'avvio di una procedura di assunzione di prova a titolo cautelare in relazione ai difetti manifestatisi a seguito della copertura della pista di ghiaccio Siberia (Testo messaggio)",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "SKIPPED_PRIVACY",
+      "url": "https://www.ascona.ch/Testo-messaggio-b22e6f00?i=1&MasterId=g1_3789",
+      "note": "Escluso ex lege: rilevati dati personali nLPD"
+    },
+    {
+      "ust_code": 5091,
+      "municipality_name": "Ascona",
+      "title": "MM 17/2026 - Richiesta di credito per la messa in sicurezza dei pedoni e rifacimento delle sottostrutture in Via delle Scuole (parte nord) ad Ascona a carico del Comune, dell'Azienda elettrica e dell'Azienda acqua potabile (Testo messaggio)",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.ascona.ch/Testo-messaggio-d9fb2800?i=1&MasterId=g1_3787"
+    },
+    {
+      "ust_code": 5091,
+      "municipality_name": "Ascona",
+      "title": "Rapporto Commissione Edilizia",
+      "kind": "RAPPORTO_COMMISSIONE",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.ascona.ch/Rapporto-Commissione-Edilizia-1b395400?i=1&MasterId=g1_3787"
+    },
+    {
+      "ust_code": 5091,
+      "municipality_name": "Ascona",
+      "title": "Rapporto Commissione Gestione",
+      "kind": "RAPPORTO_COMMISSIONE",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.ascona.ch/Rapporto-Commissione-Gestione-8c111700?i=1&MasterId=g1_3787"
+    },
+    {
+      "ust_code": 5091,
+      "municipality_name": "Ascona",
+      "title": "MM 16/2026 - Richiesta di credito di fr. 105'000.00 per il rifacimento dello strato di usura in Viale Bartolomeo Papio (Testo messaggio)",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.ascona.ch/Testo-messaggio-15fe7100?i=1&MasterId=g1_3786"
+    },
+    {
+      "ust_code": 5091,
+      "municipality_name": "Ascona",
+      "title": "Rapporto Commissione Edilizia",
+      "kind": "RAPPORTO_COMMISSIONE",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.ascona.ch/Rapporto-Commissione-Edilizia-c62bf700?i=1&MasterId=g1_3786"
+    },
+    {
+      "ust_code": 5091,
+      "municipality_name": "Ascona",
+      "title": "Rapporto Commissione Gestione",
+      "kind": "RAPPORTO_COMMISSIONE",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.ascona.ch/Rapporto-Commissione-Gestione-51124a00?i=1&MasterId=g1_3786"
+    },
+    {
+      "ust_code": 5091,
+      "municipality_name": "Ascona",
+      "title": "MM 15/2026 - Richiesta credito quadro di fr. 262'000.00 per la sostituzione di 5 tratte di cavi MT a carico dell'Azienda elettrica comunale (Testo messaggio)",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.ascona.ch/Testo-messaggio-84283300?i=1&MasterId=g1_3785"
+    },
+    {
+      "ust_code": 5091,
+      "municipality_name": "Ascona",
+      "title": "Rapporto Commissione Gestione",
+      "kind": "RAPPORTO_COMMISSIONE",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.ascona.ch/Rapporto-Commissione-Gestione-84a6bf00?i=1&MasterId=g1_3785"
+    },
+    {
+      "ust_code": 5091,
+      "municipality_name": "Ascona",
+      "title": "MM 14/2026 - Richiesta credito quadro di fr. 900'000.00 per il rinnovo di 4 cabine di trasformazione a carico dell'Azienda elettrica comunale (Testo messaggio)",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.ascona.ch/Testo-messaggio-01b05400?i=1&MasterId=g1_3784"
+    },
+    {
+      "ust_code": 5091,
+      "municipality_name": "Ascona",
+      "title": "Rapporto Commissione Gestione",
+      "kind": "RAPPORTO_COMMISSIONE",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.ascona.ch/Rapporto-Commissione-Gestione-c3c7a600?i=1&MasterId=g1_3784"
+    },
+    {
+      "ust_code": 5091,
+      "municipality_name": "Ascona",
+      "title": "MM 13/2026 - Variante di piano regolatore, Piano particolareggiato del Nucleo (PPN) (Testo messaggio)",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.ascona.ch/Testo-messaggio-04d5a900?i=1&MasterId=g1_3783"
+    },
+    {
+      "ust_code": 5091,
+      "municipality_name": "Ascona",
+      "title": "MM 11/2026 - Modifiche al Regolamento comunale per la distribuzione di acqua potabile (Testo messaggio)",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.ascona.ch/Testo-messaggio-28344100?i=1&MasterId=g1_3782"
+    },
+    {
+      "ust_code": 5091,
+      "municipality_name": "Ascona",
+      "title": "Sezione degli enti locali trasmette risoluzione nr. 8512 sul MM 31/2025 Modifica art. 4 Regolamento comunale sulle tasse e le tariffe per prestazioni particolari Polizia.",
+      "kind": "ALTRO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.ascona.ch/Sezione-degli-enti-locali-trasmette-risoluzione-nr-8512-sul-MM-312025-Modifica-art-4-Regolamento-comunale-sulle-tasse-e-le-tariffe-per-prestazioni-particolari-Polizia-88c01600?i=1"
+    },
+    {
+      "ust_code": 5091,
+      "municipality_name": "Ascona",
+      "title": "Sezione degli enti locali trasmette risoluzione nr. 8510 sul MM 24/2025 Approvazione nuova convenzione di finanziamento tra il Comune del Borgo di Ascona e l'Associazione Mondo Magico per il sostegno all'asilo nido del Comune di Ascona.",
+      "kind": "ALTRO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.ascona.ch/Sezione-degli-enti-locali-trasmette-risoluzione-nr-8510-sul-MM-242025-Approvazione-nuova-convenzione-di-finanziamento-tra-il-Comune-del-Borgo-di-Ascona-e-l-Associazione-Mondo-Magico-per-il-sostegno-all-asilo-nido-del-Comune-di-Ascona-d92d9800?i=1"
+    },
+    {
+      "ust_code": 5097,
+      "municipality_name": "Brissago",
+      "title": "MM 1575 – Richiesta di un credito di CHF 220’000.00 per il progetto “Brissago Memoria Viva”",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.brissago.ch/sito/wp-content/uploads/2026/10/MM-1575.pdf"
+    },
+    {
+      "ust_code": 5097,
+      "municipality_name": "Brissago",
+      "title": "MM 1572 – Richiesta di approvazione del contratto di prestazione con le FART per l’esecuzione del servizio nelle frazioni (Linea 8)",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.brissago.ch/sito/wp-content/uploads/2026/09/MM-1572.pdf"
+    },
+    {
+      "ust_code": 5097,
+      "municipality_name": "Brissago",
+      "title": "Mozione copertura piscina dei bambini con vela parasole presso il Lido comunale",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.brissago.ch/sito/wp-content/uploads/2026/06/26.06.15-Mozione-1.pdf"
+    },
+    {
+      "ust_code": 5097,
+      "municipality_name": "Brissago",
+      "title": "Preavviso di ricevibilità",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.brissago.ch/sito/wp-content/uploads/2026/06/26.07.28-Preavviso-ricevibilita-vela.pdf"
+    },
+    {
+      "ust_code": 5097,
+      "municipality_name": "Brissago",
+      "title": "Mozione per la creazione di un ulteriore passaggio pedonale in prossimità della stazione Migrolino",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.brissago.ch/sito/wp-content/uploads/2026/06/26.06.15-Mozione.pdf"
+    },
+    {
+      "ust_code": 5097,
+      "municipality_name": "Brissago",
+      "title": "Preavviso di ricevibilità",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.brissago.ch/sito/wp-content/uploads/2026/06/26.07.28-Preavviso-ricevibilita.pdf"
+    },
+    {
+      "ust_code": 5097,
+      "municipality_name": "Brissago",
+      "title": "Interpellanza per la creazione di un sentiero sensoriale “5 sensi”",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.brissago.ch/sito/wp-content/uploads/2026/06/26.06.15-Interpellanza.pdf"
+    },
+    {
+      "ust_code": 5097,
+      "municipality_name": "Brissago",
+      "title": "MM 1568 – Consuntivo 2025",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.brissago.ch/sito/wp-content/uploads/2026/05/MM-1568.pdf"
+    },
+    {
+      "ust_code": 5097,
+      "municipality_name": "Brissago",
+      "title": "Preavviso Commissione della Gestione",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.brissago.ch/sito/wp-content/uploads/2026/05/26.05.26-MM-1568-Preavviso-Gestione.pdf"
+    },
+    {
+      "ust_code": 5097,
+      "municipality_name": "Brissago",
+      "title": "MM 1570 – Richiesta di credito per sistemazione frane di Codeghero e Cagetto",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.brissago.ch/sito/wp-content/uploads/2026/05/MM-1570.pdf"
+    },
+    {
+      "ust_code": 5097,
+      "municipality_name": "Brissago",
+      "title": "Preavviso Commissione della Gestione",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.brissago.ch/sito/wp-content/uploads/2026/05/26.05.26-MM-1570-Preavviso-Gestione.pdf"
+    },
+    {
+      "ust_code": 5097,
+      "municipality_name": "Brissago",
+      "title": "Preavviso Commissione Edilizia e del Piano regolatore",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.brissago.ch/sito/wp-content/uploads/2026/05/26.05.27-Preavviso-commissione-Edilizia-e-del-Piano-regolatore.pdf"
+    },
+    {
+      "ust_code": 5097,
+      "municipality_name": "Brissago",
+      "title": "Mozione del PSB + Area Rosso-Verde sul tema: isole di calore",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.brissago.ch/sito/wp-content/uploads/2026/04/26.04.13-Mozione.pdf"
+    },
+    {
+      "ust_code": 5097,
+      "municipality_name": "Brissago",
+      "title": "Preavviso di ricevibilità",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.brissago.ch/sito/wp-content/uploads/2026/04/26.08.19-Preavviso-sulla-ricevibilita.pdf"
+    },
+    {
+      "ust_code": 5097,
+      "municipality_name": "Brissago",
+      "title": "MM 1569 – Rinnovo della convenzione per il consolidamento del progetto Operatori di Prossimità nel Locarnese",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.brissago.ch/sito/wp-content/uploads/2026/03/MM-1569.pdf"
+    },
+    {
+      "ust_code": 5115,
+      "municipality_name": "Losone",
+      "title": "Conti del Comune",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.losone.ch/Conti-del-Comune-519c1a00?i=1"
+    },
+    {
+      "ust_code": 5115,
+      "municipality_name": "Losone",
+      "title": "Lido di Locarno - sconti domiciliati",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.losone.ch/Lido-di-Locarno-sconti-domiciliati-8433bb00?i=1"
+    },
+    {
+      "ust_code": 5115,
+      "municipality_name": "Losone",
+      "title": "Cardada Cimetta - sconti domiciliati",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.losone.ch/Cardada-Cimetta-sconti-domiciliati-75442900?i=1"
+    },
+    {
+      "ust_code": 5115,
+      "municipality_name": "Losone",
+      "title": "Bilancio preventivo 2026",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.losone.ch/Bilancio-preventivo-2026-af227700?i=1"
+    },
+    {
+      "ust_code": 5115,
+      "municipality_name": "Losone",
+      "title": "Bilancio preventivo 2025",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.losone.ch/Bilancio-preventivo-2025-dd804200?i=1"
+    },
+    {
+      "ust_code": 5115,
+      "municipality_name": "Losone",
+      "title": "Bilancio preventivo 2024",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2024,
+      "status": "DISCOVERED",
+      "url": "https://www.losone.ch/Bilancio-preventivo-2024-bcb81e00?i=1"
+    },
+    {
+      "ust_code": 5115,
+      "municipality_name": "Losone",
+      "title": "Bilancio preventivo 2023",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2023,
+      "status": "DISCOVERED",
+      "url": "https://www.losone.ch/Bilancio-preventivo-2023-10c91200?i=1"
+    },
+    {
+      "ust_code": 5115,
+      "municipality_name": "Losone",
+      "title": "Bilancio preventivo 2022",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2022,
+      "status": "DISCOVERED",
+      "url": "https://www.losone.ch/Bilancio-preventivo-2022-7933d600?i=1"
+    },
+    {
+      "ust_code": 5115,
+      "municipality_name": "Losone",
+      "title": "Bilancio consuntivo 2025",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.losone.ch/Bilancio-consuntivo-2025-e2df4200?i=1"
+    },
+    {
+      "ust_code": 5115,
+      "municipality_name": "Losone",
+      "title": "Bilancio consuntivo 2024",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2024,
+      "status": "DISCOVERED",
+      "url": "https://www.losone.ch/Bilancio-consuntivo-2024-4f041800?i=1"
+    },
+    {
+      "ust_code": 5115,
+      "municipality_name": "Losone",
+      "title": "Bilancio consuntivo 202",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.losone.ch/Bilancio-consuntivo-2023-cf9e2700?i=1"
+    },
+    {
+      "ust_code": 5115,
+      "municipality_name": "Losone",
+      "title": "Bilancio consuntivo 2022",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2022,
+      "status": "DISCOVERED",
+      "url": "https://www.losone.ch/Bilancio-consuntivo-2022-baa63300?i=1"
+    },
+    {
+      "ust_code": 5115,
+      "municipality_name": "Losone",
+      "title": "Conti del Comune",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.losone.ch/Conti-del-Comune-519c1a00?i=1"
+    },
+    {
+      "ust_code": 5115,
+      "municipality_name": "Losone",
+      "title": "Lido di Locarno - sconti domiciliati",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.losone.ch/Lido-di-Locarno-sconti-domiciliati-8433bb00?i=1"
+    },
+    {
+      "ust_code": 5115,
+      "municipality_name": "Losone",
+      "title": "Cardada Cimetta - sconti domiciliati",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.losone.ch/Cardada-Cimetta-sconti-domiciliati-75442900?i=1"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "Preventivo Comune 2026",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2025/10/Preventivo-Comune-2026.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "Preventivo Azienda Comunale Acqua Potabile 2026",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2025/10/Preventivo-Azienda-Comunale-Acqua-Potabile-2026.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "Preventivo Azienda Comunale Porto Natanti 2026",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2025/10/Preventivo-Azienda-Comunale-Porto-Natanti-2026.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "Preventivo Comune 2026 – conti approvati CC 22.12.2025",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2026/01/Preventivo-Comune-2026-conti-approvati-CC-22.12.2025.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "Preventivo Azienda Comunale Acqua Potabile 2026 – conti approvati CC 22.12.2025",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2026/01/Preventivo-Azienda-Comunale-Acqua-Potabile-2026-conti-approvati-CC-22.12.2025.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "Preventivo Azienda Comunale Porto Natanti 2026 – conti approvati CC 22.12.2025",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2026/01/Preventivo-Azienda-Comunale-Porto-Natanti-2026-conti-approvati-CC-22.12.2025.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "Preventivo Comune 2025",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2024/10/Preventivo-Comune-2025.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "Preventivo Azienda Comunale Acqua Potabile 2025",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2024/10/Preventivo-Azienda-Comunale-Acqua-Potabile-2025.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "Preventivo Azienda Comunale Porto Natanti 2025",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2024/10/Preventivo-Azienda-Comunale-Porto-Natanti-2025.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "Preventivo Comune 2025 – conti approvati CC 20.01.2025",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2025/02/Preventivo-Comune-2025-conti-approvati-CC-20.01.2025.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "Preventivo Azienda Comunale Acqua Potabile 2025 – conti approvati CC 20.01.2025",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2025/02/Preventivo-Azienda-Comunale-Acqua-Potabile-2025-conti-approvati-CC-20.01.2025.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "Preventivo Azienda Comunale Porto Natanti 2025 – conti approvati CC 20.01.2025",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2025/02/Preventivo-Azienda-Comunale-Porto-Natanti-2025-conti-approvati-CC-20.01.2025.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "Consuntivo Comune 2025",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2026/05/Consuntivo-Comune-2025.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "Consuntivo Azienda Comunale Acqua Potabile 2025",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2026/05/Consuntivo-Azienda-Comunale-Acqua-Potabile-2025.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "Consuntivo Azienda Comunale Porto Natanti 2025",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2026/05/Consuntivo-Azienda-Comunale-Porto-Natanti-2025.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "MM 495-2026 Richiesta d’approvazione della Variante di Piano regolatore – zona Due Cappelle",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2026/10/MM-495-2026-Richiesta-dapprovazione-della-Variante-di-Piano-regolatore-zona-Due-Cappelle.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "MM 493-2026 – Richiesta di un credito di CHF 892’300.00 (IVA inclusa) per la cura del bosco di protezione prioritario per strade e abitato comparto TABOR",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2026/05/MM-493-2026-Richiesta-di-un-credito-di-CHF-892300.00-IVA-inclusa-per-la-cura-del-bosco-di-protezione-prioritario-per-strade-e-abitato-comparto-TABOR.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "MM 492-2026 – Richiesta di un credito suppletorio di CHF 207’670.35 (IVA inclusa) concernente l’edificazione del nuovo magazzino comunale sul mappale no. 724 RFD Ronco sopra Ascona",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2026/05/MM-492-2026-Richiesta-di-un-credito-suppletorio-di-CHF-207670.35-IVA-inclusa-concernente-ledificazione-del-nuovo-magazzino-comunale-sul-mappale-no.-724-RFD-Ronco-sopra-Ascona.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "MM 491-2026 – Richiesta di un credito di CHF 380’000.00 per la realizzazione di una nuova stazione di pompaggio e camera di comando in Via Livurcio, zona Cimitero",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2026/04/MM-491-2026-Richiesta-di-un-credito-di-CHF-380000.00-per-la-realizzazione-di-una-nuova-stazione-di-pompaggio-e-camera-di-comando-in-Via-Livurcio-zona-Cimitero.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "MM 487-2026 – Rinnovo della Convenzione per il consolidamento del progetto Operatori di Prossimità nel Locarnese",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2026/04/MM-487-2026-Rinnovo-della-Convenzione-per-il-consolidamento-del-progetto-Operatori-di-Prossimita-nel-Locarnese.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "MM 486-2026 – Nuovo Regolamento organico del cimitero",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2026/04/MM-486-2026-Nuovo-Regolamento-organico-del-cimitero.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "MM 485-2026 – Richiesta di un credito di CHF 140’000.00 per l’aggiornamento del Piano Generale di Smaltimento (PGS)",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2026/03/MM-485-2026-Richiesta-di-un-credito-di-CHF-140000.00-per-laggiornamento-del-Piano-Generale-di-Smaltimento-PGS.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "MM 484-2026 – Concernente lo scioglimento dell’Azienda Comunale Acqua Potabile e dell’Azienda Comunale Porto Natanti di Ronco sopra Ascona e la loro integrazione nella gestione ordinaria del Comune",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2026/03/MM-484-2026-Concernente-lo-scioglimento-dellAzienda-Comunale-Acqua-Potabile-e-dellAzienda-Comunale-Porto-Natanti-di-Ronco-sopra-Ascona-e-la-loro-integrazione-nella-gestione-ordinaria-del-Comune.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "MM 483-2026 – Richiesta d’approvazione della Variante di Piano regolatore – zona Due Cappelle",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2026/02/MM-483-2026-Richiesta-dapprovazione-della-Variante-di-Piano-regolatore-zona-Due-Cappelle.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "MM 482-2026 – Richiesta di un credito di CHF 150’000.00 per la digitalizzazione dell’archivio comunale e l’implementazione del sistema di gestione documentale ARXivar",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2026/02/MM-482-2026-Richiesta-di-un-credito-di-CHF-150000.00-per-la-digitalizzazione-dellarchivio-comunale-e-limplementazione-del-sistema-di-gestione-documentale-ARXivar.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "MM 481-2026 – Richiesta di un credito di CHF 170’000.00, per la sostituzione dei serramenti dello stabile ex Scuole",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2026/02/MM-481-2026-Richiesta-di-un-credito-di-CHF-170000.00-per-la-sostituzione-dei-serramenti-dello-stabile-ex-Scuole.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "MM 480-2025 – Richiesta di un credito di CHF 66’000.00, a posteriori, pr la sostituzione delle catene di ancoraggio del pontile interno galleggiante del Porto Crodolo",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2026/01/MM-480-2025-Richiesta-di-un-credito-di-CHF-66000.00-a-posteriori-pr-la-sostituzione-delle-catene-di-ancoraggio-del-pontile-interno-galleggiante-del-Porto-Crodolo.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "MM 479-2025 Richiesta di un credito di CHF 195’000.00 (IVA inclusa) per l’installazione di un impianto di ultrafiltrazione presso la galleria Ofima, a servizio dell’approvvigionamento di acqua potabile",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2025/11/MM-479-2025-Richiesta-di-un-credito-di-CHF-195000.00-IVA-inclusa-per-linstallazione-di-un-impianto-di-ultrafiltrazione-presso-la-galleria-Ofima-a-servizio-dellapprovvigionamento-di-acqua-potabile.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "MM 478-2025 Modifica del Regolamento per la circolazione con veicoli a motore sulla strada forestale Corona dei Pinci",
+      "kind": "ALTRO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2025/11/MM-478-2025-Modifica-del-Regolamento-per-la-circolazione-con-veicoli-a-motore-sulla-strada-forestale-Corona-dei-Pinci.pdf"
+    },
+    {
+      "ust_code": 5125,
+      "municipality_name": "Ronco sopra Ascona",
+      "title": "MM 473-2025 – Progetto di ampliamento della riserva antincendio in zona Pozzuolo",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://ronco-s-ascona.ch/wp-content/uploads/2025/10/MM-473-2025-Progetto-di-ampliamento-della-riserva-antincendio-in-zona-Pozzuolo.pdf"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/MM8-2026-Modifica-regolamento-rifiutipdf-1d6d1a00?i=1&pannorg=3676&panntime=1793569197"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 07-2026 Convenzione pompieri",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/Convenzione-pompieri-384e6000?i=1&pannorg=3676&panntime=1793569197"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 07-2026 Convenzione pompieri-allegato",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/Convenzione-pompieri-allegato-f4172100?i=1&pannorg=3676&panntime=1793569197"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 06-2026 Consuntivo Comune 2025",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/Consuntivo-Comune-2025-7d69d700?i=1&pannorg=3676&panntime=1793569197"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 05-2026 Consuntivo 2025 AAP",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/Consuntivo-2025-AAP-466c4500?i=1&pannorg=3676&panntime=1793569197"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 03-2026 Credito ciclabile Ponte dei Cavalli",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/MM3-2026-Credito-ciclabile-Ponte-dei-Cavalli-73209900?i=1&pannorg=3676&panntime=1793569197"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 02-2026 Richiesta credito di 420'000.- sala multiuso Cavigliano",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/MM-02-2026-Richiesta-credito-di-420-000-sala-multiuso-Cavigliano-18ee8a00?i=1&pannorg=3676&panntime=1793569197"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 01-2026 Credito suppletorio di 35'032.- sorpasso spese di riscaldamento",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/MM-01-2026-Credito-suppletorio-di-35-032-sorpasso-spese-di-riscaldamento-aaf6df00?i=1&pannorg=3676&panntime=1793569197"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 08-2024 Credito messa in sicurezza Sopra le Bolle Tegna",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2024,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/MM-08-2024-e2cf6f00?i=1&pannorg=3676&panntime=1793569197"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 09-2024 Credito pista ciclabile Ponte dei Cavalli Cavigliano",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2024,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/MM-09-2024-Credito-pista-ciclabile-Ponte-dei-Cavalli-Cavigliano-dbc83c00?i=1&pannorg=3676&panntime=1793569197"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 10-2024 Allegato progetto nuovo patto tra azionisti",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2024,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/MM-10-2024-Allegato-progetto-nuovo-patto-tra-azionisti-e1c0d200?i=1&pannorg=3676&panntime=1793569197"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 10-2024 Allegato tabella contributi Comuni",
+      "kind": "ALTRO",
+      "fiscal_year": 2024,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/MM-10-2024-Allegato-tabella-contributi-Comuni-c12d3800?i=1&pannorg=3676&panntime=1793569197"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 10-2024 Rinnovo patto CBR SA Locarno",
+      "kind": "ALTRO",
+      "fiscal_year": 2024,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/MM-10-2024-Rinnovo-patto-CBR-SA-Locarno-98981500?i=1&pannorg=3676&panntime=1793569197"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 11-2024 Modifiche ROD",
+      "kind": "ALTRO",
+      "fiscal_year": 2024,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/MM-11-2024-Modifiche-ROD-ea7e3100?i=1&pannorg=3676&panntime=1793569197"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 01-2024 Credito per l'allestimento del PGS sezione Verscio",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2024,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/MM-01-2024-Credito-per-l-allestimento-del-PGS-sezione-Verscio-b97c0100?i=1&pannorg=3676&panntime=1793569197"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 05/2026 Consuntivo AAP 2025",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/Consuntivo-2025-AAP-466c4500?i=1"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 06/2026 Consuntivo Comune 2025",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/Consuntivo-Comune-2025-7d69d700?i=1"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 07/2026 Convenzione pompieri",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/Convenzione-pompieri-384e6000?i=1"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 07/2026 Convenzione pompieri allegato",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/Convenzione-pompieri-allegato-f4172100?i=1"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 08/2026 Modifica regolamento rifiuti",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/MM-08-2026-Modifica-regolamento-rifiuti-5d07e900?i=1"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 01-2026 Credito suppletorio SE, SI e Centro Civico Cavigliano",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/MM-1-26-Credito-suppletorio-SE-SI-e-Centro-Civico-Cavigliano-a4bfae00?i=1"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 02-2026 Richiesta di un credito per il risanamento della sala multiuso di Cavigliano",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/MM-2-26-Richiesta-di-un-credito-per-il-risanamento-sala-multiuso-Cavigliano-26079700?i=1"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 02-2026 Allegato 1",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/MM-2-26-Richiesta-di-un-credito-per-il-risanamento-sala-multiuso-Cavigliano-preventivo-e-descrizione-d17c5e00?i=1"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 02-2026 Allegato 2",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/MM-2-26-Richiesta-di-un-credito-per-il-risanamento-sala-multiuso-Cavigliano-rappresentazione-c053b500?i=1"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 03-2026 Richiesta di un credito pista ciclabile Ponte dei Cavalli",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/MM3-2026-Credito-ciclabile-Ponte-dei-Cavalli-73209900?i=1"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "Rapporto di minoranza",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/6-Modifica-ROD-rapporto-minoranza-CLPpdf-bf367b00?i=1"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "Presa di posizione del Municipio",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/7-Modifica-ROD-presa-di-posizione-del-Municipiopdf-501b7700?i=1"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "Interrogazione Progetto SI Verscio",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/Interrogazione-Progetto-SI-Verscio-885fac00?i=1"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "risposta interrogazione Progetto SI Verscio",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/Risposta-interrogazione-Progetto-SI-Verscio-8a77a100?i=1"
+    },
+    {
+      "ust_code": 5396,
+      "municipality_name": "Terre di Pedemonte",
+      "title": "MM 10-25 AAP Preventivo 2026",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.pedemonte.ch/MM-10-25-AAP-Preventivo-2026-96e55d00?i=1"
+    },
+    {
+      "ust_code": 5397,
+      "municipality_name": "Centovalli",
+      "title": "MM296 Approvazione di un credito di fr. 70’000.- per la manutenzione di alcuni tratti stradali comunali a Palagnedra",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://centovalli.swiss/2026/05/11/mm296-approvazione-di-un-credito-di-fr-70000-per-la-manutenzione-di-alcuni-tratti-stradali-comunali-a-palagnedra/"
+    },
+    {
+      "ust_code": 5397,
+      "municipality_name": "Centovalli",
+      "title": "MM295 Modifiche Regolamento organico comunale",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://centovalli.swiss/2026/05/11/mm295-modifiche-regolamento-organico-comunale/"
+    },
+    {
+      "ust_code": 5397,
+      "municipality_name": "Centovalli",
+      "title": "MM294 Esame e approvazione del consuntivo 2025 del Comune delle Centovalli",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://centovalli.swiss/2026/05/11/mm294-esame-e-approvazione-del-consuntivo-2025-del-comune-delle-centovalli/"
+    },
+    {
+      "ust_code": 5397,
+      "municipality_name": "Centovalli",
+      "title": "MM293 Dimissioni delegato SALVA",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://centovalli.swiss/2025/11/13/mm293-dimissioni-delegato-salva/"
+    },
+    {
+      "ust_code": 5397,
+      "municipality_name": "Centovalli",
+      "title": "MM292 Regolamento sul finanziamento dell’illuminazione pubblica stradale, con trasferimento dei costi all’utenza tramite imposta speciale di attribuzione",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://centovalli.swiss/2025/11/13/mm292-regolamento-sul-finanziamento-dellilluminazione-pubblica-stradale-con-trasferimento-dei-costi-allutenza-tramite-imposta-speciale-di-attribuzione/"
+    },
+    {
+      "ust_code": 5397,
+      "municipality_name": "Centovalli",
+      "title": "MM291 Variante del piano regolatore inerente le “Abitazioni secondarie” a salvaguardia delle abitazioni primarie",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://centovalli.swiss/2025/11/13/mm291-variante-del-piano-regolatore-inerente-le-abitazioni-secondarie-a-salvaguardia-delle-abitazioni-primarie/"
+    },
+    {
+      "ust_code": 5397,
+      "municipality_name": "Centovalli",
+      "title": "MM290 Esame e approvazione del preventivo 2026 del Comune e dei relativi moltiplicatori d’imposta comunale",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://centovalli.swiss/2025/11/13/mm290-esame-e-approvazione-del-preventivo-2026-del-comune-e-dei-relativi-moltiplicatori-dimposta-comunale/"
+    },
+    {
+      "ust_code": 5096,
+      "municipality_name": "Brione sopra Minusio",
+      "title": "MM 562 - Consuntivo comunale 2025",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.brione.ch/MM-562-Consuntivo-comunale-2025-52c66000?i=1"
+    },
+    {
+      "ust_code": 5096,
+      "municipality_name": "Brione sopra Minusio",
+      "title": "MM 563 - Richiesta di un credito suppletorio di Fr. 95'216.48 destinato all’esecuzione dei lavori di ristrutturazione di Casa Erina",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.brione.ch/MM-563-Richiesta-di-un-credito-suppletorio-di-Fr-95-21648-destinato-all-esecuzione-dei-lavori-di-ristrutturazione-di-Casa-Erinapdf-bb3a8000?i=1"
+    },
+    {
+      "ust_code": 5096,
+      "municipality_name": "Brione sopra Minusio",
+      "title": "MM 564 - Richiesta di un credito di Fr. 52'000.-- destinato all’allestimento di un progetto di riqualifica e di messa in sicurezza del nucleo mediante interventi di moderazione del traffico, nonché un piano della mobilità scolastica",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.brione.ch/MM-564-Richiesta-di-un-credito-di-Fr-52-000-destinato-all-allestimento-di-un-progetto-di-riqualifica-e-di-messa-in-sicurezza-del-nucleo-mediante-interventi-di-moderazione-del-traffico-nonch-un-piano-della-mobilit-scolastica-4a0a9000?i=1"
+    },
+    {
+      "ust_code": 5096,
+      "municipality_name": "Brione sopra Minusio",
+      "title": "MM 565 - Richiesta di un credito di Fr. 112’000.-- destinato all’acquisto di un nuovo scuolabus",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.brione.ch/MM-565-Richiesta-di-un-credito-di-Fr-112-000-destinato-all-acquisto-di-un-nuovo-scuolabus-e4be5900?i=1"
+    },
+    {
+      "ust_code": 5096,
+      "municipality_name": "Brione sopra Minusio",
+      "title": "Avviso di pubblicazione - progetto stradale comunale - area di posteggio all'imbocco di Via Val Resa",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.brione.ch/Avviso-di-pubblicazione-progetto-stradale-comunale-area-di-posteggio-all-imbocco-di-Via-Val-Resa-edd2bc00?i=1"
+    },
+    {
+      "ust_code": 5108,
+      "municipality_name": "Gordola",
+      "title": "Sconti per i residenti",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gordola.ch/Sconti-per-i-residenti-bb215300?i=1"
+    },
+    {
+      "ust_code": 5108,
+      "municipality_name": "Gordola",
+      "title": "MM1627 - Modifica del Regolamento Comunale per la gestione e fornitura dell’acqua potabile (RGFAP)",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gordola.ch/MM1627-Modifica-del-Regolamento-Comunale-per-la-gestione-e-fornitura-dell-acqua-potabile-RGFAP-5eb8d200?i=1"
+    },
+    {
+      "ust_code": 5108,
+      "municipality_name": "Gordola",
+      "title": "MM 1622 – Bilanci Consuntivi del Comune di Gordola 2025",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.gordola.ch/MM-1622-Bilanci-Consuntivi-del-Comune-di-Gordola-2025-390f5700?i=1"
+    },
+    {
+      "ust_code": 5108,
+      "municipality_name": "Gordola",
+      "title": "MM 1617 – Riclassificazione dei prefabbricati ai Campisci da bene amministrativo a bene patrimoniale",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gordola.ch/MM-1617-Riclassificazione-dei-prefabbricati-ai-Campisci-da-bene-amministrativo-a-bene-patrimoniale-72f5f100?i=1"
+    },
+    {
+      "ust_code": 5108,
+      "municipality_name": "Gordola",
+      "title": "MM 1619 – Dimissioni del Signor Johannes Wyss dalla carica di Consigliere Comunale",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gordola.ch/MM-1619-Dimissioni-del-Signor-Johannes-Wyss-dalla-carica-di-Consigliere-Comunale-da01de00?i=1"
+    },
+    {
+      "ust_code": 5108,
+      "municipality_name": "Gordola",
+      "title": "MM 1620 – Dimissioni del Signor Ivan Corda dalla carica di Consigliere Comunale",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gordola.ch/MM-1620-Dimissioni-del-Signor-Ivan-Corda-dalla-carica-di-Consigliere-Comunale-252f1a00?i=1"
+    },
+    {
+      "ust_code": 5108,
+      "municipality_name": "Gordola",
+      "title": "MM 1616 – Richiesta di un credito di CHF 75'000 per Sostituzione 2 termopompe stabile Scuola Infanzia Ai CampisciPCi",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gordola.ch/MM-1616-Richiesta-di-un-credito-di-CHF-75-000-per-Sostituzione-2-termopompe-stabile-Scuola-Infanzia-Ai-CampisciPCi-c0775300?i=1"
+    },
+    {
+      "ust_code": 5108,
+      "municipality_name": "Gordola",
+      "title": "MM 1606 – Richiesta di un credito quadro di CHF 250'000 per espropri e scorporo terreni",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gordola.ch/MM-1606-Richiesta-di-un-credito-quadro-di-CHF-250-000-per-espropri-e-scorporo-terreni-b7f68000?i=1"
+    },
+    {
+      "ust_code": 5108,
+      "municipality_name": "Gordola",
+      "title": "MM 1611 - Credito contatori",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gordola.ch/MM-1611-Credito-contatori-5ed73000?i=1"
+    },
+    {
+      "ust_code": 5108,
+      "municipality_name": "Gordola",
+      "title": "MM 1612 - Credito quadro posa e sostituzioni condotte",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gordola.ch/MM-1612-Credito-quadro-posa-e-sostituzioni-condotte-adcef200?i=1"
+    },
+    {
+      "ust_code": 5108,
+      "municipality_name": "Gordola",
+      "title": "MM 1615 - Convenzione frequenza scolastica Gordola Lavertezzo",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gordola.ch/MM-1615-Convenzione-frequenza-scolastica-Gordola-Lavertezzo-3a094c00?i=1"
+    },
+    {
+      "ust_code": 5108,
+      "municipality_name": "Gordola",
+      "title": "MM 1601 - Rinnovo convenzione prossimità",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gordola.ch/MM-1601-Rinnovo-convenzione-prossimit-8a973000?i=1"
+    },
+    {
+      "ust_code": 5108,
+      "municipality_name": "Gordola",
+      "title": "MM 1607 - Convenzione con l'asilo nido Mini-Nido",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gordola.ch/MM-1607-Convenzione-con-l-asilo-nido-Mini-Nido-ddc13a00?i=1"
+    },
+    {
+      "ust_code": 5108,
+      "municipality_name": "Gordola",
+      "title": "MM 1609 - Dimissioni Alessandro Gnesa dalla carica di CC",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gordola.ch/MM-1609-Dimissioni-Alessandro-Gnesa-dalla-carica-di-CC-a73aed00?i=1"
+    },
+    {
+      "ust_code": 5108,
+      "municipality_name": "Gordola",
+      "title": "MM 1610 - Convenzione piazza di tiro tra Gambarogno e i Comuni del Comprensorio",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gordola.ch/MM-1610-Convenzione-piazza-di-tiro-tra-Gambarogno-e-i-Comuni-del-Comprensorio-e724f400?i=1"
+    },
+    {
+      "ust_code": 5108,
+      "municipality_name": "Gordola",
+      "title": "Sconti per i residenti",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gordola.ch/Sconti-per-i-residenti-bb215300?i=1"
+    },
+    {
+      "ust_code": 5117,
+      "municipality_name": "Mergoscia",
+      "title": "MM 08-2026 - Preventivo 2027",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2027,
+      "status": "DISCOVERED",
+      "url": "https://www.comune-mergoscia.ch/Preventivo-2027-cafae200?i=1"
+    },
+    {
+      "ust_code": 5117,
+      "municipality_name": "Mergoscia",
+      "title": "MM 09-2026 - Adozione del nuovo regolamento comunale delle canalizzazioni",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.comune-mergoscia.ch/MM-09-2026-Adozione-del-nuovo-regolamento-comunale-delle-canalizzazioni-46e3d400?i=1"
+    },
+    {
+      "ust_code": 5117,
+      "municipality_name": "Mergoscia",
+      "title": "MM 07-2026 - Richiesta di credito risanamento Via Cantonitt - MM e documentazione",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.comune-mergoscia.ch/MM-07-2026-Messaggio-Municipale-richiesta-di-credito-risanamento-Via-Cantonitt-MM-e-documentazione-c1d83600?i=1"
+    },
+    {
+      "ust_code": 5117,
+      "municipality_name": "Mergoscia",
+      "title": "MM 06-2026 -  Sistemazione stradale  Via Casaa 2025 - 1 - MM e allegati da 1 a 6",
+      "kind": "ALTRO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.comune-mergoscia.ch/MM-06-2026-Messaggio-Municipale-zona-Via-Casaa-2025-1-MM-e-allegati-da-1-a-6-8a8d9e00?i=1"
+    },
+    {
+      "ust_code": 5117,
+      "municipality_name": "Mergoscia",
+      "title": "MM 06-2026 - Sistemazione stradale Via Casaa 2025 - 1 - MM e allegati da 7 e 8",
+      "kind": "ALTRO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.comune-mergoscia.ch/MM-06-2026-Messaggio-Municipale-zona-Via-Casaa-2025-1-MM-e-allegati-da-7-e-8-a2657200?i=1"
+    },
+    {
+      "ust_code": 5117,
+      "municipality_name": "Mergoscia",
+      "title": "MM 01-2026 Convenzione poligono di tiro Quartino",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.comune-mergoscia.ch/MM-01-2026-Convenzione-poligono-di-tiro-Quartino-17aea400?i=1"
+    },
+    {
+      "ust_code": 5117,
+      "municipality_name": "Mergoscia",
+      "title": "MM 03-2026 Approvazione consuntivo per l’esercizio 2025",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.comune-mergoscia.ch/MM-03-2026-Approvazione-consuntivo-per-l-esercizio-2025-6439ba00?i=1"
+    },
+    {
+      "ust_code": 5117,
+      "municipality_name": "Mergoscia",
+      "title": "MM 04-2026 Approvazione richiesta credito Acquedotto Perdell",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.comune-mergoscia.ch/MM-04-2026-Approvazione-richiesta-credito-Acquedotto-Perdell-d36b9900?i=1"
+    },
+    {
+      "ust_code": 5117,
+      "municipality_name": "Mergoscia",
+      "title": "MM 05-2026 Richiesta di credito per l’allestimento perizia stato delle strade comunali di Mergoscia",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.comune-mergoscia.ch/MM-05-2026-Richiesta-di-credito-per-l-allestimento-perizia-stato-delle-strade-comunali-di-Mergoscia-209f5800?i=1"
+    },
+    {
+      "ust_code": 5117,
+      "municipality_name": "Mergoscia",
+      "title": "MM 04-2025 Posa condotta",
+      "kind": "ALTRO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.comune-mergoscia.ch/MM-04-2025-Posa-condotta-193dad00?i=1"
+    },
+    {
+      "ust_code": 5117,
+      "municipality_name": "Mergoscia",
+      "title": "MM 05-2025 Convenzione ASI",
+      "kind": "ALTRO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.comune-mergoscia.ch/MM-05-2025-Convenzione-ASI-f1ecb500?i=1"
+    },
+    {
+      "ust_code": 5117,
+      "municipality_name": "Mergoscia",
+      "title": "MM 06-2025 Credito perizia stato delle strade",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.comune-mergoscia.ch/MM-06-2025-Credito-perizia-stato-delle-strade-3a20da00?i=1"
+    },
+    {
+      "ust_code": 5117,
+      "municipality_name": "Mergoscia",
+      "title": "MM 07-2025 Convenzione operatori prossimità",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.comune-mergoscia.ch/MM-07-2025-Convenzione-operatori-prossimita-cc2f5e00?i=1"
+    },
+    {
+      "ust_code": 5117,
+      "municipality_name": "Mergoscia",
+      "title": "MM 08-2025 Preventivo 2026",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.comune-mergoscia.ch/MM-08-2025-Preventivo-2026-c4d0c900?i=1"
+    },
+    {
+      "ust_code": 5117,
+      "municipality_name": "Mergoscia",
+      "title": "MM 09-2025 Credito risanamento Via Cantonitt",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.comune-mergoscia.ch/MM-09-2025-Credito-risanamento-Via-Cantonitt-b2eea000?i=1"
+    },
+    {
+      "ust_code": 5117,
+      "municipality_name": "Mergoscia",
+      "title": "MM 08-2026 - Preventivo 2027",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2027,
+      "status": "DISCOVERED",
+      "url": "https://www.comune-mergoscia.ch/Preventivo-2027-cafae200?i=1"
+    },
+    {
+      "ust_code": 5117,
+      "municipality_name": "Mergoscia",
+      "title": "MM 09-2026 - Adozione del nuovo regolamento comunale delle canalizzazioni",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.comune-mergoscia.ch/MM-09-2026-Adozione-del-nuovo-regolamento-comunale-delle-canalizzazioni-46e3d400?i=1"
+    },
+    {
+      "ust_code": 5117,
+      "municipality_name": "Mergoscia",
+      "title": "MM 07-2026 - Richiesta di credito risanamento Via Cantonitt - MM e documentazione",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.comune-mergoscia.ch/MM-07-2026-Messaggio-Municipale-richiesta-di-credito-risanamento-Via-Cantonitt-MM-e-documentazione-c1d83600?i=1"
+    },
+    {
+      "ust_code": 5117,
+      "municipality_name": "Mergoscia",
+      "title": "MM 06-2026 -  Sistemazione stradale  Via Casaa 2025 - 1 - MM e allegati da 1 a 6",
+      "kind": "ALTRO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.comune-mergoscia.ch/MM-06-2026-Messaggio-Municipale-zona-Via-Casaa-2025-1-MM-e-allegati-da-1-a-6-8a8d9e00?i=1"
+    },
+    {
+      "ust_code": 5118,
+      "municipality_name": "Minusio",
+      "title": "MM N° 37/2026 accompagnante il bilancio preventivo dell'Amministrazione comunale e dell'Azienda acqua potabile per l'anno 2027 e la fissazione dei moltiplicatori d'imposta comunali 2027",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2027,
+      "status": "DISCOVERED",
+      "url": "https://www.minusio.ch/MM-N-372026-accompagnante-il-bilancio-preventivo-dell-Amministrazione-comunale-e-dell-Azienda-acqua-potabile-per-l-anno-2027-e-la-fissazione-dei-moltiplicatori-d-imposta-comunali-2027-c694cc00?i=1&MasterId=g1_4387"
+    },
+    {
+      "ust_code": 5118,
+      "municipality_name": "Minusio",
+      "title": "MM N° 37/2026 accompagnante il bilancio preventivo dell'Amministrazione comunale e dell'Azienda acqua potabile per l'anno 2027 e la fissazione dei moltiplicatori d'imposta comunali 2027 (documento contabile)",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2027,
+      "status": "DISCOVERED",
+      "url": "https://www.minusio.ch/MM-N-412025-accompagnante-il-bilancio-preventivo-dell-Amministrazione-comunale-e-dell-Azienda-comunale-acqua-potabile-per-l-anno-2026-e-la-fissazione-dei-moltiplicatori-d-imposta-comunali-2026-documento-contabile-c9df5d00?i=1&MasterId=g1_4387"
+    },
+    {
+      "ust_code": 5118,
+      "municipality_name": "Minusio",
+      "title": "MM N° 34/2026 concernente la modifica del Regolamento comunale per l'assegnazione di contributi atti a finanziare le attività sportive, culturali e di socializzazionetoriale (LST)",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.minusio.ch/MM-N-342026-concernente-la-modifica-del-Regolamento-comunale-per-l-assegnazione-di-contributi-atti-a-finanziare-le-attivit-sportive-culturali-e-di-socializzazionetoriale-LST-dd19f000?i=1&MasterId=g1_4380"
+    },
+    {
+      "ust_code": 5118,
+      "municipality_name": "Minusio",
+      "title": "MM N° 33/2026 concernente l'adeguamento formale del Piano regolatore (PR) alla Legge sullo sviluppo territoriale (LST)",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.minusio.ch/Adeguamento-formale-del-Piano-Regolatore-alla-Legge-sullo-sviluppo-territoriale-c87d6200?i=1&MasterId=g1_4293"
+    },
+    {
+      "ust_code": 5118,
+      "municipality_name": "Minusio",
+      "title": "MM N° 32/2026 concernente la richiesta di un credito di CHF 2'760'000.00 per il risanamento della copertura e interventi di ammodernamento presso il Centro anziani Casa Rea",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.minusio.ch/MM-N-322026-concernente-la-richiesta-di-un-credito-di-CHF-2-760-00000-per-il-risanamento-della-copertura-e-interventi-di-ammodernamento-presso-il-Centro-anziani-Casa-Rea-aeb67b00?i=1&MasterId=g1_4279"
+    },
+    {
+      "ust_code": 5118,
+      "municipality_name": "Minusio",
+      "title": "Edilizia - mm32 - credito x risanamento copertura + interventi di ammodernamento Casa Rea",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.minusio.ch/Edilizia-mm32-credito-x-risanamento-copertura-interventi-di-ammodernamento-Casa-Rea-43d7ce00?i=1&MasterId=g1_4279"
+    },
+    {
+      "ust_code": 5118,
+      "municipality_name": "Minusio",
+      "title": "Gestione - mm32 - credito x risanamento copertura + interventi di ammodernamento Casa Rea",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.minusio.ch/Gestione-mm32-credito-x-risanamento-copertura-interventi-di-ammodernamento-Casa-Rea-7f290400?i=1&MasterId=g1_4279"
+    },
+    {
+      "ust_code": 5118,
+      "municipality_name": "Minusio",
+      "title": "Descrizione attività Fattoria Gerbione",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.minusio.ch/Descrizione-attivit-Fattoria-Gerbionepdf-94b9c700?i=1&MasterId=g1_4278"
+    },
+    {
+      "ust_code": 5118,
+      "municipality_name": "Minusio",
+      "title": "MM N° 31/2026 concernente la locazione della proprietà comunale \"Villa Parco d'Usignoli\" (fondo 2743 RFD) all’Associazione Fattoria Gerbione, rispettivamente l'autorizzazione a procedere con trattativa diretta (art. 167 cpv. 3 LOC)",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.minusio.ch/mm31-autorizzazione-sottoscrizione-contratto-di-locazione-Villa-Parco-Usignolipdf-9e584f00?i=1&MasterId=g1_4278"
+    },
+    {
+      "ust_code": 5118,
+      "municipality_name": "Minusio",
+      "title": "Gestione - mm31 - locazione Villa Parco d'Usignoli",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.minusio.ch/Gestione-mm31-locazione-Villa-Parco-d-Usignoli-83a23f00?i=1&MasterId=g1_4278"
+    },
+    {
+      "ust_code": 5118,
+      "municipality_name": "Minusio",
+      "title": "Petizioni (maggioranza) - mm31 - locazione Villa Parco d'Usignoli",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.minusio.ch/Petizioni-maggioranza-mm31-locazione-Villa-Parco-d-Usignoli-72051d00?i=1&MasterId=g1_4278"
+    },
+    {
+      "ust_code": 5118,
+      "municipality_name": "Minusio",
+      "title": "Petizioni (minoranza) - mm31 - locazione Villa Parco d'Usignoli",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.minusio.ch/Petizioni-minoranza-mm31-locazione-Villa-Parco-d-Usignoli-154b1800?i=1&MasterId=g1_4278"
+    },
+    {
+      "ust_code": 5118,
+      "municipality_name": "Minusio",
+      "title": "MM N° 30/2026 concernente la richiesta di un credito d'opera di CHF 500'000.00 per la gestione delle neofite invasive sul territorio di Minusio nel quadriennio 2027-2031",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2027,
+      "status": "DISCOVERED",
+      "url": "https://www.minusio.ch/MM-N-302026-concernente-la-richiesta-di-un-credito-d-opera-di-CHF-500-00000-per-la-gestione-delle-neofite-invasive-sul-territorio-di-Minusio-nel-quadriennio-2027-2031-045d3700?i=1&MasterId=g1_4273"
+    },
+    {
+      "ust_code": 5118,
+      "municipality_name": "Minusio",
+      "title": "Gestione - mm30 - credito x gestione neofite invasive 2027-2031",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2027,
+      "status": "DISCOVERED",
+      "url": "https://www.minusio.ch/Gestione-mm30-credito-x-gestione-neofite-invasive-2027-2031-442b1d00?i=1&MasterId=g1_4273"
+    },
+    {
+      "ust_code": 5118,
+      "municipality_name": "Minusio",
+      "title": "MM N° 25/2026 concernente la richiesta di un credito di CHF 2'860'000.00 per la ristrutturazione e l'ampliamento della proprietà comunale \"Villa Parco d'Usignoli\" (fondo 2743 RFD)",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.minusio.ch/MM-N-252026-concernente-la-richiesta-di-un-credito-di-CHF-2-860-00000-per-la-ristrutturazione-e-l-ampliamento-della-propriet-comunale-Villa-Parco-d-Usignoli-fondo-2743-RFD-fadc9e00?i=1&MasterId=g1_4205"
+    },
+    {
+      "ust_code": 5118,
+      "municipality_name": "Minusio",
+      "title": "Avviso di pubblicazione ai sensi della Legge sulle strade del progetto stradale per la gestione della mobilità durante il cantiere di ricostruzione ponti in Via R. Simen",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.minusio.ch/Avviso-di-pubblicazione-ai-sensi-della-Legge-sulle-strade-del-progetto-stradale-per-la-gestione-della-mobilit-durante-il-cantiere-di-ricostruzione-ponti-in-Via-R-Simen-d68fda00?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "CONSUNTIVO 2025.pdf",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/CONSUNTIVO-2025pdf-8c761f00?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "MM 3 del 2026 Convenzione poligono di tiro Quartino.pdf",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/MM-3-del-2026-Convenzione-poligono-di-tiro-Quartinopdf-827f3b00?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "MM 4 del 2026 Regolamento norme protezione dati in ambito di lettura numeri immatricolazione veicoli.pdf",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/MM-4-del-2026-Regolamento-norme-protezione-dati-in-ambito-di-lettura-numeri-immatricolazione-veicolipdf-a2912900?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "MM 6 del 2026 Sostituzione mobilio scuola elementare.pdf",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/MM-6-del-2026-Sostituzione-mobilio-scuola-elementarepdf-2b218f00?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "MM 7 del 2026 Consuntivo 2025.pdf",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/MM-7-del-2026-Consuntivo-2025pdf-26425b00?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "MM 22 del 2025 Piano finanziario 2025-2029",
+      "kind": "PIANO_FINANZIARIO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/MM-22-del-2025-Piano-finanziario-2025-2029-bdf1fe00?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "MM 18 del 2025 Preventivo 2026",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/MM-18-del-2025-Preventivo-2026-3a33ad00?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "MM 21 del 2025 Rinnovo Convenzione Operatori di Prossimità nel Locarnese 2026-2029",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/MM-21-del-2025-Rinnovo-Convenzione-Operatori-di-Prossimita-nel-Locarnese-2026-2029-67477300?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "Preventivo 2026",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/Preventivo-2026-278a2200?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "MM 17 del 2025 Richiesta di credito di CHF 355'000.- per la riqualifica della riva del Lido comunale al mappale 841 RFD",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/MM-17-del-2025-Richiesta-di-credito-di-CHF-355-000-per-la-riqualifica-della-riva-del-Lido-comunale-al-mappale-841-RFD-293ef300?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "MM 15 del 2025 Convenzione concernente la gestione del poligono di tiro di Quartino tra il Comune di Tenero-Contra e il Comune di Gambarogno",
+      "kind": "ALTRO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/MM-15-del-2025-Convenzione-concernente-la-gestione-del-poligono-di-tiro-di-Quartino-tra-il-Comune-di-Tenero-Contra-e-il-Comune-di-Gambarogno-4517ef00?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "MM 16 del 2025 Richiesta di un credito di CHF 250'000.- per la sostituzione del vettore energetico per il riscaldamento primario e nuovi corpi luce a illuminazione LED presso la Casa comunale di Tenero",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/MM-16-del-2025-Richiesta-di-un-credito-di-CHF-250-000-per-la-sostituzione-del-vettore-energetico-per-il-riscaldamento-primario-e-nuovi-corpi-luce-a-illuminazione-LED-presso-la-Casa-comunale-di-Tenero-b2fa5300?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "Consuntivo 2024",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2024,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/Consuntivo-2024-88a87700?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "MM 10 del 2025 Richiesta di un credito di CHF 410'000.- per la cura del bosco di protezione e la messa in sicurezza della strada cantonale nella tratta Contra - Mergoscia",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/MM-10-del-2025-Richiesta-di-un-credito-di-CHF-410-000-per-la-cura-del-bosco-di-protezione-e-la-messa-in-sicurezza-della-strada-cantonale-nella-tratta-Contra-Mergoscia-8095a100?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "MM 11 del 2025 Richiesta di adozione della variante di piano regolatore relativa all’Adattamento del PR alla LST",
+      "kind": "ALTRO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/MM-11-del-2025-Richiesta-di-adozione-della-variante-di-piano-regolatore-relativa-all-Adattamento-del-PR-alla-LST-13938400?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "Gruppo Lega UDC Indipendenti - Interpellanza raccolta rifiuti a Contra.pdf",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/Gruppo-Lega-UDC-Indipendenti-Interpellanza-raccolta-rifiuti-a-Contrapdf-3ae53200?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "Il Centro - Interpellanza abitazioni secondarie e affittacamente tipo Airbnb.pdf",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/Il-Centro-Interpellanza-abitazioni-secondarie-e-affittacamente-tipo-Airbnbpdf-216fcd00?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "Risposta interpellanza Gruppo Lega UDC Indipendenti - Raccolta rifiuti a Contra.pdf",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/Risposta-interpellanza-Gruppo-Lega-UDC-Indipendenti-Raccolta-rifiuti-a-Contrapdf-7ed5fc00?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "Risposta interpellanza Il Centro - Abitazioni secondarie e affittacamere tipo Airbnb.pdf",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/Risposta-interpellanza-Il-Centro-Abitazioni-secondarie-e-affittacamere-tipo-Airbnbpdf-ab1e8a00?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "Risposta interpellanza Prospero Graziano inquinamento riale di Contra.pdf",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/Risposta-interpellanza-Prospero-Graziano-inquinamento-riale-di-Contrapdf-7965db00?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "CONSUNTIVO 2025.pdf",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/CONSUNTIVO-2025pdf-8c761f00?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "MM 3 del 2026 Convenzione poligono di tiro Quartino.pdf",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/MM-3-del-2026-Convenzione-poligono-di-tiro-Quartinopdf-827f3b00?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "MM 4 del 2026 Regolamento norme protezione dati in ambito di lettura numeri immatricolazione veicoli.pdf",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/MM-4-del-2026-Regolamento-norme-protezione-dati-in-ambito-di-lettura-numeri-immatricolazione-veicolipdf-a2912900?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "MM 6 del 2026 Sostituzione mobilio scuola elementare.pdf",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/MM-6-del-2026-Sostituzione-mobilio-scuola-elementarepdf-2b218f00?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "MM 7 del 2026 Consuntivo 2025.pdf",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/MM-7-del-2026-Consuntivo-2025pdf-26425b00?i=1"
+    },
+    {
+      "ust_code": 5131,
+      "municipality_name": "Tenero-Contra",
+      "title": "Commissione edilizia e opere pubbliche - Interpellanza Mobile Home e Bungalow.pdf",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.tenero-contra.ch/Commissione-edilizia-e-opere-pubbliche-Interpellanza-Mobile-Home-e-Bungalowpdf-34f34600?i=1"
+    },
+    {
+      "ust_code": 5138,
+      "municipality_name": "Cugnasco-Gerra",
+      "title": "I conti del Comune",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.cugnasco-gerra.ch/I-conti-del-Comune-43c4a500?i=1"
+    },
+    {
+      "ust_code": 5138,
+      "municipality_name": "Cugnasco-Gerra",
+      "title": "MM no. 6: Piano Finanziario 2025-2030 del Comune di Cugnasco-Gerra",
+      "kind": "PIANO_FINANZIARIO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.cugnasco-gerra.ch/MM-no-6-Piano-Finanziario-2025-2030-del-Comune-di-Cugnasco-Gerra-6ba7fe00?i=1"
+    },
+    {
+      "ust_code": 5138,
+      "municipality_name": "Cugnasco-Gerra",
+      "title": "MM no. 10: Piano finanziario 2022-2026 del Comune di Cugnasco-Gerra",
+      "kind": "PIANO_FINANZIARIO",
+      "fiscal_year": 2022,
+      "status": "DISCOVERED",
+      "url": "https://www.cugnasco-gerra.ch/MM-no-10-Piano-finanziario-2022-2026-del-Comune-di-Cugnasco-Gerra-f29fdb00?i=1"
+    },
+    {
+      "ust_code": 5138,
+      "municipality_name": "Cugnasco-Gerra",
+      "title": "MM no. 33: Preventivo 2027 del Comune di Cugnasco-Gerra",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2027,
+      "status": "DISCOVERED",
+      "url": "https://www.cugnasco-gerra.ch/MM-no-33-Preventivo-2027-del-Comune-di-Cugnasco-Gerra-50be8200?i=1"
+    },
+    {
+      "ust_code": 5138,
+      "municipality_name": "Cugnasco-Gerra",
+      "title": "MM no. 18: Preventivo 2026 del Comune di Cugnasco-Gerra",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.cugnasco-gerra.ch/MM-no-18-Preventivo-2026-del-Comune-di-Cugnasco-Gerra-f9dd8800?i=1"
+    },
+    {
+      "ust_code": 5138,
+      "municipality_name": "Cugnasco-Gerra",
+      "title": "MM no. 5: Preventivo 2025 del Comune di Cugnasco-Gerra",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.cugnasco-gerra.ch/MM-no-5-Preventivo-2025-del-Comune-di-Cugnasco-Gerra-f409ec00?i=1"
+    },
+    {
+      "ust_code": 5138,
+      "municipality_name": "Cugnasco-Gerra",
+      "title": "MM no. 27: Preventivo 2024 del Comune di Cugnasco-Gerra",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2024,
+      "status": "DISCOVERED",
+      "url": "https://www.cugnasco-gerra.ch/MM-no-27-Preventivo-2024-del-Comune-di-Cugnasco-Gerra-988dfe00?i=1"
+    },
+    {
+      "ust_code": 5138,
+      "municipality_name": "Cugnasco-Gerra",
+      "title": "MM no. 21: Preventivo 2023 del Comune di Cugnasco-Gerra",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2023,
+      "status": "DISCOVERED",
+      "url": "https://www.cugnasco-gerra.ch/MM-no-21-Preventivo-2023-del-Comune-di-Cugnasco-Gerra-662ef900?i=1"
+    },
+    {
+      "ust_code": 5138,
+      "municipality_name": "Cugnasco-Gerra",
+      "title": "MM no. 23: Consuntivo 2025 del Comune di Cugnasco-Gerra",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.cugnasco-gerra.ch/MM-no-23-Consuntivo-205-del-Comune-di-Cugnasco-Gerra-8d9d2100?i=1"
+    },
+    {
+      "ust_code": 5138,
+      "municipality_name": "Cugnasco-Gerra",
+      "title": "MM no. 8: Consuntivo 2024 del Comune di Cugnasco-Gerra",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2024,
+      "status": "DISCOVERED",
+      "url": "https://www.cugnasco-gerra.ch/MM-no-8-Consuntivo-2024-del-Comune-di-Cugnasco-Gerra-b22f7900?i=1"
+    },
+    {
+      "ust_code": 5138,
+      "municipality_name": "Cugnasco-Gerra",
+      "title": "MM no. 32: Consuntivo 2023 del Comune di Cugnasco-Gerra",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2023,
+      "status": "DISCOVERED",
+      "url": "https://www.cugnasco-gerra.ch/MM-no-32-Consuntivo-2023-del-Comune-di-Cugnasco-Gerra-f6564d00?i=1"
+    },
+    {
+      "ust_code": 5138,
+      "municipality_name": "Cugnasco-Gerra",
+      "title": "MM no. 25: Consuntivo 2022 del Comune di Cugnasco-Gerra",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2022,
+      "status": "DISCOVERED",
+      "url": "https://www.cugnasco-gerra.ch/MM-no-25-Consuntivo-2022-del-Comune-di-Cugnasco-Gerra-69523f00?i=1"
+    },
+    {
+      "ust_code": 5138,
+      "municipality_name": "Cugnasco-Gerra",
+      "title": "MM no. 33: Preventivo 2027 del Comune di Cugnasco-Gerra",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2027,
+      "status": "DISCOVERED",
+      "url": "https://cugnasco-gerra.ch/MM-no-33-Preventivo-2027-del-Comune-di-Cugnasco-Gerra-50be8200?i=1"
+    },
+    {
+      "ust_code": 5138,
+      "municipality_name": "Cugnasco-Gerra",
+      "title": "MM no. 34: Approvazione del progetto e del preventivo: acquisizione e installazione di una struttura prefabbricata destinata ad accogliere due sezioni della scuola dell'infanzia, e concessione del relativo credito d'investimento di Fr. 735'000.-",
+      "kind": "PREVENTIVO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://cugnasco-gerra.ch/MM-no-34-Approvazione-del-progetto-e-del-preventivo-definitivi-concernenti-l-acquisizione-e-l-installazione-di-una-struttura-prefabbricata-destinata-ad-accogliere-due-sezioni-della-scuola-dell-infanzia-e-concessione-del-relativo-credito-d-i-247e4800?i=1"
+    },
+    {
+      "ust_code": 5138,
+      "municipality_name": "Cugnasco-Gerra",
+      "title": "I conti del Comune",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://cugnasco-gerra.ch/I-conti-del-Comune-43c4a500?i=1"
+    },
+    {
+      "ust_code": 5112,
+      "municipality_name": "Lavertezzo",
+      "title": "mm 2026 01 convenzione piazza tiro comune gambarogno",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2026/send/80-mm-2026/845-mm-2026-01-convenzione-piazza-tiro-comune-gambarogno"
+    },
+    {
+      "ust_code": 5112,
+      "municipality_name": "Lavertezzo",
+      "title": "mm 2026 01 convenzione piazza tiro comune gambarogno rapporti commissionali",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2026/send/80-mm-2026/865-mm-2026-01-convenzione-piazza-tiro-comune-gambarogno-rapporti-commissionali"
+    },
+    {
+      "ust_code": 5112,
+      "municipality_name": "Lavertezzo",
+      "title": "mm 2026 02 mozione elaborata del gruppo per il paese denominata contributi fer",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2026/send/80-mm-2026/859-mm-2026-02-mozione-elaborata-del-gruppo-per-il-paese-denominata-contributi-fer"
+    },
+    {
+      "ust_code": 5112,
+      "municipality_name": "Lavertezzo",
+      "title": "mm 2026 03 convenzione per il consolidamento del progetto operatori di prossimita nel locarnese",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2026/send/80-mm-2026/849-mm-2026-03-convenzione-per-il-consolidamento-del-progetto-operatori-di-prossimita-nel-locarnese"
+    },
+    {
+      "ust_code": 5112,
+      "municipality_name": "Lavertezzo",
+      "title": "mm 2026 03 convenzione per il consolidamento del progetto operatori di prossimita nel locarnese rapporti commissionali",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2026/send/80-mm-2026/866-mm-2026-03-convenzione-per-il-consolidamento-del-progetto-operatori-di-prossimita-nel-locarnese-rapporti-commissionali"
+    },
+    {
+      "ust_code": 5112,
+      "municipality_name": "Lavertezzo",
+      "title": "mm 2026 04 consuntivo acap 2025",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2026/send/80-mm-2026/861-mm-2026-04-consuntivo-acap-2025"
+    },
+    {
+      "ust_code": 5112,
+      "municipality_name": "Lavertezzo",
+      "title": "mm 2026 04 consuntivo acap 2025 rapporti commissionali",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2026/send/80-mm-2026/870-mm-2026-04-consuntivo-acap-2025-rapporti-commissionali"
+    },
+    {
+      "ust_code": 5112,
+      "municipality_name": "Lavertezzo",
+      "title": "mm 2026 05 mm 8 2023 modifica aliquota prelievo 30 lcm",
+      "kind": "ALTRO",
+      "fiscal_year": 2023,
+      "status": "DISCOVERED",
+      "url": "https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2026/send/80-mm-2026/862-mm-2026-05-mm-8-2023-modifica-aliquota-prelievo-30-lcm"
+    },
+    {
+      "ust_code": 5112,
+      "municipality_name": "Lavertezzo",
+      "title": "mm 2026 05 mm 8 2023 modifica aliquota prelievo 30 lcm rapporti commissionali",
+      "kind": "ALTRO",
+      "fiscal_year": 2023,
+      "status": "DISCOVERED",
+      "url": "https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2026/send/80-mm-2026/871-mm-2026-05-mm-8-2023-modifica-aliquota-prelievo-30-lcm-rapporti-commissionali"
+    },
+    {
+      "ust_code": 5112,
+      "municipality_name": "Lavertezzo",
+      "title": "mm 2026 07 consuntivo comunale 2025",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2026/send/80-mm-2026/864-mm-2026-07-consuntivo-comunale-2025"
+    },
+    {
+      "ust_code": 5112,
+      "municipality_name": "Lavertezzo",
+      "title": "mm 2026 07 consuntivo comunale 2025 rapporti commissionali",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2026/send/80-mm-2026/872-mm-2026-07-consuntivo-comunale-2025-rapporti-commissionali"
+    },
+    {
+      "ust_code": 5112,
+      "municipality_name": "Lavertezzo",
+      "title": "mm 2026 09 mm 8 2023 modifica aliquota prelievo 5 lcm",
+      "kind": "ALTRO",
+      "fiscal_year": 2023,
+      "status": "DISCOVERED",
+      "url": "https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2026/send/80-mm-2026/900-mm-2026-09-mm-8-2023-modifica-aliquota-prelievo-5-lcm"
+    },
+    {
+      "ust_code": 5112,
+      "municipality_name": "Lavertezzo",
+      "title": "mm 2026 10 mandato prestazione lea",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2026/send/80-mm-2026/888-mm-2026-10-mandato-prestazione-lea"
+    },
+    {
+      "ust_code": 5112,
+      "municipality_name": "Lavertezzo",
+      "title": "mm 2026 11 credito chf 330 000 acquisizione scorpori terreni per riassetti stradali anni 1980",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2026/send/80-mm-2026/902-mm-2026-11-credito-chf-330-000-acquisizione-scorpori-terreni-per-riassetti-stradali-anni-1980"
+    },
+    {
+      "ust_code": 5112,
+      "municipality_name": "Lavertezzo",
+      "title": "mm 2026 12 r concernente la sicurezza delle informazioni",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2026/send/80-mm-2026/891-mm-2026-12-r-concernente-la-sicurezza-delle-informazioni"
+    },
+    {
+      "ust_code": 5113,
+      "municipality_name": "Locarno",
+      "title": "Consuntivo 2024 Città di Locarno (Gestione Separata Enti)",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2024,
+      "status": "MANUAL_UPLOAD",
+      "intake_method": "MANUAL_UPLOAD",
+      "note": "Download automatico escluso da robots.txt; caricato tramite /admin/upload"
+    },
+    {
+      "ust_code": 5113,
+      "municipality_name": "Locarno",
+      "title": "Preventivo 2025 Città di Locarno e Moltiplicatore d'Imposta (90% PF / 97% PG)",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2025,
+      "status": "MANUAL_UPLOAD",
+      "intake_method": "MANUAL_UPLOAD",
+      "note": "Download automatico escluso da robots.txt; caricato tramite /admin/upload"
+    },
+    {
+      "ust_code": 5120,
+      "municipality_name": "Muralto",
+      "title": "MM2026/23  domanda naturalizzazione",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "SKIPPED_PRIVACY",
+      "url": "https://www.muralto.ch/Messaggi-municipali/MM202623-domanda-naturalizzazione-e0d34b00?i=1&MasterId=g1_744",
+      "note": "Escluso ex lege: rilevati dati personali nLPD"
+    },
+    {
+      "ust_code": 5120,
+      "municipality_name": "Muralto",
+      "title": "MM2026/23 Avviso di pubblicazione",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.muralto.ch/Messaggi-municipali/MM202623-Avviso-di-pubblicazione-077fa000?i=1&MasterId=g1_744"
+    },
+    {
+      "ust_code": 5120,
+      "municipality_name": "Muralto",
+      "title": "MM2026/22 Avviso di pubblicazione",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.muralto.ch/Messaggi-municipali/MM202622-Avviso-di-pubblicazione-8c28b100?i=1&MasterId=g1_743"
+    },
+    {
+      "ust_code": 5120,
+      "municipality_name": "Muralto",
+      "title": "MM2026/22 Domanda di naturalizzazione",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "SKIPPED_PRIVACY",
+      "url": "https://www.muralto.ch/Messaggi-municipali/MM202622-Domanda-di-naturalizzazione-972b8200?i=1&MasterId=g1_743",
+      "note": "Escluso ex lege: rilevati dati personali nLPD"
+    },
+    {
+      "ust_code": 5120,
+      "municipality_name": "Muralto",
+      "title": "MM2026/21 Avviso di pubblicazione",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.muralto.ch/Messaggi-municipali/MM202621-Avviso-di-pubblicazione-49de4000?i=1&MasterId=g1_735"
+    },
+    {
+      "ust_code": 5120,
+      "municipality_name": "Muralto",
+      "title": "MM2026/21 Preventivo 2027",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2027,
+      "status": "DISCOVERED",
+      "url": "https://www.muralto.ch/Messaggi-municipali/MM202621-Preventivo-2027-0ee99800?i=1&MasterId=g1_735"
+    },
+    {
+      "ust_code": 5120,
+      "municipality_name": "Muralto",
+      "title": "MM2026/19 Avviso di pubblicazione",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.muralto.ch/Messaggi-municipali/MM202619-Avviso-di-pubblicazione-4a7a7800?i=1&MasterId=g1_724"
+    },
+    {
+      "ust_code": 5120,
+      "municipality_name": "Muralto",
+      "title": "MM2026/19 Richiesta di un credito d'investimento di CHF 218'000.00 concernente i lavori per la messa in sicurezza antincendio della sala del Palazzo dei congressi",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.muralto.ch/Messaggi-municipali/MM192026-Richiesta-di-un-credito-d-investimento-di-CHF-218-00000-concernente-i-lavori-per-la-messa-in-sicurezza-antincendio-della-sala-del-Palazzo-dei-congressi-f9fc1900?i=1&MasterId=g1_724"
+    },
+    {
+      "ust_code": 5120,
+      "municipality_name": "Muralto",
+      "title": "MM2026/19  Rapporto di minoranza della Commissione edilizia",
+      "kind": "RAPPORTO_COMMISSIONE",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.muralto.ch/Messaggi-municipali/MM202619-Rapporto-di-minoranza-della-Commissione-edilizia-e37b4e00?i=1&MasterId=g1_724"
+    },
+    {
+      "ust_code": 5120,
+      "municipality_name": "Muralto",
+      "title": "MM2026/19 Rapporto di maggioranza della Commissione edilizia",
+      "kind": "RAPPORTO_COMMISSIONE",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.muralto.ch/Messaggi-municipali/MM202619-Rapporto-di-maggioranza-della-Commissione-edilizia-6e849a00?i=1&MasterId=g1_724"
+    },
+    {
+      "ust_code": 5120,
+      "municipality_name": "Muralto",
+      "title": "MM2026/18  Richiesta di un credito di CHF 48'000.00 concernente il rinnovo della Convenzione per il consolidamento del progetto Operatori di Prossimità nel Locarnese 2026-2029",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.muralto.ch/Messaggi-municipali/MM202618-Richiesta-di-un-credito-di-CHF-48-00000-concernente-il-rinnovo-della-Convenzione-per-il-consolidamento-del-progetto-Operatori-di-Prossimita-nel-Locarnese-20206-2029-5b298c00?i=1&MasterId=g1_703"
+    },
+    {
+      "ust_code": 5120,
+      "municipality_name": "Muralto",
+      "title": "MM2026/18 Avviso di pubblicazione",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.muralto.ch/Messaggi-municipali/MM202618-Avviso-di-pubblicazione-60d39200?i=1&MasterId=g1_703"
+    },
+    {
+      "ust_code": 5120,
+      "municipality_name": "Muralto",
+      "title": "MM2026/18 Rapporto della Commissione della gestione",
+      "kind": "RAPPORTO_COMMISSIONE",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.muralto.ch/Messaggi-municipali/MM202618-Rapporto-della-Commissione-della-gestione-fec18200?i=1&MasterId=g1_703"
+    },
+    {
+      "ust_code": 5120,
+      "municipality_name": "Muralto",
+      "title": "MM2026/18 Rapporto di minoranza della Commissione delle petizioni",
+      "kind": "RAPPORTO_COMMISSIONE",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.muralto.ch/Messaggi-municipali/MM202618-Rapporto-di-minoranza-della-Commissione-delle-petizioni-c537f900?i=1&MasterId=g1_703"
+    },
+    {
+      "ust_code": 5120,
+      "municipality_name": "Muralto",
+      "title": "MM2026/18 Rapporto di maggioranza della Commissione delle petizioni",
+      "kind": "RAPPORTO_COMMISSIONE",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.muralto.ch/Messaggi-municipali/MM202618-Rapporto-della-Commissione-delle-petizioni-0c927400?i=1&MasterId=g1_703"
+    },
+    {
+      "ust_code": 5121,
+      "municipality_name": "Orselina",
+      "title": "MM 7-2026 Costituzione servitù di passo pedonale e veicolare a carico part. no. 910 RFD Orselina di proprietà del Patriziato di Muralto e a favore del Comune di Orselina",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.orselina.ch/downdoc.php?id_doc=4407&lng=1&i=1&vis=2&rif=9ccdfe26c1"
+    },
+    {
+      "ust_code": 5121,
+      "municipality_name": "Orselina",
+      "title": "MM 6-2026 Fr. 45'000.00 per elaborazione Programma d'azione (PAC) per lo sviluppo insediativo centripeto di qualità del Comune di Orselina",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.orselina.ch/downdoc.php?id_doc=4405&lng=1&i=1&vis=2&rif=16b7dfa7b2"
+    },
+    {
+      "ust_code": 5121,
+      "municipality_name": "Orselina",
+      "title": "MM 5-2026 Fr. 106'000.00 credito complessivo per il rifacimento parziale del parco giochi al Parco, la creazione di una scacchiera pubblica e la realizzazione di uno spazio di ristoro e svago in Piazza di Rocco",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.orselina.ch/downdoc.php?id_doc=4403&lng=1&i=1&vis=2&rif=7145d4f3ae"
+    },
+    {
+      "ust_code": 5121,
+      "municipality_name": "Orselina",
+      "title": "MM 3-2026 Dimissioni carica di Consigliere comunale Huber Bernhard",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.orselina.ch/downdoc.php?id_doc=4411&lng=1&i=1&vis=2&rif=1dc10ef0e7"
+    },
+    {
+      "ust_code": 5121,
+      "municipality_name": "Orselina",
+      "title": "MM 2-2026 Consuntivo 2025 del Comune di Orselina",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.orselina.ch/downdoc.php?id_doc=4401&lng=1&i=1&vis=2&rif=a08a0cf149"
+    },
+    {
+      "ust_code": 5121,
+      "municipality_name": "Orselina",
+      "title": "MM 1-2026 Dimissioni carica di Consigliere comunale Giannini Stefania",
+      "kind": "ALTRO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.orselina.ch/downdoc.php?id_doc=4409&lng=1&i=1&vis=2&rif=fcf8825c96"
+    },
+    {
+      "ust_code": 5121,
+      "municipality_name": "Orselina",
+      "title": "MM 10-2025 Modifica art. 4 Regolamento per la concessione di contributi e sussidi ai giovani",
+      "kind": "ALTRO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.orselina.ch/downdoc.php?id_doc=4200&lng=1&i=1&vis=2&rif=8f980fbc07"
+    },
+    {
+      "ust_code": 5121,
+      "municipality_name": "Orselina",
+      "title": "MM 9-2025 Convenzione per fase di consolidamento del progetto di Prossimità nel Locarnese 2026/2029",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.orselina.ch/downdoc.php?id_doc=4198&lng=1&i=1&vis=2&rif=0922210733"
+    },
+    {
+      "ust_code": 5121,
+      "municipality_name": "Orselina",
+      "title": "MM 8-2025 Fr. 320'000.00 per rifacimento copertura dell'edificio \"Castello Bernese\"",
+      "kind": "ALTRO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.orselina.ch/downdoc.php?id_doc=4204&lng=1&i=1&vis=2&rif=4356d948d6"
+    },
+    {
+      "ust_code": 5121,
+      "municipality_name": "Orselina",
+      "title": "MM 7-2025 Fr. 200'000.00 credito quadro per rinnovamento condotte e candelabri dell'illuminazione pubblica lungo i sentieri",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.orselina.ch/downdoc.php?id_doc=4202&lng=1&i=1&vis=2&rif=2b5e16d49f"
+    },
+    {
+      "ust_code": 5121,
+      "municipality_name": "Orselina",
+      "title": "MM 6-2025 Conti preventivi 2026 e moltiplicatore d'imposta 2026",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.orselina.ch/downdoc.php?id_doc=4194&lng=1&i=1&vis=2&rif=f1a6b748a3"
+    },
+    {
+      "ust_code": 5121,
+      "municipality_name": "Orselina",
+      "title": "MM 4-2025 Convenzione concernente gestione poligono di tiro di Quartino tra il Comune di Orselina e il Comune di Gambarogno",
+      "kind": "ALTRO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.orselina.ch/downdoc.php?id_doc=4196&lng=1&i=1&vis=2&rif=c09a8a5fff"
+    },
+    {
+      "ust_code": 5121,
+      "municipality_name": "Orselina",
+      "title": "MM 3-2025 Consuntivo 2024 del Comune di Orselina",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2024,
+      "status": "DISCOVERED",
+      "url": "https://www.orselina.ch/downdoc.php?id_doc=3982&lng=1&i=1&vis=2&rif=23a00b8b8c"
+    },
+    {
+      "ust_code": 5121,
+      "municipality_name": "Orselina",
+      "title": "MM 1-2025 Fr. 190'000.00 per rifacimento copertura dell'edificio \"Castello Bernese\"",
+      "kind": "ALTRO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.orselina.ch/downdoc.php?id_doc=3980&lng=1&i=1&vis=2&rif=bc6d6de7e9"
+    },
+    {
+      "ust_code": 5121,
+      "municipality_name": "Orselina",
+      "title": "MM 14-2024 Fr. 40'000.00 per creazione spazio mensa presso Castello Bernese e interventi alla mensa presso Casa comunale",
+      "kind": "ALTRO",
+      "fiscal_year": 2024,
+      "status": "DISCOVERED",
+      "url": "https://www.orselina.ch/downdoc.php?id_doc=3811&lng=1&i=1&vis=2&rif=27b50318b6"
+    },
+    {
+      "ust_code": 5136,
+      "municipality_name": "Onsernone",
+      "title": "MM credito MU93 Sezioni di Gresso e Vergeletto",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.onsernone.swiss/MM-credito-MU93-Sezioni-di-Gresso-e-Vergeletto-b54ba400?i=1"
+    },
+    {
+      "ust_code": 5136,
+      "municipality_name": "Onsernone",
+      "title": "MM Richiesta Credito Centro Servizi di Berzona",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.onsernone.swiss/MM-Richiesta-Credito-Centro-Servizi-di-Berzona-0e338100?i=1"
+    },
+    {
+      "ust_code": 5136,
+      "municipality_name": "Onsernone",
+      "title": "MM Richiesta Credito Acquisto Bellavista Spruga",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.onsernone.swiss/MM-Richiesta-Credito-Acquisto-Bellavista-Spruga-818c1800?i=1"
+    },
+    {
+      "ust_code": 5136,
+      "municipality_name": "Onsernone",
+      "title": "MM richiesta credito per pianificazione comparto cave",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.onsernone.swiss/MM-richiesta-credito-per-pianificazione-comparto-cave-8f2e7900?i=1"
+    },
+    {
+      "ust_code": 5136,
+      "municipality_name": "Onsernone",
+      "title": "MM richiesta credito per realizzazione di 6 impianti fotovoltaici",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.onsernone.swiss/MM-richiesta-credito-per-realizzazione-di-6-impianti-fotovoltaici-0ba97c00?i=1"
+    },
+    {
+      "ust_code": 5136,
+      "municipality_name": "Onsernone",
+      "title": "Progetto \"Vivere in Valle\"",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.onsernone.swiss/Progetto-vivere-in-Valle-2d8b5000?i=1"
+    },
+    {
+      "ust_code": 5398,
+      "municipality_name": "Gambarogno",
+      "title": "Operatrice sociale",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gambarogno.ch/Operatrice-sociale-4288fa00?i=1"
+    },
+    {
+      "ust_code": 5398,
+      "municipality_name": "Gambarogno",
+      "title": "MM 528 Dimissioni dalla carica di consigliere comunale Fiala Sabrina",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gambarogno.ch/MM-528-Dimissioni-dalla-carica-di-consigliere-comunale-Fiala-Sabrina-a1c86e00?i=1"
+    },
+    {
+      "ust_code": 5398,
+      "municipality_name": "Gambarogno",
+      "title": "MM 534 Preventivo 2027",
+      "kind": "PREVENTIVO",
+      "fiscal_year": 2027,
+      "status": "DISCOVERED",
+      "url": "https://www.gambarogno.ch/MM-492-Preventivo-2026-3c24a800?i=1"
+    },
+    {
+      "ust_code": 5398,
+      "municipality_name": "Gambarogno",
+      "title": "MM 526 Modifica ROD con inserimento funzione di Direttore dei Servizi finanziari",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gambarogno.ch/MM-526-Modifica-ROD-con-inserimento-funzione-di-Direttore-dei-Servizi-finanziari-574e1f00?i=1"
+    },
+    {
+      "ust_code": 5398,
+      "municipality_name": "Gambarogno",
+      "title": "MM 513 Credito CHF 420'000.00 revisione e parziale ampliamento organo Chiesa San Carlo Borromeo Magadino",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gambarogno.ch/MM-513-Credito-CHF-420-00000-revisione-e-parziale-ampliamento-organo-Chiesa-San-Carlo-Borromeo-Magadino-04a7bd00?i=1"
+    },
+    {
+      "ust_code": 5398,
+      "municipality_name": "Gambarogno",
+      "title": "MM 514 Credito CHF 723'000.00 risanamento serbatoio principale Indemini",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gambarogno.ch/MM-514-Credito-CHF-723-00000-risanamento-serbatoio-principale-Indemini-cf26a900?i=1"
+    },
+    {
+      "ust_code": 5398,
+      "municipality_name": "Gambarogno",
+      "title": "MM 520 Credito CHF 65'000.00 rifacimento tetti in piode lavatoio e fontante di sopra a Indemini",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gambarogno.ch/MM-520-Credito-CHF-65-00000-rifacimento-tetti-in-piode-lavatoio-e-fontante-di-sopra-a-Indemini-a5ca8400?i=1"
+    },
+    {
+      "ust_code": 5398,
+      "municipality_name": "Gambarogno",
+      "title": "MM 521 Credito CHF 82'000.00 mandato finalizzato all'elaborazione del progetto Scuola del futuro",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gambarogno.ch/MM-521-Credito-CHF-82-00000-mandato-finalizzato-all-elaborazione-del-progetto-Scuola-del-futuro-db844600?i=1"
+    },
+    {
+      "ust_code": 5398,
+      "municipality_name": "Gambarogno",
+      "title": "MM 523 Credito quadro CHF 175'000.00 per interventi presso il Centro sportivo 2027-2029",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2027,
+      "status": "DISCOVERED",
+      "url": "https://www.gambarogno.ch/MM-523-Credito-quadro-CHF-175-00000-per-interventi-presso-il-Centro-sportivo-2027-2029-32aebb00?i=1"
+    },
+    {
+      "ust_code": 5398,
+      "municipality_name": "Gambarogno",
+      "title": "MM 524 Convenzione con Patriziato Magadino per utilizzo e gestione Parco giochi Alle Bolle",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gambarogno.ch/MM-524-Convenzione-con-Patriziato-Magadino-per-utilizzo-e-gestione-Parco-giochi-Alle-Bolle-f1e8a800?i=1"
+    },
+    {
+      "ust_code": 5398,
+      "municipality_name": "Gambarogno",
+      "title": "MM 525 Credito CHF 170'000.00 restauro e messa in sicurezza ponte in sasso riale Vadina a Vira",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gambarogno.ch/MM-525-Credito-CHF-170-00000-restauro-e-messa-in-sicurezza-ponte-in-sasso-riale-Vadina-a-Vira-b1aa3b00?i=1"
+    },
+    {
+      "ust_code": 5398,
+      "municipality_name": "Gambarogno",
+      "title": "MM 515 Credito a posteriori CHF 223'000.00 ripristino condotte adduzione SA e CA per interventi di manutenzione",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gambarogno.ch/MM-515-Credito-a-posteriori-CHF-223-00000-ripristino-condotte-adduzione-SA-e-CA-per-interventi-di-manutenzione-50802100?i=1"
+    },
+    {
+      "ust_code": 5398,
+      "municipality_name": "Gambarogno",
+      "title": "MM 516 Preavviso municipale rapporto commissionale mozione Sargenti 05.02.2024 Affinché anche Contone abbia almeno una sala riunione pubblica per la popolazione",
+      "kind": "ALTRO",
+      "fiscal_year": 2024,
+      "status": "DISCOVERED",
+      "url": "https://www.gambarogno.ch/MM-516-Preavviso-municipale-rapporto-commissionale-mozione-Sargenti-05022024-Affinch-anche-Contone-abbia-almeno-una-sala-riunione-pubblica-per-la-popolazione-5a20a100?i=1"
+    },
+    {
+      "ust_code": 5398,
+      "municipality_name": "Gambarogno",
+      "title": "MM 517 Preavviso municipale rapporto commissionale mozione Fiala 23.06.25 Prospettive future Centro Rivamonte",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gambarogno.ch/MM-517-Preavviso-municipale-rapporto-commissionale-mozione-Fiala-230625-Prospettive-future-Centro-Rivamonte-a7fac800?i=1"
+    },
+    {
+      "ust_code": 5398,
+      "municipality_name": "Gambarogno",
+      "title": "MM 518 Preavviso municipale rapporto commissionale mozione Franceschini 13.10.25 Sistemazione pista ghiaccio centro sportivo MA per inline hockey",
+      "kind": "ALTRO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gambarogno.ch/MM-518-Preavviso-municipale-rapporto-commissionale-mozione-Franceschini-131025-Sistemazione-pista-ghiaccio-centro-sportivo-MA-per-inline-hockey-bc5a8000?i=1"
+    },
+    {
+      "ust_code": 5398,
+      "municipality_name": "Gambarogno",
+      "title": "Operatrice sociale",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gambarogno.ch/Operatrice-sociale-4288fa00?i=1"
+    },
+    {
+      "ust_code": 5398,
+      "municipality_name": "Gambarogno",
+      "title": "Avviso di concorso per l'assunzione di due operai/e comunali qualificati",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gambarogno.ch/Avviso-di-concorso-per-l-assunzione-di-due-operaie-comunali-qualificati-5b559300?i=1"
+    },
+    {
+      "ust_code": 5398,
+      "municipality_name": "Gambarogno",
+      "title": "Mansionario concorso assunzione operaio comunale con indirizzo operatore meccanico",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gambarogno.ch/Mansionario-concorso-assunzione-operaio-comunale-con-indirizzo-operatore-meccanico-d5fb5400?i=1"
+    },
+    {
+      "ust_code": 5398,
+      "municipality_name": "Gambarogno",
+      "title": "Mansionario concorso assunzione operaio comunale con indirizzo selvicoltore",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "status": "DISCOVERED",
+      "url": "https://www.gambarogno.ch/Mansionario-concorso-assunzione-operaio-comunale-con-indirizzo-selvicoltore-44113b00?i=1"
+    },
+    {
+      "ust_code": 5399,
+      "municipality_name": "Verzasca",
+      "title": "Messaggio municipale no. 78-2026 Piano finanziario 2026-2029",
+      "kind": "PIANO_FINANZIARIO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.verzasca.swiss/Messaggio-municipale-no-78-2026-Piano-finanziario-2026-2029-821eb700?i=1"
+    },
+    {
+      "ust_code": 5399,
+      "municipality_name": "Verzasca",
+      "title": "Messaggio municipale no. 77-2026 Adeguamento e riqualifica della piazza di atterraggio per elicotteri a Vogorno e richiesta di un credito di CHF 106'000.--",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.verzasca.swiss/MM-77-2026-Adeguamento-e-riqualifica-della-piazza-di-atterraggio-per-elicotteri-a-Vogorno-e-richiesta-di-un-credito-di-CHF-106-000--4385e800?i=1"
+    },
+    {
+      "ust_code": 5399,
+      "municipality_name": "Verzasca",
+      "title": "Messaggio municipale no. 75-2026 Conto consuntivo 2025",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "status": "DISCOVERED",
+      "url": "https://www.verzasca.swiss/Messaggio-municipale-no-75-2026-Conto-consuntivo-2025-23f2b600?i=1"
+    },
+    {
+      "ust_code": 5399,
+      "municipality_name": "Verzasca",
+      "title": "Messaggio municipale no. 72-2026 Realizzazione della passerella pedonale sul Ponte Gannone a Brione Verzasca e apertura credito di CHF 234'000.--",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.verzasca.swiss/Messaggio-municipale-no-72-2026-Realizzazione-della-passerella-pedonale-sul-Ponte-Gannone-a-Brione-Verzasca-e-apertura-credito-di-CHF-234-000--11c60100?i=1"
+    },
+    {
+      "ust_code": 5399,
+      "municipality_name": "Verzasca",
+      "title": "Messaggio municipale no. 73-2026 Introduzione della nomenclatura delle vie e della numerazione civica degli edifici nelle sezioni di Lavertezzo e Gerra e richiesta di un credito di CHF 115'000.--",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.verzasca.swiss/Messaggio-municipale-no-73-2026-Introduzione-della-nomenclatura-delle-vie-e-della-numerazione-civica-degli-edifici-nelle-sezioni-di-Lavertezzo-e-Gerra-e-richiesta-di-un-credito-di-CHF-115-000--9e7a8900?i=1"
+    },
+    {
+      "ust_code": 5399,
+      "municipality_name": "Verzasca",
+      "title": "Messaggio municipale no. 74-2026 Sostituzione del bus scolastico comunale per il trasporto degli allievi e richiesta di un credito di CHF 98'000.--",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": 2026,
+      "status": "DISCOVERED",
+      "url": "https://www.verzasca.swiss/Messaggio-municipale-no-74-2026-Sostituzione-del-bus-scolastico-comunale-per-il-trasporto-degli-allievi-e-richiesta-di-un-credito-di-CHF-98-000--eb9a4c00?i=1"
+    }
+  ]
+}

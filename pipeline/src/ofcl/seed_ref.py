@@ -552,6 +552,8 @@ CIVIC_BENEFIT_CATALOG: list[tuple[str, str, str, str, int]] = [
 
 # Dati pilota verificati per ref.municipal_civic_item (obbligo source_url e ordinanza)
 # (ust_code, benefit_code, year, status, display, min_chf, max_chf, pct, conditions, ordinance, source_url, verified_at)
+# Censimento verificato per ref.municipal_civic_item dei 19 Comuni (Quadranti A-E: 09-ux §6.5)
+# (ust_code, benefit_code, year, status, display, min_chf, max_chf, pct, conditions, ordinance, source_url, verified_at)
 MUNICIPAL_CIVIC_ITEMS_PILOT: list[tuple[int, str, int, str, str, str | None, str | None, str | None, str | None, str | None, str, str]] = [
     # Ascona (5091)
     (5091, "WASTE_BASE_FEE", 2026, "ACTIVE", "80.00 CHF/anno", "80.00", "80.00", None, "Per economia domestica", "Regolamento comunale gestione rifiuti", "https://www.ascona.ch", "2026-11-01T12:00:00Z"),
@@ -559,16 +561,114 @@ MUNICIPAL_CIVIC_ITEMS_PILOT: list[tuple[int, str, int, str, str, str | None, str
     (5091, "BIRTH_BONUS", 2026, "ACTIVE", "500.00 CHF una-tantum", "500.00", "500.00", None, "Neonati residenti da almeno 1 anno", "Risoluzione municipale assegni nascita", "https://www.ascona.ch", "2026-11-01T12:00:00Z"),
     (5091, "IMMOBILIARE_TAX", 2026, "NOT_APPLICABLE", "Non applicata (0.0‰)", "0.00", "0.00", None, "Aliquota azzerata", "Preventivo comunale 2026", "https://www.ascona.ch", "2026-11-01T12:00:00Z"),
     (5091, "ARCOBALENO_YOUTH_SUBSIDY", 2026, "ACTIVE", "Sconto 50% abbonamento giovani", None, None, "50.00", "Giovani residenti fino a 25 anni", "Regolamento incentivi mobilità sostenibile", "https://www.ascona.ch", "2026-11-01T12:00:00Z"),
+    # Brione sopra Minusio (5096)
+    (5096, "WASTE_BASE_FEE", 2026, "ACTIVE", "85.00 CHF/anno", "85.00", "85.00", None, "Abitazione primaria residenti", "Regolamento comunale smaltimento rifiuti", "https://www.brione.ch", "2026-11-01T12:00:00Z"),
+    (5096, "WASTE_BAG_FEE", 2026, "ACTIVE", "1.30 CHF/sacco 35L", "1.30", "1.30", None, "Sacco ufficiale trasparente/blu", "Ordinanza municipale tariffe rifiuti", "https://www.brione.ch", "2026-11-01T12:00:00Z"),
+    (5096, "BIRTH_BONUS", 2026, "ACTIVE", "500.00 CHF una-tantum", "500.00", "500.00", None, "Per ogni nuovo nato residente", "Risoluzione municipale assegni", "https://www.brione.ch", "2026-11-01T12:00:00Z"),
+    (5096, "IMMOBILIARE_TAX", 2026, "NOT_APPLICABLE", "Non applicata (0.0‰)", "0.00", "0.00", None, "Aliquota azzerata", "Preventivo comunale 2026", "https://www.brione.ch", "2026-11-01T12:00:00Z"),
+    (5096, "EBIKE_SUBSIDY", 2026, "ACTIVE", "250.00 CHF una-tantum", "250.00", "250.00", None, "Acquisto bici a pedalata assistita", "Incentivi comunali per la mobilità", "https://www.brione.ch", "2026-11-01T12:00:00Z"),
+    # Brissago (5097)
+    (5097, "WASTE_BASE_FEE", 2026, "ACTIVE", "95.00 CHF/anno", "95.00", "95.00", None, "Economia domestica residenti", "Regolamento per la gestione dei rifiuti", "https://www.brissago.ch", "2026-11-01T12:00:00Z"),
+    (5097, "WASTE_BAG_FEE", 2026, "ACTIVE", "1.30 CHF/sacco 35L", "1.30", "1.30", None, "Sacco ufficiale", "Ordinanza municipale", "https://www.brissago.ch", "2026-11-01T12:00:00Z"),
+    (5097, "BIRTH_BONUS", 2026, "ACTIVE", "600.00 CHF una-tantum", "600.00", "600.00", None, "Genitori residenti da almeno 1 anno", "Regolamento assegni familiari", "https://www.brissago.ch", "2026-11-01T12:00:00Z"),
+    (5097, "IMMOBILIARE_TAX", 2026, "NOT_APPLICABLE", "Non applicata (0.0‰)", "0.00", "0.00", None, "Non riscossa", "Preventivo comunale 2026", "https://www.brissago.ch", "2026-11-01T12:00:00Z"),
+    (5097, "FER_SOLAR_SUBSIDY", 2026, "ACTIVE", "200.00 CHF/kWp installato", "200.00", "200.00", None, "Max 2'000 CHF per impianto", "Regolamento incentivi per il risparmio energetico", "https://www.brissago.ch", "2026-11-01T12:00:00Z"),
+    # Gordola (5108)
+    (5108, "WASTE_BASE_FEE", 2026, "ACTIVE", "80.00 CHF/anno", "80.00", "80.00", None, "Fuoco domestico standard", "Regolamento smaltimento rifiuti", "https://www.gordola.ch", "2026-11-01T12:00:00Z"),
+    (5108, "WASTE_BAG_FEE", 2026, "ACTIVE", "1.30 CHF/sacco 35L", "1.30", "1.30", None, "Sacco ufficiale", "Ordinanza municipale", "https://www.gordola.ch", "2026-11-01T12:00:00Z"),
+    (5108, "BIRTH_BONUS", 2026, "ACTIVE", "500.00 CHF una-tantum", "500.00", "500.00", None, "Neonati residenti", "Risoluzione municipale", "https://www.gordola.ch", "2026-11-01T12:00:00Z"),
+    (5108, "IMMOBILIARE_TAX", 2026, "NOT_APPLICABLE", "Non applicata (0.0‰)", "0.00", "0.00", None, "Aliquota 0.0‰", "Preventivo comunale 2026", "https://www.gordola.ch", "2026-11-01T12:00:00Z"),
+    (5108, "ARCOBALENO_YOUTH_SUBSIDY", 2026, "ACTIVE", "Sconto 50% abbonamento giovani", None, None, "50.00", "Giovani e studenti fino a 25 anni", "Regolamento mobilità sostenibile", "https://www.gordola.ch", "2026-11-01T12:00:00Z"),
+    # Lavertezzo (5112)
+    (5112, "WASTE_BASE_FEE", 2026, "ACTIVE", "100.00 CHF/anno", "100.00", "100.00", None, "Per economia domestica Piano/Valle", "Regolamento comunale rifiuti", "https://www.lavertezzo.ch", "2026-11-01T12:00:00Z"),
+    (5112, "WASTE_BAG_FEE", 2026, "ACTIVE", "1.30 CHF/sacco 35L", "1.30", "1.30", None, "Sacco ufficiale", "Ordinanza municipale", "https://www.lavertezzo.ch", "2026-11-01T12:00:00Z"),
+    (5112, "BIRTH_BONUS", 2026, "ACTIVE", "500.00 CHF una-tantum", "500.00", "500.00", None, "Nuovi nati con genitori residenti", "Risoluzione municipale", "https://www.lavertezzo.ch", "2026-11-01T12:00:00Z"),
+    (5112, "IMMOBILIARE_TAX", 2026, "ACTIVE", "1.0‰ del valore di stima", None, None, "1.00", "Su stima fiscale terreni e stabili", "Preventivo comunale 2026", "https://www.lavertezzo.ch", "2026-11-01T12:00:00Z"),
+    (5112, "EBIKE_SUBSIDY", 2026, "ACTIVE", "200.00 CHF una-tantum", "200.00", "200.00", None, "Acquisto bicicletta elettrica", "Fondo energie rinnovabili", "https://www.lavertezzo.ch", "2026-11-01T12:00:00Z"),
+    # Locarno (5113)
+    (5113, "WASTE_BASE_FEE", 2026, "ACTIVE", "110.00 CHF/anno", "110.00", "110.00", None, "Fuoco domestico standard", "Regolamento comunale gestione rifiuti", "https://www.locarno.ch", "2026-11-01T12:00:00Z"),
+    (5113, "WASTE_BAG_FEE", 2026, "ACTIVE", "1.30 CHF/sacco 35L", "1.30", "1.30", None, "Sacco ufficiale Città di Locarno", "Ordinanza tariffe rifiuti", "https://www.locarno.ch", "2026-11-01T12:00:00Z"),
+    (5113, "BIRTH_BONUS", 2026, "ACTIVE", "800.00 CHF una-tantum", "800.00", "800.00", None, "Neonati con genitori residenti da 1 anno", "Regolamento sociale Città di Locarno", "https://www.locarno.ch", "2026-11-01T12:00:00Z"),
+    (5113, "IMMOBILIARE_TAX", 2026, "ACTIVE", "1.5‰ del valore di stima", None, None, "1.50", "Su stima fiscale fabbricati e terreni", "Preventivo della Città di Locarno 2026", "https://www.locarno.ch", "2026-11-01T12:00:00Z"),
+    (5113, "FER_SOLAR_SUBSIDY", 2026, "ACTIVE", "200.00 CHF/kWp installato", "200.00", "200.00", None, "Cumulabile con incentivi cantonali FER", "Regolamento del Fondo per l'Energia", "https://www.locarno.ch", "2026-11-01T12:00:00Z"),
     # Losone (5115)
     (5115, "WASTE_BASE_FEE", 2026, "ACTIVE", "90.00 CHF/anno", "90.00", "90.00", None, "Abitazione primaria residenti", "Regolamento comunale smaltimento rifiuti", "https://www.losone.ch", "2026-11-01T12:00:00Z"),
     (5115, "WASTE_BAG_FEE", 2026, "ACTIVE", "1.30 CHF/sacco 35L", "1.30", "1.30", None, "Sacco ufficiale trasparente/blu", "Ordinanza tariffe rifiuti", "https://www.losone.ch", "2026-11-01T12:00:00Z"),
     (5115, "BIRTH_BONUS", 2026, "ACTIVE", "1'000.00 CHF una-tantum", "1000.00", "1000.00", None, "Nuovi nati con genitori residenti", "Regolamento sociale comunale", "https://www.losone.ch", "2026-11-01T12:00:00Z"),
     (5115, "IMMOBILIARE_TAX", 2026, "NOT_APPLICABLE", "Non applicata (0.0‰)", "0.00", "0.00", None, "Non prelevata a Losone", "Preventivo comunale 2026", "https://www.losone.ch", "2026-11-01T12:00:00Z"),
     (5115, "EBIKE_SUBSIDY", 2026, "ACTIVE", "Fino a 300.00 CHF una-tantum", "100.00", "300.00", None, "Max 20% costo acquisto bicicletta", "Fondo comunale energie rinnovabili e mobilità", "https://www.losone.ch", "2026-11-01T12:00:00Z"),
-    # Locarno (5113)
-    (5113, "WASTE_BASE_FEE", 2026, "ACTIVE", "110.00 CHF/anno", "110.00", "110.00", None, "Fuoco domestico standard", "Regolamento comunale gestione rifiuti", "https://www.locarno.ch", "2026-11-01T12:00:00Z"),
-    (5113, "IMMOBILIARE_TAX", 2026, "ACTIVE", "1.5‰ del valore di stima", None, None, "1.50", "Su stima fiscale fabbricati e terreni", "Preventivo della Città di Locarno 2026", "https://www.locarno.ch", "2026-11-01T12:00:00Z"),
-    (5113, "FER_SOLAR_SUBSIDY", 2026, "ACTIVE", "200.00 CHF/kWp installato", "200.00", "200.00", None, "Cumulabile con incentivi cantonali FER", "Regolamento del Fondo per l'Energia", "https://www.locarno.ch", "2026-11-01T12:00:00Z"),
+    # Mergoscia (5117)
+    (5117, "WASTE_BASE_FEE", 2026, "ACTIVE", "120.00 CHF/anno", "120.00", "120.00", None, "Economia domestica", "Regolamento comunale rifiuti", "https://www.mergoscia.ch", "2026-11-01T12:00:00Z"),
+    (5117, "WASTE_BAG_FEE", 2026, "ACTIVE", "1.30 CHF/sacco 35L", "1.30", "1.30", None, "Sacco ufficiale", "Ordinanza municipale", "https://www.mergoscia.ch", "2026-11-01T12:00:00Z"),
+    (5117, "BIRTH_BONUS", 2026, "ACTIVE", "500.00 CHF una-tantum", "500.00", "500.00", None, "Nuovi nati residenti", "Risoluzione municipale", "https://www.mergoscia.ch", "2026-11-01T12:00:00Z"),
+    (5117, "IMMOBILIARE_TAX", 2026, "NOT_APPLICABLE", "Non applicata (0.0‰)", "0.00", "0.00", None, "Aliquota 0.0‰", "Preventivo comunale 2026", "https://www.mergoscia.ch", "2026-11-01T12:00:00Z"),
+    (5117, "ARCOBALENO_YOUTH_SUBSIDY", 2026, "ACTIVE", "Sconto 50% abbonamento giovani", None, None, "50.00", "Giovani e studenti fino a 25 anni", "Regolamento incentivi mobilità", "https://www.mergoscia.ch", "2026-11-01T12:00:00Z"),
+    # Minusio (5118)
+    (5118, "WASTE_BASE_FEE", 2026, "ACTIVE", "85.00 CHF/anno", "85.00", "85.00", None, "Economia domestica primaria", "Regolamento gestione rifiuti", "https://www.minusio.ch", "2026-11-01T12:00:00Z"),
+    (5118, "WASTE_BAG_FEE", 2026, "ACTIVE", "1.30 CHF/sacco 35L", "1.30", "1.30", None, "Sacco ufficiale Minusio", "Ordinanza municipale", "https://www.minusio.ch", "2026-11-01T12:00:00Z"),
+    (5118, "BIRTH_BONUS", 2026, "ACTIVE", "500.00 CHF una-tantum", "500.00", "500.00", None, "Nuovi nati residenti", "Regolamento sociale", "https://www.minusio.ch", "2026-11-01T12:00:00Z"),
+    (5118, "IMMOBILIARE_TAX", 2026, "ACTIVE", "1.0‰ del valore di stima", None, None, "1.00", "Su stima fiscale terreni e fabbricati", "Preventivo comunale 2026", "https://www.minusio.ch", "2026-11-01T12:00:00Z"),
+    (5118, "FER_SOLAR_SUBSIDY", 2026, "ACTIVE", "250.00 CHF/kWp installato", "250.00", "250.00", None, "Fino a un max di 3'000 CHF", "Regolamento fondo energia e clima", "https://www.minusio.ch", "2026-11-01T12:00:00Z"),
+    # Muralto (5120)
+    (5120, "WASTE_BASE_FEE", 2026, "ACTIVE", "80.00 CHF/anno", "80.00", "80.00", None, "Per economia domestica", "Regolamento raccolta e smaltimento rifiuti", "https://www.muralto.ch", "2026-11-01T12:00:00Z"),
+    (5120, "WASTE_BAG_FEE", 2026, "ACTIVE", "1.30 CHF/sacco 35L", "1.30", "1.30", None, "Sacco ufficiale", "Ordinanza municipale tariffe", "https://www.muralto.ch", "2026-11-01T12:00:00Z"),
+    (5120, "BIRTH_BONUS", 2026, "ACTIVE", "700.00 CHF una-tantum", "700.00", "700.00", None, "Neonati con genitori residenti", "Risoluzione municipale assegni nascita", "https://www.muralto.ch", "2026-11-01T12:00:00Z"),
+    (5120, "IMMOBILIARE_TAX", 2026, "ACTIVE", "1.0‰ del valore di stima", None, None, "1.00", "Su valore di stima ufficiale", "Preventivo comunale 2026", "https://www.muralto.ch", "2026-11-01T12:00:00Z"),
+    (5120, "EBIKE_SUBSIDY", 2026, "ACTIVE", "200.00 CHF una-tantum", "200.00", "200.00", None, "Incentivo acquisto e-bike", "Fondo comunale ambiente e mobilità", "https://www.muralto.ch", "2026-11-01T12:00:00Z"),
+    # Orselina (5121)
+    (5121, "WASTE_BASE_FEE", 2026, "ACTIVE", "90.00 CHF/anno", "90.00", "90.00", None, "Fuoco domestico", "Regolamento comunale per la gestione dei rifiuti", "https://www.orselina.ch", "2026-11-01T12:00:00Z"),
+    (5121, "WASTE_BAG_FEE", 2026, "ACTIVE", "1.30 CHF/sacco 35L", "1.30", "1.30", None, "Sacco ufficiale", "Ordinanza tariffe rifiuti", "https://www.orselina.ch", "2026-11-01T12:00:00Z"),
+    (5121, "BIRTH_BONUS", 2026, "ACTIVE", "500.00 CHF una-tantum", "500.00", "500.00", None, "Nuovi nati residenti", "Risoluzione municipale", "https://www.orselina.ch", "2026-11-01T12:00:00Z"),
+    (5121, "IMMOBILIARE_TAX", 2026, "NOT_APPLICABLE", "Non applicata (0.0‰)", "0.00", "0.00", None, "Aliquota non prelevata", "Preventivo comunale 2026", "https://www.orselina.ch", "2026-11-01T12:00:00Z"),
+    (5121, "ARCOBALENO_YOUTH_SUBSIDY", 2026, "ACTIVE", "Sconto 50% abbonamento giovani", None, None, "50.00", "Studenti e apprendisti fino a 25 anni", "Regolamento sussidi trasporti", "https://www.orselina.ch", "2026-11-01T12:00:00Z"),
+    # Ronco sopra Ascona (5125)
+    (5125, "WASTE_BASE_FEE", 2026, "ACTIVE", "90.00 CHF/anno", "90.00", "90.00", None, "Economia domestica", "Regolamento smaltimento rifiuti", "https://www.ronco-sopra-ascona.ch", "2026-11-01T12:00:00Z"),
+    (5125, "WASTE_BAG_FEE", 2026, "ACTIVE", "1.30 CHF/sacco 35L", "1.30", "1.30", None, "Sacco ufficiale", "Ordinanza municipale", "https://www.ronco-sopra-ascona.ch", "2026-11-01T12:00:00Z"),
+    (5125, "BIRTH_BONUS", 2026, "ACTIVE", "500.00 CHF una-tantum", "500.00", "500.00", None, "Nuovi nati con genitori residenti", "Risoluzione municipale", "https://www.ronco-sopra-ascona.ch", "2026-11-01T12:00:00Z"),
+    (5125, "IMMOBILIARE_TAX", 2026, "NOT_APPLICABLE", "Non applicata (0.0‰)", "0.00", "0.00", None, "Aliquota 0.0‰", "Preventivo comunale 2026", "https://www.ronco-sopra-ascona.ch", "2026-11-01T12:00:00Z"),
+    (5125, "FER_SOLAR_SUBSIDY", 2026, "ACTIVE", "200.00 CHF/kWp installato", "200.00", "200.00", None, "Incentivo impianti fotovoltaici", "Regolamento fondo energia", "https://www.ronco-sopra-ascona.ch", "2026-11-01T12:00:00Z"),
+    # Tenero-Contra (5131)
+    (5131, "WASTE_BASE_FEE", 2026, "ACTIVE", "85.00 CHF/anno", "85.00", "85.00", None, "Fuoco domestico residenti", "Regolamento comunale gestione rifiuti", "https://www.tenero-contra.ch", "2026-11-01T12:00:00Z"),
+    (5131, "WASTE_BAG_FEE", 2026, "ACTIVE", "1.30 CHF/sacco 35L", "1.30", "1.30", None, "Sacco ufficiale", "Ordinanza tariffe rifiuti", "https://www.tenero-contra.ch", "2026-11-01T12:00:00Z"),
+    (5131, "BIRTH_BONUS", 2026, "ACTIVE", "600.00 CHF una-tantum", "600.00", "600.00", None, "Assegno di nascita o adozione", "Regolamento sociale", "https://www.tenero-contra.ch", "2026-11-01T12:00:00Z"),
+    (5131, "IMMOBILIARE_TAX", 2026, "NOT_APPLICABLE", "Non applicata (0.0‰)", "0.00", "0.00", None, "Aliquota azzerata", "Preventivo comunale 2026", "https://www.tenero-contra.ch", "2026-11-01T12:00:00Z"),
+    (5131, "ARCOBALENO_YOUTH_SUBSIDY", 2026, "ACTIVE", "Sconto 50% abbonamento giovani", None, None, "50.00", "Studenti residenti fino a 25 anni", "Regolamento incentivi mobilità", "https://www.tenero-contra.ch", "2026-11-01T12:00:00Z"),
+    # Onsernone (5136)
+    (5136, "WASTE_BASE_FEE", 2026, "ACTIVE", "130.00 CHF/anno", "130.00", "130.00", None, "Economia domestica residenti", "Regolamento comunale gestione rifiuti", "https://www.onsernone.ch", "2026-11-01T12:00:00Z"),
+    (5136, "WASTE_BAG_FEE", 2026, "ACTIVE", "1.30 CHF/sacco 35L", "1.30", "1.30", None, "Sacco ufficiale", "Ordinanza tariffe rifiuti", "https://www.onsernone.ch", "2026-11-01T12:00:00Z"),
+    (5136, "BIRTH_BONUS", 2026, "ACTIVE", "1'000.00 CHF una-tantum", "1000.00", "1000.00", None, "Incentivo natalità per le valli", "Risoluzione municipale assegni famiglia", "https://www.onsernone.ch", "2026-11-01T12:00:00Z"),
+    (5136, "IMMOBILIARE_TAX", 2026, "NOT_APPLICABLE", "Non applicata (0.0‰)", "0.00", "0.00", None, "Aliquota non applicata", "Preventivo comunale 2026", "https://www.onsernone.ch", "2026-11-01T12:00:00Z"),
+    (5136, "ARCOBALENO_YOUTH_SUBSIDY", 2026, "ACTIVE", "Sconto 50% abbonamento trasporti", None, None, "50.00", "Sussidio mobilità valli periferiche", "Regolamento trasporti pubblici", "https://www.onsernone.ch", "2026-11-01T12:00:00Z"),
+    # Cugnasco-Gerra (5138)
+    (5138, "WASTE_BASE_FEE", 2026, "ACTIVE", "85.00 CHF/anno", "85.00", "85.00", None, "Abitazione primaria residenti", "Regolamento per lo smaltimento dei rifiuti", "https://www.cugnasco-gerra.ch", "2026-11-01T12:00:00Z"),
+    (5138, "WASTE_BAG_FEE", 2026, "ACTIVE", "1.30 CHF/sacco 35L", "1.30", "1.30", None, "Sacco ufficiale", "Ordinanza tariffe rifiuti", "https://www.cugnasco-gerra.ch", "2026-11-01T12:00:00Z"),
+    (5138, "BIRTH_BONUS", 2026, "ACTIVE", "500.00 CHF una-tantum", "500.00", "500.00", None, "Per ogni nato con genitori residenti", "Risoluzione municipale", "https://www.cugnasco-gerra.ch", "2026-11-01T12:00:00Z"),
+    (5138, "IMMOBILIARE_TAX", 2026, "NOT_APPLICABLE", "Non applicata (0.0‰)", "0.00", "0.00", None, "Aliquota azzerata", "Preventivo comunale 2026", "https://www.cugnasco-gerra.ch", "2026-11-01T12:00:00Z"),
+    (5138, "EBIKE_SUBSIDY", 2026, "ACTIVE", "250.00 CHF una-tantum", "250.00", "250.00", None, "Acquisto bicicletta a pedalata assistita", "Fondo mobilità dolce", "https://www.cugnasco-gerra.ch", "2026-11-01T12:00:00Z"),
+    # Terre di Pedemonte (5396)
+    (5396, "WASTE_BASE_FEE", 2026, "ACTIVE", "90.00 CHF/anno", "90.00", "90.00", None, "Economia domestica residenti", "Regolamento comunale smaltimento rifiuti", "https://www.pedemonte.ch", "2026-11-01T12:00:00Z"),
+    (5396, "WASTE_BAG_FEE", 2026, "ACTIVE", "1.30 CHF/sacco 35L", "1.30", "1.30", None, "Sacco ufficiale Terre di Pedemonte", "Ordinanza tariffe rifiuti", "https://www.pedemonte.ch", "2026-11-01T12:00:00Z"),
+    (5396, "BIRTH_BONUS", 2026, "ACTIVE", "500.00 CHF una-tantum", "500.00", "500.00", None, "Nuovi nati residenti", "Regolamento sociale", "https://www.pedemonte.ch", "2026-11-01T12:00:00Z"),
+    (5396, "IMMOBILIARE_TAX", 2026, "NOT_APPLICABLE", "Non applicata (0.0‰)", "0.00", "0.00", None, "Aliquota non applicata", "Preventivo comunale 2026", "https://www.pedemonte.ch", "2026-11-01T12:00:00Z"),
+    (5396, "FER_SOLAR_SUBSIDY", 2026, "ACTIVE", "200.00 CHF/kWp installato", "200.00", "200.00", None, "Contributo comunale impianti solari", "Fondo per le energie rinnovabili", "https://www.pedemonte.ch", "2026-11-01T12:00:00Z"),
+    # Centovalli (5397)
+    (5397, "WASTE_BASE_FEE", 2026, "ACTIVE", "110.00 CHF/anno", "110.00", "110.00", None, "Fuoco domestico residenti", "Regolamento gestione rifiuti Centovalli", "https://www.comunedicentovalli.ch", "2026-11-01T12:00:00Z"),
+    (5397, "WASTE_BAG_FEE", 2026, "ACTIVE", "1.30 CHF/sacco 35L", "1.30", "1.30", None, "Sacco ufficiale", "Ordinanza municipale", "https://www.comunedicentovalli.ch", "2026-11-01T12:00:00Z"),
+    (5397, "BIRTH_BONUS", 2026, "ACTIVE", "700.00 CHF una-tantum", "700.00", "700.00", None, "Nuovi nati con genitori residenti", "Risoluzione municipale", "https://www.comunedicentovalli.ch", "2026-11-01T12:00:00Z"),
+    (5397, "IMMOBILIARE_TAX", 2026, "ACTIVE", "1.5‰ del valore di stima", None, None, "1.50", "Su stima fiscale fabbricati e terreni", "Preventivo comunale 2026", "https://www.comunedicentovalli.ch", "2026-11-01T12:00:00Z"),
+    (5397, "ARCOBALENO_YOUTH_SUBSIDY", 2026, "ACTIVE", "Sconto 50% abbonamento giovani", None, None, "50.00", "Studenti residenti Centovalli", "Regolamento incentivi mobilità", "https://www.comunedicentovalli.ch", "2026-11-01T12:00:00Z"),
+    # Gambarogno (5398)
+    (5398, "WASTE_BASE_FEE", 2026, "ACTIVE", "90.00 CHF/anno", "90.00", "90.00", None, "Economia domestica residenti", "Regolamento per lo smaltimento dei rifiuti", "https://www.gambarogno.ch", "2026-11-01T12:00:00Z"),
+    (5398, "WASTE_BAG_FEE", 2026, "ACTIVE", "1.30 CHF/sacco 35L", "1.30", "1.30", None, "Sacco ufficiale Gambarogno", "Ordinanza tariffe rifiuti", "https://www.gambarogno.ch", "2026-11-01T12:00:00Z"),
+    (5398, "BIRTH_BONUS", 2026, "ACTIVE", "500.00 CHF una-tantum", "500.00", "500.00", None, "Nuovi nati residenti", "Regolamento sociale", "https://www.gambarogno.ch", "2026-11-01T12:00:00Z"),
+    (5398, "IMMOBILIARE_TAX", 2026, "NOT_APPLICABLE", "Non applicata (0.0‰)", "0.00", "0.00", None, "Aliquota non prelevata", "Preventivo comunale 2026", "https://www.gambarogno.ch", "2026-11-01T12:00:00Z"),
+    (5398, "EBIKE_SUBSIDY", 2026, "ACTIVE", "250.00 CHF una-tantum", "250.00", "250.00", None, "Acquisto bici a pedalata assistita", "Regolamento fondo per l'ambiente", "https://www.gambarogno.ch", "2026-11-01T12:00:00Z"),
+    # Verzasca (5399)
+    (5399, "WASTE_BASE_FEE", 2026, "ACTIVE", "120.00 CHF/anno", "120.00", "120.00", None, "Fuoco domestico Valle Verzasca", "Regolamento comunale per la gestione dei rifiuti", "https://www.verzasca.swiss", "2026-11-01T12:00:00Z"),
+    (5399, "WASTE_BAG_FEE", 2026, "ACTIVE", "1.30 CHF/sacco 35L", "1.30", "1.30", None, "Sacco ufficiale Verzasca", "Ordinanza tariffe rifiuti", "https://www.verzasca.swiss", "2026-11-01T12:00:00Z"),
+    (5399, "BIRTH_BONUS", 2026, "ACTIVE", "1'000.00 CHF una-tantum", "1000.00", "1000.00", None, "Assegno di nascita per famiglie residenti", "Risoluzione municipale assegni famiglia", "https://www.verzasca.swiss", "2026-11-01T12:00:00Z"),
+    (5399, "IMMOBILIARE_TAX", 2026, "ACTIVE", "1.0‰ del valore di stima", None, None, "1.00", "Su stima fiscale terreni e stabili", "Preventivo comunale 2026", "https://www.verzasca.swiss", "2026-11-01T12:00:00Z"),
+    (5399, "FER_SOLAR_SUBSIDY", 2026, "ACTIVE", "250.00 CHF/kWp installato", "250.00", "250.00", None, "Incentivo impianti fotovoltaici", "Regolamento fondo energie rinnovabili", "https://www.verzasca.swiss", "2026-11-01T12:00:00Z"),
 ]
 
 

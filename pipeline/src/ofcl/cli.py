@@ -21,6 +21,7 @@ from typing import Any
 from ofcl.export.datapackage_builder import build_opendata_package
 from ofcl.extract.pdf_inspector import inspect_pdf
 from ofcl.extract.table_extractor import ExtractedCell, TableExtractor
+from ofcl.fetch.backfill import run_regional_backfill
 from ofcl.fetch.crawler import CorteseCrawler
 from ofcl.load.postgres_loader import PostgresLoader
 from ofcl.seed_ref import enforce_corfin_guardrail
@@ -391,6 +392,42 @@ def cmd_export_opendata(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_backfill(args: argparse.Namespace) -> int:
+    """Esegue il backfill regionale controllato (per lotti o all) dei 19 Comuni."""
+    enforce_corfin_guardrail()
+    repo_root = Path(__file__).resolve().parents[3]
+    registry_path = repo_root / "registry" / "comuni.yaml"
+    raw_pdf_dir = repo_root / "data" / "raw_pdfs"
+
+    print(f"[ofcl backfill] Avvio backfill regionale (Lotto: {args.batch}, fast: {args.fast})...")
+    report = asyncio.run(
+        run_regional_backfill(
+            registry_path=registry_path,
+            raw_pdf_dir=raw_pdf_dir,
+            batch=args.batch,
+            fast_mode=args.fast,
+            sync_r2=not args.no_r2,
+            max_docs_per_source=args.max_docs,
+        )
+    )
+
+    if args.output_json:
+        out_p = Path(args.output_json)
+        out_p.parent.mkdir(parents=True, exist_ok=True)
+        out_p.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+        print(f"[ofcl backfill] Catalogo salvato in: {out_p}")
+
+    stats = report["stats"]
+    print("\n--- Riepilogo Backfill Regionale OFCL ---")
+    print(f"Comuni nel lotto: {stats['total_municipalities']}")
+    print(f"Atti scoperti: {stats['total_discovered']}")
+    print(f"Per tipologia: {stats['by_kind']}")
+    print(f"Esclusioni privacy nLPD: {stats['skipped_privacy_nlpd']}")
+    print(f"Intake manuale (Locarno): {stats['manual_intake_locarno']}")
+    print(f"Durata: {report['duration_seconds']}s")
+    return 0
+
+
 def main() -> None:
     enforce_corfin_guardrail()
     parser = argparse.ArgumentParser(
@@ -460,6 +497,14 @@ def main() -> None:
     export_parser = subparsers.add_parser("export-opendata", help="Generazione pacchetti Open Data (CSV, Parquet, Frictionless)")
     export_parser.add_argument("--out-dir", type=str, default="data/opendata", help="Directory di destinazione export")
 
+    # Subcommand: backfill
+    backfill_parser = subparsers.add_parser("backfill", help="Backfill regionale controllato (Consuntivi e Preventivi 2022-2027)")
+    backfill_parser.add_argument("--batch", default="all", help="Numero lotto (1: Isole/Melezza, 2: Navegna, 3: Locarno/Valli/Gambarogno) oppure 'all'")
+    backfill_parser.add_argument("--fast", action="store_true", help="Esecuzione rapida senza crawl-delay (uso interno/test)")
+    backfill_parser.add_argument("--no-r2", action="store_true", help="Disabilita sincronizzazione R2")
+    backfill_parser.add_argument("--max-docs", type=int, default=15, help="Massimo documenti per fonte (default: 15)")
+    backfill_parser.add_argument("--output-json", type=str, default="data/backfill_regional_report.json", help="Percorso report JSON")
+
     args = parser.parse_args()
 
     if args.subcommand == "crawl":
@@ -472,6 +517,8 @@ def main() -> None:
         sys.exit(cmd_validate(args))
     elif args.subcommand == "export-opendata":
         sys.exit(cmd_export_opendata(args))
+    elif args.subcommand == "backfill":
+        sys.exit(cmd_backfill(args))
 
 
 if __name__ == "__main__":

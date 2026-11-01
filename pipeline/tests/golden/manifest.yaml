@@ -28,7 +28,7 @@ golden_set:
     available_locally: true
 
   - id: GS-03
-    ust_code: 5118
+    ust_code: 5115
     municipality_name: "Losone"
     year: 2024
     type: "CONSUNTIVO"
@@ -40,7 +40,7 @@ golden_set:
     available_locally: false
 
   - id: GS-04
-    ust_code: 5118
+    ust_code: 5115
     municipality_name: "Losone"
     year: 2025
     type: "PREVENTIVO"
@@ -124,7 +124,7 @@ golden_set:
     available_locally: false
 
   - id: GS-11
-    ust_code: 5119
+    ust_code: 5118
     municipality_name: "Minusio"
     year: 2024
     type: "CONSUNTIVO"
@@ -136,7 +136,7 @@ golden_set:
     available_locally: false
 
   - id: GS-12
-    ust_code: 5111
+    ust_code: 5108
     municipality_name: "Gordola"
     year: 2024
     type: "CONSUNTIVO"
@@ -148,7 +148,7 @@ golden_set:
     available_locally: false
 
   - id: GS-13
-    ust_code: 5121
+    ust_code: 5120
     municipality_name: "Muralto"
     year: 2024
     type: "CONSUNTIVO"
@@ -173,7 +173,7 @@ golden_set:
     available_locally: false
 
   - id: GS-15
-    ust_code: 5105
+    ust_code: 5397
     municipality_name: "Centovalli"
     year: 2024
     type: "CONSUNTIVO"
@@ -223,7 +223,7 @@ golden_set:
 
   # 2 Documenti da Città di Locarno (Manuali)
   - id: GS-19
-    ust_code: 5115
+    ust_code: 5113
     municipality_name: "Locarno"
     year: 2024
     type: "CONSUNTIVO"
@@ -235,7 +235,7 @@ golden_set:
     available_locally: false
 
   - id: GS-20
-    ust_code: 5115
+    ust_code: 5113
     municipality_name: "Locarno"
     year: 2025
     type: "PREVENTIVO"
@@ -273,7 +273,7 @@ golden_set:
 
   # 2 PDF Scansionati/Degradati (OCR)
   - id: GS-23
-    ust_code: 5128
+    ust_code: 5399
     municipality_name: "Verzasca"
     year: 2022
     type: "CONSUNTIVO"

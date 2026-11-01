@@ -1,0 +1,84 @@
+{
+  "started_at": "2026-11-01T21:32:59.080321+00:00",
+  "finished_at": "2026-11-01T21:33:00.513239+00:00",
+  "duration_seconds": 1.43,
+  "dry_run": true,
+  "target_municipalities_count": 1,
+  "total_discovered_docs": 5,
+  "status_counts": {
+    "DOWNLOADED": 5
+  },
+  "canary_checks": [
+    {
+      "ust_code": 5096,
+      "name": "Brione sopra Minusio",
+      "canary_url": "https://www.brione.ch/Il-Comune-b90fe600?i=1",
+      "ok": false,
+      "status_code": 404,
+      "error": "HTTP 404"
+    }
+  ],
+  "total_bytes_downloaded": 0,
+  "results": [
+    {
+      "ust_code": 5096,
+      "title": "MM 562 - Consuntivo comunale 2025",
+      "kind": "CONSUNTIVO",
+      "fiscal_year": 2025,
+      "url": "https://www.brione.ch/MM-562-Consuntivo-comunale-2025-52c66000?i=1",
+      "status": "DOWNLOADED",
+      "sha256": null,
+      "size_bytes": 0,
+      "r2_key": null,
+      "error": null
+    },
+    {
+      "ust_code": 5096,
+      "title": "MM 563 - Richiesta di un credito suppletorio di Fr. 95'216.48 destinato all’esecuzione dei lavori di ristrutturazione di Casa Erina",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "url": "https://www.brione.ch/MM-563-Richiesta-di-un-credito-suppletorio-di-Fr-95-21648-destinato-all-esecuzione-dei-lavori-di-ristrutturazione-di-Casa-Erinapdf-bb3a8000?i=1",
+      "status": "DOWNLOADED",
+      "sha256": null,
+      "size_bytes": 0,
+      "r2_key": null,
+      "error": null
+    },
+    {
+      "ust_code": 5096,
+      "title": "MM 564 - Richiesta di un credito di Fr. 52'000.-- destinato all’allestimento di un progetto di riqualifica e di messa in sicurezza del nucleo mediante interventi di moderazione del traffico, nonché un piano della mobilità scolastica",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "url": "https://www.brione.ch/MM-564-Richiesta-di-un-credito-di-Fr-52-000-destinato-all-allestimento-di-un-progetto-di-riqualifica-e-di-messa-in-sicurezza-del-nucleo-mediante-interventi-di-moderazione-del-traffico-nonch-un-piano-della-mobilit-scolastica-4a0a9000?i=1",
+      "status": "DOWNLOADED",
+      "sha256": null,
+      "size_bytes": 0,
+      "r2_key": null,
+      "error": null
+    },
+    {
+      "ust_code": 5096,
+      "title": "MM 565 - Richiesta di un credito di Fr. 112’000.-- destinato all’acquisto di un nuovo scuolabus",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "url": "https://www.brione.ch/MM-565-Richiesta-di-un-credito-di-Fr-112-000-destinato-all-acquisto-di-un-nuovo-scuolabus-e4be5900?i=1",
+      "status": "DOWNLOADED",
+      "sha256": null,
+      "size_bytes": 0,
+      "r2_key": null,
+      "error": null
+    },
+    {
+      "ust_code": 5096,
+      "title": "Avviso di pubblicazione - progetto stradale comunale - area di posteggio all'imbocco di Via Val Resa",
+      "kind": "CREDITO_INVESTIMENTO",
+      "fiscal_year": null,
+      "url": "https://www.brione.ch/Avviso-di-pubblicazione-progetto-stradale-comunale-area-di-posteggio-all-imbocco-di-Via-Val-Resa-edd2bc00?i=1",
+      "status": "DOWNLOADED",
+      "sha256": null,
+      "size_bytes": 0,
+      "r2_key": null,
+      "error": null
+    }
+  ]
+}
