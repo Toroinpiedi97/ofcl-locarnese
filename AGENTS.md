@@ -20,13 +20,18 @@ Applica queste regole a ogni risposta e operazione nel progetto **Osservatorio F
 - Poni **1 sola domanda/decisione alla volta** con opzioni chiare (es. Opzione A vs Opzione B).
 - Spiega sempre in italiano chiaro, tecnico ma accessibile, orientato ai fatti e strutturato con formattazione visiva forte.
 
-## 5. Dare Corpo e Sostanza al Quadro Informativo Finale (Informative Wrap-up)
-Quando completi un'operazione, un audit, un refactoring o una fase di lavoro, dedica sempre uno spazio strutturato in 3 punti:
-1. **Quadro Tecnico & Scelte Architetturali:** cosa è stato realizzato, come interagiscono i file coinvolti e il perché delle scelte adottate.
-2. **Impatto Operativo & Valore d'Uso:** cosa cambia per il cittadino/giornalista/consigliere, per il curatore (`/admin`) e per la robustezza della pipeline.
-3. **Punti di Attenzione & Casi Limite:** dettagli non ovvi, vincoli legali/`robots.txt` o aspetti da presidiare.
+## 5. Quadro Informativo Finale Breve ed Essenziale (Informative Wrap-up)
+Quando completi un'operazione, un audit, un refactoring o una fase di lavoro, chiudi con un riepilogo **molto breve ed essenziale** (massimo 1–2 righe per punto, nessun muro di testo):
+1. **Tecnica:** cosa è stato fatto e file chiave coinvolti.
+2. **Impatto:** valore pratico per il cittadino o curatore.
+3. **Attenzione:** eventuale vincolo o caso limite immediato.
 
-## 6. Conclusione con Un'Unica Azione Successiva Concreta
+## 6. Filosofia "Lazy Senior Developer" (Ispirata a Ponytail - Zero Bloat & YAGNI)
+- **Il codice migliore è quello che non serve scrivere:** prediligi sempre soluzioni native (CSS moderno, SVG, standard library) ed evita di aggiungere librerie esterne non indispensabili.
+- **Interventi chirurgici:** modifica solo i file necessari per la task corrente; nessun refactoring speculativo o astrazione prematura.
+- **Presidio MCA2 non negoziabile:** la semplificazione non deve mai compromettere la precisione contabile al centesimo (`0.01 CHF`) o i guardrail di isolamento (`C-01`).
+
+## 7. Conclusione con Un'Unica Azione Successiva Concreta
 - Chiudi la risposta indicando **esattamente 1 azione successiva** chiara, fattibile in meno di 2 minuti (oppure una scelta secca tra Opzione A e Opzione B).
 
 ---
