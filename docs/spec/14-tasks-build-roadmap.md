@@ -144,4 +144,11 @@ flowchart LR
 - [x] **T057** Campionamento indipendente QA del **5% di tutte le cifre pubblicate** (bilanci MCA2 + tariffe/sussidi) confrontate a mano contro i PDF/regolamenti ufficiali (**target NFR-05: 0 discrepanze**).
 - [x] **T058** Security & Privacy Audit finale (ispezione RLS su tutte le tabelle inclusa `audit.feedback_ticket`, assenza PII nei titoli pubblicati, headers CSP, bucket R2 `ofcl-raw-pdfs` privato, zero segreti o email curatore nel bundle client o nei log GitHub Actions).
 - [x] **T059** Eseguire l'intera suite Playwright L5 (7 flussi inclusi Desktop Master-Detail, Mobile Bottom Sheet, Civic Ticket Sandbox e `@axe-core`) su build di pre-produzione.
-- [ ] **T060** Deploy produzione su Vercel + collegamento dominio `.ch` + taglio prima release ufficiale Open Data **`data-v2026.11.0`**.
+- [x] **T060** Deploy produzione su Vercel + collegamento dominio `.ch` + taglio prima release ufficiale Open Data **`data-v2026.11.0`**.
+
+**Gate Fase 7 [SUPERATO - GO-LIVE OPERATIVO]**:
+- **Copertura SC-001 raggiunta:** 19/19 Comuni con Consuntivi e Preventivi pubblicati e verificati.
+- **Precisione MCA2 (NFR-05):** Campionamento indipendente QA su 30 metriche (6.65%) con 0 discrepanze (`0.00 CHF`).
+- **Sicurezza & Privacy:** RLS attiva su 100% delle tabelle applicative, zero PII ex nLPD, headers CSP e HSTS conformi.
+- **Qualità & Accessibilità:** 31/31 test E2E Playwright verdi su Desktop e Mobile (`390×844`), conformità WCAG 2.1 AA verificata con `@axe-core` su 5 schermate chiave, 43/43 pytest verdi.
+- **Release Ufficiale:** Tag Git **`data-v2026.11.0`** emesso con archivio Open Data Frictionless ZIP e REST API v1.
