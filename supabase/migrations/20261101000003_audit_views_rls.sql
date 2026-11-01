@@ -17,11 +17,11 @@ create table audit.curator_action (
 );
 
 -- =========================================================
--- VISTE PUBBLICHE API (security_invoker = true)
+-- VISTE PUBBLICHE API (Security Definer per filtri controllati)
 -- =========================================================
 
 -- Vista Golden: sceglie la versione autorevole del bilancio
-create view api.ledger_golden with (security_invoker = true) as
+create view api.ledger_golden as
 select distinct on (lv.entity_id, lv.ref_year, lv.value_kind, lv.statement, lv.view_kind,
                     lv.function_code, lv.account_code, lv.detail_code, lv.side)
        lv.id,
@@ -58,7 +58,7 @@ order by lv.entity_id, lv.ref_year, lv.value_kind, lv.statement, lv.view_kind,
          v.fetched_at desc;
 
 -- Vista Crediti d'investimento pubblica con calcolo sorpassi
-create view api.investment_credits_overview with (security_invoker = true) as
+create view api.investment_credits_overview as
 select ic.id,
        ic.ust_code,
        m.name as municipality_name,

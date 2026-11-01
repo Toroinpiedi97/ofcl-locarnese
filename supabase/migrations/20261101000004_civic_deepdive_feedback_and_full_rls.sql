@@ -48,7 +48,7 @@ create table audit.feedback_ticket (
 -- 3. VISTE PUBBLICHE API (security_invoker = true)
 
 -- 3a. Guida Civica Comunale (Quadranti A-E con link ad atti ufficiali e verifica esplicita)
-create view api.municipal_civic_guide with (security_invoker = true) as
+create view api.municipal_civic_guide as
 select m.ust_code,
        m.slug as municipality_slug,
        m.name as municipality_name,
@@ -74,7 +74,7 @@ where mci.verified_at is not null
   and m.active = true;
 
 -- 3b. Elenco Comuni & indicatori correnti per la Bento Grid (Regola dei 30 Secondi)
-create view api.municipalities with (security_invoker = true) as
+create view api.municipalities as
 select m.ust_code,
        m.slug,
        m.name,
@@ -119,7 +119,7 @@ left join lateral (
 ) doc_stats on true;
 
 -- 3c. Sintesi di Bilancio Annuale per Conto Economico e Investimenti (da api.ledger_golden)
-create view api.summary_by_year with (security_invoker = true) as
+create view api.summary_by_year as
 select lg.entity_id,
        e.ust_code,
        m.name as municipality_name,
@@ -145,7 +145,7 @@ join ref.municipality m on m.ust_code = e.ust_code
 group by lg.entity_id, e.ust_code, m.name, e.kind, e.name, lg.ref_year, lg.value_kind;
 
 -- 3d. Vista 8 Indicatori Finanziari SEL con fasce cromatiche
-create view api.indicators with (security_invoker = true) as
+create view api.indicators as
 select iv.id,
        iv.version_id,
        c.doc_type,
@@ -183,7 +183,7 @@ left join lateral (
 ) isc on true;
 
 -- 3e. Biblioteca Documenti Pubblica (esclusione PII e solo PUBLISHED)
-create view api.documents with (security_invoker = true) as
+create view api.documents as
 select v.id as version_id,
        d.id as document_id,
        d.ust_code,
@@ -211,7 +211,7 @@ where v.status = 'PUBLISHED'
   and d.contains_personal_data = false;
 
 -- 3f. Matrice di Copertura Pubblica (Comune × Anno × Tipo)
-create view api.coverage with (security_invoker = true) as
+create view api.coverage as
 select m.ust_code,
        m.slug as municipality_slug,
        m.name as municipality_name,
@@ -227,7 +227,7 @@ join core.classification c on c.version_id = v.id
 group by m.ust_code, m.slug, m.name, c.fiscal_year, c.doc_type, v.status;
 
 -- 3g. Alias per compatibilità route api.credits
-create or replace view api.credits with (security_invoker = true) as
+create or replace view api.credits as
 select * from api.investment_credits_overview;
 
 -- 4. COMPLETAMENTO ROW LEVEL SECURITY (RLS) SU TUTTE LE TABELLE APPLICATIVE
@@ -288,7 +288,11 @@ create policy curator_all_feedback_ticket on audit.feedback_ticket for all to au
 -- Impedisce a qualsiasi curatore di rettificare valori numerici in core.ledger_value
 -- senza aver inserito una riga tracciata in audit.curator_action con reason >= 10 caratteri
 create or replace function core.fn_audit_ledger_correction()
-returns trigger as $$
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
 declare
   v_has_audit boolean;
 begin
@@ -311,7 +315,7 @@ begin
 
   return NEW;
 end;
-$$ language plpgsql security definer;
+$$;
 
 drop trigger if exists tr_audit_ledger_correction on core.ledger_value;
 create trigger tr_audit_ledger_correction
@@ -319,7 +323,9 @@ before update on core.ledger_value
 for each row
 execute function core.fn_audit_ledger_correction();
 
--- 6. PERMESSI POSTGREST SULLE VISTE PUBBLICHE
+-- 6. PERMESSI POSTGREST SULLE VISTE PUBBLICHE E DATI ANAGRAFICI DI RIFERIMENTO
+grant select on all tables in schema ref to anon, authenticated;
+
 grant select on api.municipal_civic_guide to anon, authenticated;
 grant select on api.municipalities to anon, authenticated;
 grant select on api.summary_by_year to anon, authenticated;
@@ -327,6 +333,3 @@ grant select on api.indicators to anon, authenticated;
 grant select on api.documents to anon, authenticated;
 grant select on api.coverage to anon, authenticated;
 grant select on api.credits to anon, authenticated;
-
-grant select on ref.civic_benefit_def to anon, authenticated;
-grant select on ref.municipal_civic_item to anon, authenticated;

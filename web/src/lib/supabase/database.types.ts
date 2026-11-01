@@ -38,7 +38,7 @@ export type Database = {
       };
       entity: {
         Row: {
-          id: number;
+          id: string;
           ust_code: number;
           kind: "COMUNE" | "AAP" | "AE" | "PORTO" | "CASA_ANZIANI" | "ENTE_AUTONOMO" | "ALTRO";
           name: string;
@@ -48,7 +48,7 @@ export type Database = {
           valid_to: string | null;
         };
         Insert: {
-          id?: number;
+          id?: string;
           ust_code: number;
           kind: "COMUNE" | "AAP" | "AE" | "PORTO" | "CASA_ANZIANI" | "ENTE_AUTONOMO" | "ALTRO";
           name: string;
@@ -328,7 +328,7 @@ export type Database = {
       };
       summary_by_year: {
         Row: {
-          entity_id: number;
+          entity_id: string;
           ust_code: number;
           municipality_name: string;
           entity_kind: string;
@@ -353,7 +353,7 @@ export type Database = {
           version_id: string;
           doc_type: string;
           fiscal_year: number;
-          entity_id: number;
+          entity_id: string;
           ust_code: number;
           municipality_name: string;
           indicator_code: string;

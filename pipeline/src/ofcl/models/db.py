@@ -7,7 +7,7 @@ Modelli Pydantic v2 per le tabelle relazionali Supabase di OFCL:
 
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from decimal import Decimal
 from typing import Any, Literal
 from uuid import UUID
@@ -32,7 +32,7 @@ class MunicipalityRecord(BaseModel):
 
 
 class EntityRecord(BaseModel):
-    id: int | None = None
+    id: UUID | None = None
     ust_code: int
     kind: Literal["COMUNE", "AAP", "AE", "PORTO", "CASA_ANZIANI", "ENTE_AUTONOMO", "ALTRO"]
     name: str
@@ -47,7 +47,7 @@ class AccountMCA2Record(BaseModel):
     level: int = Field(ge=1, le=4)
     parent_code: str | None = None
     label_it: str
-    statement: Literal["CE", "CI", "BI"]
+    statement: Literal["CE", "CI", "BIL"]
     source_url: str
 
 
@@ -138,7 +138,7 @@ class RawPipelineRunRecord(BaseModel):
     id: UUID | None = None
     stage: Literal["CRAWL", "EXTRACT", "VALIDATE", "PUBLISH", "EXPORT"]
     git_sha: str
-    started_at: datetime = Field(default_factory=datetime.utcnow)
+    started_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     finished_at: datetime | None = None
     status: Literal["RUNNING", "OK", "PARTIAL", "FAILED"] = "RUNNING"
     report: dict[str, Any] | None = None
@@ -151,7 +151,7 @@ class RawDocumentRecord(BaseModel):
     origin_url: str
     title_raw: str | None = None
     published_on: date | None = None
-    first_seen_at: datetime = Field(default_factory=datetime.utcnow)
+    first_seen_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     offline_since: datetime | None = None
     acquisition: Literal["CRAWLER", "MANUAL_UPLOAD", "LIT_REQUEST"] = "CRAWLER"
     contains_personal_data: bool = False
@@ -164,7 +164,7 @@ class RawDocumentVersionRecord(BaseModel):
     file_size_bytes: int = Field(gt=0)
     page_count: int = Field(gt=0)
     storage_path: str
-    fetched_at: datetime = Field(default_factory=datetime.utcnow)
+    fetched_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     published_at: datetime | None = None
     status: Literal["DOWNLOADED", "CLASSIFIED", "EXTRACTED", "VALIDATED", "NEEDS_REVIEW", "APPROVED", "PUBLISHED", "SUPERSEDED", "REJECTED"] = "DOWNLOADED"
 
@@ -187,8 +187,8 @@ class CoreClassificationRecord(BaseModel):
 class CoreLedgerValueRecord(BaseModel):
     id: int | None = None
     version_id: UUID
-    entity_id: int
-    statement: Literal["CE", "CI", "BI"]
+    entity_id: UUID
+    statement: Literal["CE", "CI", "BIL"]
     view_kind: Literal["NATURE", "FUNCTION"]
     function_code: str | None = None
     account_code: str | None = None
@@ -197,7 +197,7 @@ class CoreLedgerValueRecord(BaseModel):
     column_role: Literal["CURRENT", "PRIOR_BUDGET", "PRIOR_ACTUAL"]
     ref_year: int
     value_kind: Literal["ACTUAL", "BUDGET", "PLAN"]
-    side: Literal["SPESA", "RICAVO", "ATTIVO", "PASSIVO"]
+    side: Literal["SPESA", "RICAVO", "ATTIVO", "PASSIVO", "SALDO"]
     amount_chf: Decimal
     amount_raw: str
     page: int
@@ -246,7 +246,7 @@ class AuditCuratorActionRecord(BaseModel):
     before: dict[str, Any] | None = None
     after: dict[str, Any] | None = None
     reason: str = Field(min_length=10)
-    at: datetime = Field(default_factory=datetime.utcnow)
+    at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class AuditFeedbackTicketRecord(BaseModel):
@@ -261,5 +261,5 @@ class AuditFeedbackTicketRecord(BaseModel):
     status: Literal["NEW", "IN_REVIEW", "RESOLVED", "DISMISSED"] = "NEW"
     resolution_note: str | None = None
     resolved_by: UUID | None = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     resolved_at: datetime | None = None

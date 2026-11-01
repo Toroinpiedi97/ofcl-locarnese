@@ -124,7 +124,7 @@ async def test_download_pdf_stream_guardrails(tmp_path: Path) -> None:
     """Verifica il comportamento del download in streaming sui vari casi limite."""
     registry_file = tmp_path / "comuni.yaml"
     registry_file.write_text("[]", encoding="utf-8")
-    crawler = CorteseCrawler(registry_file, tmp_path / "raw_pdfs", sync_r2=False)
+    crawler = CorteseCrawler(registry_file, tmp_path / "raw_pdfs", sync_r2=False, fast_mode=True)
 
     # 1. Caso nLPD: saltato preventivamente
     doc_nlpd = DiscoveredDocument(
@@ -160,7 +160,7 @@ async def test_download_pdf_stream_success_and_cache(tmp_path: Path) -> None:
     """Verifica download valido con mock e verifica caching su download successivo."""
     registry_file = tmp_path / "comuni.yaml"
     registry_file.write_text("[]", encoding="utf-8")
-    crawler = CorteseCrawler(registry_file, tmp_path / "raw_pdfs", sync_r2=False)
+    crawler = CorteseCrawler(registry_file, tmp_path / "raw_pdfs", sync_r2=False, fast_mode=True)
 
     pdf_bytes = b"%PDF-1.4\n1 0 obj\n<<>>\nendobj\ntrailer\n<<>>\n%%EOF"
 
@@ -201,7 +201,7 @@ async def test_download_pdf_stream_invalid_and_not_modified(tmp_path: Path) -> N
     """Verifica gestione di file non-PDF e risposte HTTP 304."""
     registry_file = tmp_path / "comuni.yaml"
     registry_file.write_text("[]", encoding="utf-8")
-    crawler = CorteseCrawler(registry_file, tmp_path / "raw_pdfs", sync_r2=False)
+    crawler = CorteseCrawler(registry_file, tmp_path / "raw_pdfs", sync_r2=False, fast_mode=True)
 
     doc = DiscoveredDocument(
         ust_code=5096,
@@ -227,3 +227,28 @@ async def test_download_pdf_stream_invalid_and_not_modified(tmp_path: Path) -> N
     async with httpx.AsyncClient(transport=transport_304) as client:
         res = await crawler.download_pdf_stream(doc, client, etag='"xyz789"')
         assert res.status == "NOT_MODIFIED"
+
+
+@pytest.mark.asyncio
+async def test_crawler_check_canary_anti_drift(tmp_path: Path) -> None:
+    """Verifica che check_canary rilevi endpoint sani (200) e segnali drift su 404."""
+    registry_file = tmp_path / "comuni.yaml"
+    registry_file.write_text("[]", encoding="utf-8")
+    crawler = CorteseCrawler(registry_file, tmp_path / "raw_pdfs", sync_r2=False, fast_mode=True)
+
+    transport = httpx.MockTransport(
+        lambda req: httpx.Response(200 if "canary-ok" in str(req.url) else 404)
+    )
+
+    async with httpx.AsyncClient(transport=transport) as client:
+        # Canarino valido
+        ok, code, err = await crawler.check_canary({"canary_url": "https://example.ch/canary-ok"}, client)
+        assert ok is True
+        assert code == 200
+        assert err is None
+
+        # Canarino in drift (404 Not Found)
+        drift_ok, drift_code, drift_err = await crawler.check_canary({"canary_url": "https://example.ch/canary-broken"}, client)
+        assert drift_ok is False
+        assert drift_code == 404
+        assert "HTTP 404" in str(drift_err)

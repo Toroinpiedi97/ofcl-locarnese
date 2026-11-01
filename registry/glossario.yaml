@@ -32,10 +32,10 @@ entities:
       - "Azienda Porto Comunale"
       - "Porto Patriziale / Comunale"
   LEA:
-    canonical: "Laboratorio / Ente Elettro-Acqua"
+    canonical: "Locarnese Ente Acqua (LEA)"
     aliases:
       - "LEA"
-      - "Azienda Elettrica ed Acqua Losone"
+      - "Locarnese Ente Acqua"
   CASA_ANZIANI:
     canonical: "Casa per Anziani / Strutture Residenziali"
     aliases:

@@ -46,11 +46,13 @@ class CorteseCrawler:
         raw_pdf_dir: Path,
         *,
         sync_r2: bool = True,
+        fast_mode: bool = False,
     ) -> None:
         enforce_corfin_guardrail()
         self.registry_yaml_path = registry_yaml_path
         self.raw_pdf_dir = raw_pdf_dir
         self.sync_r2 = sync_r2
+        self.fast_mode = fast_mode
         self.municipalities: list[dict[str, Any]] = yaml.safe_load(
             registry_yaml_path.read_text(encoding="utf-8")
         )
@@ -62,6 +64,26 @@ class CorteseCrawler:
                 return m
         return None
 
+    async def check_canary(
+        self,
+        m: dict[str, Any],
+        client: httpx.AsyncClient,
+    ) -> tuple[bool, int, str | None]:
+        """Verifica la salute dell'URL canarino (Guardrail C-13 anti-drift)."""
+        canary_url = m.get("canary_url")
+        if not canary_url:
+            return True, 200, None
+
+        try:
+            resp = await client.head(canary_url, timeout=15.0, follow_redirects=True)
+            if resp.status_code == 405:  # Method Not Allowed -> fallback GET
+                resp = await client.get(canary_url, timeout=15.0, follow_redirects=True)
+            if resp.status_code < 400:
+                return True, resp.status_code, None
+            return False, resp.status_code, f"HTTP {resp.status_code}"
+        except Exception as exc:  # noqa: BLE001
+            return False, 0, str(exc)
+
     async def scan_municipality(
         self,
         m: dict[str, Any],
@@ -70,18 +92,20 @@ class CorteseCrawler:
         max_docs_per_source: int = 15,
         since_date: str | None = None,
     ) -> list[DiscoveredDocument]:
-        """Scansiona le fonti di un singolo comune rispettando il crawl-delay."""
+        """Scansiona le fonti di un singolo comune rispettando il crawl-delay reale."""
         ust_code = m["ust_code"]
         slug = m["slug"]
         cms_family = m["cms_family"]
         crawl_delay = m.get("robots", {}).get("crawl_delay_s", 2)
+        delay = 0 if self.fast_mode else crawl_delay
         discovered: list[DiscoveredDocument] = []
 
         for src in m.get("sources", []):
             url = src["url"]
             try:
-                # Rispetto del Crawl-delay prima della richiesta (cap a 2s per test)
-                await asyncio.sleep(min(crawl_delay, 2))
+                # Rispetto del Crawl-delay prima di ciascuna richiesta
+                if delay > 0:
+                    await asyncio.sleep(delay)
 
                 resp = await client.get(url, timeout=30.0, follow_redirects=True)
                 if resp.status_code != 200:
@@ -279,7 +303,9 @@ class CorteseCrawler:
         )
 
         results: list[DownloadResult] = []
-        for doc in discovered:
+        download_delay = 0 if self.fast_mode else m.get("robots", {}).get("crawl_delay_s", 2)
+
+        for i, doc in enumerate(discovered):
             if dry_run:
                 status: DownloadStatus
                 if doc.contains_personal_data:
@@ -295,6 +321,8 @@ class CorteseCrawler:
                     )
                 )
             else:
+                if i > 0 and download_delay > 0:
+                    await asyncio.sleep(download_delay)
                 res = await self.download_pdf_stream(doc, client)
                 results.append(res)
 
@@ -317,12 +345,26 @@ class CorteseCrawler:
 
         started_at = datetime.now(UTC)
         all_results: list[DownloadResult] = []
+        canary_reports: list[dict[str, Any]] = []
 
         async with httpx.AsyncClient(
             headers={"User-Agent": USER_AGENT},
             follow_redirects=True,
         ) as client:
             for m in target_comuni:
+                # Controllo preliminare canarino anti-drift C-13
+                canary_ok, canary_code, canary_err = await self.check_canary(m, client)
+                canary_reports.append(
+                    {
+                        "ust_code": m["ust_code"],
+                        "name": m["name"],
+                        "canary_url": m.get("canary_url"),
+                        "ok": canary_ok,
+                        "status_code": canary_code,
+                        "error": canary_err,
+                    }
+                )
+
                 res = await self.crawl_municipality(
                     m,
                     client,
@@ -350,6 +392,7 @@ class CorteseCrawler:
             "target_municipalities_count": len(target_comuni),
             "total_discovered_docs": len(all_results),
             "status_counts": status_counts,
+            "canary_checks": canary_reports,
             "total_bytes_downloaded": total_bytes,
             "results": [
                 {

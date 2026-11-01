@@ -71,6 +71,68 @@ def save_pipeline_run_to_db(stage: str, git_sha: str, report: dict[str, Any]) ->
         return None
 
 
+def save_crawl_documents_to_db(report: dict[str, Any]) -> tuple[int, int]:
+    """Salva i documenti e le versioni scoperte in raw.document e raw.document_version."""
+    enforce_corfin_guardrail()
+    db_url = os.environ.get("DATABASE_URL") or os.environ.get("POSTGRES_URL")
+    if not db_url:
+        return 0, 0
+
+    docs_count = 0
+    versions_count = 0
+    try:
+        import psycopg
+
+        with psycopg.connect(db_url) as conn, conn.cursor() as cur:
+            for item in report.get("results", []):
+                ust_code = item["ust_code"]
+                origin_url = item["url"]
+                title_raw = item.get("title")
+                status = item.get("status")
+                sha256 = item.get("sha256")
+                size_bytes = item.get("size_bytes", 0)
+                storage_path = item.get("r2_key") or (f"pdf/{ust_code}/{sha256}.pdf" if sha256 else None)
+                contains_privacy = status == "SKIPPED_PRIVACY"
+
+                cur.execute(
+                    """
+                    INSERT INTO raw.document (ust_code, origin_url, title_raw, acquisition, contains_personal_data)
+                    VALUES (%s, %s, %s, 'CRAWLER', %s)
+                    ON CONFLICT (ust_code, origin_url) DO UPDATE
+                    SET title_raw = coalesce(EXCLUDED.title_raw, raw.document.title_raw),
+                        contains_personal_data = EXCLUDED.contains_personal_data
+                    RETURNING id;
+                    """,
+                    (ust_code, origin_url, title_raw, contains_privacy),
+                )
+                doc_row = cur.fetchone()
+                if not doc_row:
+                    continue
+                doc_id = doc_row[0]
+                docs_count += 1
+
+                if status in ("DOWNLOADED", "CACHED") and sha256 and size_bytes > 0 and storage_path:
+                    cur.execute(
+                        """
+                        INSERT INTO raw.document_version (document_id, sha256, storage_path, bytes, mime, fetched_at, status)
+                        VALUES (%s, %s, %s, %s, 'application/pdf', now(), 'DOWNLOADED')
+                        ON CONFLICT (sha256) DO UPDATE
+                        SET storage_path = EXCLUDED.storage_path
+                        RETURNING id;
+                        """,
+                        (doc_id, sha256, storage_path, size_bytes),
+                    )
+                    ver_row = cur.fetchone()
+                    if ver_row:
+                        versions_count += 1
+
+            conn.commit()
+    except Exception as exc:  # noqa: BLE001
+        print(f"[WARN] Errore salvataggio documenti su DB: {exc}", file=sys.stderr)
+
+    return docs_count, versions_count
+
+
 def cmd_crawl(args: argparse.Namespace) -> int:
     """Esegue il comando 'ofcl crawl'."""
     repo_root = Path(__file__).resolve().parents[3]
@@ -81,6 +143,7 @@ def cmd_crawl(args: argparse.Namespace) -> int:
         registry_yaml_path=registry_path,
         raw_pdf_dir=raw_dir,
         sync_r2=not args.dry_run and not args.no_r2,
+        fast_mode=args.fast,
     )
 
     ust_filter: int | None = None
@@ -104,6 +167,11 @@ def cmd_crawl(args: argparse.Namespace) -> int:
             since_date=args.since,
         )
     )
+
+    # Persistenza opzionale in raw.document e raw.document_version
+    docs_saved, versions_saved = save_crawl_documents_to_db(report)
+    if docs_saved > 0 or versions_saved > 0:
+        print(f"[ofcl crawl] DB salvati: {docs_saved} raw.document, {versions_saved} raw.document_version")
 
     # Persistenza opzionale in raw.pipeline_run
     git_sha = get_git_sha()
@@ -179,6 +247,11 @@ def main() -> None:
         "--no-r2",
         action="store_true",
         help="Disabilita sincronizzazione con Cloudflare R2",
+    )
+    crawl_parser.add_argument(
+        "--fast",
+        action="store_true",
+        help="Esecuzione rapida senza crawl-delay (uso interno / test)",
     )
 
     args = parser.parse_args()
