@@ -6,6 +6,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import date
+from pathlib import Path
 from typing import Any, Literal
 
 DocKind = Literal[
@@ -33,3 +34,29 @@ class DiscoveredDocument:
     fiscal_year: int | None = None  # es. 2026 o 2027
     contains_personal_data: bool = False  # Guardrail nLPD / LPDP
     metadata: dict[str, Any] = field(default_factory=dict)
+
+
+DownloadStatus = Literal[
+    "DOWNLOADED",
+    "CACHED",
+    "NOT_MODIFIED",
+    "SKIPPED_PRIVACY",
+    "SKIPPED_GUARD",
+    "TOO_LARGE",
+    "INVALID_PDF",
+    "ERROR",
+]
+
+
+@dataclass
+class DownloadResult:
+    """Risultato del download e deduplicazione crittografica di un PDF."""
+
+    doc: DiscoveredDocument
+    status: DownloadStatus
+    sha256: str | None = None
+    size_bytes: int = 0
+    local_path: Path | None = None
+    r2_key: str | None = None
+    etag: str | None = None
+    error: str | None = None

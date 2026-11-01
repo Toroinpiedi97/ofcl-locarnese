@@ -61,14 +61,14 @@ flowchart LR
 ## Fase 2 · Stadio 1 Pipeline: Connettori Cortesi 5 CMS & Archivio Settimanale R2 (`SHA-256`)
 
 - [x] **T020** Implementare crawler cortese asincrono e filtro privacy nLPD in `pipeline/src/ofcl/fetch/crawler.py` e `privacy_filter.py` (rispetto `Crawl-delay`, `User-Agent` trasparente, streaming `SHA-256`, esclusione atti con dati personali).
-- [ ] **T021** Integrare `crawler.py` con `storage/r2.py` e database (`raw.document` / `raw.document_version`): richieste condizionali `ETag`/`If-Modified-Since`, controllo MIME/dimensione max 150 MB e dedup automatica `SHA-256` su bucket privato `ofcl-raw-pdfs`.
+- [x] **T021** Integrare `crawler.py` con `storage/r2.py` e database (`raw.document` / `raw.document_version`): richieste condizionali `ETag`/`If-Modified-Since`, controllo MIME/dimensione max 150 MB e dedup automatica `SHA-256` su bucket privato `ofcl-raw-pdfs`.
 - [x] **T022** [P] Implementare connettore `AssoloConnector` in `pipeline/src/ofcl/fetch/connectors.py` (gestione hash 8-hex, suffisso `?i=1`, estrazione anno fiscale prioritaria).
 - [x] **T023** [P] Implementare connettore `OrselinaConnector` in `pipeline/src/ofcl/fetch/connectors.py` (preservazione rigorosa token firmato `&vis=2&rif=` — **C-03a**).
 - [x] **T024** [P] Implementare connettore `WordPressConnector` in `pipeline/src/ofcl/fetch/connectors.py` per Brissago, Centovalli e Ronco s/Ascona.
 - [x] **T025** [P] Implementare connettore `JoomlaConnector` in `pipeline/src/ofcl/fetch/connectors.py` per Lavertezzo (endpoint `/send/` e blocco `/images/PDF/`).
 - [x] **T026** [P] Implementare connettore `LocarnoConnector` in `pipeline/src/ofcl/fetch/connectors.py`: indicizza solo metadati HTML consentiti e blocca qualsiasi download diretto da `/files/` (**C-02**).
-- [ ] **T027** Rafforzare paginazione multi-pagina (WP REST `/wp-json/wp/v2/`, Assolo `fric`/`ris_pg` per C-07, controllo canarino anti-drift C-13) e salvare snapshot HTML reali in `pipeline/tests/fixtures/html/`.
-- [ ] **T028** Implementare comando CLI `ofcl crawl --ust <code|all> [--dry-run] [--since YYYY-MM-DD]` con salvataggio report in `raw.pipeline_run`.
+- [x] **T027** Rafforzare paginazione multi-pagina (WP REST `/wp-json/wp/v2/`, Assolo `fric`/`ris_pg` per C-07, controllo canarino anti-drift C-13) e salvare snapshot HTML reali in `pipeline/tests/fixtures/html/`.
+- [x] **T028** Implementare comando CLI `ofcl crawl --ust <code|all> [--dry-run] [--since YYYY-MM-DD]` con salvataggio report in `raw.pipeline_run`.
 
 **Gate Fase 2**: `pytest` connettori 100% verde; `ofcl crawl --dry-run` scopre candidati sui Comuni attivi con **0 violazioni `robots.txt`**.
 

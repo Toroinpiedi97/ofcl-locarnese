@@ -18,6 +18,9 @@ dependencies = [
     "boto3>=1.36.0",
 ]
 
+[project.scripts]
+ofcl = "ofcl.cli:main"
+
 [project.optional-dependencies]
 db = [
     "psycopg[binary]>=3.2.3",

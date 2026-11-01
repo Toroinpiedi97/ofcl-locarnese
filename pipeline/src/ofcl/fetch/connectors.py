@@ -132,6 +132,34 @@ class AssoloConnector:
             year, mm_num = extract_year_and_mm(title)
             has_personal = contains_personal_data(title)
 
+            # Esclude link di navigazione generale del portale che non sono atti/documenti
+            if title.lower().strip() in {
+                "messaggi municipali",
+                "messaggi",
+                "albo",
+                "albo comunale",
+                "atti",
+                "sedute",
+                "risoluzioni",
+                "documenti",
+                "archivio",
+            }:
+                continue
+
+            if (
+                doc_kind == "ALTRO"
+                and mm_num is None
+                and year is None
+                and "pdf" not in href.lower()
+                and "allegat" not in href.lower()
+                and "messagg" not in href.lower()
+                and "seduta" not in href.lower()
+            ):
+                continue
+
+            if doc_kind == "ALTRO" and mm_num is None and "pdf" not in href.lower() and "pdf" not in title.lower():
+                continue
+
             documents.append(
                 DiscoveredDocument(
                     ust_code=ust_code,
@@ -166,6 +194,69 @@ class WordPressConnector:
         soup = BeautifulSoup(html_content, "html.parser")
         documents: list[DiscoveredDocument] = []
         seen_urls: set[str] = set()
+
+        # Strategia 1: ispezione per singoli <article> (stile blog / albo WordPress)
+        articles = soup.find_all("article")
+        if articles:
+            for art in articles:
+                heading = art.find(["h1", "h2", "h3", "h4", "entry-title"])
+                title = heading.get_text(separator=" ", strip=True) if heading else ""
+
+                # Cerca link diretti PDF dentro l'articolo
+                pdf_links = [
+                    a for a in art.find_all("a", href=True)
+                    if _clean_href(a).lower().endswith(".pdf") or "/files/" in _clean_href(a).lower()
+                ]
+
+                # Se ci sono link diretti a PDF, usa quelli; altrimenti i link dell'articolo
+                target_anchors = pdf_links if pdf_links else art.find_all("a", href=True)
+
+                for a in target_anchors:
+                    href = _clean_href(a)
+                    low_href = href.lower()
+
+                    is_pdf = low_href.endswith(".pdf") or "/files/" in low_href
+                    is_doc_page = (
+                        "/documenti/" in low_href
+                        or "preventiv" in low_href
+                        or "consuntiv" in low_href
+                        or bool(re.search(r"/(?:mm[-_]?\d+|crediti)", low_href))
+                    )
+
+                    if not (is_pdf or is_doc_page):
+                        continue
+
+                    full_url = urljoin(page_url, href)
+                    if full_url in seen_urls:
+                        continue
+                    seen_urls.add(full_url)
+
+                    doc_title = title or a.get_text(separator=" ", strip=True)
+                    if not doc_title or len(doc_title) < 5:
+                        doc_title = a.get_text(separator=" ", strip=True)
+
+                    doc_kind = classify_doc_kind(doc_title)
+                    year, mm_num = extract_year_and_mm(doc_title)
+                    has_personal = contains_personal_data(doc_title)
+
+                    if doc_kind == "ALTRO" and mm_num is None and year is None:
+                        continue
+
+                    documents.append(
+                        DiscoveredDocument(
+                            ust_code=ust_code,
+                            municipality_slug=slug,
+                            title=doc_title,
+                            doc_url=full_url,
+                            page_url=page_url,
+                            doc_kind=doc_kind,
+                            fiscal_year=year,
+                            mm_number=mm_num,
+                            contains_personal_data=has_personal,
+                            metadata={"is_direct_pdf": is_pdf},
+                        )
+                    )
+            return documents
 
         for a in soup.find_all("a", href=True):
             href = _clean_href(a)
@@ -206,6 +297,34 @@ class WordPressConnector:
             year, mm_num = extract_year_and_mm(title)
             has_personal = contains_personal_data(title)
 
+            # Esclude link di navigazione generale del portale che non sono atti/documenti
+            if title.lower().strip() in {
+                "messaggi municipali",
+                "messaggi",
+                "albo",
+                "albo comunale",
+                "atti",
+                "sedute",
+                "risoluzioni",
+                "documenti",
+                "archivio",
+            }:
+                continue
+
+            if (
+                doc_kind == "ALTRO"
+                and mm_num is None
+                and year is None
+                and "pdf" not in href.lower()
+                and "allegat" not in href.lower()
+                and "messagg" not in href.lower()
+                and "seduta" not in href.lower()
+            ):
+                continue
+
+            if doc_kind == "ALTRO" and mm_num is None and "pdf" not in href.lower() and "pdf" not in title.lower():
+                continue
+
             documents.append(
                 DiscoveredDocument(
                     ust_code=ust_code,
@@ -244,7 +363,13 @@ class JoomlaConnector:
 
         for a in soup.find_all("a", href=True):
             href = _clean_href(a)
-            if "/send/" not in href and "/download/" not in href and not href.lower().endswith(".pdf"):
+            low_href = href.lower()
+
+            # Blocco rigoroso /images/PDF/ per guardrail T025
+            if "/images/" in low_href or "/media/" in low_href:
+                continue
+
+            if "/send/" not in low_href and "/download/" not in low_href and not low_href.endswith(".pdf"):
                 continue
 
             full_url = urljoin(page_url, href)
@@ -269,6 +394,34 @@ class JoomlaConnector:
             doc_kind = classify_doc_kind(title)
             year, mm_num = extract_year_and_mm(title)
             has_personal = contains_personal_data(title)
+
+            # Esclude link di navigazione generale del portale che non sono atti/documenti
+            if title.lower().strip() in {
+                "messaggi municipali",
+                "messaggi",
+                "albo",
+                "albo comunale",
+                "atti",
+                "sedute",
+                "risoluzioni",
+                "documenti",
+                "archivio",
+            }:
+                continue
+
+            if (
+                doc_kind == "ALTRO"
+                and mm_num is None
+                and year is None
+                and "pdf" not in href.lower()
+                and "allegat" not in href.lower()
+                and "messagg" not in href.lower()
+                and "seduta" not in href.lower()
+            ):
+                continue
+
+            if doc_kind == "ALTRO" and mm_num is None and "pdf" not in href.lower() and "pdf" not in title.lower():
+                continue
 
             documents.append(
                 DiscoveredDocument(
@@ -327,13 +480,49 @@ class OrselinaConnector:
             seen_urls.add(full_url)
 
             title = a.get_text(separator=" ", strip=True)
-            if not title or len(title) < 4:
+            generic_titles = {"scarica", "download", "apri", "documento", "scarica documento", "leggi"}
+            if not title or len(title) < 5 or title.lower() in generic_titles:
                 parent = a.find_parent(["tr", "li", "div"])
-                title = parent.get_text(separator=" ", strip=True) if parent else href
+                if parent:
+                    titolo_cell = parent.find(["td", "th"], class_=re.compile(r"titolo|descrizion", re.IGNORECASE))
+                    if titolo_cell:
+                        title = titolo_cell.get_text(separator=" ", strip=True)
+                    else:
+                        title = parent.get_text(separator=" ", strip=True)
+                else:
+                    title = href
 
             doc_kind = classify_doc_kind(title)
             year, mm_num = extract_year_and_mm(title)
             has_personal = contains_personal_data(title)
+
+            # Esclude link di navigazione generale del portale che non sono atti/documenti
+            if title.lower().strip() in {
+                "messaggi municipali",
+                "messaggi",
+                "albo",
+                "albo comunale",
+                "atti",
+                "sedute",
+                "risoluzioni",
+                "documenti",
+                "archivio",
+            }:
+                continue
+
+            if (
+                doc_kind == "ALTRO"
+                and mm_num is None
+                and year is None
+                and "pdf" not in href.lower()
+                and "allegat" not in href.lower()
+                and "messagg" not in href.lower()
+                and "seduta" not in href.lower()
+            ):
+                continue
+
+            if doc_kind == "ALTRO" and mm_num is None and "pdf" not in href.lower() and "pdf" not in title.lower():
+                continue
 
             documents.append(
                 DiscoveredDocument(
@@ -391,6 +580,34 @@ class LocarnoConnector:
             doc_kind = classify_doc_kind(title)
             year, mm_num = extract_year_and_mm(title)
             has_personal = contains_personal_data(title)
+
+            # Esclude link di navigazione generale del portale che non sono atti/documenti
+            if title.lower().strip() in {
+                "messaggi municipali",
+                "messaggi",
+                "albo",
+                "albo comunale",
+                "atti",
+                "sedute",
+                "risoluzioni",
+                "documenti",
+                "archivio",
+            }:
+                continue
+
+            if (
+                doc_kind == "ALTRO"
+                and mm_num is None
+                and year is None
+                and "pdf" not in href.lower()
+                and "allegat" not in href.lower()
+                and "messagg" not in href.lower()
+                and "seduta" not in href.lower()
+            ):
+                continue
+
+            if doc_kind == "ALTRO" and mm_num is None and "pdf" not in href.lower() and "pdf" not in title.lower():
+                continue
 
             documents.append(
                 DiscoveredDocument(

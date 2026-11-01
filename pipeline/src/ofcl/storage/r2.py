@@ -63,10 +63,23 @@ def get_r2_client() -> tuple[Any, str]:
     return client, bucket_name
 
 
+def r2_object_exists(key: str) -> bool:
+    """Verifica se un oggetto esiste già nel bucket R2."""
+    try:
+        client, bucket = get_r2_client()
+        client.head_object(Bucket=bucket, Key=key)
+        return True
+    except Exception:  # noqa: BLE001
+        return False
+
+
 def upload_pdf_to_r2(pdf_path: Path, ust_code: int, sha256: str) -> str:
     """Carica un file PDF su Cloudflare R2 e restituisce la storage key."""
-    client, bucket = get_r2_client()
     key = f"pdf/{ust_code}/{sha256}.pdf"
+    if r2_object_exists(key):
+        return key
+
+    client, bucket = get_r2_client()
 
     with open(pdf_path, "rb") as f:
         client.upload_fileobj(

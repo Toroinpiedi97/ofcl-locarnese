@@ -48,6 +48,7 @@ out/
 # Storage & Large Binaries (downloaded PDFs should be streamed to Cloudflare R2 / Object Storage)
 /data/raw_pdfs/
 /data/cache/
+/data/reports/
 *.pdf
 
 # Operating System
