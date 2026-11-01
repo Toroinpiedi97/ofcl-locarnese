@@ -207,7 +207,7 @@ export const MUNICIPALITIES: MunicipalityData[] = [
       investimenti_netti_chf: 14100000.0,
       debito_netto_pc_chf: 4320.0,
       sel_conformity: "7/8",
-      active_overruns_count: 0,
+      active_overruns_count: 1, // Ciclabile Locarno-Muralto
       latest_mm_reference: "MM 2025/42",
     },
   },
@@ -567,7 +567,7 @@ export const MUNICIPALITIES: MunicipalityData[] = [
       investimenti_netti_chf: 3100000.0,
       debito_netto_pc_chf: 2150.0,
       sel_conformity: "8/8",
-      active_overruns_count: 0,
+      active_overruns_count: 1, // Messa in sicurezza Indemini
       latest_mm_reference: "MM 2025/21",
     },
   },

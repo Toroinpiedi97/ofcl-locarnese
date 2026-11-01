@@ -68,7 +68,7 @@ test.describe("Console Curatore OFCL (/admin) - Flusso E2E", () => {
     await page.goto("/admin/upload");
 
     await expect(page.getByText("Upload Manuale Fascicoli Ufficiali")).toBeVisible();
-    await expect(page.locator("select").first()).toHaveValue("5115");
+    await expect(page.locator("select").first()).toHaveValue("5113");
     await expect(page.getByRole("button", { name: "Carica su Cloudflare R2 e Invia alla Coda" })).toBeVisible();
   });
 

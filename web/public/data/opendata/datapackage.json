@@ -1,0 +1,183 @@
+{
+  "name": "ofcl-locarnese-finanze",
+  "title": "Osservatorio Finanze Comunali del Locarnese (OFCL) - Dataset MCA2",
+  "description": "Dati contabili armonizzati MCA2, indicatori finanziari SEL, controllo crediti e tariffe civiche dei 19 Comuni del Locarnese.",
+  "version": "2026.11.0",
+  "homepage": "https://ofcl.ch",
+  "licenses": [
+    {
+      "name": "CC-BY-4.0",
+      "title": "Creative Commons Attribution 4.0 International",
+      "path": "https://creativecommons.org/licenses/by/4.0/"
+    }
+  ],
+  "contributors": [
+    {
+      "title": "Osservatorio Finanze Comunali del Locarnese",
+      "role": "author"
+    }
+  ],
+  "resources": [
+    {
+      "name": "bilanci_mca2",
+      "path": "bilanci_mca2.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
+      "encoding": "utf-8",
+      "schema": {
+        "fields": [
+          {
+            "name": "ust_code",
+            "type": "integer"
+          },
+          {
+            "name": "comune",
+            "type": "string"
+          },
+          {
+            "name": "anno",
+            "type": "integer"
+          },
+          {
+            "name": "tipo_atto",
+            "type": "string"
+          },
+          {
+            "name": "moltiplicatore_pf",
+            "type": "number"
+          },
+          {
+            "name": "moltiplicatore_pg",
+            "type": "number"
+          },
+          {
+            "name": "spese_correnti_chf",
+            "type": "number"
+          },
+          {
+            "name": "ricavi_correnti_chf",
+            "type": "number"
+          },
+          {
+            "name": "risultato_ordinario_chf",
+            "type": "number"
+          },
+          {
+            "name": "autofinanziamento_chf",
+            "type": "number"
+          },
+          {
+            "name": "investimenti_netti_chf",
+            "type": "number"
+          },
+          {
+            "name": "debito_netto_pc_chf",
+            "type": "number"
+          },
+          {
+            "name": "conformita_sel",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "indicatori_sel",
+      "path": "indicatori_sel.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
+      "encoding": "utf-8",
+      "schema": {
+        "fields": [
+          {
+            "name": "ust_code",
+            "type": "integer"
+          },
+          {
+            "name": "comune",
+            "type": "string"
+          },
+          {
+            "name": "anno",
+            "type": "integer"
+          },
+          {
+            "name": "indicatore_codice",
+            "type": "string"
+          },
+          {
+            "name": "indicatore_nome",
+            "type": "string"
+          },
+          {
+            "name": "valore",
+            "type": "number"
+          },
+          {
+            "name": "unita",
+            "type": "string"
+          },
+          {
+            "name": "conforme_sel",
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "name": "tariffe_sussidi_comunali",
+      "path": "tariffe_sussidi_comunali.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
+      "encoding": "utf-8",
+      "schema": {
+        "fields": [
+          {
+            "name": "ust_code",
+            "type": "integer"
+          },
+          {
+            "name": "comune",
+            "type": "string"
+          },
+          {
+            "name": "circolo",
+            "type": "string"
+          },
+          {
+            "name": "abitanti",
+            "type": "integer"
+          },
+          {
+            "name": "tassa_base_rifiuti",
+            "type": "string"
+          },
+          {
+            "name": "sacco_35l_chf",
+            "type": "number"
+          },
+          {
+            "name": "imposta_immobiliare",
+            "type": "string"
+          },
+          {
+            "name": "tassa_cani_annua_chf",
+            "type": "number"
+          },
+          {
+            "name": "assegno_nascita_chf",
+            "type": "number"
+          },
+          {
+            "name": "mensa_scolastica_pasto_chf",
+            "type": "string"
+          },
+          {
+            "name": "fondo_clima_attivo",
+            "type": "boolean"
+          }
+        ]
+      }
+    }
+  ]
+}

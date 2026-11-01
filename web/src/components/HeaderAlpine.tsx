@@ -23,11 +23,6 @@ export function HeaderAlpine() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Non mostrare l'header pubblico all'interno della console curatore /admin
-  if (pathname?.startsWith("/admin")) {
-    return null;
-  }
-
   // Filtra i comuni istantaneamente in-memory (zero latenza di rete)
   const filtered = searchQuery.trim()
     ? MUNICIPALITIES.filter((m) => {
@@ -82,6 +77,11 @@ export function HeaderAlpine() {
   function navigateToMunicipality(slug: string) {
     setIsSearchOpen(false);
     router.push(`/comuni/${slug}`);
+  }
+
+  // Non mostrare l'header pubblico all'interno della console curatore /admin
+  if (pathname?.startsWith("/admin")) {
+    return null;
   }
 
   return (

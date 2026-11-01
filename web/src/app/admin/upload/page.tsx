@@ -4,7 +4,7 @@ import { useState } from "react";
 import { UploadCloud, CheckCircle2, AlertCircle, FileText, Lock } from "lucide-react";
 
 export default function CuratorUploadPage() {
-  const [municipality, setMunicipality] = useState("5115"); // Default: Città di Locarno
+  const [municipality, setMunicipality] = useState("5113"); // Default: Città di Locarno
   const [statementType, setStatementType] = useState("CONSUNTIVO");
   const [year, setYear] = useState("2024");
   const [mmNumber, setMmNumber] = useState("");
@@ -85,12 +85,12 @@ export default function CuratorUploadPage() {
                 onChange={(e) => setMunicipality(e.target.value)}
                 className="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:border-cyan-500"
               >
-                <option value="5115">Città di Locarno (UST 5115)</option>
+                <option value="5113">Città di Locarno (UST 5113)</option>
                 <option value="5096">Brione sopra Minusio (UST 5096)</option>
-                <option value="5118">Losone (UST 5118)</option>
+                <option value="5115">Losone (UST 5115)</option>
                 <option value="5091">Ascona (UST 5091)</option>
                 <option value="5112">Lavertezzo (UST 5112)</option>
-                <option value="5128">Verzasca (UST 5128)</option>
+                <option value="5399">Verzasca (UST 5399)</option>
               </select>
             </div>
 

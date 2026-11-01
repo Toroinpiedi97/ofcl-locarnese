@@ -99,8 +99,9 @@ export async function POST(req: NextRequest) {
     // 6. Salvataggio su database in audit.feedback_ticket
     try {
       const supabaseAdmin = createAdminClient();
-      const { error: dbError } = await supabaseAdmin
-        .from("audit.feedback_ticket" as any)
+      const { error: dbError } = await (supabaseAdmin as any)
+        .schema("audit")
+        .from("feedback_ticket")
         .insert({
           page_path,
           message_clean: cleanMessage,
@@ -109,7 +110,7 @@ export async function POST(req: NextRequest) {
           ust_code: ust_code || null,
           ip_hash: ipHash,
           status: "NEW",
-        } as any);
+        });
 
       if (dbError) {
         console.warn("[Civic Ticket DB Warning]", dbError.message);
@@ -121,7 +122,7 @@ export async function POST(req: NextRequest) {
     // 7. Notifica Server-Side al Curatore Responsabile
     // L'indirizzo email di destinazione NON viene mai esposto nel bundle client del browser
     const recipientEmail =
-      process.env.FEEDBACK_RECIPIENT_EMAIL || "nicolas.vecchio241097@gmail.com";
+      process.env.FEEDBACK_RECIPIENT_EMAIL || "curatore@ofcl.ch";
 
     console.info(
       `[CIVIC TICKET CREATED] Dest: ${recipientEmail} | UST: ${ust_code || "N/A"} | Path: ${page_path} | Msg: ${cleanMessage.slice(0, 60)}...`

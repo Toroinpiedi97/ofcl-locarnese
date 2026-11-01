@@ -27,7 +27,7 @@ const INITIAL_TICKETS: FeedbackTicket[] = [
   },
   {
     id: "t-002",
-    ust_code: 5115,
+    ust_code: 5113,
     municipality_name: "Locarno",
     category: "SEGNALAZIONE_ATTO",
     message: "È uscito all'albo il nuovo Preventivo 2027 per la Città di Locarno (MM 12). Verrà caricato presto?",
@@ -37,7 +37,7 @@ const INITIAL_TICKETS: FeedbackTicket[] = [
   },
   {
     id: "t-003",
-    ust_code: 5118,
+    ust_code: 5115,
     municipality_name: "Losone",
     category: "ACCESSIBILITA",
     message: "La tabella sul contrasto per i daltonici è ottima, ma potreste aggiungere anche l'export CSV dei soli crediti?",

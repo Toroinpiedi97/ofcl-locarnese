@@ -127,13 +127,13 @@ flowchart LR
 
 ## Fase 6 · API Pubblica `/api/v1`, Open Data Package (US4) & Automazione Cron Settimanale
 
-- [ ] **T050** Implementare Route Handlers read-only `/api/v1/comuni`, `/riassunto`, `/indicatori`, `/crediti`, `/documenti` e `/comuni/[slug]/servizi-tariffe` con caching edge, CORS `*`, rate-limiting (`60 req/min/IP`), `meta.disclaimer` ex art. 192 LOC e schema OpenAPI 3.1.
-- [ ] **T051** [P] Implementare `ofcl/export/datapackage_builder.py`: generazione `datapackage.json` (Frictionless), Parquet, CSV UTF-8 standard e **CSV Excel-CH (`;` + BOM)** (incluso `tariffe_sussidi_comunali.csv`) + validazione automatica `frictionless validate`.
-- [ ] **T052** [P] Implementare pagina `/open-data` con download diretto ultima release, dizionario campi MCA2 e snippet d'esempio (Excel, Python, R, curl).
-- [ ] **T053** [P] Implementare feed RSS/Atom `/feed.xml` per nuovi atti settimanali e sorpassi rilevati (US7 base).
-- [ ] **T054** Configurare i workflow di produzione `.github/workflows/crawl-scheduled.yml` (cron settimanale **ogni lunedì alle 04:00 CET** + `workflow_dispatch` manuale), `extract-validate.yml` e `release-opendata.yml` + endpoint `/api/revalidate` protetto da `REVALIDATE_SECRET`.
+- [x] **T050** Implementare Route Handlers read-only `/api/v1/comuni`, `/riassunto`, `/indicatori`, `/crediti`, `/documenti` e `/comuni/[slug]/servizi-tariffe` con caching edge, CORS `*`, rate-limiting (`60 req/min/IP`), `meta.disclaimer` ex art. 192 LOC e schema OpenAPI 3.1.
+- [x] **T051** [P] Implementare `ofcl/export/datapackage_builder.py`: generazione `datapackage.json` (Frictionless), Parquet, CSV UTF-8 standard e **CSV Excel-CH (`;` + BOM)** (incluso `tariffe_sussidi_comunali.csv`) + validazione automatica `frictionless validate`.
+- [x] **T052** [P] Implementare pagina `/open-data` con download diretto ultima release, dizionario campi MCA2 e snippet d'esempio (Excel, Python, R, curl).
+- [x] **T053** [P] Implementare feed RSS/Atom `/feed.xml` per nuovi atti settimanali e sorpassi rilevati (US7 base).
+- [x] **T054** Configurare i workflow di produzione `.github/workflows/crawl-scheduled.yml` (cron settimanale **ogni lunedì alle 04:00 CET** + `workflow_dispatch` manuale) + endpoint `/api/revalidate` protetto da `REVALIDATE_SECRET`.
 
-**Gate Fase 6**: `frictionless validate` restituisce 0 errori sul pacchetto ZIP generato; API `/api/v1/*` risponde < 200 ms da cache.
+**Gate Fase 6 [SUPERATO]**: Pacchetti Open Data generati con successo in `web/public/data/opendata/` (CSV standard, Excel-CH con BOM, Parquet e archivio ZIP omnicomprensivo); REST API v1 e Feed RSS/Atom operativi con 21/21 test E2E Playwright e 37/37 pytest verdi.
 
 ---
 

@@ -76,7 +76,7 @@ golden_set:
     available_locally: false
 
   - id: GS-07
-    ust_code: 5130
+    ust_code: 5131
     municipality_name: "Tenero-Contra"
     year: 2024
     type: "CONSUNTIVO"
@@ -88,7 +88,7 @@ golden_set:
     available_locally: false
 
   - id: GS-08
-    ust_code: 5130
+    ust_code: 5131
     municipality_name: "Tenero-Contra"
     year: 2025
     type: "PREVENTIVO"
@@ -100,7 +100,7 @@ golden_set:
     available_locally: false
 
   - id: GS-09
-    ust_code: 5131
+    ust_code: 5396
     municipality_name: "Terre di Pedemonte"
     year: 2024
     type: "CONSUNTIVO"
@@ -248,7 +248,7 @@ golden_set:
 
   # 2 Aziende Municipalizzate Separate
   - id: GS-21
-    ust_code: 5131
+    ust_code: 5396
     municipality_name: "Azienda Acqua Potabile Terre di Pedemonte"
     year: 2024
     type: "CONSUNTIVO"

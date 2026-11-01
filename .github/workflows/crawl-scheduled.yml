@@ -1,0 +1,61 @@
+name: Crawl Settimanale & Aggiornamento Dati
+
+on:
+  schedule:
+    # Esecuzione automatica ogni lunedì alle 03:00 UTC (04:00 CET)
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+
+jobs:
+  scheduled-crawl:
+    name: Crawl Cortese & Pipeline MCA2
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Step 1 NON NEGOZIABILE: Guardrail C-01 (Isolamento Totale Corfin)
+      - name: Guardrail C-01 · Verifica Isolamento Assoluto da Corfin
+        run: node scripts/check-not-corfin.mjs
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Setup Python
+        run: uv python install 3.12
+
+      - name: Install Pipeline Dependencies
+        run: uv sync --all-extras
+        working-directory: pipeline
+
+      - name: Scansione Cortese 19 Portali Comunali (Crawl)
+        run: uv run ofcl crawl --ust all --max-docs 20
+        working-directory: pipeline
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
+
+      - name: Generazione Pacchetti Open Data Frictionless
+        run: uv run ofcl export-opendata --out-dir ../web/public/data/opendata
+        working-directory: pipeline
+
+      - name: Trigger Webhook Revalidation
+        if: env.REVALIDATE_SECRET != '' && env.SITE_URL != ''
+        run: |
+          curl -X POST "${{ env.SITE_URL }}/api/revalidate" \
+            -H "Authorization: Bearer ${{ secrets.REVALIDATE_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -d '{"tag": "mca2-data"}'
+        env:
+          REVALIDATE_SECRET: ${{ secrets.REVALIDATE_SECRET }}
+          SITE_URL: ${{ secrets.SITE_URL }}

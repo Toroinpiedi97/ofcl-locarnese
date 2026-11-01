@@ -18,6 +18,7 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
+from ofcl.export.datapackage_builder import build_opendata_package
 from ofcl.extract.pdf_inspector import inspect_pdf
 from ofcl.extract.table_extractor import ExtractedCell, TableExtractor
 from ofcl.fetch.crawler import CorteseCrawler
@@ -380,6 +381,16 @@ def cmd_validate(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_export_opendata(args: argparse.Namespace) -> int:
+    """Genera i pacchetti Open Data (Frictionless, CSV standard, CSV Excel-CH, Parquet)."""
+    enforce_corfin_guardrail()
+    out_dir = Path(args.out_dir)
+    print(f"--- Generazione Pacchetto Open Data Frictionless in {out_dir} ---")
+    res = build_opendata_package(out_dir)
+    print(f"[OK] Open Data Package generato con successo: {res}")
+    return 0
+
+
 def main() -> None:
     enforce_corfin_guardrail()
     parser = argparse.ArgumentParser(
@@ -445,6 +456,10 @@ def main() -> None:
     validate_parser.add_argument("--pdf", required=True, help="Percorso del file PDF")
     validate_parser.add_argument("--output-json", type=str, default=None, help="Salva output in formato JSON")
 
+    # Subcommand: export-opendata
+    export_parser = subparsers.add_parser("export-opendata", help="Generazione pacchetti Open Data (CSV, Parquet, Frictionless)")
+    export_parser.add_argument("--out-dir", type=str, default="data/opendata", help="Directory di destinazione export")
+
     args = parser.parse_args()
 
     if args.subcommand == "crawl":
@@ -455,6 +470,8 @@ def main() -> None:
         sys.exit(cmd_extract(args))
     elif args.subcommand == "validate":
         sys.exit(cmd_validate(args))
+    elif args.subcommand == "export-opendata":
+        sys.exit(cmd_export_opendata(args))
 
 
 if __name__ == "__main__":

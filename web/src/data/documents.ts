@@ -34,7 +34,7 @@ export const OFFICIAL_DOCUMENTS: OfficialDocument[] = [
     approval_date: "2026-05-18",
     file_size_bytes: 4218760,
     pages: 132,
-    sha256: "7b4c6e91f083d28a30a84d41e7f0b2a95c478e12d594b2a8d3e7c1048b29f031",
+    sha256: "168f1f85c51701560f1cb3d06cb74f9ce981337517ba6ff1c7f5b26047505aee",
     original_url: "https://www.brione.ch/Messaggi-municipali-di-nuova-promulgazione-a459ef00",
     has_personal_data: false,
   },

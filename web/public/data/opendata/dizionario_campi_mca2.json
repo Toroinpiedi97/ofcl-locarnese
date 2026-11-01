@@ -1,0 +1,141 @@
+{
+  "standard": "MCA2 (Modello Contabile Armonizzato 2 per i Comuni ticinesi)",
+  "legge": "LOC, RGFCC art. 15, 17, 22 allegati a-p",
+  "precisione": "0.01 CHF (centesimo esatto)",
+  "resources": {
+    "bilanci_mca2": [
+      {
+        "name": "ust_code",
+        "type": "integer"
+      },
+      {
+        "name": "comune",
+        "type": "string"
+      },
+      {
+        "name": "anno",
+        "type": "integer"
+      },
+      {
+        "name": "tipo_atto",
+        "type": "string"
+      },
+      {
+        "name": "moltiplicatore_pf",
+        "type": "number"
+      },
+      {
+        "name": "moltiplicatore_pg",
+        "type": "number"
+      },
+      {
+        "name": "spese_correnti_chf",
+        "type": "number"
+      },
+      {
+        "name": "ricavi_correnti_chf",
+        "type": "number"
+      },
+      {
+        "name": "risultato_ordinario_chf",
+        "type": "number"
+      },
+      {
+        "name": "autofinanziamento_chf",
+        "type": "number"
+      },
+      {
+        "name": "investimenti_netti_chf",
+        "type": "number"
+      },
+      {
+        "name": "debito_netto_pc_chf",
+        "type": "number"
+      },
+      {
+        "name": "conformita_sel",
+        "type": "string"
+      }
+    ],
+    "indicatori_sel": [
+      {
+        "name": "ust_code",
+        "type": "integer"
+      },
+      {
+        "name": "comune",
+        "type": "string"
+      },
+      {
+        "name": "anno",
+        "type": "integer"
+      },
+      {
+        "name": "indicatore_codice",
+        "type": "string"
+      },
+      {
+        "name": "indicatore_nome",
+        "type": "string"
+      },
+      {
+        "name": "valore",
+        "type": "number"
+      },
+      {
+        "name": "unita",
+        "type": "string"
+      },
+      {
+        "name": "conforme_sel",
+        "type": "boolean"
+      }
+    ],
+    "tariffe_sussidi_comunali": [
+      {
+        "name": "ust_code",
+        "type": "integer"
+      },
+      {
+        "name": "comune",
+        "type": "string"
+      },
+      {
+        "name": "circolo",
+        "type": "string"
+      },
+      {
+        "name": "abitanti",
+        "type": "integer"
+      },
+      {
+        "name": "tassa_base_rifiuti",
+        "type": "string"
+      },
+      {
+        "name": "sacco_35l_chf",
+        "type": "number"
+      },
+      {
+        "name": "imposta_immobiliare",
+        "type": "string"
+      },
+      {
+        "name": "tassa_cani_annua_chf",
+        "type": "number"
+      },
+      {
+        "name": "assegno_nascita_chf",
+        "type": "number"
+      },
+      {
+        "name": "mensa_scolastica_pasto_chf",
+        "type": "string"
+      },
+      {
+        "name": "fondo_clima_attivo",
+        "type": "boolean"
+      }
+    ]
+  }
+}
