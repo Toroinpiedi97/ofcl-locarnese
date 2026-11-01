@@ -114,3 +114,83 @@ Ad ogni pubblicazione mensile o stagionale, il workflow `release-opendata.yml` g
 - `CHANGELOG.md` e `LICENSE.txt` (`CC BY 4.0`).
 
 > **Dettaglio pratico Svizzera/Ticino**: oltre al CSV standard UTF-8 con virgola (`,`), viene generata una variante `*-excel-ch.csv` con **BOM UTF-8 e separatore punto e virgola (`;`)**, così che consiglieri comunali, segretari e giornalisti possano aprirlo con doppio clic in Microsoft Excel svizzero senza corrompere accenti o decimali!
+
+---
+
+## 6. Swiss Design System, Effetti Visivi & Doppia Pipeline Responsiva (Desktop & Mobile)
+
+A integrazione delle linee guida di accessibilità (`WCAG 2.1 AA`) e della neutralità istituzionale svizzera, il portale pubblico adotta un linguaggio visivo ispirato al territorio del Locarnese (paesaggio lacustre e montano, architettura contemporanea ticinese) declinato su 5 effetti visivi qualificanti e una rigorosa separazione architetturale tra le pipeline di visualizzazione Desktop e Mobile.
+
+### 6.1 I 5 Effetti Visivi Istituzionali del Locarnese
+
+#### 1. "Alpine Frosted Glass" (Glassmorphism Istituzionale)
+- **Concetto & Riferimento Territoriale:** Evoca l'acqua limpida del Verbano, il ghiaccio delle valli e le superfici vetrate dell'architettura ticinese moderna (stile Mario Botta). Consente di mostrare fotografie panoramiche a tutto schermo (es. bacino di Locarno, Cardada, Ascona, Gambarogno) garantendo al contempo un contrasto ottimale per la lettura dei dati contabili a 2 decimali.
+- **Ambiti di applicazione:** Navbar superiore fissa con disclaimer legale ex art. 192 LOC, le 4 card Hero dei Numeri Chiave distrettuali, il container principale della griglia comparativa e la Scheda dei 30 Secondi.
+- **Specifiche Tecniche CSS (Leggibilità e WCAG 2.1 AA):**
+  ```css
+  /* Card con effetto vetro svizzero moderno */
+  background: rgba(255, 255, 255, 0.78); /* Opacità 78-85% per leggibilità elevata dei decimali MCA2 */
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  ```
+  Sulle cifre contabili viene applicato colore solido ad alto contrasto (`#0F172A` / `#000000`, `font-semibold`), garantendo un rapporto di contrasto superiore a 7:1 (superando il requisito minimo 4.5:1 di WCAG AA).
+
+#### 2. Bento Grid con Micro-Interazioni Elastiche (Spring Physics)
+- **Concetto:** Disposizione delle card a scatole modulari "Bento Box" in puro Swiss Design contemporaneo, con gerarchia chiara e densità informativa bilanciata.
+- **Struttura dei Quadranti Bento per OFCL:**
+  - **Card Grande (Master Grid):** Griglia comparativa interattiva dei 19 Comuni, ordinabile per moltiplicatore PF/PG, debito pro capite e risultato d'esercizio, dotata di cruscotto a 8 micro-tacche SEL.
+  - **Card Media (30 Secondi):** Scheda del Comune attivo con le 4 Grandi Cifre (Avanzo/Disavanzo, Autofinanziamento, Investimenti, Debito) e link puntuali alle delibere ufficiali (`MM 060 p.N ↗`).
+  - **Card Smart Alert Crediti:** Monitoraggio dinamico delle delibere d'investimento. In presenza di sforamenti > 10% (ex art. 15 LOC) espone un banner di allerta contestuale con spesa e link all'Allegato f; in caso contrario certifica la conformità con badge verde.
+  - **Card Ripartizione Territoriale:** Spese nette per Dicastero (0–9) e mappa territoriale interattiva.
+- **Micro-interazioni:** Risposta elastica discreta con funzione di molla CSS (`transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease`), con leggero sollevamento (`scale-[1.01]`) e riflesso di luce radiale morbido all'hover.
+
+#### 3. Effetto "Acqua Calma" (Subtle Fluid Wave & Gradienti Solari)
+- **Concetto & Prestazioni:** Nessuna simulazione WebGPU pesante che surriscaldi i dispositivi mobili. Utilizzo di tracciati SVG vettoriali con curve di Bézier fluide e shader Canvas ultra-leggeri (< 15KB) che riproducono la dolce increspatura dell'acqua del Lago Maggiore al movimento del cursore o allo scorrimento.
+- **Palette Cromatica Distrettuale:**
+  - **Blu Verbano Profondo:** `#0F3854` (colore istituzionale e testate tabellari)
+  - **Azzurro Ciano Verzasca:** `#00A3C4` (accenti interattivi, link e barre di progresso attive)
+  - **Verde Smeraldo Isole di Brissago:** `#10B981` (indicatori SEL positivi e crediti conformi)
+  - **Oro Solare Cardada / Gambarogno:** `#D97706` (tramonto locarnese, usato per evidenziazioni e soglie di attenzione SEL)
+  - **Rosso Rubino Istituzionale:** `#DC2626` (sforamenti crediti e indicatori SEL critici, sempre affiancato da icona di allerta)
+
+#### 4. Smooth Scrollytelling con Parallax a Livelli (Profondità del Territorio)
+- **Perimetro di Applicazione Controllato:** Riservato unicamente alle pagine descrittive e di contesto (es. `/metodologia`, `/stato`, `/report-annuale` o presentazioni territoriali). **Escluso esplicitamente** dalla console operativa `/admin` e dalla griglia di ricerca dei dati finanziari per evitare qualsiasi fenomeno di *scroll-jacking* o rallentamento nell'esplorazione dei numeri.
+- **Dinamica Visiva:** Scorrimento a livelli di profondità (monti di sfondo a velocità ridotta, specchio d'acqua a velocità media, card informative in primo piano a velocità naturale) per ricreare la sensazione prospettica di una terrazza panoramica sul comprensorio.
+
+#### 5. Mappa Territoriale SVG & Rilievo Sottile (La "Chicca" Premium)
+- **Architettura Leggera:** Invece di librerie 3D pesanti da decine di megabyte, visualizzazione vettoriale SVG georeferenziata dei 19 comuni del distretto con rilievo orografico minimale.
+- **Comportamento Interattivo:** Ciascun comune è un poligono SVG cliccabile con transizione fluida, tematizzato cromaticamente in base al moltiplicatore d'imposta (gradiente verde-ambra-rosso). Il clic su un comune centra la vista e aggiorna istantaneamente la Scheda dei 30 Secondi nel pannello affiancato.
+
+---
+
+### 6.2 Doppia Pipeline Responsiva Disaccoppiata (Desktop & Mobile)
+
+Per prevenire conflitti di classi CSS, salti di impaginazione (*layout shift*) e garantire la massima ergonomia d'uso su qualsiasi dispositivo, l'interfaccia frontend Next.js adotta una separazione esplicita a due pipeline di rendering componentizzate:
+
+```
+web/src/
+├── components/
+│   ├── dashboard/
+│   │   ├── DashboardDesktop.tsx   # Layout a 2 colonne Master-Detail reattivo in-place
+│   │   ├── DashboardMobile.tsx    # Layout compatto con Drawer / Bottom Sheet scorrevole
+│   │   ├── MunicipalitiesTable.tsx# Griglia tabellare densa con cruscotto 8 tacche SEL
+│   │   ├── QuickCard30s.tsx       # Scheda sintetica 4 Grandi Cifre + link MM
+│   │   ├── TerritorialMap.tsx     # Mappa vettoriale interattiva dei 19 comuni
+│   │   ├── CreditAlertBanner.tsx  # Smart alert per art. 15 LOC (sforamento > 10%)
+│   │   └── IndicatorsSelBar.tsx   # Micro-cruscotto a 8 segmenti (🟢/🟡/🔴)
+│   └── shared/
+│       ├── HeaderAlpine.tsx       # Navbar fissa con disclaimer art. 192 LOC
+│       └── FooterOpenData.tsx     # Footer con licenza CC-BY-4.0 e download
+```
+
+#### Specifiche della Pipeline Desktop (`DashboardDesktop.tsx`)
+- **Layout:** Vista a due colonne fisse master-detail (Colonna sinistra 60% per la Bento Grid con Griglia 19 Comuni, Colonna destra 40% sticky per la Scheda dei 30 Secondi).
+- **Interazione In-Place:** Cliccando una riga qualsiasi nella tabella di sinistra, la scheda di destra si aggiorna istantaneamente in stato reattivo client-side, senza ricaricare la pagina o perdere lo scroll della tabella.
+- **Densità Dati:** Tabella a 7 colonne con codice UST, nome comune, moltiplicatore PF/PG, debito pro capite, micro-cruscotto 8 indicatori SEL con tooltip hover, link delibera e pulsante "Apri Scheda Completa ↗".
+
+#### Specifiche della Pipeline Mobile (`DashboardMobile.tsx`)
+- **Layout:** Flusso verticale a card singola con ricerca in evidenza e lista comuni a blocchi touch-friendly.
+- **Bottom Sheet / Drawer Scorrevole:** Il tocco su un comune apre un cassetto scorrevole dal basso (trascinabile o espandibile con gesture) che presenta le 4 Grandi Cifre, i semafori SEL e l'eventuale allerta crediti d'opera.
+- **Ergonomia One-Hand:** Tutti i target interattivi hanno altezza minima di `44px` conformemente alle linee guida Apple HIG e WCAG 2.1 AA, permettendo la consultazione rapida da smartphone con una sola mano.
