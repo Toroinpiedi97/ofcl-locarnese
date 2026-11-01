@@ -128,17 +128,17 @@ select lg.entity_id,
        lg.ref_year,
        lg.value_kind,
        -- Conto Economico
-       coalesce(sum(lg.amount_chf) filter (where lg.statement = 'CE' and lg.side = 'EXPENSE' and lg.account_code in ('30','31','33','35','36','37')), 0) as spese_operative,
-       coalesce(sum(lg.amount_chf) filter (where lg.statement = 'CE' and lg.side = 'REVENUE' and lg.account_code in ('40','41','42','43','45','46')), 0) as ricavi_operativi,
-       coalesce(sum(lg.amount_chf) filter (where lg.statement = 'CE' and lg.side = 'EXPENSE' and lg.account_code = '34'), 0) as spese_finanziarie_34,
-       coalesce(sum(lg.amount_chf) filter (where lg.statement = 'CE' and lg.side = 'REVENUE' and lg.account_code = '44'), 0) as ricavi_finanziari_44,
-       coalesce(sum(lg.amount_chf) filter (where lg.statement = 'CE' and lg.side = 'EXPENSE' and lg.account_code = '38'), 0) as spese_straordinarie_38,
-       coalesce(sum(lg.amount_chf) filter (where lg.statement = 'CE' and lg.side = 'REVENUE' and lg.account_code = '48'), 0) as ricavi_straordinari_48,
-       coalesce(sum(lg.amount_chf) filter (where lg.statement = 'CE' and lg.side = 'EXPENSE' and lg.account_code = '39'), 0) as addebiti_interni_39,
-       coalesce(sum(lg.amount_chf) filter (where lg.statement = 'CE' and lg.side = 'REVENUE' and lg.account_code = '49'), 0) as accrediti_interni_49,
+       coalesce(sum(lg.amount_chf) filter (where lg.statement = 'CE' and lg.side = 'SPESA' and lg.account_code in ('30','31','33','35','36','37')), 0) as spese_operative,
+       coalesce(sum(lg.amount_chf) filter (where lg.statement = 'CE' and lg.side = 'RICAVO' and lg.account_code in ('40','41','42','43','45','46')), 0) as ricavi_operativi,
+       coalesce(sum(lg.amount_chf) filter (where lg.statement = 'CE' and lg.side = 'SPESA' and lg.account_code = '34'), 0) as spese_finanziarie_34,
+       coalesce(sum(lg.amount_chf) filter (where lg.statement = 'CE' and lg.side = 'RICAVO' and lg.account_code = '44'), 0) as ricavi_finanziari_44,
+       coalesce(sum(lg.amount_chf) filter (where lg.statement = 'CE' and lg.side = 'SPESA' and lg.account_code = '38'), 0) as spese_straordinarie_38,
+       coalesce(sum(lg.amount_chf) filter (where lg.statement = 'CE' and lg.side = 'RICAVO' and lg.account_code = '48'), 0) as ricavi_straordinari_48,
+       coalesce(sum(lg.amount_chf) filter (where lg.statement = 'CE' and lg.side = 'SPESA' and lg.account_code = '39'), 0) as addebiti_interni_39,
+       coalesce(sum(lg.amount_chf) filter (where lg.statement = 'CE' and lg.side = 'RICAVO' and lg.account_code = '49'), 0) as accrediti_interni_49,
        -- Investimenti Beni Amministrativi
-       coalesce(sum(lg.amount_chf) filter (where lg.statement = 'CI' and lg.side = 'EXPENSE' and lg.account_code in ('50','51','52','54','55','56','57','58')), 0) as uscite_investimenti_ba,
-       coalesce(sum(lg.amount_chf) filter (where lg.statement = 'CI' and lg.side = 'REVENUE' and lg.account_code in ('60','61','62','63','64','66','68')), 0) as entrate_investimenti_ba
+       coalesce(sum(lg.amount_chf) filter (where lg.statement = 'CI' and lg.side = 'SPESA' and lg.account_code in ('50','51','52','54','55','56','57','58')), 0) as uscite_investimenti_ba,
+       coalesce(sum(lg.amount_chf) filter (where lg.statement = 'CI' and lg.side = 'RICAVO' and lg.account_code in ('60','61','62','63','64','66','68')), 0) as entrate_investimenti_ba
 from api.ledger_golden lg
 join ref.entity e on e.id = lg.entity_id
 join ref.municipality m on m.ust_code = e.ust_code

@@ -1,392 +1,449 @@
-# ==============================================================================
-# Anagrafica e Mappatura Fonti dei 19 Comuni del Distretto di Locarno (UST 2104)
-# Conforme a MCA2 / RGFCC e Specifica OFCL (docs/spec/05-fonti-connettori.md)
-# ==============================================================================
-
 - ust_code: 5091
   slug: ascona
   name: Ascona
   circle: Isole
   cms_family: ASSOLO
-  seat: "Via Borgo 29, 6612 Ascona"
+  seat: Via Borgo 29, 6612 Ascona
   entities:
-    - { kind: COMUNE, name: "Comune di Ascona" }
-    - { kind: AE, name: "Azienda elettrica comunale di Ascona" }
-    - { kind: AAP, name: "Azienda acqua potabile di Ascona" }
+  - kind: COMUNE
+    name: Comune di Ascona
+  - kind: AE
+    name: Azienda elettrica comunale di Ascona
+  - kind: AAP
+    name: Azienda acqua potabile di Ascona
   sources:
-    - kind: MM_INDEX
-      url: https://www.ascona.ch/Messaggi-municipali
-      strategy: assolo_list
-      params: { fric: 6430 }
-    - kind: ALBO
-      url: https://www.ascona.ch/Albo-comunale-65d3e000
-      strategy: assolo_list
+  - kind: MM_INDEX
+    url: https://www.ascona.ch/Messaggi-municipali
+    strategy: assolo_list
+    params:
+      fric: 6430
+  - kind: ALBO
+    url: https://www.ascona.ch/Albo-comunale-65d3e000
+    strategy: assolo_list
   robots:
     crawl_delay_s: 30
   active: true
-
+  verified_at: '2026-11-01T18:16:35Z'
+  canary_url: https://www.ascona.ch/Albo-comunale-65d3e000?i=1
 - ust_code: 5096
   slug: brione-sopra-minusio
   name: Brione sopra Minusio
   circle: Navegna
   cms_family: ASSOLO
-  seat: "Via Contra 16, 6645 Brione sopra Minusio"
+  seat: Via Contra 16, 6645 Brione sopra Minusio
   entities:
-    - { kind: COMUNE, name: "Comune di Brione sopra Minusio" }
+  - kind: COMUNE
+    name: Comune di Brione sopra Minusio
   sources:
-    - kind: MM_INDEX
-      url: https://www.brione.ch/Messaggi-municipali-di-nuova-promulgazione-a459ef00
-      strategy: assolo_list
-      params: { fric: 3790 }
-    - kind: ALBO
-      url: https://www.brione.ch/Albo-comunale
-      strategy: assolo_list
+  - kind: MM_INDEX
+    url: https://www.brione.ch/Messaggi-municipali-di-nuova-promulgazione-a459ef00
+    strategy: assolo_list
+    params:
+      fric: 3790
+  - kind: ALBO
+    url: https://www.brione.ch/Albo-comunale
+    strategy: assolo_list
   robots:
     crawl_delay_s: 30
   active: true
-
+  verified_at: '2026-11-01T18:16:35Z'
+  canary_url: https://www.brione.ch/Il-Comune-b90fe600?i=1
 - ust_code: 5097
   slug: brissago
   name: Brissago
   circle: Isole
   cms_family: WORDPRESS
-  seat: "Piazza Municipio 1, 6614 Brissago"
+  seat: Piazza Municipio 1, 6614 Brissago
   entities:
-    - { kind: COMUNE, name: "Comune di Brissago" }
+  - kind: COMUNE
+    name: Comune di Brissago
   sources:
-    - kind: MM_INDEX
-      url: https://www.brissago.ch/comune/amministrazione/consiglio-comunale/documenti-consiglio-comunale/
-      strategy: wordpress_html
-    - kind: ALBO
-      url: https://www.brissago.ch/comune/amministrazione/
-      strategy: wordpress_html
+  - kind: MM_INDEX
+    url: https://www.brissago.ch/comune/amministrazione/consiglio-comunale/documenti-consiglio-comunale/
+    strategy: wordpress_html
+  - kind: ALBO
+    url: https://www.brissago.ch/comune/amministrazione/
+    strategy: wordpress_html
   robots:
     crawl_delay_s: 5
   active: true
-
+  verified_at: '2026-11-01T18:16:35Z'
+  canary_url: https://www.brissago.ch/sito/wp-content/uploads/2026/10/MM-1575.pdf
 - ust_code: 5108
   slug: gordola
   name: Gordola
   circle: Navegna
   cms_family: ASSOLO
-  seat: "Piazza Municipio, 6596 Gordola"
+  seat: Piazza Municipio, 6596 Gordola
   entities:
-    - { kind: COMUNE, name: "Comune di Gordola" }
-    - { kind: AAP, name: "Azienda acqua potabile Gordola" }
+  - kind: COMUNE
+    name: Comune di Gordola
+  - kind: AAP
+    name: Azienda acqua potabile Gordola
   sources:
-    - kind: MM_INDEX
-      url: https://www.gordola.ch/Messaggi-municipali-f3c97f00
-      strategy: assolo_list
-      params: { fric: 4261 }
-    - kind: ALBO
-      url: https://www.gordola.ch/Albo-comunale-0cbcc300
-      strategy: assolo_list
+  - kind: MM_INDEX
+    url: https://www.gordola.ch/Messaggi-municipali-f3c97f00
+    strategy: assolo_list
+    params:
+      fric: 4261
+  - kind: ALBO
+    url: https://www.gordola.ch/Albo-comunale-0cbcc300
+    strategy: assolo_list
   robots:
     crawl_delay_s: 30
   active: true
-
+  verified_at: '2026-11-01T18:16:35Z'
+  canary_url: https://www.gordola.ch/Scopri-Gordola-997dd400?i=1
 - ust_code: 5112
   slug: lavertezzo
   name: Lavertezzo
   circle: Verzasca
   cms_family: JOOMLA
-  seat: "Via San Gottardo 34, 6595 Riazzino"
-  merger_note: "Cessione comprensorio di valle al Comune di Verzasca il 18.10.2020"
+  seat: Via San Gottardo 34, 6595 Riazzino
+  merger_note: Cessione comprensorio di valle al Comune di Verzasca il 18.10.2020
   entities:
-    - { kind: COMUNE, name: "Comune di Lavertezzo" }
-    - { kind: AAP, name: "Azienda comunale acqua potabile (ACAP)" }
+  - kind: COMUNE
+    name: Comune di Lavertezzo
+  - kind: AAP
+    name: Azienda comunale acqua potabile (ACAP)
   sources:
-    - kind: MM_INDEX
-      url: https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2026
-      strategy: joomla_jdownloads
-    - kind: ALBO
-      url: https://www.lavertezzo.ch/documenti-albo-comunale
-      strategy: joomla_jdownloads
+  - kind: MM_INDEX
+    url: https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2026
+    strategy: joomla_jdownloads
+  - kind: ALBO
+    url: https://www.lavertezzo.ch/documenti-albo-comunale
+    strategy: joomla_jdownloads
   robots:
     crawl_delay_s: 5
   active: true
-
+  verified_at: '2026-11-01T18:16:35Z'
+  canary_url: https://www.lavertezzo.ch/documenti-albo-comunale/messaggi-municipali/mm-2026/send/80-mm-2026/845-mm-2026-01-convenzione-piazza-tiro-comune-gambarogno
 - ust_code: 5113
   slug: locarno
   name: Locarno
   circle: Locarno
   cms_family: CITY_LOCARNO
-  seat: "Piazza Grande 18, 6600 Locarno"
+  seat: Piazza Grande 18, 6600 Locarno
   entities:
-    - { kind: COMUNE, name: "Città di Locarno" }
-    - { kind: ENTE_AUTONOMO, name: "Locarnese Ente Acqua (LEA)" }
-    - { kind: CASA_ANZIANI, name: "Istituto per anziani San Carlo" }
+  - kind: COMUNE
+    name: Città di Locarno
+  - kind: ENTE_AUTONOMO
+    name: Locarnese Ente Acqua (LEA)
+  - kind: CASA_ANZIANI
+    name: Istituto per anziani San Carlo
   sources:
-    - kind: CONTI_INDEX
-      url: https://www.locarno.ch/it/finanze
-      strategy: locarno_city
-    - kind: MM_INDEX
-      url: https://www.locarno.ch/it/messaggi-municipali/2024-2028
-      strategy: locarno_city
+  - kind: CONTI_INDEX
+    url: https://www.locarno.ch/it/finanze
+    strategy: locarno_city
+  - kind: MM_INDEX
+    url: https://www.locarno.ch/it/messaggi-municipali/2024-2028
+    strategy: locarno_city
   robots:
     crawl_delay_s: 10
-    disallow_all: true # C-02: robots.txt impone Disallow: / -> procedura concordata ex art. 192 LOC
+    disallow_all: true
   active: true
-
+  verified_at: '2026-11-01T18:16:35Z'
+  canary_url: https://www.locarno.ch/files/documenti/Locarno360_agosto_2025_web.pdf
 - ust_code: 5115
   slug: losone
   name: Losone
   circle: Isole
   cms_family: ASSOLO
-  seat: "Via Trébla 2, 6616 Losone"
+  seat: Via Trébla 2, 6616 Losone
   delegation_threshold_chf: 70000
   entities:
-    - { kind: COMUNE, name: "Comune di Losone" }
+  - kind: COMUNE
+    name: Comune di Losone
   sources:
-    - kind: CONTI_INDEX
-      url: https://www.losone.ch/Conti-del-Comune-519c1a00
-      strategy: assolo_list
-      params: { ris_n: 200 }
-    - kind: MM_INDEX
-      url: https://www.losone.ch/Documenti-del-Consiglio-comunale-b1cb9e00
-      strategy: assolo_list
+  - kind: CONTI_INDEX
+    url: https://www.losone.ch/Conti-del-Comune-519c1a00
+    strategy: assolo_list
+    params:
+      ris_n: 200
+  - kind: MM_INDEX
+    url: https://www.losone.ch/Documenti-del-Consiglio-comunale-b1cb9e00
+    strategy: assolo_list
   robots:
     crawl_delay_s: 30
   active: true
-
+  verified_at: '2026-11-01T18:16:35Z'
+  canary_url: https://www.losone.ch/Losone-d95c6b00?i=1
 - ust_code: 5117
   slug: mergoscia
   name: Mergoscia
   circle: Navegna
   cms_family: ASSOLO
-  seat: "6647 Mergoscia"
+  seat: 6647 Mergoscia
   entities:
-    - { kind: COMUNE, name: "Comune di Mergoscia" }
+  - kind: COMUNE
+    name: Comune di Mergoscia
   sources:
-    - kind: MM_INDEX
-      url: https://www.comune-mergoscia.ch/Messaggi-municipali-861f7d00
-      strategy: assolo_list
-    - kind: ALBO
-      url: https://www.comune-mergoscia.ch/Albo-comunale-04399800
-      strategy: assolo_list
+  - kind: MM_INDEX
+    url: https://www.comune-mergoscia.ch/Messaggi-municipali-861f7d00
+    strategy: assolo_list
+  - kind: ALBO
+    url: https://www.comune-mergoscia.ch/Albo-comunale-04399800
+    strategy: assolo_list
   robots:
     crawl_delay_s: 30
   active: true
-
+  verified_at: '2026-11-01T18:16:35Z'
+  canary_url: https://www.comune-mergoscia.ch/Benvenuti-a-Mergoscia-d95c6b00?i=1
 - ust_code: 5118
   slug: minusio
   name: Minusio
   circle: Navegna
   cms_family: ASSOLO
-  seat: "Via San Gottardo 46, 6648 Minusio"
+  seat: Via San Gottardo 46, 6648 Minusio
   entities:
-    - { kind: COMUNE, name: "Comune di Minusio" }
-    - { kind: AAP, name: "Azienda comunale acqua potabile (ACAP)" }
-    - { kind: CASA_ANZIANI, name: "Centro anziani Casa Rea" }
+  - kind: COMUNE
+    name: Comune di Minusio
+  - kind: AAP
+    name: Azienda comunale acqua potabile (ACAP)
+  - kind: CASA_ANZIANI
+    name: Centro anziani Casa Rea
   sources:
-    - kind: MM_INDEX
-      url: https://www.minusio.ch/Messaggi-municipali-584f1a00
-      strategy: assolo_list
-      params: { fric: 5420 }
-    - kind: ALBO
-      url: https://www.minusio.ch/Albo-comunale-c3dfab00
-      strategy: assolo_list
+  - kind: MM_INDEX
+    url: https://www.minusio.ch/Messaggi-municipali-584f1a00
+    strategy: assolo_list
+    params:
+      fric: 5420
+  - kind: ALBO
+    url: https://www.minusio.ch/Albo-comunale-c3dfab00
+    strategy: assolo_list
   robots:
     crawl_delay_s: 30
   active: true
-
+  verified_at: '2026-11-01T18:16:35Z'
+  canary_url: https://www.minusio.ch/Benvenuti-sul-sito-del-Comune-di-Minusio-d95c6b00?i=1
 - ust_code: 5120
   slug: muralto
   name: Muralto
   circle: Locarno
   cms_family: ASSOLO
-  seat: "Via Municipio 3, 6600 Muralto"
+  seat: Via Municipio 3, 6600 Muralto
   entities:
-    - { kind: COMUNE, name: "Comune di Muralto" }
+  - kind: COMUNE
+    name: Comune di Muralto
   sources:
-    - kind: MM_INDEX
-      url: https://www.muralto.ch/Messaggi-municipali/IT-ac4d1f00
-      strategy: assolo_list
-      params: { fric: 4665 }
-    - kind: ALBO
-      url: https://www.muralto.ch/Albo-comunale/IT-c3dfab00
-      strategy: assolo_list
+  - kind: MM_INDEX
+    url: https://www.muralto.ch/Messaggi-municipali/IT-ac4d1f00
+    strategy: assolo_list
+    params:
+      fric: 4665
+  - kind: ALBO
+    url: https://www.muralto.ch/Albo-comunale/IT-c3dfab00
+    strategy: assolo_list
   robots:
     crawl_delay_s: 30
   active: true
-
+  verified_at: '2026-11-01T18:16:35Z'
+  canary_url: https://www.muralto.ch/Messaggi-municipali/Home/IT-8ecf0300?i=1
 - ust_code: 5121
   slug: orselina
   name: Orselina
   circle: Locarno
   cms_family: CUSTOM_PHP
-  seat: "Via Orselina 1, 6644 Orselina"
+  seat: Via Orselina 1, 6644 Orselina
   entities:
-    - { kind: COMUNE, name: "Comune di Orselina" }
+  - kind: COMUNE
+    name: Comune di Orselina
   sources:
-    - kind: MM_INDEX
-      url: https://www.orselina.ch/index.php?node=326&lng=1
-      strategy: assolo_legacy_signed # C-03a: richiede token &rif= dinamico
+  - kind: MM_INDEX
+    url: https://www.orselina.ch/index.php?node=329&lng=1&vis=2&rif=f5d7298ee5
+    strategy: assolo_legacy_signed
   robots:
     crawl_delay_s: 5
   active: true
-
+  verified_at: '2026-11-01T18:16:35Z'
+  canary_url: https://www.orselina.ch/downdoc.php?id_doc=4407&lng=1&i=1&vis=2&rif=9ccdfe26c1
 - ust_code: 5125
   slug: ronco-sopra-ascona
   name: Ronco sopra Ascona
   circle: Isole
   cms_family: WORDPRESS
-  seat: "Via Ronco 12, 6622 Ronco sopra Ascona"
+  seat: Via Ronco 12, 6622 Ronco sopra Ascona
   entities:
-    - { kind: COMUNE, name: "Comune di Ronco sopra Ascona" }
-    - { kind: AAP, name: "Azienda comunale acqua potabile (ACAP)" }
-    - { kind: PORTO, name: "Azienda comunale porto natanti (APONA)" }
+  - kind: COMUNE
+    name: Comune di Ronco sopra Ascona
+  - kind: AAP
+    name: Azienda comunale acqua potabile (ACAP)
+  - kind: PORTO
+    name: Azienda comunale porto natanti (APONA)
   sources:
-    - kind: CONTI_INDEX
-      url: https://ronco-s-ascona.ch/istituzione/conti-consuntivi/
-      strategy: wordpress_html
-    - kind: MM_INDEX
-      url: https://ronco-s-ascona.ch/albo-comunale/messaggi-municipali/
-      strategy: wordpress_html
+  - kind: CONTI_INDEX
+    url: https://ronco-s-ascona.ch/istituzione/conti-consuntivi/
+    strategy: wordpress_html
+  - kind: MM_INDEX
+    url: https://ronco-s-ascona.ch/albo-comunale/messaggi-municipali/
+    strategy: wordpress_html
   robots:
     crawl_delay_s: 5
   active: true
-
+  verified_at: '2026-11-01T18:16:35Z'
+  canary_url: https://ronco-s-ascona.ch/istituzione/conti-consuntivi/
 - ust_code: 5131
   slug: tenero-contra
   name: Tenero-Contra
   circle: Navegna
   cms_family: ASSOLO
-  seat: "Piazza Municipio 1, 6598 Tenero"
+  seat: Piazza Municipio 1, 6598 Tenero
   entities:
-    - { kind: COMUNE, name: "Comune di Tenero-Contra" }
+  - kind: COMUNE
+    name: Comune di Tenero-Contra
   sources:
-    - kind: MM_INDEX
-      url: https://www.tenero-contra.ch/Messaggi-municipali-43c4a500
-      strategy: assolo_list
-      params: { fric: 4257 }
-    - kind: ALBO
-      url: https://www.tenero-contra.ch/Atti-pubblici-e-amministrativi-478eac00
-      strategy: assolo_list
+  - kind: MM_INDEX
+    url: https://www.tenero-contra.ch/Messaggi-municipali-43c4a500
+    strategy: assolo_list
+    params:
+      fric: 4257
+  - kind: ALBO
+    url: https://www.tenero-contra.ch/Atti-pubblici-e-amministrativi-478eac00
+    strategy: assolo_list
   robots:
     crawl_delay_s: 30
   active: true
-
+  verified_at: '2026-11-01T18:16:35Z'
+  canary_url: https://www.tenero-contra.ch/Benvenuti-a-Tenero-Contra-d95c6b00?i=1
 - ust_code: 5136
   slug: onsernone
   name: Onsernone
   circle: Onsernone
   cms_family: ASSOLO
-  seat: "Frazione Russo, 6662 Onsernone"
-  merger_note: "Fusioni storiche 2005 (Russo, Crana, Comologno) e 2017 (Gresso, Isorno, Mosogno, Vergeletto)"
+  seat: Frazione Russo, 6662 Onsernone
+  merger_note: Fusioni storiche 2005 (Russo, Crana, Comologno) e 2017 (Gresso, Isorno,
+    Mosogno, Vergeletto)
   entities:
-    - { kind: COMUNE, name: "Comune di Onsernone" }
-    - { kind: AAP, name: "Azienda acqua potabile Onsernone" }
+  - kind: COMUNE
+    name: Comune di Onsernone
+  - kind: AAP
+    name: Azienda acqua potabile Onsernone
   sources:
-    - kind: MM_INDEX
-      url: https://www.onsernone.swiss/Messaggi-861f7d00
-      strategy: assolo_list
-    - kind: ALBO
-      url: https://www.onsernone.swiss/Albo-comunale-04399800
-      strategy: assolo_list
+  - kind: MM_INDEX
+    url: https://www.onsernone.swiss/Messaggi-861f7d00
+    strategy: assolo_list
+  - kind: ALBO
+    url: https://www.onsernone.swiss/Albo-comunale-04399800
+    strategy: assolo_list
   robots:
     crawl_delay_s: 30
   active: true
-
+  verified_at: '2026-11-01T18:16:35Z'
+  canary_url: https://www.onsernone.swiss/Sportello-virtuale-e5590100?i=1
 - ust_code: 5138
   slug: cugnasco-gerra
   name: Cugnasco-Gerra
   circle: Navegna
   cms_family: ASSOLO
-  seat: "Via Municipio 1, 6516 Cugnasco"
-  merger_note: "Fusione 2008 Cugnasco + Gerra Verzasca; cessione valle a Verzasca 2020"
+  seat: Via Municipio 1, 6516 Cugnasco
+  merger_note: Fusione 2008 Cugnasco + Gerra Verzasca; cessione valle a Verzasca 2020
   entities:
-    - { kind: COMUNE, name: "Comune di Cugnasco-Gerra" }
-    - { kind: AAP, name: "Azienda acqua potabile Cugnasco-Gerra" }
+  - kind: COMUNE
+    name: Comune di Cugnasco-Gerra
+  - kind: AAP
+    name: Azienda acqua potabile Cugnasco-Gerra
   sources:
-    - kind: CONTI_INDEX
-      url: https://www.cugnasco-gerra.ch/I-conti-del-Comune-43c4a500
-      strategy: assolo_list
-    - kind: ALBO
-      url: https://cugnasco-gerra.ch/Albo-comunale-3e117300
-      strategy: assolo_list
+  - kind: CONTI_INDEX
+    url: https://www.cugnasco-gerra.ch/I-conti-del-Comune-43c4a500
+    strategy: assolo_list
+  - kind: ALBO
+    url: https://cugnasco-gerra.ch/Albo-comunale-3e117300
+    strategy: assolo_list
   robots:
     crawl_delay_s: 30
   active: true
-
+  verified_at: '2026-11-01T18:16:35Z'
+  canary_url: https://www.cugnasco-gerra.ch/Login-2680db00?i=1
 - ust_code: 5396
   slug: terre-di-pedemonte
   name: Terre di Pedemonte
   circle: Melezza
   cms_family: ASSOLO
-  seat: "Via Cantonale 54, 6652 Tegna"
-  merger_note: "Fusione 2014 Cavigliano + Tegna + Verscio"
+  seat: Via Cantonale 54, 6652 Tegna
+  merger_note: Fusione 2014 Cavigliano + Tegna + Verscio
   entities:
-    - { kind: COMUNE, name: "Comune di Terre di Pedemonte" }
-    - { kind: AAP, name: "Azienda acqua potabile Terre di Pedemonte" }
+  - kind: COMUNE
+    name: Comune di Terre di Pedemonte
+  - kind: AAP
+    name: Azienda acqua potabile Terre di Pedemonte
   sources:
-    - kind: MM_INDEX
-      url: https://www.pedemonte.ch/Messaggi-861f7d00
-      strategy: assolo_list
-    - kind: SESSION_INDEX
-      url: https://www.pedemonte.ch/Sedute-di-Consiglio-comunale-5af21900
-      strategy: assolo_list
+  - kind: MM_INDEX
+    url: https://www.pedemonte.ch/Messaggi-861f7d00
+    strategy: assolo_list
+  - kind: SESSION_INDEX
+    url: https://www.pedemonte.ch/Sedute-di-Consiglio-comunale-5af21900
+    strategy: assolo_list
   robots:
     crawl_delay_s: 30
   active: true
-
+  verified_at: '2026-11-01T18:16:35Z'
+  canary_url: https://www.pedemonte.ch/Il-Comune-872fe600?i=1
 - ust_code: 5397
   slug: centovalli
   name: Centovalli
   circle: Melezza
   cms_family: WORDPRESS
-  seat: "Piazza Municipio, 6653 Intragna"
-  merger_note: "Fusione 2010 Borgnone + Intragna + Palagnedra"
+  seat: Piazza Municipio, 6653 Intragna
+  merger_note: Fusione 2010 Borgnone + Intragna + Palagnedra
   entities:
-    - { kind: COMUNE, name: "Comune delle Centovalli" }
+  - kind: COMUNE
+    name: Comune delle Centovalli
   sources:
-    - kind: MM_INDEX
-      url: https://centovalli.swiss/category/a4-messaggi-municipali/
-      strategy: wordpress_html
-    - kind: CONTI_INDEX
-      url: https://centovalli.swiss/category/a4-messaggi-municipali/preventivi/
-      strategy: wordpress_html
+  - kind: MM_INDEX
+    url: https://centovalli.swiss/category/a4-messaggi-municipali/
+    strategy: wordpress_html
+  - kind: CONTI_INDEX
+    url: https://centovalli.swiss/category/a4-messaggi-municipali/preventivi/
+    strategy: wordpress_html
   robots:
     crawl_delay_s: 10
   active: true
-
+  verified_at: '2026-11-01T18:16:35Z'
+  canary_url: https://centovalli.swiss/2026/05/11/mm296-approvazione-di-un-credito-di-fr-70000-per-la-manutenzione-di-alcuni-tratti-stradali-comunali-a-palagnedra/
 - ust_code: 5398
   slug: gambarogno
   name: Gambarogno
   circle: Gambarogno
   cms_family: ASSOLO
-  seat: "Viale Stazione 1, 6573 Magadino"
-  merger_note: "Fusione 2011 di 9 comuni (Caviano, Contone, Gerra G., Indemini, Magadino, Piazzogna, S. Nazzaro, S. Abbondio, Vira G.)"
+  seat: Viale Stazione 1, 6573 Magadino
+  merger_note: Fusione 2011 di 9 comuni (Caviano, Contone, Gerra G., Indemini, Magadino,
+    Piazzogna, S. Nazzaro, S. Abbondio, Vira G.)
   entities:
-    - { kind: COMUNE, name: "Comune di Gambarogno" }
+  - kind: COMUNE
+    name: Comune di Gambarogno
   sources:
-    - kind: MM_INDEX
-      url: https://www.gambarogno.ch/Messaggi-861f7d00
-      strategy: assolo_list
-    - kind: ALBO
-      url: https://www.gambarogno.ch/Albo-comunale-04399800
-      strategy: assolo_list
+  - kind: MM_INDEX
+    url: https://www.gambarogno.ch/Messaggi-861f7d00
+    strategy: assolo_list
+  - kind: ALBO
+    url: https://www.gambarogno.ch/Albo-comunale-04399800
+    strategy: assolo_list
   robots:
     crawl_delay_s: 30
   active: true
-
+  verified_at: '2026-11-01T18:16:35Z'
+  canary_url: https://www.gambarogno.ch/Benvenuti-nel-sito-del-Comune-di-Gambarogno-d95c6b00?i=1
 - ust_code: 5399
   slug: verzasca
   name: Verzasca
   circle: Verzasca
   cms_family: ASSOLO
-  seat: "Frazione Vogorno, 6632 Verzasca"
+  seat: Frazione Vogorno, 6632 Verzasca
   valid_from: 2020-10-18
-  merger_note: "Fusione 2020 di Brione V., Corippo, Frasco, Sonogno, Vogorno + territori montani di Cugnasco-Gerra e Lavertezzo"
+  merger_note: Fusione 2020 di Brione V., Corippo, Frasco, Sonogno, Vogorno + territori
+    montani di Cugnasco-Gerra e Lavertezzo
   entities:
-    - { kind: COMUNE, name: "Comune di Verzasca" }
+  - kind: COMUNE
+    name: Comune di Verzasca
   sources:
-    - kind: MM_INDEX
-      url: https://www.verzasca.swiss/Documenti-Consiglio-comunale-d5961d00
-      strategy: assolo_list
-    - kind: CONTI_INDEX
-      url: https://www.verzasca.swiss/Economia
-      strategy: assolo_list
+  - kind: MM_INDEX
+    url: https://www.verzasca.swiss/Documenti-Consiglio-comunale-d5961d00
+    strategy: assolo_list
+  - kind: CONTI_INDEX
+    url: https://www.verzasca.swiss/Economia
+    strategy: assolo_list
   robots:
     crawl_delay_s: 30
   active: true
+  verified_at: '2026-11-01T18:16:35Z'
+  canary_url: https://www.verzasca.swiss/Il-Comune-9a3e8a00?i=1

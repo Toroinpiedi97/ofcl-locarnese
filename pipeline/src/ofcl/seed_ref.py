@@ -71,6 +71,8 @@ class MunicipalitySpec(BaseModel):
     sources: list[SourceSpec]
     robots: RobotsSpec
     active: bool = True
+    verified_at: str | None = None
+    canary_url: str | None = None
 
 
 # ==============================================================================

@@ -197,7 +197,7 @@ class CoreLedgerValueRecord(BaseModel):
     column_role: Literal["CURRENT", "PRIOR_BUDGET", "PRIOR_ACTUAL"]
     ref_year: int
     value_kind: Literal["ACTUAL", "BUDGET", "PLAN"]
-    side: Literal["EXPENSE", "REVENUE", "ASSET", "LIABILITY"]
+    side: Literal["SPESA", "RICAVO", "ATTIVO", "PASSIVO"]
     amount_chf: Decimal
     amount_raw: str
     page: int

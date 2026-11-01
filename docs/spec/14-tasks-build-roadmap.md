@@ -33,7 +33,7 @@ flowchart LR
 - [x] **T006** [P] Configurare `.github/workflows/ci.yml` iniziale (guard anti-Corfin + lint/test Python + typecheck/build Next.js).
 - [x] **T007** Scaricare il **Manuale MCA2 SEL** e gli Allegati RGFCC ufficiali da `ti.ch/sel` e fissare in `docs/normativa/mca2-soglie-ufficiali.md` le formule esatte e gli estremi delle fasce degli 8 indicatori (risolve **C-03g** buco 9–10% e **C-03h** soglia 70% vs 80%).
 - [x] **T008** Scaricare dataset popolazione permanente STATPOP (`2019–2026`) da `opendata.swiss` / USTAT e moltiplicatori ufficiali (`2019–2026`) dalla **Divisione delle Contribuzioni DFE** per i codici UST `5091..5399` marcandoli `VERIFIED` (risolve **C-03k**).
-- [ ] **T009** Completare verifica live puntuale dei 19 portali comunali (inclusi i 3 indici dinamici **C-07**: Brione, Losone, Centovalli e i link firmati `&rif=` di Orselina **C-03a**) aggiornando `registry/comuni.yaml` con `verified_at` e `canary_url`.
+- [x] **T009** Completare verifica live puntuale dei 19 portali comunali (inclusi i 3 indici dinamici **C-07**: Brione, Losone, Centovalli e i link firmati `&rif=` di Orselina **C-03a**) aggiornando `registry/comuni.yaml` con `verified_at` e `canary_url`.
 - [x] **T010** [P] Compilare `registry/glossario.yaml` con sinonimi enti (`AAP`/`ACAP`, `AE`, `APONA`, `LEA`, `San Carlo`, `Casa Rea`), sezioni art. 22 RGFCC e keyword anti-dati-personali (`naturalizzazione`, `attinenza`, `esproprio`).
 - [ ] **T011** [P] Inviare **Template A** (`12-legal-compliance.md`) alla Cancelleria/Finanze della Città di Locarno per autorizzazione `/files/` o export strutturato (**C-02**).
 - [ ] **T012** [P] Inviare **Template B** (ex LIT) alle Cancellerie con lacune storiche `2022–2026` online rilevate in T009 (**C-11**).

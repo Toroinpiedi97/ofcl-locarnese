@@ -173,8 +173,13 @@ class WordPressConnector:
 
             # Link diretto a file PDF
             is_pdf = low_href.endswith(".pdf") or "/files/" in low_href or "download" in low_href
-            # Articolo o pagina trattanda (es. /documenti/mm-1557-consuntivo-2024/)
-            is_doc_page = "/documenti/" in low_href or "/mm-" in low_href or "preventiv" in low_href
+            # Articolo o pagina trattanda (es. /documenti/mm-1557-consuntivo-2024/ o /2026/05/11/mm294-...)
+            is_doc_page = (
+                "/documenti/" in low_href
+                or "preventiv" in low_href
+                or "consuntiv" in low_href
+                or bool(re.search(r"/(?:mm[-_]?\d+|crediti)", low_href))
+            )
 
             if not (is_pdf or is_doc_page):
                 continue
