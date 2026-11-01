@@ -261,7 +261,14 @@ export default async function MunicipalityDetailPage({ params }: PageProps) {
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <Link
+                href={`/segnala?comune=${mun.slug}&ust=${mun.ust_code}`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-medium hover:text-slate-900 dark:hover:text-white transition-colors"
+              >
+                <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+                <span>Segnala Discrepanza</span>
+              </Link>
               <Link
                 href="/confronta"
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-medium hover:text-slate-900 dark:hover:text-white transition-colors"
