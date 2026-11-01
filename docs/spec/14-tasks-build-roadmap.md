@@ -77,7 +77,7 @@ flowchart LR
 ## Fase 3 · Stadio 2–4 Pipeline: Classificatore, Parser PDF MCA2, Golden Set & Motore V01–V12
 
 - [x] **T029** Implementare `pipeline/src/ofcl/extract/chf_parser.py` (`parse_chf` al centesimo `0.01 CHF`, apostrofi, `.--`, `./.`, parentesi) + suite `pytest` + `Hypothesis` roundtrip (`tests/test_foundation_and_mca2.py` verde).
-- [ ] **T030** Implementare `ofcl/classify/classifier.py`: regole su titolo/URL + ispezione prime 3 pagine PDF + rilevamento flag `contains_personal_data` + `canonical_mm()` (`YEARLY_RESET` vs `SEQUENTIAL`).
+- [x] **T030** Implementare `ofcl/classify/classifier.py`: regole su titolo/URL + ispezione prime 3 pagine PDF + rilevamento flag `contains_personal_data` + `canonical_mm()` (`YEARLY_RESET` vs `SEQUENTIAL`).
 - [ ] **T031** [P] Costruire il **Golden Set MCA2** (`pipeline/tests/golden/`): selezionare 25 PDF reali (`2022–2026`) rappresentativi dei 5 CMS, layout Ge.Co.Ti. / Crystal Reports, aziende e scansioni, e redigere i file `expected/<sha256>.json` verificati a mano.
 - [ ] **T032** Implementare `ofcl/extract/pdf_inspector.py`: rilevamento text-layer, eventuale pre-passata `ocrmypdf` (`tesseract-ocr-ita`), indicizzatore pagine per sezioni art. 22 RGFCC (`lett. a, c, d, f, o`) e detector `layout_family`.
 - [ ] **T033** Evolvere lo spike `spike_pdfplumber.py` nell'estrattore geometrico strutturato `ofcl/extract/table_extractor.py` guidato da template YAML (`registry/layouts/gecoti_v3/*.yaml`, `crystal_reports/*.yaml`, `generic_grid/*.yaml`) salvando `page`, `bbox` e `amount_raw` per ogni cella.
