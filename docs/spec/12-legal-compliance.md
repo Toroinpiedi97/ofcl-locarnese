@@ -76,3 +76,55 @@ RingraziandoVi sin d'ora per la preziosa collaborazione istituzionale, porgiamo 
 [Nome Cognome]
 [Recapiti]
 ```
+
+---
+
+## 5. Testi Ufficiali del Disclaimer di Responsabilità (Verbatim)
+
+Per garantire la massima tutela legale e trasparenza verso cittadini, consiglieri comunali, giornalisti e amministrazioni pubbliche, il disclaimer opera su **4 livelli complementari**:
+
+### A. Livello 1: Top Banner Fisso (Tutte le pagine pubbliche)
+> **Avviso di trasparenza (art. 192 LOC):** OFCL è un osservatorio civico indipendente e non costituisce un servizio ufficiale. I dati contabili sono estratti dai documenti pubblici dei 19 Comuni e della Sezione degli enti locali (SEL). Agli effetti giuridici fanno fede esclusivamente gli atti originali pubblicati agli albi comunali. [Note legali complete →](/note-legali)
+
+### B. Livello 2: Footer Istituzionale (Tutte le pagine pubbliche)
+> **Disclaimer & Fonti:** Dati finanziari rielaborati a scopo informativo, statistico e civico. Fonti: Albi e siti web dei 19 Comuni del Distretto di Locarno, Sezione degli enti locali (SEL) del Cantone Ticino. Ai sensi dell'art. 192 LOC, hanno valore probatorio unicamente gli atti cartacei/digitali ufficiali esposti all'Albo pretorio. OFCL declina ogni responsabilità per eventuali errori di estrazione, trascrizione o disallineamento temporale. Dati aperti sotto licenza [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.it). [Segnala un'imprecisione contabile](/segnala) · [Note Legali & Privacy](/note-legali).
+
+### C. Livello 3: Metadati API (`meta.disclaimer`) e Intestazione CSV/Open Data
+- **In ogni payload JSON (`GET /api/v1/...`)**:
+```json
+{
+  "meta": {
+    "source": "OFCL - Osservatorio Finanze Comunali del Locarnese",
+    "legal_disclaimer": "Dati rielaborati a solo scopo conoscitivo. Agli effetti giuridici fanno fede esclusivamente gli atti ufficiali esposti all'albo comunale (art. 192 LOC). Non costituisce consulenza contabile, fiscale o legale.",
+    "official_sources": [
+      "Albi pretori e portali web ufficiali dei 19 Comuni del Distretto di Locarno",
+      "Sezione degli enti locali (SEL) - Dipartimento delle Istituzioni del Cantone Ticino"
+    ],
+    "license": "CC BY 4.0 (Creative Commons Attribution 4.0 International)",
+    "correction_url": "https://finanze-locarnese.ch/segnala"
+  }
+}
+```
+- **In cima a ogni export CSV/TSV**:
+```text
+# OFCL - Osservatorio Finanze Comunali del Locarnese | Dati MCA2 rielaborati
+# Disclaimer: Dati a solo scopo conoscitivo. Fanno fede esclusivamente gli atti ufficiali esposti all'albo (art. 192 LOC).
+# Fonti: Pubblicazioni ufficiali dei 19 Comuni del Locarnese e Sezione Enti Locali (SEL). Licenza: CC BY 4.0.
+# Segnalazioni e rettifiche: https://finanze-locarnese.ch/segnala
+```
+
+### D. Livello 4: Pagina Integrale `/note-legali` (Termini di Utilizzo e Clausole di Manleva)
+
+Il testo integrale copre obbligatoriamente i seguenti 10 capitoli codificati:
+
+1. **Natura del Portale & Indipendenza Civica:** Dichiarazione esplicita che OFCL è un progetto civico no-profit indipendente di trasparenza sui dati aperti e non un ente pubblico, né un organo ausiliario dei Comuni o del Cantone Ticino.
+2. **Fonti Ufficiali dei Dati:** Indicazione tassativa delle sorgenti (Albi comunali, Preventivi e Consuntivi comunali approvati, Allegati RGFCC `a–p`, Messaggi Municipali finanziari, rendiconti SEL).
+3. **Valore Legale Esclusivo dell'Albo Comunale (Art. 192 LOC RL 181.100):** Menhir giuridico in base al quale la pubblicazione digitale su OFCL non ha valore di notifica, esecutività o certificazione formale, riservata unicamente all'Albo pretorio.
+4. **Esclusione di Garanzia e Limitazione di Responsabilità:** Riconoscimento che l'acquisizione dei dati poggia su algoritmi di estrazione geometrica/OCR e riconciliazione automatica. Possibilità di errori materiali, ritardi di pubblicazione o divergenze contabili. Esclusione espressa di qualsiasi responsabilità per danni diretti, indiretti, patrimoniali o finanziari derivanti dall'affidamento sui dati. I dati non costituiscono parere professionale, contabile, fiscale o legale.
+5. **Diritto d'Autore & Riuso dei Dati Pubblici (Art. 5 cpv. 1 LDA RS 231.1):** Qualificazione degli atti comunali come documenti ufficiali esclusi dal diritto d'autore. Rilascio del valore aggiunto strutturato sotto licenza Creative Commons Attribuzione 4.0 Internazionale (CC BY 4.0).
+6. **Protezione dei Segni Pubblici (LPSt RS 232.21):** Attestazione del mancato utilizzo di stemmi araldici ufficiali della Confederazione, del Cantone o dei Comuni per prevenire confusione con le autorità pubbliche.
+7. **Protezione dei Dati Personali (nLPD RS 235.1 & LPDP RL 163.100):** Garanzia di assenza di trattamento sistematico di dati personali; esclusione preventiva di qualsiasi fascicolo concernente persone fisiche (naturalizzazioni, condoni, pendenze legali nominative).
+8. **Diritto di Accesso e Trasparenza (LIT RL 162.100):** Inquadramento della raccolta dati nell'esercizio del principio di trasparenza amministrativa sancito dal diritto cantonale.
+9. **Procedura di Segnalazione, Rettifica e Sospensione Cautelare (Notice & Take-Down in 24h):** Canale aperto per cittadini e funzionari comunali per richiedere l'immediata verifica o messa offline cautelativa di dati contestati.
+10. **Diritto Applicabile & Foro Competente:** Applicazione esclusiva del diritto materiale svizzero; foro competente per ogni eventuale controversia: Pretura del Distretto di Locarno e Città.
+

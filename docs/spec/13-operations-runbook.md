@@ -6,9 +6,9 @@ La pipeline adatta automaticamente la propria cadenza alle scadenze fissate dall
 
 | Finestra temporale | Evento istituzionale nei 19 Comuni | Schedulazione Cron | Focus operativo Curatore |
 |---|---|---|---|
-| **15 ott – 15 dic** | Trasmissione **Preventivi anno `T+1`** (termine legale art. 151 LOC: **31 ottobre**) + voto moltiplicatori in CC a nov/dic | **Mar & Ven 03:15 CET** | Alta priorità: validazione Preventivi `PROPOSTA` a novembre e versioni `APPROVATO / EMENDATO` dopo le sedute natalizie dei CC |
-| **15 mar – 30 giu** | Pubblicazione **Consuntivi anno `T-1`** + Allegati `a–p` art. 22 RGFCC + liquidazione crediti d'opera | **Mar & Ven 03:15 CET** | Picco annuale principale: riconciliazione Allegato f (sorpassi), ricalcolo 8 indicatori SEL, rilascio Open Data primaverile |
-| **Lug – Set / Gen – Mar** | Sessioni ordinarie/straordinarie CC: **Messaggi di richiesta credito**, crediti suppletori, Piani Finanziari quadriennali, statistiche SEL/USTAT | **Lun 03:15 CET** | Aggiornamento anagrafica popolazione STATPOP (settembre), verifica nuovi crediti d'investimento (~20 min/settimana) |
+| **Tutto l'anno (Standard)** | Scansione massiva e cortese dei 19 albi comunali | **Lun 04:00 CET** (settimanale) | Verifica nuovi PDF caricati su R2, controllo canarini e coda `NEEDS_REVIEW` |
+| **15 ott – 15 dic** | Sessione Preventivi (termine 31.10) e moltiplicatori | **Lun 04:00 CET** (+ dispatch manuale post sedute CC) | Validazione Preventivi e sdoppiamento aliquote PF/PG approvate dai Consigli Comunali |
+| **15 mar – 30 giu** | Sessione Consuntivi + Allegati `a–p` (art. 22 RGFCC) | **Lun 04:00 CET** (+ dispatch manuale post sedute CC) | Chiusura consuntivi anno precedente, ricalcolo 8 indicatori SEL e rilascio Open Data |
 
 ---
 

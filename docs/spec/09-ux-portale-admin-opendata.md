@@ -194,3 +194,60 @@ web/src/
 - **Layout:** Flusso verticale a card singola con ricerca in evidenza e lista comuni a blocchi touch-friendly.
 - **Bottom Sheet / Drawer Scorrevole:** Il tocco su un comune apre un cassetto scorrevole dal basso (trascinabile o espandibile con gesture) che presenta le 4 Grandi Cifre, i semafori SEL e l'eventuale allerta crediti d'opera.
 - **Ergonomia One-Hand:** Tutti i target interattivi hanno altezza minima di `44px` conformemente alle linee guida Apple HIG e WCAG 2.1 AA, permettendo la consultazione rapida da smartphone con una sola mano.
+
+---
+
+### 6.3 Micro-Disclaimer Istituzionale & Frequenza di Aggiornamento
+In conformità alle decisioni di progetto, il testo informativo sintetico fisso nell'Header superiore e nel Footer adotta la seguente dicitura:
+> *"Dati aggiornati settimanalmente (ogni lunedì alle 04:00 CET). Fanno fede gli atti esposti ex art. 192 LOC."*
+
+Questa formulazione essenziale garantisce trasparenza sulla cadenza di aggiornamento senza sovraccaricare visivamente la navigazione.
+
+---
+
+### 6.4 Modulo Civico di Segnalazione & Rettifica ("Civic Ticket Sandbox")
+Per consentire a cittadini, contabili, consiglieri comunali e giornalisti di segnalare discrepanze nei dati esposti, l'interfaccia include un popover/modal interattivo "Segnala una discrepanza / Proponi una correzione":
+- **Architettura di Sicurezza & Sandbox Rigorosa:**
+  - Solo input di testo semplice con sanitizzazione server-side (rimozione di tag HTML, caratteri di controllo e codice eseguibile, zero vulnerabilità XSS/SQLi).
+  - Limite di lunghezza: massimo **500 caratteri**.
+  - Rate limiting protetto per IP: massimo 3 segnalazioni all'ora per indirizzo IP.
+  - Honeypot invisibile e token CSRF per bloccare bot e spam automatico.
+- **Flusso Operativo e Canale di Notifica:**
+  - L'endpoint protetto `POST /api/feedback` registra la segnalazione nello schema di audit (`audit.feedback_ticket`) con stato `NEW` e contesto associato (Comune, codice UST, metrica o delibera segnalata).
+  - L'API recapita contestualmente una notifica email strutturata all'indirizzo del curatore responsabile: `nicolas.vecchio241097@gmail.com`.
+  - La notifica include: timestamp, codice UST, nome del Comune, metrica o delibera contestata, testo della segnalazione e link diretto allo split-view di revisione (`/admin/review/[versionId]`).
+
+---
+
+### 6.5 Civic Deep Dive: "Vivere nel Comune: Tasse, Tariffe, Famiglie & Servizi"
+Oltre ai tabulati contabili e alla "Regola dei 30 Secondi", la scheda di ciascun Comune integra una sezione di approfondimento pratico strutturata in quadranti Bento ordinati, volta a offrire alle famiglie e ai residenti del Locarnese una visione completa del costo della vita e dei servizi municipali:
+
+#### Quadrante A: Tariffe di Causalità & Costi Obbligatori (Cosa pago ogni anno?)
+- **Tassa Base Rifiuti & Tariffa Puntuale:** Costo annuo della tassa base a fuoco/residente + costo del sacco ufficiale dei rifiuti (es. 1.30 CHF per sacco da 35L).
+- **Acqua Potabile & Fognature:** Tariffa al metro cubo consumato (`CHF/m³`) + quota fissa di allacciamento (con indicazione dell'azienda distributrice: es. SES, ACAP, Azienda Acqua comunale).
+- **Imposta Immobiliare Comunale:** Aliquota applicata ai valori di stima (es. 0.0‰ a Losone, 1.5‰ a Locarno o altro comune).
+- **Tassa sui Cani:** Importo della tassa annua comunale (con indicazione delle esenzioni per cani d'utilità o guida).
+- **Parcheggi & Mobilità Residenziale:** Costo dell'abbonamento annuo o mensile per parcheggi in zona blu / stalli riservati ai residenti.
+
+#### Quadrante B: Sostegno alle Famiglie, Infanzia & Educazione (Cosa offre il Comune?)
+- **Bonus / Assegno Comunale di Nascita:** Importo una-tantum riconosciuto dal Comune per ogni neonato residente (es. 500–1'000 CHF).
+- **Retta Nido d'Infanzia & Asili:** Tariffa oraria/mensile calmierata per le famiglie residenti e sussidi comunali integrativi rispetto al Cantone.
+- **Ristorazione Scolastica & Doposcuola:** Costo del pasto alla mensa scolastica (tariffa differenziata per fasce di reddito) e contributo al servizio parascolastico.
+- **Sussidi per Attività Giovanili (Sport & Musica):** Contributi comunali a fondo perso per i giovani (<18 anni) iscritti a società sportive o scuole di musica riconosciute.
+- **Borse di Studio & Sussidi Scolastici:** Buoni comunali per l'acquisto di libri di testo per scuole medie, superiori o apprendisti.
+
+#### Quadrante C: Terza Età, Inclusione Sociale & Salute
+- **Pasti a Domicilio & Sostegno Spitex:** Servizio comunale per anziani e persone non autosufficienti con tariffe agevolate.
+- **Agevolazioni Lidi & Centri Balneari per Anziani (AVS):** Accesso gratuito o abbonamenti fortemente scontati per residenti AVS a lidi e piscine comunali (es. Lido Locarno, centri balneari lacustri).
+- **Trasporto Sociale Anziani:** Servizi comunali o convenzionati di trasporto per visite mediche o commissioni essenziali.
+
+#### Quadrante D: Sostenibilità Energetica, Clima & Trasporti
+- **Incentivi Comunali per l'Energia (Clima & Risparmio):** Fondo comunale per impianti fotovoltaici, pompe di calore e risanamenti termici (contributi CHF/kWp o forfait che si sommano ai sussidi cantonali FER).
+- **Sconti Trasporto Pubblico (Comunità Tariffale Arcobaleno):** Percentuale di rimborso comunale sull'abbonamento annuale per giovani studenti o pensionati.
+- **Incentivi alla Mobilità Dolce:** Contributi all'acquisto di biciclette elettriche (E-Bike) o stazioni di ricarica domestiche.
+- **Smaltimento Scarti Vegetali (Verde):** Modalità del servizio (gratuito con ecocentro o tramite abbonamento a bidone carrellato).
+
+#### Quadrante E: Informazioni Istituzionali & Sportello
+- **Moltiplicatore Fiscale Differenziato:** Quota PF (Persone Fisiche) e quota PG (Persone Giuridiche).
+- **Tassa di Soggiorno Turistica:** Costo per notte applicato nei comuni turistici (es. Ascona, Brissago, Locarno).
+- **Cancelleria & Pratiche:** Costo di rilascio certificati anagrafici (es. certificato di domicilio o stato di famiglia) e canali di sportello.

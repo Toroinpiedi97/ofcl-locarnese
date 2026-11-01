@@ -87,11 +87,10 @@ class Connector(Protocol):
 
 ## 4. Calendario di scansione
 
-| Periodo | Frequenza | Motivo |
-|---|---|---|
-| 1 ott – 30 nov | 2×/settimana | Preventivi (scadenza 31.10) |
-| 1 mar – 30 giu | 2×/settimana | Consuntivi |
-| resto dell'anno | 1×/settimana | crediti d'investimento, PF |
+| Periodo | Frequenza | Schedulazione | Motivo |
+|---|---|---|---|
+| Tutto l'anno | 1×/settimana (massiva) | Lunedì 04:00 CET | Acquisizione massiva e cortese dei 19 albi con hash SHA-256 e zero impatto sui server comunali |
+| Picchi preventivi / consuntivi | 1×/settimana + dispatch manuale | Lunedì 04:00 CET | Aggiornamento rapido su richiesta a seguito delle delibere dei Consigli Comunali |
 
 ## 5. Fonti cantonali e federali
 
