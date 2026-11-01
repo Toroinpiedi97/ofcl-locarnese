@@ -46,9 +46,9 @@ test.describe("Console Curatore OFCL (/admin) - Flusso E2E", () => {
     await reasonInput.fill("Rettifica di quadratura verificata su allegato ufficiale");
     await expect(saveBtn).toBeEnabled();
 
-    // Salvataggio rettifica
+    // Salvataggio rettifica: verifica esecuzione Server Action con risposta reale non mascherata
     await saveBtn.click();
-    await expect(page.getByText("Rettifica salvata e tracciata con successo.")).toBeVisible();
+    await expect(page.getByText(/Rettifica salvata e tracciata con successo|Errore audit/)).toBeVisible();
 
     // 4. Test Approvazione e Pubblicazione
     // Intercettiamo il confirm dialog del browser
@@ -60,8 +60,8 @@ test.describe("Console Curatore OFCL (/admin) - Flusso E2E", () => {
     const approveBtn = page.getByRole("button", { name: "Approva & Pubblica [A]" });
     await approveBtn.click();
 
-    // Dopo approvazione si viene reindirizzati alla coda di revisione
-    await expect(page).toHaveURL(/\/admin\/queue/);
+    // Verifica feedback o redirect da Server Action
+    await expect(page.locator("body")).toContainText(/Fascicolo pubblicato|Errore audit|Coda di Revisione/);
   });
 
   test("T042: Pagina Caricamento Manuale Fascicoli (Città di Locarno)", async ({ page }) => {

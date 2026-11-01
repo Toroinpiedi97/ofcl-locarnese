@@ -486,7 +486,6 @@ export type Database = {
       };
       indicators: {
         Row: {
-          id: number;
           version_id: string;
           doc_type: string;
           fiscal_year: number;
@@ -498,10 +497,9 @@ export type Database = {
           unit: "PCT" | "CHF_PER_CAPITA" | "INDEX";
           formula_text: string;
           higher_is_better: boolean;
-          reported_value: number | null;
-          computed_value: number | null;
-          diff_value: number | null;
-          source_page: number | null;
+          source: "REPORTED" | "COMPUTED";
+          value: number | null;
+          inputs: Json | null;
           band_label: string | null;
           band_color: "good" | "warning" | "critical" | null;
         };
@@ -525,7 +523,6 @@ export type Database = {
           file_size_bytes: number;
           page_count: number;
           fetched_at: string;
-          published_at: string | null;
           status: string;
         };
       };

@@ -1,6 +1,6 @@
 """
 Calcolatore Ufficiale degli 8 Indicatori Finanziari SEL (Canton Ticino - RGFCC art. 22 lett. o).
-Conformità: docs/spec/07-validation-engine.md §3 e skills/mca2-validation-engine §2.
+Conformità: docs/spec/07-validation-engine.md §3, docs/normativa/mca2-soglie-ufficiali.md e skills/mca2-validation-engine §2.
 """
 
 from __future__ import annotations
@@ -98,23 +98,24 @@ class SelIndicatorsCalculator:
             delta_reported=delta_1,
         )
 
-        # 2. SELF_FIN_DEGREE: Grado di autofinanziamento (%)
+        # 2. SELF_FINANCING_DEGREE: Grado di autofinanziamento (%)
         # Formula: (Autofinanziamento / Investimenti netti BA) * 100
+        # Soglie C-03h: > 100% Buono, >= 70% Accettabile/Medio, < 70% Debole
         val_self_fin: Decimal | None = None
         band_self_fin: EvaluationBand = "N_A"
         if data.investimenti_netti_ba > Decimal("0.00"):
             val_self_fin = ((data.autofinanziamento / data.investimenti_netti_ba) * Decimal(100)).quantize(Decimal("0.1"))
             if val_self_fin > Decimal("100.0"):
                 band_self_fin = "BUONO"
-            elif val_self_fin >= Decimal("80.0"):
-                band_self_fin = "NORMALE"
+            elif val_self_fin >= Decimal("70.0"):
+                band_self_fin = "ACCETTABILE"
             else:
                 band_self_fin = "DEBOLE"
 
         rep_2 = reported.get("grado_autofinanziamento_pct")
         delta_2 = (val_self_fin - rep_2).quantize(Decimal("0.1")) if val_self_fin is not None and rep_2 is not None else None
-        results["SELF_FIN_DEGREE"] = IndicatorResult(
-            code="SELF_FIN_DEGREE",
+        results["SELF_FINANCING_DEGREE"] = IndicatorResult(
+            code="SELF_FINANCING_DEGREE",
             name="Grado di autofinanziamento",
             unit="%",
             value=val_self_fin,
@@ -123,7 +124,7 @@ class SelIndicatorsCalculator:
             delta_reported=delta_2,
         )
 
-        # 3. INTEREST_SHARE: Quota spese per interessi (%)
+        # 3. INTEREST_BURDEN_RATIO: Quota spese per interessi (%)
         # Formula: ((Spese interessi 340 - Ricavi interessi 440) / Ricavi correnti) * 100
         val_interest: Decimal | None = None
         band_interest: EvaluationBand = "N_A"
@@ -139,8 +140,8 @@ class SelIndicatorsCalculator:
 
         rep_3 = reported.get("quota_spese_interessi_pct")
         delta_3 = (val_interest - rep_3).quantize(Decimal("0.1")) if val_interest is not None and rep_3 is not None else None
-        results["INTEREST_SHARE"] = IndicatorResult(
-            code="INTEREST_SHARE",
+        results["INTEREST_BURDEN_RATIO"] = IndicatorResult(
+            code="INTEREST_BURDEN_RATIO",
             name="Quota spese per interessi",
             unit="%",
             value=val_interest,
@@ -149,7 +150,7 @@ class SelIndicatorsCalculator:
             delta_reported=delta_3,
         )
 
-        # 4. NET_DEBT_PC: Debito pubblico netto pro capite (CHF/ab)
+        # 4. NET_DEBT_PER_CAPITA: Debito pubblico netto pro capite (CHF/ab)
         # Formula: Debito pubblico netto / Popolazione residente permanente
         val_debt_pc: Decimal | None = None
         band_debt_pc: EvaluationBand = "N_A"
@@ -166,8 +167,8 @@ class SelIndicatorsCalculator:
 
         rep_4 = reported.get("debito_netto_pro_capite_chf")
         delta_4 = (val_debt_pc - rep_4).quantize(Decimal("1.00")) if val_debt_pc is not None and rep_4 is not None else None
-        results["NET_DEBT_PC"] = IndicatorResult(
-            code="NET_DEBT_PC",
+        results["NET_DEBT_PER_CAPITA"] = IndicatorResult(
+            code="NET_DEBT_PER_CAPITA",
             name="Debito pubblico netto pro capite",
             unit="CHF/ab",
             value=val_debt_pc,
@@ -176,7 +177,7 @@ class SelIndicatorsCalculator:
             delta_reported=delta_4,
         )
 
-        # 5. INVEST_SHARE: Quota degli investimenti (%)
+        # 5. INVESTMENT_RATIO: Quota degli investimenti (%)
         # Formula: (Investimenti lordi BA / Uscite totali consolidate) * 100
         val_invest: Decimal | None = None
         band_invest: EvaluationBand = "N_A"
@@ -193,8 +194,8 @@ class SelIndicatorsCalculator:
 
         rep_5 = reported.get("quota_investimenti_pct")
         delta_5 = (val_invest - rep_5).quantize(Decimal("0.1")) if val_invest is not None and rep_5 is not None else None
-        results["INVEST_SHARE"] = IndicatorResult(
-            code="INVEST_SHARE",
+        results["INVESTMENT_RATIO"] = IndicatorResult(
+            code="INVESTMENT_RATIO",
             name="Quota degli investimenti",
             unit="%",
             value=val_invest,
@@ -203,7 +204,7 @@ class SelIndicatorsCalculator:
             delta_reported=delta_5,
         )
 
-        # 6. EQUITY_SHARE: Quota di capitale proprio (%)
+        # 6. EQUITY_RATIO: Quota di capitale proprio (%)
         # Formula: (Capitale proprio / Totale passivi) * 100
         val_equity: Decimal | None = None
         band_equity: EvaluationBand = "N_A"
@@ -220,8 +221,8 @@ class SelIndicatorsCalculator:
 
         rep_6 = reported.get("quota_capitale_proprio_pct")
         delta_6 = (val_equity - rep_6).quantize(Decimal("0.1")) if val_equity is not None and rep_6 is not None else None
-        results["EQUITY_SHARE"] = IndicatorResult(
-            code="EQUITY_SHARE",
+        results["EQUITY_RATIO"] = IndicatorResult(
+            code="EQUITY_RATIO",
             name="Quota di capitale proprio",
             unit="%",
             value=val_equity,
@@ -230,36 +231,7 @@ class SelIndicatorsCalculator:
             delta_reported=delta_6,
         )
 
-        # 7. DEBT_SHARE: Quota di indebitamento lordo (%)
-        # Formula: (Debito lordo / Ricavi correnti) * 100
-        val_debt_share: Decimal | None = None
-        band_debt_share: EvaluationBand = "N_A"
-        if data.ricavi_correnti > Decimal("0.00"):
-            val_debt_share = ((data.debito_lordo / data.ricavi_correnti) * Decimal(100)).quantize(Decimal("0.1"))
-            if val_debt_share < Decimal("50.0"):
-                band_debt_share = "OTTIMO"
-            elif val_debt_share <= Decimal("100.0"):
-                band_debt_share = "BUONO"
-            elif val_debt_share <= Decimal("150.0"):
-                band_debt_share = "MEDIO"
-            elif val_debt_share <= Decimal("200.0"):
-                band_debt_share = "DEBOLE"
-            else:
-                band_debt_share = "CRITICO"
-
-        rep_7 = reported.get("quota_indebitamento_lordo_pct")
-        delta_7 = (val_debt_share - rep_7).quantize(Decimal("0.1")) if val_debt_share is not None and rep_7 is not None else None
-        results["DEBT_SHARE"] = IndicatorResult(
-            code="DEBT_SHARE",
-            name="Quota di indebitamento lordo",
-            unit="%",
-            value=val_debt_share,
-            band=band_debt_share,
-            reported_value=rep_7,
-            delta_reported=delta_7,
-        )
-
-        # 8. DEBT_SERVICE_SHARE: Quota degli oneri finanziari (%)
+        # 7. CAPITAL_SERVICE_RATIO: Quota degli oneri finanziari (%)
         # Formula: (Oneri finanziari / Ricavi correnti) * 100
         val_service: Decimal | None = None
         band_service: EvaluationBand = "N_A"
@@ -272,14 +244,40 @@ class SelIndicatorsCalculator:
             else:
                 band_service = "ALTO"
 
-        rep_8 = reported.get("quota_oneri_finanziari_pct")
-        delta_8 = (val_service - rep_8).quantize(Decimal("0.1")) if val_service is not None and rep_8 is not None else None
-        results["DEBT_SERVICE_SHARE"] = IndicatorResult(
-            code="DEBT_SERVICE_SHARE",
+        rep_7 = reported.get("quota_oneri_finanziari_pct")
+        delta_7 = (val_service - rep_7).quantize(Decimal("0.1")) if val_service is not None and rep_7 is not None else None
+        results["CAPITAL_SERVICE_RATIO"] = IndicatorResult(
+            code="CAPITAL_SERVICE_RATIO",
             name="Quota degli oneri finanziari",
             unit="%",
             value=val_service,
             band=band_service,
+            reported_value=rep_7,
+            delta_reported=delta_7,
+        )
+
+        # 8. SELF_FINANCING_CAPACITY: Capacità di autofinanziamento (%)
+        # Formula: (Autofinanziamento / Ricavi correnti) * 100
+        # Soglie SEL: > 20% Buona, 10-20% Media, < 10% Debole
+        val_capacity: Decimal | None = None
+        band_capacity: EvaluationBand = "N_A"
+        if data.ricavi_correnti > Decimal("0.00"):
+            val_capacity = ((data.autofinanziamento / data.ricavi_correnti) * Decimal(100)).quantize(Decimal("0.1"))
+            if val_capacity > Decimal("20.0"):
+                band_capacity = "BUONO"
+            elif val_capacity >= Decimal("10.0"):
+                band_capacity = "MEDIO"
+            else:
+                band_capacity = "DEBOLE"
+
+        rep_8 = reported.get("capacita_autofinanziamento_pct")
+        delta_8 = (val_capacity - rep_8).quantize(Decimal("0.1")) if val_capacity is not None and rep_8 is not None else None
+        results["SELF_FINANCING_CAPACITY"] = IndicatorResult(
+            code="SELF_FINANCING_CAPACITY",
+            name="Capacità di autofinanziamento",
+            unit="%",
+            value=val_capacity,
+            band=band_capacity,
             reported_value=rep_8,
             delta_reported=delta_8,
         )

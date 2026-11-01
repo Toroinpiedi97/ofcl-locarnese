@@ -141,20 +141,25 @@ def test_sel_indicators_calculator_all_8_and_bands() -> None:
     assert r1.band == "ECCESSIVO"
 
     # 2. Grado di autofinanziamento: 437'731 / 801'495 ~ 54.6%
-    r2 = results["SELF_FIN_DEGREE"]
+    r2 = results["SELF_FINANCING_DEGREE"]
     assert r2.value == Decimal("54.6")
     assert r2.band == "DEBOLE"
 
     # 3. Quota interessi netti negativa: Buona
-    r3 = results["INTEREST_SHARE"]
+    r3 = results["INTEREST_BURDEN_RATIO"]
     assert r3.band == "BUONO"
 
     # 4. Debito pro capite: 5'122'098 / 435 ~ 11'775 CHF/ab
-    r4 = results["NET_DEBT_PC"]
+    r4 = results["NET_DEBT_PER_CAPITA"]
     assert r4.value is not None and r4.value > Decimal("10000.00")
     assert r4.band == "ECCESSIVO"
 
     # 6. Quota capitale proprio: 1.41M / 9.72M ~ 14.5%
-    r6 = results["EQUITY_SHARE"]
+    r6 = results["EQUITY_RATIO"]
     assert r6.value == Decimal("14.5")
     assert r6.band == "MEDIO"
+
+    # 8. Capacità di autofinanziamento: 437'731 / 2.99M ~ 14.6%
+    r8 = results["SELF_FINANCING_CAPACITY"]
+    assert r8.value == Decimal("14.6")
+    assert r8.band == "MEDIO"

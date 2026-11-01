@@ -146,8 +146,7 @@ group by lg.entity_id, e.ust_code, m.name, e.kind, e.name, lg.ref_year, lg.value
 
 -- 3d. Vista 8 Indicatori Finanziari SEL con fasce cromatiche
 create view api.indicators as
-select iv.id,
-       iv.version_id,
+select iv.version_id,
        c.doc_type,
        c.fiscal_year,
        iv.entity_id,
@@ -158,10 +157,9 @@ select iv.id,
        idef.unit,
        idef.formula_text,
        idef.higher_is_better,
-       iv.reported_value,
-       iv.computed_value,
-       iv.diff_value,
-       iv.source_page,
+       iv.source,
+       iv.value,
+       iv.inputs,
        isc.label_it as band_label,
        isc.color_token as band_color
 from core.indicator_value iv
@@ -176,8 +174,8 @@ left join lateral (
   from ref.indicator_scale s
   where s.indicator_code = iv.indicator_code
     and s.valid_from <= make_date(c.fiscal_year, 1, 1)
-    and (s.lower_bound is null or coalesce(iv.computed_value, iv.reported_value) >= s.lower_bound)
-    and (s.upper_bound is null or coalesce(iv.computed_value, iv.reported_value) <= s.upper_bound)
+    and (s.lower_bound is null or iv.value >= s.lower_bound)
+    and (s.upper_bound is null or iv.value <= s.upper_bound)
   order by s.valid_from desc, s.band_order asc
   limit 1
 ) isc on true;
@@ -198,10 +196,9 @@ select v.id as version_id,
        d.published_on,
        d.acquisition,
        v.sha256,
-       v.file_size_bytes,
-       v.page_count,
+       v.bytes as file_size_bytes,
+       v.pages as page_count,
        v.fetched_at,
-       v.published_at,
        v.status
 from raw.document_version v
 join raw.document d on d.id = v.document_id
