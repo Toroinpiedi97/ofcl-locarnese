@@ -113,7 +113,7 @@ create table core.investment_credit (
   mm_number       text,
   title           text not null,
   vote_date       date,
-  authorization   text check (authorization in ('CC_ORDINARIO','CREDITO_QUADRO','DELEGA_MUNICIPIO','A_POSTERIORE','SUPPLETORIO')),
+  authorization_kind text check (authorization_kind in ('CC_ORDINARIO','CREDITO_QUADRO','DELEGA_MUNICIPIO','A_POSTERIORE','SUPPLETORIO')),
   amount_voted    numeric(16,2),                         -- importo lordo votato
   net_expected    numeric(16,2),                         -- investimento netto previsto
   vat_included    boolean,
