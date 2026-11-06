@@ -33,6 +33,8 @@ class DiscoveredDocument:
     mm_number: str | None = None  # es. 'MM 08/2026'
     fiscal_year: int | None = None  # es. 2026 o 2027
     contains_personal_data: bool = False  # Guardrail nLPD / LPDP
+    summary_md: str | None = None  # Estratto Fit-Markdown pulito (se pagina di 2° livello)
+    selector_relocated: bool = False  # True se individuato tramite rilocazione adattiva Scrapling
     metadata: dict[str, Any] = field(default_factory=dict)
 
 
@@ -59,4 +61,6 @@ class DownloadResult:
     local_path: Path | None = None
     r2_key: str | None = None
     etag: str | None = None
+    last_modified: str | None = None
     error: str | None = None
+

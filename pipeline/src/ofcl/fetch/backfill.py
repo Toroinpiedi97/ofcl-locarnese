@@ -47,6 +47,7 @@ async def run_regional_backfill(
             5121, 5125, 5131, 5136, 5138, 5396, 5397, 5398, 5399,
         ]
 
+    started_at = datetime.now(UTC)
     crawler = CorteseCrawler(
         registry_yaml_path=registry_path,
         raw_pdf_dir=raw_pdf_dir,
@@ -60,7 +61,7 @@ async def run_regional_backfill(
     skipped_privacy_nlpd: int = 0
     manual_intake_locarno: int = 0
 
-    async with httpx.AsyncClient(headers={"User-Agent": "OFCL-Bot/1.0 (+https://ofcl.ch/bot)"}) as client:
+    async with httpx.AsyncClient(headers={"User-Agent": "OFCL-Bot/1.0 (+https://ofcl.ch/bot; info@ofcl.ch)"}) as client:
         for ust in target_usts:
             mun = crawler.get_municipality_by_ust(ust)
             if not mun:
@@ -131,6 +132,9 @@ async def run_regional_backfill(
             except Exception as exc:  # noqa: BLE001
                 logger.error("Errore backfill per comune %s (UST %d): %s", mun["name"], ust, exc)
 
+    finished_at = datetime.now(UTC)
+    duration_s = round((finished_at - started_at).total_seconds(), 2)
+
     stats = {
         "total_municipalities": len(target_usts),
         "total_discovered": total_discovered,
@@ -140,10 +144,12 @@ async def run_regional_backfill(
     }
 
     report = {
-        "generated_at": datetime.now(UTC).isoformat(),
+        "generated_at": finished_at.isoformat(),
+        "duration_seconds": duration_s,
         "batch": batch or "ALL",
         "stats": stats,
         "results": results,
     }
 
     return report
+

@@ -38,8 +38,8 @@ jobs:
         run: uv sync --all-extras
         working-directory: pipeline
 
-      - name: Scansione Cortese 19 Portali Comunali (Crawl)
-        run: uv run ofcl crawl --ust all --max-docs 20
+      - name: Scansione Cortese 19 Portali Comunali (Crawl v2)
+        run: uv run ofcl crawl --ust all --max-docs 20 --concurrency 6 --max-pages 3
         working-directory: pipeline
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}

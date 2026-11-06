@@ -476,6 +476,28 @@ def main() -> None:
         action="store_true",
         help="Esecuzione rapida senza crawl-delay (uso interno / test)",
     )
+    crawl_parser.add_argument(
+        "--concurrency",
+        type=int,
+        default=6,
+        help="Numero massimo di domini comunali scansionati in parallelo (default: 6)",
+    )
+    crawl_parser.add_argument(
+        "--max-pages",
+        type=int,
+        default=3,
+        help="Numero massimo di pagine di paginazione per fonte (default: 3)",
+    )
+    crawl_parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="Riprende la scansione saltando i Comuni già completati in data/crawl_state.json",
+    )
+    crawl_parser.add_argument(
+        "--http-cache",
+        action="store_true",
+        help="Abilita la cache disco HTML in data/.http_cache per sviluppo/debug",
+    )
 
     # Subcommand: inspect-pdf
     inspect_parser = subparsers.add_parser("inspect-pdf", help="Ispezione geometrica e indicizzazione di un PDF")
