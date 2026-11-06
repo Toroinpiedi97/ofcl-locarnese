@@ -29,7 +29,16 @@
     },
     "tax_multiplier_pf": 75,
     "tax_multiplier_pg": 75,
-    "waste_base_fee": "80.00 CHF/anno"
+    "waste_base_fee": "80.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "80.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 115,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 500,
+      "canteen_meal_chf": 9,
+      "climate_fund_active": true
+    }
   },
   {
     "ust_code": 5096,
@@ -61,7 +70,16 @@
     },
     "tax_multiplier_pf": 78,
     "tax_multiplier_pg": 78,
-    "waste_base_fee": "85.00 CHF/anno"
+    "waste_base_fee": "110.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "110.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 500,
+      "canteen_meal_chf": 9,
+      "climate_fund_active": true
+    }
   },
   {
     "ust_code": 5097,
@@ -93,7 +111,16 @@
     },
     "tax_multiplier_pf": 85,
     "tax_multiplier_pg": 85,
-    "waste_base_fee": "95.00 CHF/anno"
+    "waste_base_fee": "130.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "130.00 CHF/anno",
+      "waste_bag_35l_chf": 1.1,
+      "dog_tax_chf": 80,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 600,
+      "canteen_meal_chf": 8.5,
+      "climate_fund_active": true
+    }
   },
   {
     "ust_code": 5108,
@@ -125,7 +152,16 @@
     },
     "tax_multiplier_pf": 88,
     "tax_multiplier_pg": 88,
-    "waste_base_fee": "80.00 CHF/anno"
+    "waste_base_fee": "80.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "80.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 500,
+      "canteen_meal_chf": 9,
+      "climate_fund_active": true
+    }
   },
   {
     "ust_code": 5112,
@@ -157,7 +193,16 @@
     },
     "tax_multiplier_pf": 100,
     "tax_multiplier_pg": 100,
-    "waste_base_fee": "100.00 CHF/anno"
+    "waste_base_fee": "100.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "100.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 1,
+      "birth_bonus_chf": 500,
+      "canteen_meal_chf": 8.5,
+      "climate_fund_active": true
+    }
   },
   {
     "ust_code": 5113,
@@ -189,7 +234,16 @@
     },
     "tax_multiplier_pf": 90,
     "tax_multiplier_pg": 97,
-    "waste_base_fee": "110.00 CHF/anno"
+    "waste_base_fee": "110.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "110.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 1.5,
+      "birth_bonus_chf": 800,
+      "canteen_meal_chf": 7.5,
+      "climate_fund_active": true
+    }
   },
   {
     "ust_code": 5115,
@@ -221,7 +275,16 @@
     },
     "tax_multiplier_pf": 90,
     "tax_multiplier_pg": 90,
-    "waste_base_fee": "90.00 CHF/anno"
+    "waste_base_fee": "90.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "90.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 1000,
+      "canteen_meal_chf": 8,
+      "climate_fund_active": true
+    }
   },
   {
     "ust_code": 5117,
@@ -253,7 +316,16 @@
     },
     "tax_multiplier_pf": 100,
     "tax_multiplier_pg": 100,
-    "waste_base_fee": "120.00 CHF/anno"
+    "waste_base_fee": "120.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "120.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 500,
+      "canteen_meal_chf": 9,
+      "climate_fund_active": false
+    }
   },
   {
     "ust_code": 5118,
@@ -285,7 +357,16 @@
     },
     "tax_multiplier_pf": 82,
     "tax_multiplier_pg": 82,
-    "waste_base_fee": "85.00 CHF/anno"
+    "waste_base_fee": "85.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "85.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 90,
+      "real_estate_tax_permille": 1,
+      "birth_bonus_chf": 500,
+      "canteen_meal_chf": 8.5,
+      "climate_fund_active": true
+    }
   },
   {
     "ust_code": 5120,
@@ -317,14 +398,23 @@
     },
     "tax_multiplier_pf": 85,
     "tax_multiplier_pg": 85,
-    "waste_base_fee": "80.00 CHF/anno"
+    "waste_base_fee": "80.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "80.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 1,
+      "birth_bonus_chf": 700,
+      "canteen_meal_chf": 8,
+      "climate_fund_active": true
+    }
   },
   {
     "ust_code": 5121,
     "name": "Orselina",
     "slug": "orselina",
     "circle": "Locarno",
-    "population": 699,
+    "population": 682,
     "multipliers_history": {
       "2022": {
         "pf": 75,
@@ -349,7 +439,16 @@
     },
     "tax_multiplier_pf": 82,
     "tax_multiplier_pg": 82,
-    "waste_base_fee": "90.00 CHF/anno"
+    "waste_base_fee": "90.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "90.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 500,
+      "canteen_meal_chf": 9,
+      "climate_fund_active": true
+    }
   },
   {
     "ust_code": 5125,
@@ -381,14 +480,23 @@
     },
     "tax_multiplier_pf": 75,
     "tax_multiplier_pg": 75,
-    "waste_base_fee": "90.00 CHF/anno"
+    "waste_base_fee": "90.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "90.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 500,
+      "canteen_meal_chf": 9,
+      "climate_fund_active": true
+    }
   },
   {
     "ust_code": 5131,
     "name": "Tenero-Contra",
     "slug": "tenero-contra",
     "circle": "Navegna",
-    "population": 3397,
+    "population": 3417,
     "multipliers_history": {
       "2022": {
         "pf": 93,
@@ -413,7 +521,16 @@
     },
     "tax_multiplier_pf": 93,
     "tax_multiplier_pg": 93,
-    "waste_base_fee": "85.00 CHF/anno"
+    "waste_base_fee": "85.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "85.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 90,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 600,
+      "canteen_meal_chf": 8,
+      "climate_fund_active": true
+    }
   },
   {
     "ust_code": 5136,
@@ -445,7 +562,16 @@
     },
     "tax_multiplier_pf": 95,
     "tax_multiplier_pg": 95,
-    "waste_base_fee": "130.00 CHF/anno"
+    "waste_base_fee": "130.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "130.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 1000,
+      "canteen_meal_chf": 8,
+      "climate_fund_active": false
+    }
   },
   {
     "ust_code": 5138,
@@ -477,7 +603,16 @@
     },
     "tax_multiplier_pf": 88,
     "tax_multiplier_pg": 88,
-    "waste_base_fee": "85.00 CHF/anno"
+    "waste_base_fee": "85.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "85.00 CHF/anno",
+      "waste_bag_35l_chf": 1.15,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 500,
+      "canteen_meal_chf": 8.5,
+      "climate_fund_active": true
+    }
   },
   {
     "ust_code": 5396,
@@ -509,7 +644,16 @@
     },
     "tax_multiplier_pf": 85,
     "tax_multiplier_pg": 85,
-    "waste_base_fee": "90.00 CHF/anno"
+    "waste_base_fee": "100.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "100.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 500,
+      "canteen_meal_chf": 8.5,
+      "climate_fund_active": true
+    }
   },
   {
     "ust_code": 5397,
@@ -541,7 +685,16 @@
     },
     "tax_multiplier_pf": 95,
     "tax_multiplier_pg": 120,
-    "waste_base_fee": "110.00 CHF/anno"
+    "waste_base_fee": "110.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "110.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 1.5,
+      "birth_bonus_chf": 700,
+      "canteen_meal_chf": 8.5,
+      "climate_fund_active": true
+    }
   },
   {
     "ust_code": 5398,
@@ -573,7 +726,16 @@
     },
     "tax_multiplier_pf": 85,
     "tax_multiplier_pg": 100,
-    "waste_base_fee": "90.00 CHF/anno"
+    "waste_base_fee": "90.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "90.00 CHF/anno",
+      "waste_bag_35l_chf": 1.2,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 500,
+      "canteen_meal_chf": 8.5,
+      "climate_fund_active": true
+    }
   },
   {
     "ust_code": 5399,
@@ -605,6 +767,15 @@
     },
     "tax_multiplier_pf": 88,
     "tax_multiplier_pg": 88,
-    "waste_base_fee": "120.00 CHF/anno"
+    "waste_base_fee": "120.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "120.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 115,
+      "real_estate_tax_permille": 1,
+      "birth_bonus_chf": 1000,
+      "canteen_meal_chf": 8.5,
+      "climate_fund_active": true
+    }
   }
 ]

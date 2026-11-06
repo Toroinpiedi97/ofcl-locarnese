@@ -34,16 +34,16 @@ export async function GET(
       population: mun.population,
     },
     quadrante_a_tariffe_causalita: {
-      tassa_base_rifiuti: mun.waste_base_fee,
-      sacco_ufficiale_35l_chf: 1.3,
-      imposta_immobiliare_comunale: mun.slug === "losone" ? "0.0 ‰" : "1.0..1.5 ‰",
-      tassa_cani_annuale_chf: 100.0,
+      tassa_base_rifiuti: mun.civic_tariffs.waste_base_fee,
+      sacco_ufficiale_35l_chf: mun.civic_tariffs.waste_bag_35l_chf,
+      imposta_immobiliare_comunale: `${mun.civic_tariffs.real_estate_tax_permille.toFixed(1)} ‰`,
+      tassa_cani_annuale_chf: mun.civic_tariffs.dog_tax_chf,
       gestione_acqua_fognature: `Azienda Acqua Potabile (${mun.circle})`,
     },
     quadrante_b_famiglie_infanzia: {
-      assegno_nascita_chf: 500.0,
+      assegno_nascita_chf: mun.civic_tariffs.birth_bonus_chf,
       retta_nido_infanzia: "Tariffa calmierata per fasce di reddito",
-      mensa_scolastica_pasto_chf: "8.00-10.00 CHF",
+      mensa_scolastica_pasto_chf: `${mun.civic_tariffs.canteen_meal_chf.toFixed(2)} CHF`,
       sussidi_sport_musica_giovani_chf: "Fino a 200.00 CHF / giovane",
     },
     quadrante_c_terza_eta_sociale: {
@@ -52,7 +52,9 @@ export async function GET(
       trasporto_sociale_anziani: "Disponibile per visite sanitarie",
     },
     quadrante_d_clima_mobilita: {
-      fondo_comunale_energia: "Sussidi per impianti fotovoltaici e termopompe",
+      fondo_comunale_energia: mun.civic_tariffs.climate_fund_active
+        ? "Incentivi comunali attivi per impianti fotovoltaici e termopompe"
+        : "Accesso a sussidi cantonali FER Ticino",
       sconto_abbonamento_arcobaleno: "Contributo comunale per giovani e studenti",
       ecocentro_verde: "Smaltimento scarti vegetali gratuito presso ecocentro",
     },

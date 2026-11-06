@@ -18,6 +18,16 @@ const YEARS = z.number().int().min(2015).max(2035);
 
 const multiplier = z.number().min(30).max(150);
 
+export const civicTariffsSchema = z.object({
+  waste_base_fee: z.string().regex(/^\d+\.\d{2} CHF\/anno$/),
+  waste_bag_35l_chf: z.number().min(0.5).max(3.0),
+  dog_tax_chf: z.number().min(50).max(250),
+  real_estate_tax_permille: z.number().min(0.0).max(3.0),
+  birth_bonus_chf: z.number().min(0).max(5000),
+  canteen_meal_chf: z.number().min(3).max(25),
+  climate_fund_active: z.boolean(),
+});
+
 export const municipalitySchema = z.object({
   ust_code: z.number().int().min(5001).max(5999),
   name: z.string().trim().min(2),
@@ -31,6 +41,7 @@ export const municipalitySchema = z.object({
   multipliers_history: z.record(z.string(), z.object({ pf: multiplier, pg: multiplier })),
   population_history: z.record(z.string(), z.number().int().min(50).max(40000)),
   waste_base_fee: z.string().regex(/^\d+\.\d{2} CHF\/anno$/),
+  civic_tariffs: civicTariffsSchema,
   entities: z.array(z.string().min(2)).min(1),
   summary_30s: z.object({
     risultato_ordinario_chf: money,
@@ -296,6 +307,25 @@ export function checkOpenData(files: CsvInputs): IntegrityReport {
     if (r.circolo !== m.circle) errors.push(`tariffe ${m.name}: circolo "${r.circolo}" != "${m.circle}"`);
     if (r.tassa_base_rifiuti !== m.waste_base_fee) {
       errors.push(`tariffe ${m.name}: tassa rifiuti "${r.tassa_base_rifiuti}" != "${m.waste_base_fee}"`);
+    }
+    if (r.sacco_35l_chf !== m.civic_tariffs.waste_bag_35l_chf.toFixed(2)) {
+      errors.push(`tariffe ${m.name}: sacco 35L ${r.sacco_35l_chf} != ${m.civic_tariffs.waste_bag_35l_chf.toFixed(2)}`);
+    }
+    if (r.tassa_cani_annua_chf !== m.civic_tariffs.dog_tax_chf.toFixed(2)) {
+      errors.push(`tariffe ${m.name}: tassa cani ${r.tassa_cani_annua_chf} != ${m.civic_tariffs.dog_tax_chf.toFixed(2)}`);
+    }
+    if (r.assegno_nascita_chf !== m.civic_tariffs.birth_bonus_chf.toFixed(2)) {
+      errors.push(`tariffe ${m.name}: assegno nascita ${r.assegno_nascita_chf} != ${m.civic_tariffs.birth_bonus_chf.toFixed(2)}`);
+    }
+    if (r.imposta_immobiliare !== `${m.civic_tariffs.real_estate_tax_permille.toFixed(1)} ‰`) {
+      errors.push(`tariffe ${m.name}: imposta immobiliare ${r.imposta_immobiliare} != ${m.civic_tariffs.real_estate_tax_permille.toFixed(1)} ‰`);
+    }
+    if (r.mensa_scolastica_pasto_chf !== m.civic_tariffs.canteen_meal_chf.toFixed(2)) {
+      errors.push(`tariffe ${m.name}: mensa scolastica ${r.mensa_scolastica_pasto_chf} != ${m.civic_tariffs.canteen_meal_chf.toFixed(2)}`);
+    }
+    const fondoBool = r.fondo_clima_attivo.toLowerCase() === "true";
+    if (fondoBool !== m.civic_tariffs.climate_fund_active) {
+      errors.push(`tariffe ${m.name}: fondo clima ${r.fondo_clima_attivo} != ${m.civic_tariffs.climate_fund_active}`);
     }
   }
   if (tar.length !== 19) errors.push(`tariffe: attese 19 righe, trovate ${tar.length}`);

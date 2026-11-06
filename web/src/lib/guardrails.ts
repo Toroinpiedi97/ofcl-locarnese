@@ -18,6 +18,7 @@ export type GuardBucket =
   | "api" // Vercel: invocazioni /api/v1/*, feed
   | "download" // Vercel/CDN: banda file open data
   | "supabase_write" // Supabase: scritture (ticket civici)
+  | "supabase_read" // Supabase: query protette da database
   | "r2_presign"; // Cloudflare R2: operazioni Class B (URL firmati)
 
 interface BucketConfig {
@@ -25,13 +26,17 @@ interface BucketConfig {
   perIpPerMinute: number;
 }
 
-// Default prudenziali: ~1/3 dei limiti free-tier giornalizzati, cosi' i
-// tre servizi non si saturano insieme.
+// Default calibrati per rispettare rigorosamente i limiti Free Tier 2026:
+// - Vercel Hobby: 100k invocazioni serverless/mese (~3.3k/giorno) -> limite 2'500/giorno con 60/min/IP
+// - Vercel CDN Transfer: 100 GB/mese -> limite download 3'000/giorno con 10/min/IP (cache 24h)
+// - Supabase Free: 500 MB DB, 5 GB/mese egress (~166 MB/giorno) -> scritture 150/giorno (3/min), query 1'000/giorno
+// - Cloudflare R2 Free: 10M Class B op/mese, zero egress fee -> presign 5'000/giorno con 30/min/IP
 const DEFAULTS: Record<GuardBucket, BucketConfig> = {
-  api: { perDay: 20000, perIpPerMinute: 60 },
+  api: { perDay: 2500, perIpPerMinute: 60 },
   download: { perDay: 3000, perIpPerMinute: 10 },
-  supabase_write: { perDay: 300, perIpPerMinute: 3 },
-  r2_presign: { perDay: 2000, perIpPerMinute: 20 },
+  supabase_write: { perDay: 150, perIpPerMinute: 3 },
+  supabase_read: { perDay: 1000, perIpPerMinute: 30 },
+  r2_presign: { perDay: 5000, perIpPerMinute: 30 },
 };
 
 function configFor(bucket: GuardBucket): BucketConfig {

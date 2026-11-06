@@ -40,6 +40,7 @@ def _load_district_municipalities() -> list[dict[str, Any]]:
             "pg": r["tax_multiplier_pg"],
             "waste": r["waste_base_fee"],
             "history": r["multipliers_history"],
+            "civic_tariffs": r.get("civic_tariffs", {}),
         }
         for r in raw
     ]
@@ -216,18 +217,19 @@ def build_opendata_package(output_dir: Path) -> Path:
     # 3. Dataset: tariffe_sussidi_comunali (Quadranti A-E)
     civic_rows: list[dict[str, Any]] = []
     for m in DISTRICT_MUNICIPALITIES:
+        ct = m.get("civic_tariffs", {})
         civic_rows.append({
             "ust_code": m["ust_code"],
             "comune": m["name"],
             "circolo": m["circle"],
             "abitanti": m["pop"],
-            "tassa_base_rifiuti": m["waste"],
-            "sacco_35l_chf": "1.30",
-            "imposta_immobiliare": "0.0 ‰" if m["slug"] == "losone" else "1.0..1.5 ‰",
-            "tassa_cani_annua_chf": "100.00",
-            "assegno_nascita_chf": "500.00",
-            "mensa_scolastica_pasto_chf": "8.00-10.00",
-            "fondo_clima_attivo": True,
+            "tassa_base_rifiuti": ct.get("waste_base_fee", m["waste"]),
+            "sacco_35l_chf": f"{float(ct.get('waste_bag_35l_chf', 1.3)):.2f}",
+            "imposta_immobiliare": f"{float(ct.get('real_estate_tax_permille', 0.0)):.1f} ‰",
+            "tassa_cani_annua_chf": f"{float(ct.get('dog_tax_chf', 100.0)):.2f}",
+            "assegno_nascita_chf": f"{float(ct.get('birth_bonus_chf', 500.0)):.2f}",
+            "mensa_scolastica_pasto_chf": f"{float(ct.get('canteen_meal_chf', 8.5)):.2f}",
+            "fondo_clima_attivo": bool(ct.get("climate_fund_active", True)),
         })
 
     _export_csv_variants(

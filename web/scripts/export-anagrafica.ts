@@ -18,6 +18,7 @@ const rows = MUNICIPALITIES.map((m) => ({
   tax_multiplier_pf: m.tax_multiplier_pf,
   tax_multiplier_pg: m.tax_multiplier_pg,
   waste_base_fee: m.waste_base_fee,
+  civic_tariffs: m.civic_tariffs,
 }));
 writeFileSync(out, JSON.stringify(rows, null, 2) + "\n");
 console.log(`Scritte ${rows.length} anagrafiche in ${out}`);
