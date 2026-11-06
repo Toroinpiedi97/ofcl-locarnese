@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import type { MunicipalityData } from "@/data/municipalities";
 import { QuickCard30s } from "./QuickCard30s";
 import { CreditAlertBanner } from "./CreditAlertBanner";
-import { IndicatorsSelBar } from "./IndicatorsSelBar";
 import {
   Search,
   X,
@@ -13,9 +12,7 @@ import {
   TrendingDown,
   Building2,
   AlertTriangle,
-  ArrowUpRight,
 } from "lucide-react";
-import Link from "next/link";
 
 export interface DashboardMobileProps {
   municipalities: MunicipalityData[];

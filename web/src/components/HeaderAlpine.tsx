@@ -13,7 +13,7 @@ import {
   X,
   Command,
 } from "lucide-react";
-import { MUNICIPALITIES, type MunicipalityData } from "@/data/municipalities";
+import { MUNICIPALITIES } from "@/data/municipalities";
 
 export function HeaderAlpine() {
   const router = useRouter();

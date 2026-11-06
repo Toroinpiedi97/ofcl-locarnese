@@ -8,12 +8,9 @@ import {
   ShieldCheck,
   TrendingDown,
   TrendingUp,
-  Info,
-  Building2,
   Users,
   Briefcase,
   HelpCircle,
-  Coins,
 } from "lucide-react";
 
 export interface TaxImpactSimulatorProps {

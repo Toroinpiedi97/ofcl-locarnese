@@ -6,7 +6,7 @@ import { MunicipalitiesTable } from "./MunicipalitiesTable";
 import { QuickCard30s } from "./QuickCard30s";
 import { TerritorialMap } from "./TerritorialMap";
 import { CreditAlertBanner } from "./CreditAlertBanner";
-import { Table, MapPin, AlertTriangle, ShieldCheck } from "lucide-react";
+import { Table, MapPin } from "lucide-react";
 
 export interface DashboardDesktopProps {
   municipalities: MunicipalityData[];

@@ -5,19 +5,11 @@ import { QuickCard30s } from "@/components/dashboard/QuickCard30s";
 import { TaxImpactSimulator } from "@/components/dashboard/TaxImpactSimulator";
 import { CivicDeepDiveBento } from "@/components/dashboard/CivicDeepDiveBento";
 import { CreditAlertBanner } from "@/components/dashboard/CreditAlertBanner";
-import { IndicatorsSelBar } from "@/components/dashboard/IndicatorsSelBar";
 import {
-  Building2,
-  Users,
-  Percent,
-  Calendar,
   ChevronRight,
-  ShieldCheck,
   FileText,
   AlertTriangle,
   ArrowLeft,
-  Share2,
-  ExternalLink,
 } from "lucide-react";
 import type { Metadata } from "next";
 

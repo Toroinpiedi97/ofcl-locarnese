@@ -5,7 +5,6 @@ import {
   Building2,
   Users,
   Percent,
-  TrendingUp,
   ShieldCheck,
   FileSpreadsheet,
   Coins,
@@ -22,10 +21,6 @@ export default function HomePage() {
   const totalInvestments = (
     MUNICIPALITIES.reduce((acc, m) => acc + m.summary_30s.investimenti_netti_chf, 0) / 1_000_000
   ).toFixed(1);
-  const overrunsCount = MUNICIPALITIES.reduce(
-    (acc, m) => acc + (m.summary_30s.active_overruns_count ?? 0),
-    0
-  );
 
   return (
     <main className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-16">

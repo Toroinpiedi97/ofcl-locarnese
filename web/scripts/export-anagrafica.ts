@@ -3,11 +3,13 @@
  * in registry/anagrafica_web.json, letta dalla pipeline Python per generare
  * gli open data. Evita copie divergenti dei dati anagrafici.
  */
-import { writeFileSync } from "node:fs";
+import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { MUNICIPALITIES } from "../src/data/municipalities";
 
-const out = join(process.cwd(), "..", "registry", "anagrafica_web.json");
+const parentRegistry = join(process.cwd(), "..", "registry", "anagrafica_web.json");
+const localRegistry = join(process.cwd(), "registry", "anagrafica_web.json");
+const out = existsSync(join(process.cwd(), "..", "registry")) ? parentRegistry : localRegistry;
 const rows = MUNICIPALITIES.map((m) => ({
   ust_code: m.ust_code,
   name: m.name,

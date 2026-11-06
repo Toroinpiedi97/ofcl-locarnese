@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MessageSquareText, CheckCircle2, Clock, XCircle, AlertCircle, Search } from "lucide-react";
+import { MessageSquareText, CheckCircle2, Clock, XCircle } from "lucide-react";
 
 interface FeedbackTicket {
   id: string;

@@ -6,12 +6,7 @@ import {
   ArrowUp,
   ArrowDown,
   Building2,
-  Users,
-  Percent,
-  TrendingUp,
-  TrendingDown,
   Search,
-  Check,
 } from "lucide-react";
 import type { MunicipalityData } from "@/data/municipalities";
 import { IndicatorsSelBar } from "./IndicatorsSelBar";

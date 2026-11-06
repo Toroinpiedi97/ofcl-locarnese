@@ -1,16 +1,12 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { MUNICIPALITIES } from "@/data/municipalities";
-import { INVESTMENT_CREDITS, type InvestmentCredit } from "@/data/credits";
+import { INVESTMENT_CREDITS } from "@/data/credits";
 import {
-  ArrowLeft,
-  Calendar,
   CheckCircle2,
   AlertTriangle,
   FileText,
-  ShieldAlert,
   ChevronRight,
-  ShieldCheck,
 } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -45,8 +41,6 @@ export default async function MunicipalityCreditsPage({ params }: PageProps) {
 
   const credits = INVESTMENT_CREDITS.filter((c) => c.municipality_slug === slug);
   const totalVoted = credits.reduce((acc, c) => acc + c.voted_credit_chf, 0);
-  const totalSpent = credits.reduce((acc, c) => acc + c.spent_total_chf, 0);
-  const totalResidual = credits.reduce((acc, c) => acc + c.residual_chf, 0);
   const overruns = credits.filter((c) => c.is_overrun);
 
   return (

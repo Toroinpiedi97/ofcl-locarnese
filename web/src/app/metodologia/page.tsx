@@ -2,13 +2,9 @@ import Link from "next/link";
 import {
   ArrowLeft,
   BookOpen,
-  CheckCircle2,
-  HelpCircle,
   Scale,
   ShieldCheck,
   TrendingUp,
-  Coins,
-  Building2,
   Table,
 } from "lucide-react";
 import type { Metadata } from "next";

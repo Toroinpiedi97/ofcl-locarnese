@@ -2,9 +2,7 @@ import Link from "next/link";
 import {
   ArrowLeft,
   CheckCircle2,
-  Clock,
   FileSpreadsheet,
-  GitCommit,
   Hash,
   ShieldCheck,
   Tag,

@@ -1,23 +1,10 @@
-"use client";
-
 import type { MunicipalityData } from "@/data/municipalities";
 import {
   Trash2,
-  Droplets,
-  Home,
-  Dog,
-  Car,
   Baby,
-  GraduationCap,
-  Music,
   HeartHandshake,
   Sun,
-  Bus,
-  Bike,
   Building,
-  FileText,
-  ExternalLink,
-  ShieldCheck,
   CheckCircle2,
   Info,
 } from "lucide-react";

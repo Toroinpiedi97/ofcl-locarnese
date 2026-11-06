@@ -5,13 +5,10 @@ import {
   TrendingUp,
   TrendingDown,
   Building2,
-  ExternalLink,
-  Info,
   ArrowUpRight,
   ShieldCheck,
   PiggyBank,
   Wallet,
-  Coins,
 } from "lucide-react";
 import type { MunicipalityData } from "@/data/municipalities";
 import { IndicatorsSelBar } from "./IndicatorsSelBar";
@@ -37,7 +34,7 @@ export function QuickCard30s({ municipality, year = 2025 }: QuickCard30sProps) {
                 UST {municipality.ust_code}
               </span>
               <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                Circolo di {municipality.circle}
+                Circolo di {municipality.circle} · Anno {year}
               </span>
             </div>
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white mt-1">

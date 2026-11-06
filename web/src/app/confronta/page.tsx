@@ -7,16 +7,9 @@ import {
   ArrowLeft,
   ArrowUpDown,
   Download,
-  Building2,
-  Users,
-  Percent,
-  TrendingUp,
-  TrendingDown,
-  Coins,
   ShieldCheck,
   Check,
   AlertCircle,
-  HelpCircle,
   Filter,
 } from "lucide-react";
 

@@ -2,11 +2,13 @@
  * Gate di integrità dati: `pnpm validate:data`. Esce con codice 1 se trova errori.
  * Eseguito in prebuild (Vercel) e in CI, così dati incoerenti non vengono mai pubblicati.
  */
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { checkOpenData, checkStructuredData } from "../src/lib/data-integrity";
 
-const dir = join(process.cwd(), "public", "data", "opendata");
+const webDir = join(process.cwd(), "public", "data", "opendata");
+const rootDir = join(process.cwd(), "web", "public", "data", "opendata");
+const dir = existsSync(webDir) ? webDir : rootDir;
 const read = (f: string) => readFileSync(join(dir, f), "utf-8");
 
 const a = checkStructuredData();
