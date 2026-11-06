@@ -53,111 +53,88 @@ const RELEASES = [
 
 export default function ChangelogDatiPage() {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20">
-      <header className="bg-gradient-to-b from-[#0F3854]/10 via-transparent to-transparent pt-8 pb-6 border-b border-slate-200 dark:border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="mb-4">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Torna alla Dashboard</span>
-            </Link>
-          </nav>
-
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#0F3854]/10 dark:bg-cyan-950/40 border border-[#0F3854]/20 dark:border-cyan-500/30 text-[#0F3854] dark:text-cyan-300 text-xs font-semibold mb-2">
-                <Tag className="w-3.5 h-3.5" />
-                <span>Tracciabilità del Dato & Versionamento Immutabile</span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-                Changelog Dati & Cronologia Rilasci
-              </h1>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mt-1.5 max-w-2xl leading-relaxed">
-                Ogni modifica, integrazione di nuovi consuntivi o rettifica convalidata dal curatore viene registrata
-                con firma crittografica SHA-256 e data certa.
-              </p>
-            </div>
-
-            <Link
-              href="/open-data"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-800 dark:text-slate-200 hover:bg-slate-50 transition-colors shadow-xs self-start md:self-auto"
-            >
-              <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-              <span>Scarica Dataset Open Data</span>
-            </Link>
+    <div className="space-y-6 pb-12">
+      <header className="ofl-card p-6">
+        <div>
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#1e232b] text-white text-xs font-semibold mb-2">
+            <GitCommit className="w-3.5 h-3.5 text-cyan-400" />
+            <span>Tracciabilità Immutabile & Audit Trail MCA2</span>
           </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
+            Changelog Dati & Cronologia Rilasci
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-700 mt-1 max-w-2xl leading-relaxed">
+            Ogni revisione dei bilanci, quadratura contabile o aggiornamento dei connettori comunali viene registrata
+            con identificatore univoco e hash crittografico SHA-256.
+          </p>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-6">
-        {RELEASES.map((rel) => (
-          <div
-            key={rel.version}
-            className="bento-card p-6 bg-white/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800 space-y-4 shadow-sm"
-          >
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
-              <div className="flex items-center gap-2.5">
-                <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-lg bg-[#0F3854] text-white">
-                  {rel.version}
-                </span>
-                <span className="text-xs text-slate-400">·</span>
-                <span className="text-xs font-medium text-slate-500">{rel.date}</span>
-              </div>
+      <main className="space-y-6">
+        <div className="space-y-6">
+          {RELEASES.map((rel) => {
+            const isCurrent = rel.status === "ATTUALE";
 
-              <span
-                className={`px-2 py-0.5 rounded text-[10px] font-bold self-start sm:self-auto ${
-                  rel.status === "ATTUALE"
-                    ? "bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300"
-                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
+            return (
+              <div
+                key={rel.version}
+                className={`ofl-card p-6 border transition-all ${
+                  isCurrent
+                    ? "border-cyan-600/50 shadow-xs"
+                    : "border-slate-300 opacity-90"
                 }`}
               >
-                {rel.status}
-              </span>
-            </div>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                  <div className="flex items-center gap-2.5 flex-wrap">
+                    <span className="font-mono text-xs font-black px-2.5 py-1 rounded-lg bg-slate-900/10 text-slate-900">
+                      {rel.version}
+                    </span>
+                    <span
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        isCurrent
+                          ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                          : "bg-slate-200 text-slate-700"
+                      }`}
+                    >
+                      {rel.status}
+                    </span>
+                    <span className="text-xs text-slate-600 font-medium">· Deliberato il {rel.date}</span>
+                  </div>
+                </div>
 
-            <div>
-              <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-                {rel.title}
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
-                {rel.summary}
-              </p>
-            </div>
+                <h2 className="text-lg font-bold text-slate-900 mb-1.5">{rel.title}</h2>
+                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed mb-4">{rel.summary}</p>
 
-            <div className="space-y-1.5 pt-1">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">
-                Interventi & Aggiornamenti:
-              </span>
-              <ul className="space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
-                {rel.changes.map((ch, idx) => (
-                  <li key={idx} className="flex items-start gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#00A3C4] shrink-0 mt-0.5" />
-                    <span>{ch}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+                <div className="border-t border-slate-200 pt-3">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">
+                    Interventi e Validazioni:
+                  </span>
+                  <ul className="space-y-1.5 text-xs text-slate-700">
+                    {rel.changes.map((ch, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-cyan-700 shrink-0 mt-0.5" />
+                        <span>{ch}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-400">
-              <span className="flex items-center gap-1" title={rel.sha256}>
-                <Hash className="w-3.5 h-3.5 text-[#00A3C4]" />
-                <span>SHA-256: {rel.sha256.slice(0, 16)}...</span>
-              </span>
+                <div className="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-[11px] font-mono text-slate-600">
+                  <span className="truncate">
+                    <strong className="text-slate-800">Digest SHA-256:</strong> {rel.sha256}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
 
-              <span>Fanno fede gli atti ex art. 192 LOC</span>
-            </div>
-          </div>
-        ))}
-
-        <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-slate-500 leading-relaxed flex items-start gap-2.5">
-          <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+        {/* Note di trasparenza */}
+        <div className="ofl-card p-4 text-xs text-slate-700 leading-relaxed flex items-start gap-2.5">
+          <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
           <p>
-            Ogni rilascio segue il principio di versionamento semantico per i dati. Nessun valore pubblicato
-            può essere modificato retroattivamente senza una corrispondente traccia di rettifica (curator action)
-            nel database di audit.
+            Questo registro è generato in maniera deterministica dal sistema di pubblicazione e non può essere modificato retroattivamente.
+            Qualsiasi rettifica a seguito di segnalazione viene pubblicata come nuova versione incrementale.
           </p>
         </div>
       </main>

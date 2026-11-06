@@ -15,7 +15,7 @@
   --color-granito: #1E293B;        /* Granito Maggiatale / Ardesia */
   --color-neve: #F8FAFC;           /* Bianco Neve Basodino */
 
-  --background: #F8FAFC;
+  --background: #1B2028;
   --foreground: #0F172A;
 
   /* Font settings: Tabular numbers per MCA2 0.01 CHF precision */
@@ -34,60 +34,149 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #090D16;
-    --foreground: #F1F5F9;
-  }
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: #1b2028;
+  color: #0f172a;
   font-feature-settings: var(--font-features-mca2);
 }
 
 /* =========================================================================
-   1. ALPINE FROSTED GLASS (Glassmorphism Istituzionale Svizzero)
+   1. OFCL FROSTED-SLATE DESIGN SYSTEM (Sidebar Antracite + Canvas Satinato)
    ========================================================================= */
-.glass-alpine {
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  box-shadow: 0 10px 30px -10px rgba(15, 56, 84, 0.08);
+
+/* SIDEBAR SCURA ANTRACITE */
+.ofl-sidebar {
+  background-color: #1e232b;
+  background: linear-gradient(180deg, #262c35 0%, #1e232b 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.22);
 }
 
-.dark .glass-alpine,
-@media (prefers-color-scheme: dark) {
-  .glass-alpine {
-    background: rgba(15, 23, 42, 0.82);
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.45);
+.ofl-nav-active {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.07) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 4px 10px rgba(0, 0, 0, 0.2);
+  color: #f8fafc;
+}
+
+.ofl-nav-idle {
+  color: #cbd5e1; /* Contrasto WCAG 2.1 AA >= 9:1 su sfondo #1e232b */
+  border: 1px solid transparent;
+}
+.ofl-nav-idle:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+}
+
+/* SFONDO PRINCIPALE ACCIAIO-GHIACCIO SATINATO */
+.ofl-canvas {
+  background-color: #b8c4d2;
+  background: linear-gradient(140deg, #ccd5e0 0%, #b8c4d2 52%, #a5b3c4 100%);
+}
+
+/* CARD TATTILE SOFT-3D SATINATA */
+.ofl-card {
+  background-color: #e4ebf3; /* Fallback certificato Axe >= 4.5:1 per testi #0f172a */
+  background: linear-gradient(180deg, rgba(236, 241, 247, 0.94) 0%, rgba(220, 228, 238, 0.90) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow:
+    0 10px 22px -4px rgba(24, 39, 58, 0.18),
+    0 2px 6px rgba(24, 39, 58, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease;
+}
+
+/* PILL INPUT & CONTROLLI */
+.ofl-input-pill {
+  background-color: #e2e9f1;
+  background: linear-gradient(180deg, rgba(226, 233, 241, 0.9) 0%, rgba(236, 241, 247, 0.95) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: inset 0 2px 4px rgba(15, 23, 42, 0.07), 0 2px 5px rgba(24, 39, 58, 0.08);
+}
+
+.ofl-year-pill {
+  background-color: #d5dfe9;
+  background: linear-gradient(180deg, #eef3f8 0%, #d5dfe9 100%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 4px 10px rgba(24, 39, 58, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+/* BOTTONI PILL BLU & AMBRA */
+.ofl-btn-blue {
+  background-color: #1d58d8;
+  background: linear-gradient(180deg, #3b82f6 0%, #1d58d8 100%);
+  border: 1px solid rgba(147, 197, 253, 0.55);
+  box-shadow: 0 6px 14px rgba(29, 78, 216, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+  color: #ffffff;
+}
+.ofl-btn-blue:hover {
+  filter: brightness(1.05);
+}
+
+.ofl-btn-amber {
+  background-color: #fbbf24;
+  background: linear-gradient(180deg, #fde047 0%, #f59e0b 100%);
+  border: 1px solid rgba(254, 249, 195, 0.75);
+  box-shadow: 0 6px 14px rgba(217, 119, 6, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  color: #1e293b;
+}
+.ofl-btn-amber:hover {
+  filter: brightness(1.04);
+}
+
+/* BOTTONI TATTILI INTERNI ("Dettagli", "Scarica PDF / CSV") */
+.ofl-btn-frost {
+  background-color: #dce4ee;
+  background: linear-gradient(180deg, #f4f7fb 0%, #dce4ee 100%);
+  border: 1px solid rgba(255, 255, 255, 0.88);
+  box-shadow: 0 2px 5px rgba(15, 23, 42, 0.10), inset 0 1px 0 #ffffff;
+  color: #1e293b;
+}
+.ofl-btn-frost:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #e4ebf4 100%);
+}
+
+/* DRAWER DESTRO SOVRAPPOSTO IN VETRO SMERIGLIATO */
+.ofl-glass-drawer {
+  background-color: #d4deea;
+  background: linear-gradient(180deg, rgba(236, 242, 249, 0.82) 0%, rgba(212, 222, 234, 0.78) 100%);
+  backdrop-filter: blur(22px) saturate(165%);
+  -webkit-backdrop-filter: blur(22px) saturate(165%);
+  border-left: 1px solid rgba(255, 255, 255, 0.85);
+  border-top: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: -18px 0 34px -6px rgba(15, 23, 42, 0.20), inset 1px 1px 0 rgba(255, 255, 255, 0.85);
+  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+  will-change: transform;
+}
+
+/* CARD TICKET NEL DRAWER */
+.ofl-ticket-card {
+  background-color: #dae3ee;
+  background: linear-gradient(180deg, rgba(235, 241, 248, 0.88) 0%, rgba(218, 227, 238, 0.84) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.82);
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+/* SKELETON SHIMMER SATINATO A ZERO LAYOUT SHIFT */
+.ofl-skeleton {
+  background: linear-gradient(90deg, rgba(220, 228, 238, 0.6) 0%, rgba(240, 245, 251, 0.9) 50%, rgba(220, 228, 238, 0.6) 100%);
+  background-size: 200% 100%;
+  animation: ofl-shimmer 1.8s infinite ease-in-out;
+}
+
+@keyframes ofl-shimmer {
+  0% {
+    background-position: 200% 0;
   }
-}
-
-.glass-alpine-header {
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(20px) saturate(190%);
-  -webkit-backdrop-filter: blur(20px) saturate(190%);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-}
-
-.dark .glass-alpine-header,
-@media (prefers-color-scheme: dark) {
-  .glass-alpine-header {
-    background: rgba(9, 13, 22, 0.88);
-    backdrop-filter: blur(20px) saturate(190%);
-    -webkit-backdrop-filter: blur(20px) saturate(190%);
-    border-bottom: 1px solid rgba(30, 41, 59, 0.8);
+  100% {
+    background-position: -200% 0;
   }
 }
 
 /* =========================================================================
-   2. BENTO CARD & ELASTIC SPRING PHYSICS MICRO-INTERACTIONS
+   2. BENTO CARD & VECCHI COMPONENTI (Compatibilità Retroattiva)
    ========================================================================= */
 .bento-card {
   background: rgba(255, 255, 255, 0.92);
@@ -104,62 +193,29 @@ body {
   border-color: rgba(0, 163, 196, 0.35);
 }
 
-.dark .bento-card,
-@media (prefers-color-scheme: dark) {
-  .bento-card {
-    background: rgba(15, 23, 42, 0.75);
-    border: 1px solid rgba(51, 65, 85, 0.7);
-  }
-  .bento-card:hover {
-    border-color: rgba(0, 163, 196, 0.5);
-    box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.5);
-  }
-}
-
 /* =========================================================================
    3. TABULAR NUMBERS (MCA2 0.01 CHF Centesimi Precisi)
    ========================================================================= */
-.tabular-nums {
+.tabular-nums, .tabular-mca2 {
   font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1, "zero" 1;
   letter-spacing: -0.01em;
 }
 
 /* =========================================================================
-   4. DIVISORI FLUIDI SVG "ACQUA CALMA"
-   ========================================================================= */
-.wave-divider {
-  overflow: hidden;
-  position: relative;
-  line-height: 0;
-}
-
-.wave-divider svg {
-  display: block;
-  width: calc(100% + 1.3px);
-  height: 48px;
-}
-
-/* =========================================================================
-   5. ACCESSIBILITY GUARDS (WCAG 2.1 AA / eCH-0059)
-   Fallback obbligatori per preferenze di accessibilità di sistema
+   4. ACCESSIBILITY GUARDS (WCAG 2.1 AA / eCH-0059)
    ========================================================================= */
 @media (prefers-reduced-transparency: reduce) {
-  .glass-alpine,
-  .glass-alpine-header {
+  .ofl-card,
+  .ofl-glass-drawer,
+  .bento-card {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
-    background: #ffffff !important;
-    border-color: #CBD5E1 !important;
+    background: #e2e9f2 !important;
+    border-color: #cbd5e1 !important;
   }
-
-  .dark .glass-alpine,
-  .dark .glass-alpine-header,
-  @media (prefers-color-scheme: dark) {
-    .glass-alpine,
-    .glass-alpine-header {
-      background: #0F172A !important;
-      border-color: #334155 !important;
-    }
+  .ofl-sidebar {
+    background: #1e232b !important;
   }
 }
 
@@ -173,7 +229,14 @@ body {
     scroll-behavior: auto !important;
   }
 
-  .bento-card:hover {
+  .ofl-card,
+  .ofl-glass-drawer,
+  .bento-card {
     transform: none !important;
+    transition: none !important;
+  }
+  .ofl-skeleton {
+    animation: none !important;
+    background: rgba(220, 228, 238, 0.8) !important;
   }
 }

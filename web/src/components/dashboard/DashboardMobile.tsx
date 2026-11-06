@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import type { MunicipalityData } from "@/data/municipalities";
 import { QuickCard30s } from "./QuickCard30s";
 import { CreditAlertBanner } from "./CreditAlertBanner";
-import { IndicatorsSelBar } from "./IndicatorsSelBar";
 import {
   Search,
   X,
@@ -16,6 +15,7 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export interface DashboardMobileProps {
   municipalities: MunicipalityData[];
@@ -58,13 +58,13 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
     <div className="w-full space-y-4">
       {/* Barra di ricerca rapida con target comodo */}
       <div className="relative">
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
         <input
           type="search"
           value={filterQuery}
           onChange={(e) => setFilterQuery(e.target.value)}
           placeholder="Cerca comune o codice UST (es. Locarno, 5091)..."
-          className="w-full min-h-[44px] pl-10 pr-4 py-2.5 rounded-xl text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00A3C4] shadow-xs"
+          className="ofl-input-pill w-full min-h-[44px] pl-10 pr-4 py-2.5 rounded-xl text-xs sm:text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none"
         />
       </div>
 
@@ -79,18 +79,18 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
               key={m.ust_code}
               type="button"
               onClick={() => setActiveMunicipality(m)}
-              className="w-full min-h-[52px] p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-[#00A3C4] text-left transition-colors flex items-center justify-between gap-3 shadow-xs active:scale-[0.99] cursor-pointer"
+              className="ofl-card w-full min-h-[52px] p-3.5 rounded-2xl text-left transition-all flex items-center justify-between gap-3 shadow-xs active:scale-[0.99] cursor-pointer"
             >
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-mono text-[10px] px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 font-medium">
+                  <span className="font-mono text-[10px] px-1.5 py-0.2 rounded bg-slate-200/90 text-slate-700 font-bold">
                     {m.ust_code}
                   </span>
-                  <span className="text-xs text-slate-400 truncate">
+                  <span className="text-xs text-slate-600 truncate">
                     Circolo di {m.circle}
                   </span>
                 </div>
-                <div className="text-sm font-bold text-slate-900 dark:text-white truncate mt-0.5">
+                <div className="text-sm font-bold text-slate-950 truncate mt-0.5">
                   {m.name}
                 </div>
               </div>
@@ -98,19 +98,20 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
               {/* Informazioni sintetiche sulla riga */}
               <div className="flex items-center gap-3 shrink-0">
                 <div className="text-right">
-                  <div className="font-mono text-sm font-bold tabular-nums text-[#0F3854] dark:text-cyan-400">
+                  <div className="font-mono text-sm font-bold tabular-nums text-[#0F3854]">
                     {m.tax_multiplier_pf}%
                   </div>
-                  <div className="text-[10px] font-mono text-slate-400">
+                  <div className="text-[10px] font-mono text-slate-600 font-medium">
                     PF 2026
                   </div>
                 </div>
 
                 <div className="text-right min-w-[70px]">
                   <div
-                    className={`font-mono text-xs font-semibold tabular-nums flex items-center justify-end gap-1 ${
-                      isAvanzo ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
-                    }`}
+                    className={cn(
+                      "font-mono text-xs font-semibold tabular-nums flex items-center justify-end gap-1",
+                      isAvanzo ? "text-emerald-700" : "text-red-700"
+                    )}
                   >
                     {isAvanzo ? (
                       <TrendingUp className="w-3 h-3 shrink-0" />
@@ -122,14 +123,14 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
                       {(m.summary_30s.risultato_ordinario_chf / 1000).toFixed(0)}k
                     </span>
                   </div>
-                  <div className="text-[10px] text-slate-400">
+                  <div className="text-[10px] text-slate-600">
                     {isAvanzo ? "Avanzo" : "Disavanzo"}
                   </div>
                 </div>
 
                 {hasOverruns && (
                   <span
-                    className="p-1 rounded bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400"
+                    className="p-1 rounded bg-red-100 text-red-800"
                     title="Sorpasso crediti d'opera rilevato"
                   >
                     <AlertTriangle className="w-4 h-4" />
@@ -145,12 +146,12 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
         })}
 
         {filtered.length === 0 && (
-          <div className="p-8 text-center bg-white dark:bg-slate-900 rounded-xl border border-dashed border-slate-300 dark:border-slate-800">
+          <div className="p-8 text-center ofl-card rounded-2xl border border-dashed border-slate-300">
             <Building2 className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-            <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+            <p className="text-sm font-medium text-slate-800">
               Nessun comune trovato per &quot;{filterQuery}&quot;
             </p>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               Verifica il nome o il codice UST (5091–5399).
             </p>
           </div>
@@ -160,24 +161,24 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
       {/* Bottom Sheet / Drawer scorrevole per la Scheda dei 30 Secondi */}
       {activeMunicipality && (
         <div
-          className="fixed inset-0 z-50 flex flex-col justify-end bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex flex-col justify-end bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-200 select-none"
           role="dialog"
           aria-modal="true"
           aria-labelledby="drawer-title"
           onClick={() => setActiveMunicipality(null)}
         >
           <div
-            className="w-full max-h-[85vh] overflow-y-auto rounded-t-2xl bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 shadow-2xl p-4 sm:p-6 space-y-4 animate-in slide-in-from-bottom duration-250"
+            className="w-full max-h-[88vh] overflow-y-auto rounded-t-3xl ofl-glass-drawer border-t border-white/80 shadow-2xl p-4 sm:p-6 space-y-4 animate-in slide-in-from-bottom duration-250"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Maniglia trascinamento & Bottone chiusura comodo */}
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <div className="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700" />
+            <div className="flex items-center justify-between border-b border-slate-300/40 pb-3">
+              <div className="w-12 h-1.5 rounded-full bg-slate-400/60" />
               <button
                 type="button"
                 onClick={() => setActiveMunicipality(null)}
                 aria-label="Chiudi scheda"
-                className="min-h-[44px] min-w-[44px] -mr-2 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                className="min-h-[44px] min-w-[44px] -mr-2 flex items-center justify-center rounded-full text-slate-600 hover:text-slate-950 ofl-btn-frost transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>

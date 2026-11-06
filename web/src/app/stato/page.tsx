@@ -44,102 +44,88 @@ const CMS_MAPPING: Record<number, { family: string; delay: number }> = {
 
 export default function StatoPage() {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20">
-      <header className="bg-gradient-to-b from-[#0F3854]/10 via-transparent to-transparent pt-8 pb-6 border-b border-slate-200 dark:border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="mb-4">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Torna alla Dashboard</span>
-            </Link>
-          </nav>
+    <div className="space-y-6 pb-12">
+      <header className="ofl-card p-6">
+        <div>
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800 text-xs font-semibold mb-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
+            <span>Tutti i Sistemi Operativi · 19 / 19 Connettori Attivi</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
+            Stato della Piattaforma & Connettori
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-700 mt-1 max-w-2xl leading-relaxed">
+            Salute dei crawler asincroni, rispetto del Crawl-delay (robots.txt), controlli canarino anti-drift
+            e frequenza di aggiornamento settimanale (ogni lunedì alle 04:00 CET).
+          </p>
+        </div>
 
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-semibold mb-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Tutti i Sistemi Operativi · 19 / 19 Connettori Attivi</span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-                Stato della Piattaforma & Connettori
-              </h1>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mt-1.5 max-w-2xl leading-relaxed">
-                Salute dei crawler asincroni, rispetto del Crawl-delay (robots.txt), controlli canarino anti-drift
-                e frequenza di aggiornamento settimanale (ogni lunedì alle 04:00 CET).
-              </p>
+        {/* Griglia KPI Infrastrutturali */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 pt-6">
+          <div className="p-4 rounded-xl bg-white/70 border border-slate-300 shadow-xs">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600 block">
+              Comuni Monitorati
+            </span>
+            <div className="font-mono text-2xl font-black tabular-nums text-emerald-700 mt-1">
+              19 / 19
             </div>
+            <span className="text-[10px] text-slate-500 block mt-0.5">
+              100% Distretto di Locarno
+            </span>
           </div>
 
-          {/* Griglia KPI Infrastrutturali */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 pt-6">
-            <div className="bento-card p-4 bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800">
-              <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 block">
-                Comuni Monitorati
-              </span>
-              <div className="font-mono text-2xl font-bold tabular-nums text-emerald-600 dark:text-emerald-400 mt-1">
-                19 / 19
-              </div>
-              <span className="text-[10px] text-slate-400 block mt-0.5">
-                100% Distretto di Locarno
-              </span>
+          <div className="p-4 rounded-xl bg-white/70 border border-slate-300 shadow-xs">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600 block">
+              Canarini Anti-Drift (C-13)
+            </span>
+            <div className="font-mono text-2xl font-black tabular-nums text-cyan-900 mt-1">
+              19 / 19 PASS
             </div>
+            <span className="text-[10px] text-slate-500 block mt-0.5">
+              Nessuna alterazione CMS
+            </span>
+          </div>
 
-            <div className="bento-card p-4 bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800">
-              <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 block">
-                Canarini Anti-Drift (C-13)
-              </span>
-              <div className="font-mono text-2xl font-bold tabular-nums text-[#0F3854] dark:text-cyan-400 mt-1">
-                19 / 19 PASS
-              </div>
-              <span className="text-[10px] text-slate-400 block mt-0.5">
-                Nessuna alterazione CMS
-              </span>
+          <div className="p-4 rounded-xl bg-white/70 border border-slate-300 shadow-xs">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600 block">
+              Rispetto robots.txt
+            </span>
+            <div className="font-mono text-2xl font-black tabular-nums text-slate-900 mt-1">
+              100%
             </div>
+            <span className="text-[10px] text-slate-500 block mt-0.5">
+              Crawl-delay 10–30s
+            </span>
+          </div>
 
-            <div className="bento-card p-4 bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800">
-              <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 block">
-                Rispetto robots.txt
-              </span>
-              <div className="font-mono text-2xl font-bold tabular-nums text-slate-900 dark:text-white mt-1">
-                100%
-              </div>
-              <span className="text-[10px] text-slate-400 block mt-0.5">
-                Crawl-delay 10–30s
-              </span>
+          <div className="p-4 rounded-xl bg-white/70 border border-slate-300 shadow-xs">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600 block">
+              Prossima Sincronizzazione
+            </span>
+            <div className="font-mono text-xl font-black tabular-nums text-slate-900 mt-1">
+              Lunedì 04:00
             </div>
-
-            <div className="bento-card p-4 bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800">
-              <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 block">
-                Prossima Sincronizzazione
-              </span>
-              <div className="font-mono text-xl font-bold tabular-nums text-slate-900 dark:text-white mt-1">
-                Lunedì 04:00
-              </div>
-              <span className="text-[10px] text-slate-400 block mt-0.5">
-                Cron settimanale automatico
-              </span>
-            </div>
+            <span className="text-[10px] text-slate-500 block mt-0.5">
+              Cron settimanale automatico
+            </span>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
+      <main className="space-y-6">
         {/* Tabella Dettagliata Stato Connettori */}
-        <div className="bento-card overflow-hidden bg-white/90 dark:bg-slate-900/80 border border-slate-200/90 dark:border-slate-800 shadow-sm">
-          <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white">
+        <div className="ofl-card overflow-hidden shadow-xs">
+          <div className="p-4 border-b border-slate-300 flex items-center justify-between">
+            <h2 className="text-sm font-bold text-slate-900">
               Tabella Operativa dei 19 Connettori Web Comunali
             </h2>
-            <span className="text-xs font-mono text-slate-400">Verifica automatica continua</span>
+            <span className="text-xs font-mono text-slate-600 font-medium">Verifica automatica continua</span>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/40 text-[11px] font-semibold uppercase text-slate-500">
+                <tr className="border-b border-slate-300 bg-slate-900/5 text-[11px] font-bold uppercase text-slate-700">
                   <th className="py-3 px-4">Comune</th>
                   <th className="py-3 px-3">Famiglia CMS</th>
                   <th className="py-3 px-3">Crawl-Delay</th>
@@ -148,45 +134,34 @@ export default function StatoPage() {
                   <th className="py-3 px-3 text-right">Stato</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80 font-mono">
+              <tbody className="divide-y divide-slate-200 font-mono">
                 {MUNICIPALITIES.map((m) => {
                   const cms = CMS_MAPPING[m.ust_code] || { family: "ASSOLO", delay: 30 };
-
                   return (
-                    <tr
-                      key={m.ust_code}
-                      className="hover:bg-slate-50/60 dark:hover:bg-slate-800/30 transition-colors"
-                    >
-                      <td className="py-3 px-4 font-sans font-bold text-slate-900 dark:text-white">
-                        <Link
-                          href={`/comuni/${m.slug}`}
-                          className="hover:text-[#00A3C4] transition-colors flex items-center gap-1.5"
-                        >
-                          <span>{m.name}</span>
-                          <span className="text-[10px] text-slate-400 font-mono font-normal">
-                            ({m.ust_code})
-                          </span>
-                        </Link>
+                    <tr key={m.ust_code} className="hover:bg-slate-900/5">
+                      <td className="py-2.5 px-4 font-sans font-bold text-slate-900">
+                        {m.name} <span className="text-[11px] text-slate-500 font-mono font-normal">({m.ust_code})</span>
                       </td>
-                      <td className="py-3 px-3 text-slate-600 dark:text-slate-300 font-sans">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                      <td className="py-2.5 px-3">
+                        <span className="px-1.5 py-0.5 rounded bg-slate-900/10 text-slate-800 font-semibold text-[10px]">
                           {cms.family}
                         </span>
                       </td>
-                      <td className="py-3 px-3 text-slate-500">
-                        {cms.delay > 0 ? `${cms.delay}s` : "Manuale"}
+                      <td className="py-2.5 px-3 text-slate-700 font-medium">
+                        {cms.delay > 0 ? `${cms.delay}s (robots.txt)` : "Push/Upload"}
                       </td>
-                      <td className="py-3 px-3 text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>C-13 PASS</span>
+                      <td className="py-2.5 px-3">
+                        <span className="inline-flex items-center gap-1 text-emerald-800 font-bold text-[11px]">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>C-13 PASS</span>
+                        </span>
                       </td>
-                      <td className="py-3 px-3 text-slate-400 font-sans text-[11px]">
+                      <td className="py-2.5 px-3 text-slate-600 text-[11px] font-medium">
                         Oggi alle 04:00 CET
                       </td>
-                      <td className="py-3 px-3 text-right">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                          <span>OPERATIVO</span>
+                      <td className="py-2.5 px-3 text-right">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                          ATTIVO
                         </span>
                       </td>
                     </tr>
@@ -197,13 +172,16 @@ export default function StatoPage() {
           </div>
         </div>
 
-        {/* Garanzie di Isolamento */}
-        <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-slate-500 leading-relaxed flex items-start gap-2.5">
-          <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-          <p>
-            <strong>Guardrail Infrastrutturali:</strong> Tutti i connettori operano con rate limiting cortese (rispetto rigoroso di robots.txt).
-            La pipeline adotta isolamento totale da database terzi (Guardrail C-01) ed esclude preventivamente ogni informazione
-            avente carattere personale (nLPD / LPDP). Fanno fede unicamente gli atti esposti all&apos;Albo ex art. 192 LOC.
+        {/* Quadro Architettura & Isolamento */}
+        <div className="ofl-card p-5 text-xs text-slate-700 space-y-2">
+          <div className="flex items-center gap-2 text-slate-900 font-bold">
+            <ShieldCheck className="w-4 h-4 text-cyan-700" />
+            <span>Garanzie di Scraping Cortese & Isolamento Database (C-01, C-02)</span>
+          </div>
+          <p className="leading-relaxed text-slate-600">
+            I connettori di OFCL rispettano rigorosamente il protocollo robots.txt di ogni Comune, utilizzando richieste asincrone distribuite
+            con User-Agent trasparente e crawl-delay cautelativo fino a 30 secondi. Le pipeline di elaborazione operano in totale isolamento
+            rispetto ad ambienti terzi (Guardrail C-01) e verificano l&apos;impronta HTML (canarini C-13) per rilevare mutamenti nei CMS comunali.
           </p>
         </div>
       </main>

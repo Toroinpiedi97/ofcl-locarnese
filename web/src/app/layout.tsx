@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { LegalBanner } from "@/components/LegalBanner";
-import { HeaderAlpine } from "@/components/HeaderAlpine";
-import { Footer } from "@/components/Footer";
+import { CivicLangProvider } from "@/lib/i18n-civic";
+import { CivicAppShell } from "@/components/shell/CivicAppShell";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,13 +30,11 @@ export default function RootLayout({
       lang="it"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-zinc-50 font-sans text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50">
-        <LegalBanner />
-        <HeaderAlpine />
-        <div className="flex-1 flex flex-col">{children}</div>
-        <Footer />
+      <body className="min-h-full bg-[#1b2028] font-sans text-slate-900">
+        <CivicLangProvider>
+          <CivicAppShell>{children}</CivicAppShell>
+        </CivicLangProvider>
       </body>
     </html>
   );
 }
-

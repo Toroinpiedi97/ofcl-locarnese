@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { MUNICIPALITIES } from "@/data/municipalities";
+import { getDistrictDataset } from "@/lib/data/mca2-dal";
 import { apiSuccess, apiOptions } from "@/lib/api-response";
 
 export async function OPTIONS() {
@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
   const slug = searchParams.get("slug");
   const comune = searchParams.get("comune");
 
-  let list = MUNICIPALITIES;
+  let list = await getDistrictDataset();
 
   if (comune) {
     const isNum = !isNaN(Number(comune)) && !isNaN(parseFloat(comune));

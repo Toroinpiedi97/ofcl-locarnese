@@ -1,38 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useDeferredValue } from "react";
 import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
   Building2,
-  Users,
-  Percent,
-  TrendingUp,
-  TrendingDown,
   Search,
-  Check,
+  ExternalLink,
+  Map as MapIcon,
 } from "lucide-react";
 import type { MunicipalityData } from "@/data/municipalities";
-import { IndicatorsSelBar } from "./IndicatorsSelBar";
+import { formatChfCompact, formatChfExact, cn } from "@/lib/utils";
+import { useCivicLang } from "@/lib/i18n-civic";
 
 export interface MunicipalitiesTableProps {
   municipalities: MunicipalityData[];
   selectedUstCode: number;
   onSelectMunicipality: (municipality: MunicipalityData) => void;
+  onToggleMap?: () => void;
+  isMapActive?: boolean;
 }
 
-type SortField = "name" | "population" | "multiplier_pf" | "risultato" | "debito_pc";
+type SortField = "name" | "multiplier_pf" | "debito_pc" | "autofin";
 type SortDirection = "asc" | "desc";
 
 export function MunicipalitiesTable({
   municipalities,
   selectedUstCode,
   onSelectMunicipality,
+  onToggleMap,
+  isMapActive = false,
 }: MunicipalitiesTableProps) {
+  const { t } = useCivicLang();
   const [filterQuery, setFilterQuery] = useState("");
+  const deferredQuery = useDeferredValue(filterQuery);
   const [sortField, setSortField] = useState<SortField>("multiplier_pf");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
+  const [showAllRows, setShowAllRows] = useState(false);
 
   function handleSort(field: SortField) {
     if (sortField === field) {
@@ -43,9 +48,10 @@ export function MunicipalitiesTable({
     }
   }
 
-  // Filtro testuale rapido
+  // Filtro rapido non bloccante
   const filtered = municipalities.filter((m) => {
-    const q = filterQuery.toLowerCase().trim();
+    const q = deferredQuery.toLowerCase().trim();
+    if (!q) return true;
     return (
       m.name.toLowerCase().includes(q) ||
       m.ust_code.toString().includes(q) ||
@@ -60,195 +66,204 @@ export function MunicipalitiesTable({
       case "name":
         diff = a.name.localeCompare(b.name);
         break;
-      case "population":
-        diff = a.population - b.population;
-        break;
       case "multiplier_pf":
         diff = a.tax_multiplier_pf - b.tax_multiplier_pf;
         break;
-      case "risultato":
-        diff = a.summary_30s.risultato_ordinario_chf - b.summary_30s.risultato_ordinario_chf;
-        break;
       case "debito_pc":
         diff = a.summary_30s.debito_netto_pc_chf - b.summary_30s.debito_netto_pc_chf;
+        break;
+      case "autofin":
+        diff = a.summary_30s.autofinanziamento_chf - b.summary_30s.autofinanziamento_chf;
         break;
     }
     return sortDirection === "asc" ? diff : -diff;
   });
 
+  const displayedRows = showAllRows ? sorted : sorted.slice(0, 6);
+
   function renderSortIcon(field: SortField) {
     if (sortField !== field) {
-      return <ArrowUpDown className="w-3 h-3 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200" />;
+      return <ArrowUpDown className="w-3 h-3 text-slate-400 opacity-60" />;
     }
     return sortDirection === "asc" ? (
-      <ArrowUp className="w-3 h-3 text-cyan-500" />
+      <ArrowUp className="w-3 h-3 text-[#0F3854] font-bold" />
     ) : (
-      <ArrowDown className="w-3 h-3 text-cyan-500" />
+      <ArrowDown className="w-3 h-3 text-[#0F3854] font-bold" />
     );
   }
 
   return (
-    <div className="bento-card bg-white/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
-      {/* Intestazione Griglia & Filtro Rapido */}
-      <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/60 dark:bg-slate-950/40">
-        <div>
-          <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Building2 className="w-4 h-4 text-[#0F3854] dark:text-cyan-400" />
-            <span>I 19 Comuni del Locarnese</span>
-          </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Dati armonizzati MCA2 · Clicca su un comune per aggiornare la Scheda 30 Secondi
-          </p>
+    <div className="flex flex-col justify-between h-full">
+      <div>
+        {/* Intestazione Card Tabella */}
+        <div className="flex items-center justify-between pb-3 border-b border-slate-300/40">
+          <div className="flex items-center gap-2">
+            <h2 className="text-sm font-bold text-slate-900 tracking-tight">
+              {t.tableTitle}
+            </h2>
+            {isMapActive && (
+              <span className="font-mono text-[10px] px-2 py-0.5 rounded-full bg-cyan-100 text-cyan-900 font-bold">
+                Mappa Attiva
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2">
+            {onToggleMap && (
+              <button
+                type="button"
+                onClick={onToggleMap}
+                className={cn(
+                  "px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer",
+                  isMapActive
+                    ? "bg-[#0F3854] text-white shadow-xs"
+                    : "ofl-btn-frost text-slate-700"
+                )}
+              >
+                <MapIcon className="w-3.5 h-3.5" />
+                <span>Mappa SVG Distretto</span>
+              </button>
+            )}
+          </div>
         </div>
 
-        <div className="relative w-full sm:w-60">
-          <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            value={filterQuery}
-            onChange={(e) => setFilterQuery(e.target.value)}
-            placeholder="Filtra comune..."
-            className="w-full pl-8 pr-3 py-1.5 text-xs bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-cyan-500"
-          />
-        </div>
-      </div>
-
-      {/* Tabella Comparativa */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs border-collapse">
-          <thead>
-            <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900 text-slate-600 dark:text-slate-400 font-semibold select-none">
-              <th className="py-2.5 px-3">
-                <button
+        {/* Tabella Comparativa 5 Colonne */}
+        <div className="overflow-x-auto mt-2">
+          <table className="w-full text-left border-collapse text-xs select-none">
+            <thead>
+              <tr className="border-b border-slate-300/40 text-slate-500 font-semibold text-[11px]">
+                <th
                   onClick={() => handleSort("name")}
-                  className="flex items-center gap-1 group hover:text-slate-900 dark:hover:text-white cursor-pointer"
+                  className="py-2 pr-2 cursor-pointer hover:text-slate-900 whitespace-nowrap"
                 >
-                  <span>Comune</span>
-                  {renderSortIcon("name")}
-                </button>
-              </th>
-              <th className="py-2.5 px-3">
-                <button
-                  onClick={() => handleSort("population")}
-                  className="flex items-center gap-1 group hover:text-slate-900 dark:hover:text-white cursor-pointer"
-                >
-                  <span>Abitanti</span>
-                  {renderSortIcon("population")}
-                </button>
-              </th>
-              <th className="py-2.5 px-3">
-                <button
+                  <div className="flex items-center gap-1">
+                    <span>{t.tableColMun}</span>
+                    {renderSortIcon("name")}
+                  </div>
+                </th>
+                <th
                   onClick={() => handleSort("multiplier_pf")}
-                  className="flex items-center gap-1 group hover:text-slate-900 dark:hover:text-white cursor-pointer"
+                  className="py-2 px-2 cursor-pointer hover:text-slate-900 whitespace-nowrap text-right"
                 >
-                  <span>Moltiplicatore 2026</span>
-                  {renderSortIcon("multiplier_pf")}
-                </button>
-              </th>
-              <th className="py-2.5 px-3">
-                <button
-                  onClick={() => handleSort("risultato")}
-                  className="flex items-center gap-1 group hover:text-slate-900 dark:hover:text-white cursor-pointer"
-                >
-                  <span>Risultato Ord.</span>
-                  {renderSortIcon("risultato")}
-                </button>
-              </th>
-              <th className="py-2.5 px-3">
-                <button
+                  <div className="flex items-center justify-end gap-1">
+                    <span>{t.tableColMult}</span>
+                    {renderSortIcon("multiplier_pf")}
+                  </div>
+                </th>
+                <th
                   onClick={() => handleSort("debito_pc")}
-                  className="flex items-center gap-1 group hover:text-slate-900 dark:hover:text-white cursor-pointer"
+                  className="py-2 px-2 cursor-pointer hover:text-slate-900 whitespace-nowrap text-right"
                 >
-                  <span>Debito p.c.</span>
-                  {renderSortIcon("debito_pc")}
-                </button>
-              </th>
-              <th className="py-2.5 px-3 min-w-[130px]">Cruscotto SEL</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
-            {sorted.map((m) => {
-              const isSelected = m.ust_code === selectedUstCode;
-              const isAvanzo = m.summary_30s.risultato_ordinario_chf >= 0;
-
-              return (
-                <tr
-                  key={m.ust_code}
-                  tabIndex={0}
-                  onClick={() => onSelectMunicipality(m)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      onSelectMunicipality(m);
-                    }
-                  }}
-                  className={`cursor-pointer transition-colors ${
-                    isSelected
-                      ? "bg-cyan-50/80 dark:bg-cyan-950/40 text-cyan-950 dark:text-cyan-100 font-medium ring-1 ring-inset ring-cyan-500/40"
-                      : "hover:bg-slate-50 dark:hover:bg-slate-800/40 text-slate-800 dark:text-slate-200"
-                  }`}
+                  <div className="flex items-center justify-end gap-1">
+                    <span>{t.tableColDebt}</span>
+                    {renderSortIcon("debito_pc")}
+                  </div>
+                </th>
+                <th
+                  onClick={() => handleSort("autofin")}
+                  className="py-2 px-2 cursor-pointer hover:text-slate-900 whitespace-nowrap text-right"
                 >
-                  {/* Nome & UST */}
-                  <td className="py-2.5 px-3">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-[10px] px-1 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold">
-                        {m.ust_code}
-                      </span>
-                      <span className="font-semibold">{m.name}</span>
-                    </div>
-                  </td>
+                  <div className="flex items-center justify-end gap-1">
+                    <span>{t.tableColAutofin}</span>
+                    {renderSortIcon("autofin")}
+                  </div>
+                </th>
+                <th className="py-2 pl-2 text-right whitespace-nowrap">
+                  {t.tableColActions}
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-300/30">
+              {displayedRows.map((m) => {
+                const isSelected = m.ust_code === selectedUstCode;
 
-                  {/* Abitanti */}
-                  <td className="py-2.5 px-3 font-mono tabular-nums text-slate-600 dark:text-slate-300">
-                    {m.population.toLocaleString("de-CH")}
-                  </td>
+                return (
+                  <tr
+                    key={m.ust_code}
+                    tabIndex={0}
+                    onClick={() => onSelectMunicipality(m)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        onSelectMunicipality(m);
+                      }
+                    }}
+                    className={cn(
+                      "cursor-pointer transition-colors group",
+                      isSelected
+                        ? "bg-white/80 font-medium shadow-xs"
+                        : "hover:bg-white/40 text-slate-800"
+                    )}
+                  >
+                    {/* 1. Comune con UST */}
+                    <td className="py-2.5 pr-2">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-mono text-[10px] px-1 py-0.2 rounded bg-slate-200/90 text-slate-700 font-bold shrink-0">
+                          {m.ust_code}
+                        </span>
+                        <span className="font-semibold text-slate-900 group-hover:text-blue-900">
+                          {m.name}
+                        </span>
+                      </div>
+                    </td>
 
-                  {/* Moltiplicatore 2026 */}
-                  <td className="py-2.5 px-3">
-                    <div className="flex items-center gap-1.5 font-mono font-bold tabular-nums text-slate-900 dark:text-white">
+                    {/* 2. Multiplicatore */}
+                    <td className="py-2.5 px-2 text-right font-mono font-bold text-slate-900 tabular-nums">
                       <span>{m.tax_multiplier_pf}%</span>
                       {m.has_differentiated_pg && (
-                        <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 font-medium">
+                        <span className="text-[9px] text-amber-800 block">
                           PG: {m.tax_multiplier_pg}%
                         </span>
                       )}
-                    </div>
-                  </td>
+                    </td>
 
-                  {/* Risultato Ordinario */}
-                  <td className="py-2.5 px-3 font-mono tabular-nums font-semibold">
-                    <span className={isAvanzo ? "text-emerald-700 dark:text-emerald-400" : "text-red-700 dark:text-red-400"}>
-                      {isAvanzo ? "+" : ""}
-                      {(m.summary_30s.risultato_ordinario_chf / 1000).toLocaleString("de-CH", {
-                        maximumFractionDigits: 1,
-                      })}{" "}
-                      k
-                    </span>
-                  </td>
+                    {/* 3. Debito p.c. */}
+                    <td className="py-2.5 px-2 text-right font-mono tabular-nums text-slate-700">
+                      {Math.round(m.summary_30s.debito_netto_pc_chf).toLocaleString("de-CH")}{" "}
+                      <span className="text-[10px] text-slate-500">CHF</span>
+                    </td>
 
-                  {/* Debito Netto pro Capite */}
-                  <td className="py-2.5 px-3 font-mono tabular-nums text-slate-600 dark:text-slate-300">
-                    {m.summary_30s.debito_netto_pc_chf.toLocaleString("de-CH", {
-                      maximumFractionDigits: 0,
-                    })}{" "}
-                    CHF
-                  </td>
+                    {/* 4. Autofinanziamento */}
+                    <td className="py-2.5 px-2 text-right font-mono font-bold tabular-nums text-slate-900">
+                      {formatChfCompact(m.summary_30s.autofinanziamento_chf)}
+                    </td>
 
-                  {/* Micro-Cruscotto 8 tacche SEL */}
-                  <td className="py-2.5 px-3">
-                    <IndicatorsSelBar scoreConform={m.summary_30s.sel_conformity} compact />
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                    {/* 5. Azioni */}
+                    <td className="py-2.5 pl-2 text-right">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSelectMunicipality(m);
+                        }}
+                        className={cn(
+                          "ofl-btn-frost rounded-lg px-2 py-1 text-[11px] font-bold cursor-pointer transition-all",
+                          isSelected && "bg-white shadow-xs text-blue-900 border-blue-300"
+                        )}
+                      >
+                        {t.tableActionDetails}
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Footer Griglia */}
-      <div className="p-2.5 border-t border-slate-200 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-950/30 flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-400">
-        <div>Mostrati {sorted.length} su 19 comuni</div>
-        <div>Tutti i dati espressi in CHF (MCA2 al centesimo esatto)</div>
+      <div className="pt-2 mt-2 border-t border-slate-300/30 flex items-center justify-between text-xs text-slate-600">
+        <span>
+          {sorted.length} su {municipalities.length} {t.tableTotalCount}
+        </span>
+        <button
+          type="button"
+          onClick={() => setShowAllRows((prev) => !prev)}
+          className="font-bold text-[#0F3854] hover:underline cursor-pointer"
+        >
+          {showAllRows ? t.tableCollapse : t.tableShowAll}
+        </button>
       </div>
     </div>
   );

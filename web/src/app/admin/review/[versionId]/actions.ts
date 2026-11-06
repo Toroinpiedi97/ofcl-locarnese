@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export interface ActionResult {
   success: boolean;
@@ -149,6 +149,7 @@ export async function approveAndPublishAction(versionId: string): Promise<Action
     revalidatePath(`/admin/review/${versionId}`);
     revalidatePath("/admin/queue");
     revalidatePath("/");
+    revalidateTag("mca2-data", "max");
     return { success: true, message: "Fascicolo pubblicato con successo sul portale pubblico OFCL." };
   } catch (err: unknown) {
     return {
