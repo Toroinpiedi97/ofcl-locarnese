@@ -7,17 +7,10 @@ import { CivicDeepDiveBento } from "@/components/dashboard/CivicDeepDiveBento";
 import { CreditAlertBanner } from "@/components/dashboard/CreditAlertBanner";
 import { SelIndicatorsRadarChart } from "@/components/charts";
 import {
-  Building2,
-  Users,
-  Percent,
-  Calendar,
   ChevronRight,
-  ShieldCheck,
   FileText,
   AlertTriangle,
   ArrowLeft,
-  Share2,
-  ExternalLink,
 } from "lucide-react";
 import type { Metadata } from "next";
 

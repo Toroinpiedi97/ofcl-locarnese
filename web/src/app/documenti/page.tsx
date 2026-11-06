@@ -2,21 +2,15 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { OFFICIAL_DOCUMENTS, type OfficialDocument } from "@/data/documents";
+import { OFFICIAL_DOCUMENTS } from "@/data/documents";
 import { MUNICIPALITIES } from "@/data/municipalities";
 import {
   FileText,
   Search,
-  Filter,
   Download,
-  Calendar,
   Building2,
   ShieldCheck,
-  ExternalLink,
-  ArrowLeft,
-  CheckCircle2,
   FileCheck2,
-  Hash,
 } from "lucide-react";
 
 export default function DocumentiPage() {

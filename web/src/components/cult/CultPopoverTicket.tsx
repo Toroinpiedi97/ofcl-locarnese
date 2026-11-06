@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useId } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { MUNICIPALITIES } from "@/data/municipalities";
-import { Ticket, Send, CheckCircle2, ShieldCheck, AlertCircle, Loader2 } from "lucide-react";
+import { Ticket, Send, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface CultPopoverTicketProps {
@@ -203,6 +203,19 @@ export function CultPopoverTicket({
                 <span>🛡️ Hash rate-limited · Audit curatore obbligatorio</span>
                 <span className="font-mono">{message.length} / 500 car.</span>
               </div>
+            </div>
+
+            <div>
+              <label className="font-bold text-slate-700 block mb-1">
+                Email facoltativa per riscontro (nLPD confidenziale)
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="es. cittadino@locarnese.ch (facoltativo)"
+                className="ofl-input-pill w-full rounded-lg px-2.5 py-1.5 text-xs text-slate-900 focus:outline-none"
+              />
             </div>
 
             {errorMsg && (

@@ -28,6 +28,7 @@ export function SectorPerCapitaBarChart({
     <div style={{ height }} className="w-full relative select-none">
       <ResponsiveBar
         data={data}
+        ariaLabel="Grafico ripartizione spesa pro capite per settore"
         keys={["Spese Personale (30)", "Beni e Servizi (31)", "Trasferimenti (36)"]}
         indexBy="settore"
         layout="horizontal"
@@ -43,7 +44,7 @@ export function SectorPerCapitaBarChart({
           tickSize: 4,
           tickPadding: 4,
           tickRotation: 0,
-          format: (v) => `${v}`,
+          format: (v: number | string) => `${v}`,
         }}
         axisLeft={{
           tickSize: 0,
@@ -53,7 +54,7 @@ export function SectorPerCapitaBarChart({
         enableGridX={true}
         enableGridY={false}
         enableLabel={false}
-        tooltip={({ id, value, color, indexValue }) => (
+        tooltip={({ id, value, color, indexValue }: { id: string | number; value: number | string; color: string; indexValue: string | number }) => (
           <div className="rounded-xl bg-slate-900/95 text-white p-2 text-xs font-mono shadow-xl border border-slate-700">
             <div className="font-bold border-b border-slate-700 pb-1 mb-1 text-slate-300">
               {indexValue} · {id}

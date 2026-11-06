@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { MUNICIPALITIES } from "@/data/municipalities";
@@ -22,7 +21,6 @@ export function CommandSearchDialog({ open, onOpenChange }: CommandSearchDialogP
   const { t } = useCivicLang();
   const [query, setQuery] = useState("");
   const deferredQuery = useDeferredValue(query);
-  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const filteredMunicipalities = MUNICIPALITIES.filter((m) => {
     const q = deferredQuery.toLowerCase().trim();
@@ -41,10 +39,6 @@ export function CommandSearchDialog({ open, onOpenChange }: CommandSearchDialogP
     { label: t.navOpenData, path: "/open-data", icon: Database },
     { label: "Biblioteca Documenti & Fascicoli", path: "/documenti", icon: FileText },
   ].filter((r) => !deferredQuery || r.label.toLowerCase().includes(deferredQuery.toLowerCase()));
-
-  useEffect(() => {
-    setSelectedIndex(0);
-  }, [deferredQuery]);
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -66,6 +60,7 @@ export function CommandSearchDialog({ open, onOpenChange }: CommandSearchDialogP
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg p-0 overflow-hidden ofl-card border border-white/80">
+        <DialogTitle className="sr-only">Ricerca rapida nel Locarnese</DialogTitle>
         <div className="p-3 border-b border-slate-300/40 flex items-center gap-2.5 bg-slate-100/50">
           <Search className="w-4 h-4 text-slate-500 shrink-0" />
           <input

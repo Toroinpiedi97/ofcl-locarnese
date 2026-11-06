@@ -2,15 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ShieldAlert,
-  FileCheck2,
   Scale,
-  ExternalLink,
   AlertTriangle,
   Mail,
-  ArrowLeft,
   Building2,
   Database,
-  Lock,
 } from "lucide-react";
 import {
   LEGAL_CONFIG,

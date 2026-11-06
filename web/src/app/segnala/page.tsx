@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useId, useTransition, Suspense } from "react";
+import { useState, useId, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { MUNICIPALITIES } from "@/data/municipalities";
@@ -11,8 +11,6 @@ import {
   CheckCircle2,
   AlertTriangle,
   Loader2,
-  Building2,
-  FileText,
 } from "lucide-react";
 
 function SegnalaContent() {

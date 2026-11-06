@@ -35,11 +35,17 @@ export async function middleware(request: NextRequest) {
     },
   });
 
+  const pathname = request.nextUrl.pathname;
+
+  // Ottimizzazione TTFB e Quota Free Tier: bypass immediato per tutte le rotte pubbliche.
+  // Solo la console curatore (/admin/*) richiede il controllo di sessione Supabase Auth.
+  if (!pathname.startsWith("/admin")) {
+    return response;
+  }
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  const pathname = request.nextUrl.pathname;
 
   // Protezione dedicata alla Console Curatore (/admin/*)
   if (pathname.startsWith("/admin")) {

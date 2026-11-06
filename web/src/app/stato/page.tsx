@@ -1,16 +1,5 @@
-import Link from "next/link";
 import { MUNICIPALITIES } from "@/data/municipalities";
-import {
-  Activity,
-  ArrowLeft,
-  CheckCircle2,
-  Clock,
-  Globe,
-  Radio,
-  Server,
-  ShieldCheck,
-  Zap,
-} from "lucide-react";
+import { CheckCircle2, ShieldCheck } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

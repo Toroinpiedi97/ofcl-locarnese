@@ -58,6 +58,7 @@ export function DistrictTrendLineChart({
     <div style={{ height }} className="w-full relative select-none">
       <ResponsiveLine
         data={data}
+        ariaLabel="Grafico andamento spese e ricavi storici 2019-2026"
         theme={nivoOflTheme}
         colors={["#2563eb", "#b91c1c", "#64748b"]}
         margin={{ top: 12, right: 14, bottom: 28, left: 42 }}
@@ -80,7 +81,7 @@ export function DistrictTrendLineChart({
           tickSize: 4,
           tickPadding: 4,
           tickRotation: 0,
-          format: (v) => `${v}`,
+          format: (v: number | string) => `${v}`,
         }}
         enableGridX={false}
         enableGridY={true}
@@ -92,12 +93,12 @@ export function DistrictTrendLineChart({
         pointLabelYOffset={-12}
         useMesh={true}
         enableSlices="x"
-        sliceTooltip={({ slice }) => (
+        sliceTooltip={({ slice }: { slice: { points: readonly any[] } }) => (
           <div className="rounded-xl bg-slate-900/95 text-white p-2.5 text-xs font-mono shadow-xl border border-slate-700">
             <div className="font-bold border-b border-slate-700 pb-1 mb-1.5 text-slate-300">
               Anno {slice.points[0]?.data.x} · Spesa pro capite
             </div>
-            {slice.points.map((pt) => (
+            {slice.points.map((pt: any) => (
               <div key={pt.id} className="flex items-center justify-between gap-4 py-0.5">
                 <span className="flex items-center gap-1.5">
                   <span

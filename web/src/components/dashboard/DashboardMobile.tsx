@@ -12,9 +12,7 @@ import {
   TrendingDown,
   Building2,
   AlertTriangle,
-  ArrowUpRight,
 } from "lucide-react";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 export interface DashboardMobileProps {

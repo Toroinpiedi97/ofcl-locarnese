@@ -3,14 +3,11 @@ import type { Metadata } from "next";
 import {
   Download,
   FileSpreadsheet,
-  FileText,
   Database,
   ExternalLink,
   ShieldCheck,
   Code2,
   BookOpen,
-  ArrowRight,
-  CheckCircle2,
   TableProperties,
   Sparkles,
 } from "lucide-react";

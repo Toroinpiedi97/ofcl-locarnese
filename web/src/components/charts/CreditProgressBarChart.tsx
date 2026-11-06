@@ -27,11 +27,12 @@ export function CreditProgressBarChart({
     <div style={{ height }} className="w-full relative select-none">
       <ResponsiveBar
         data={data}
+        ariaLabel="Grafico stato avanzamento crediti d'opera"
         keys={["Credito Votato", "Spesa Cumulata"]}
         indexBy="opera"
         groupMode="grouped"
         theme={nivoOflTheme}
-        colors={({ id, data: d }) => {
+        colors={({ id, data: d }: { id: string | number; data: Record<string, unknown> }) => {
           if (id === "Spesa Cumulata" && (d as { isOverrun?: number }).isOverrun === 1) {
             return "#dc2626"; // Sorpasso
           }
@@ -48,7 +49,7 @@ export function CreditProgressBarChart({
           tickSize: 4,
           tickPadding: 4,
           tickRotation: 0,
-          format: (v) => `${(Number(v) / 1000).toFixed(0)}k`,
+          format: (v: number | string) => `${(Number(v) / 1000).toFixed(0)}k`,
         }}
         axisLeft={{
           tickSize: 0,
@@ -58,7 +59,7 @@ export function CreditProgressBarChart({
         enableGridX={true}
         enableGridY={false}
         enableLabel={false}
-        tooltip={({ id, value, color, indexValue }) => (
+        tooltip={({ id, value, color, indexValue }: { id: string | number; value: number | string; color: string; indexValue: string | number }) => (
           <div className="rounded-xl bg-slate-900/95 text-white p-2 text-xs font-mono shadow-xl border border-slate-700">
             <div className="font-bold border-b border-slate-700 pb-1 mb-1 text-slate-300">
               {indexValue}

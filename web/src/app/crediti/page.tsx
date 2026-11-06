@@ -2,25 +2,18 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { INVESTMENT_CREDITS, type InvestmentCredit } from "@/data/credits";
+import { INVESTMENT_CREDITS } from "@/data/credits";
 import { MUNICIPALITIES } from "@/data/municipalities";
 import { CreditProgressBarChart } from "@/components/charts";
 import {
   AlertTriangle,
-  ArrowLeft,
   Building2,
   Calendar,
   CheckCircle2,
-  Coins,
   FileText,
-  Filter,
-  HelpCircle,
   Search,
   ShieldAlert,
   ShieldCheck,
-  TrendingDown,
-  TrendingUp,
-  ExternalLink,
 } from "lucide-react";
 
 export default function DistrictCreditsPage() {

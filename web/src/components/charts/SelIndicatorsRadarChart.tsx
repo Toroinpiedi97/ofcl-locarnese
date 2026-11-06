@@ -52,6 +52,7 @@ export function SelIndicatorsRadarChart({
     <div style={{ height }} className="w-full relative select-none">
       <ResponsiveRadar
         data={data}
+        ariaLabel="Grafico radar degli 8 indicatori finanziari SEL"
         keys={keys}
         indexBy="indicatore"
         maxValue={100}

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -8,12 +7,9 @@ import {
   CheckCircle2,
   Download,
   ArrowUpRight,
-  ShieldCheck,
   AlertTriangle,
-  Ticket,
 } from "lucide-react";
 import type { MunicipalityData } from "@/data/municipalities";
-import { formatChfExact } from "@/lib/utils";
 import { IndicatorsSelBar } from "./IndicatorsSelBar";
 import { CultExpandableTicketCard } from "@/components/cult/CultExpandableTicketCard";
 import { CultPopoverTicket } from "@/components/cult/CultPopoverTicket";
@@ -74,10 +70,11 @@ export function MunicipalityGlassDrawer({
           <button
             type="button"
             onClick={onClose}
+            aria-label="Chiudi pannello per vedere tutta la tabella"
             title="Chiudi pannello per vedere tutta la tabella"
             className="w-6 h-6 rounded-full hover:bg-slate-400/30 flex items-center justify-center text-slate-700 font-bold text-xs cursor-pointer transition-colors shrink-0"
           >
-            ✕
+            <X className="w-3.5 h-3.5" />
           </button>
         </div>
 

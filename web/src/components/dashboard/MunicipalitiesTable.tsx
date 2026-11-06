@@ -5,13 +5,11 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
-  Building2,
   Search,
-  ExternalLink,
   Map as MapIcon,
 } from "lucide-react";
 import type { MunicipalityData } from "@/data/municipalities";
-import { formatChfCompact, formatChfExact, cn } from "@/lib/utils";
+import { formatChfCompact, cn } from "@/lib/utils";
 import { useCivicLang } from "@/lib/i18n-civic";
 
 export interface MunicipalitiesTableProps {
@@ -109,6 +107,17 @@ export function MunicipalitiesTable({
           </div>
 
           <div className="flex items-center gap-2">
+            <div className="relative">
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2 top-2 pointer-events-none" />
+              <input
+                type="text"
+                value={filterQuery}
+                onChange={(e) => setFilterQuery(e.target.value)}
+                placeholder="Filtra..."
+                aria-label="Filtra comuni per nome o codice UST"
+                className="ofl-input-pill rounded-lg pl-7 pr-2 py-1 text-xs text-slate-800 w-24 sm:w-32 focus:outline-none"
+              />
+            </div>
             {onToggleMap && (
               <button
                 type="button"

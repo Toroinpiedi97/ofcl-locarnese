@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { AlertTriangle, CheckCircle2, ArrowRight, ShieldAlert } from "lucide-react";
+import { AlertTriangle, CheckCircle2, ArrowRight } from "lucide-react";
 
 export interface CreditAlertBannerProps {
   municipalityName: string;
@@ -20,7 +20,6 @@ export function CreditAlertBanner({
   municipalityName,
   slug,
   hasOverruns,
-  overrunCount = 1,
   overrunDetails = {
     account_code: "615.5010.200",
     description: "Sistemazione tornante Jacomello",

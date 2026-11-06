@@ -1,14 +1,4 @@
-import Link from "next/link";
-import {
-  ArrowLeft,
-  CheckCircle2,
-  Clock,
-  FileSpreadsheet,
-  GitCommit,
-  Hash,
-  ShieldCheck,
-  Tag,
-} from "lucide-react";
+import { CheckCircle2, GitCommit, ShieldCheck } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

@@ -5,13 +5,10 @@ import {
   TrendingUp,
   TrendingDown,
   Building2,
-  ExternalLink,
-  Info,
   ArrowUpRight,
   ShieldCheck,
   PiggyBank,
   Wallet,
-  Coins,
 } from "lucide-react";
 import type { MunicipalityData } from "@/data/municipalities";
 import { IndicatorsSelBar } from "./IndicatorsSelBar";
@@ -21,7 +18,7 @@ export interface QuickCard30sProps {
   year?: number;
 }
 
-export function QuickCard30s({ municipality, year = 2025 }: QuickCard30sProps) {
+export function QuickCard30s({ municipality }: QuickCard30sProps) {
   const { summary_30s } = municipality;
 
   const isAvanzo = summary_30s.risultato_ordinario_chf >= 0;

@@ -4,19 +4,11 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { MUNICIPALITIES, type MunicipalityData } from "@/data/municipalities";
 import {
-  ArrowLeft,
   ArrowUpDown,
   Download,
-  Building2,
-  Users,
-  Percent,
-  TrendingUp,
-  TrendingDown,
-  Coins,
   ShieldCheck,
   Check,
   AlertCircle,
-  HelpCircle,
   Filter,
 } from "lucide-react";
 

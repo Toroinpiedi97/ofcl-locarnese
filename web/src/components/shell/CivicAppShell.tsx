@@ -22,7 +22,7 @@ export function CivicAppShell({ children }: CivicAppShellProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-[#1b2028] text-slate-900 select-none">
+    <div className="min-h-screen flex flex-col lg:flex-row bg-[#1b2028] text-slate-900">
       {/* Skip Link per Accessibilità Tastiera WAI-ARIA */}
       <a
         href="#main-content"

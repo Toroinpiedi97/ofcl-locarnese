@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import type { MunicipalityData } from "@/data/municipalities";
 import { MunicipalitiesTable } from "./MunicipalitiesTable";
 import { TerritorialMap } from "./TerritorialMap";
@@ -9,20 +10,11 @@ import { DistrictTrendLineChart, SectorPerCapitaBarChart } from "@/components/ch
 import { CultPopoverTicket } from "@/components/cult/CultPopoverTicket";
 import { useCivicLang } from "@/lib/i18n-civic";
 import {
-  Search,
   Download,
   Ticket,
   ChevronDown,
-  Building2,
-  Users,
-  Percent,
-  Coins,
   ShieldCheck,
-  TrendingDown,
-  TrendingUp,
-  FileSpreadsheet,
 } from "lucide-react";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 export interface DashboardDesktopProps {
@@ -34,8 +26,9 @@ export function DashboardDesktop({
   municipalities,
   defaultUstCode = 5113, // Locarno predefinito
 }: DashboardDesktopProps) {
+  const router = useRouter();
   const { t } = useCivicLang();
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const [selectedUstCode, setSelectedUstCode] = useState<number>(defaultUstCode);
   const [compareUstCode, setCompareUstCode] = useState<number>(5115); // Losone come confronto
@@ -65,7 +58,7 @@ export function DashboardDesktop({
   }
 
   function handleTriggerOpenData() {
-    window.location.href = "/open-data";
+    router.push("/open-data");
   }
 
   // Calcoli grandezze distrettuali
@@ -73,6 +66,16 @@ export function DashboardDesktop({
   const avgMultiplier = (
     municipalities.reduce((acc, m) => acc + m.tax_multiplier_pf, 0) / municipalities.length
   ).toFixed(1);
+  const totalAutofin = municipalities.reduce(
+    (acc, m) => acc + m.summary_30s.autofinanziamento_chf,
+    0
+  );
+  const avgAutofin = municipalities.length > 0 ? totalAutofin / municipalities.length : 0;
+  const totalDebitoNetto = municipalities.reduce(
+    (acc, m) => acc + m.summary_30s.debito_netto_pc_chf * m.population,
+    0
+  );
+  const avgDebitoPc = totalPop > 0 ? Math.round(totalDebitoNetto / totalPop) : 0;
 
   return (
     <div className="p-5 lg:p-6 space-y-4">
@@ -176,7 +179,9 @@ export function DashboardDesktop({
         >
           <div className="text-xs font-semibold text-slate-700">{t.kpiAutofinancingAvg}</div>
           <div className="tabular-mca2 text-2xl sm:text-[28px] font-extrabold text-slate-950 tracking-tight mt-1 font-mono">
-            {exactKpi ? "CHF 4'210'000.00" : "CHF 4.2M"}
+            {exactKpi
+              ? `CHF ${avgAutofin.toLocaleString("de-CH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+              : `CHF ${(avgAutofin / 1_000_000).toFixed(1)}M`}
           </div>
         </div>
 
@@ -187,7 +192,9 @@ export function DashboardDesktop({
         >
           <div className="text-xs font-semibold text-slate-700">{t.kpiDebtPerCapitaAvg}</div>
           <div className="tabular-mca2 text-2xl sm:text-[28px] font-extrabold text-slate-950 tracking-tight mt-1 font-mono">
-            {exactKpi ? "CHF 3'120.50" : "CHF 3'120"}
+            {exactKpi
+              ? `CHF ${avgDebitoPc.toLocaleString("de-CH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+              : `CHF ${avgDebitoPc.toLocaleString("de-CH")}`}
           </div>
         </div>
       </section>

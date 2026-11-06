@@ -14,6 +14,7 @@ import {
   ChevronRight,
   ShieldCheck,
   FileText,
+  Search,
   Activity,
   History,
   Lock,
@@ -151,6 +152,23 @@ export function CivicSidebar({ onOpenSearch, className }: CivicSidebarProps) {
             <div className="text-[10px] text-slate-400 font-mono mt-0.5">Locarnese MCA2</div>
           </div>
         </Link>
+
+        {/* Pulsante Ricerca Rapida Cmd+K */}
+        {onOpenSearch && (
+          <button
+            type="button"
+            onClick={onOpenSearch}
+            className="w-full mb-3 flex items-center justify-between px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-300 transition-all cursor-pointer"
+          >
+            <div className="flex items-center gap-2">
+              <Search className="w-3.5 h-3.5 text-slate-400" />
+              <span>Cerca...</span>
+            </div>
+            <kbd className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-slate-300 font-bold">
+              ⌘K
+            </kbd>
+          </button>
+        )}
 
         {/* Menu Navigazione Civica */}
         <nav className="space-y-1.5" aria-label="Menu principale">
