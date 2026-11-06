@@ -23,9 +23,10 @@ test.describe("Scheda Comune Estesa (/comuni/[slug]) & Simulatore Imposte", () =
 
     // 4. Verifica Presenza 5 Quadranti Bento (Civic Deep Dive)
     await expect(page.getByText("Tariffe di Causalità & Rifiuti")).toBeVisible();
-    await expect(page.getByText("85.00 CHF/anno").first()).toBeVisible(); // Tassa base rifiuti Brione
+    await expect(page.getByText("110.00 CHF/anno").first()).toBeVisible(); // Tassa base rifiuti Brione certificata
     await expect(page.getByText("Famiglie, Infanzia & Scuola")).toBeVisible();
-    await expect(page.getByText("500.00 CHF / neonato")).toBeVisible();
+    await expect(page.getByText("Assegno Parentale di Nascita")).toBeVisible();
+    await expect(page.getByText(/3['’]?000\.00 CHF/)).toBeVisible();
     await expect(page.getByText("Terza Età, Salute & Sociale")).toBeVisible();
     await expect(page.getByText("Clima, Energia & Mobilità")).toBeVisible();
     await expect(page.getByText("Sportello Comunale & Recapiti Ufficiali")).toBeVisible();
