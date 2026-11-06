@@ -1,8 +1,44 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "@/lib/supabase/database.types";
+import { bucketForPath, clientIpFrom, consume } from "@/lib/guardrails";
 
 export async function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+
+  // Guardrail di quota giornaliera: API pubbliche e download open data.
+  const bucket = bucketForPath(pathname);
+  if (bucket) {
+    if (request.method === "OPTIONS") return NextResponse.next();
+    const verdict = consume(bucket, clientIpFrom(request.headers));
+    if (!verdict.ok) {
+      return new NextResponse(
+        JSON.stringify({
+          error:
+            verdict.reason === "ip_rate"
+              ? "Troppe richieste: rallenta e riprova."
+              : "Quota giornaliera del servizio esaurita: riprova dopo mezzanotte UTC.",
+        }),
+        {
+          status: verdict.reason === "ip_rate" ? 429 : 503,
+          headers: {
+            "Content-Type": "application/json",
+            "Retry-After": String(verdict.retryAfter),
+            "Cache-Control": "no-store",
+          },
+        }
+      );
+    }
+    // Nessuna chiamata a Supabase Auth per endpoint pubblici.
+    return NextResponse.next();
+  }
+
+  // Le pagine pubbliche non hanno sessione: evita un round-trip a Supabase
+  // Auth su ogni richiesta (consumo quota Auth + latenza).
+  if (!pathname.startsWith("/admin")) {
+    return NextResponse.next();
+  }
+
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -38,8 +74,6 @@ export async function middleware(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  const pathname = request.nextUrl.pathname;
 
   // Protezione dedicata alla Console Curatore (/admin/*)
   if (pathname.startsWith("/admin")) {
@@ -111,8 +145,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/admin/:path*",
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
+  matcher: ["/admin/:path*", "/api/v1/:path*", "/feed.xml", "/data/opendata/:path*"],
 };

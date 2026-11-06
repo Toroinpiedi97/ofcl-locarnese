@@ -1,5 +1,6 @@
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { consume } from "@/lib/guardrails";
 
 const accountId = process.env.R2_ACCOUNT_ID;
 const accessKeyId = process.env.R2_ACCESS_KEY_ID;
@@ -29,6 +30,11 @@ export async function getPresignedPdfUrl(
   r2Key: string,
   expiresInSeconds: number = 900
 ): Promise<string> {
+  // Guardrail quota R2 (operazioni Class B): oltre il tetto giornaliero non si firma
+  const guard = consume("r2_presign", "console-curatore");
+  if (!guard.ok) {
+    throw new Error("Quota giornaliera R2 esaurita: riprova dopo mezzanotte UTC.");
+  }
   const s3 = getS3Client();
   if (!s3) {
     // In assenza di credenziali R2 (ambiente dev locale offline), restituisce un URL fittizio o locale

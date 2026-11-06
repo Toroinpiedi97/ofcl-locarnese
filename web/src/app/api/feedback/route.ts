@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import crypto from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { consume } from "@/lib/guardrails";
 
 // In-memory rate limiting map come fallback (ip_hash -> list of timestamps)
 const rateLimitMap = new Map<string, number[]>();
@@ -95,6 +96,18 @@ export async function POST(req: NextRequest) {
     }
     timestamps.push(now);
     rateLimitMap.set(ipHash, timestamps);
+
+    // 5b. Guardrail quota Supabase: tetto giornaliero di scritture
+    const guard = consume("supabase_write", ipHash);
+    if (!guard.ok && guard.reason === "daily_budget") {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Le segnalazioni sono temporaneamente sospese (quota giornaliera raggiunta). Riprova domani.",
+        },
+        { status: 503, headers: { "Retry-After": String(guard.retryAfter) } }
+      );
+    }
 
     // 6. Salvataggio su database in audit.feedback_ticket
     try {

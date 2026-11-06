@@ -23,20 +23,54 @@ export async function GET(req: NextRequest) {
     );
   }
 
+  const NA = (code: string, name: string, unit: string) => ({
+    code,
+    name,
+    value: null as number | null,
+    unit,
+    band: "NON_DISPONIBILE",
+    thresholds: null as string | null,
+    is_conform: null as boolean | null,
+    status: "non_disponibile",
+  });
+
   const result = targetList.map((m) => {
     const s = m.summary_30s;
     const autofin = s.autofinanziamento_chf;
     const investNetti = s.investimenti_netti_chf;
     const debitoPc = s.debito_netto_pc_chf;
 
-    // Calcolo 8 Indicatori SEL con soglie ufficiali Sezione Enti Locali
-    const degreeVal = investNetti > 0 ? (autofin / investNetti) * 100 : 100;
-    const capacityVal = 18.5; // Stima media ricavi correnti
-    const interestRatioVal = 1.8; // Carico interessi medio
-    const serviceRatioVal = 6.2; // Servizio debito
-    const debtRatioVal = 85.0; // Quota debito netto
-    const investRatioVal = 22.4; // Quota investimenti
-    const equityRatioVal = 44.5; // Quota capitale proprio
+    // Si espongono SOLO indicatori calcolabili dai dati verificati.
+    // Gli altri restano null (mai valori stimati/placeholder).
+    const hasData = investNetti > 0 || autofin !== 0;
+    const degreeVal = investNetti > 0 ? (autofin / investNetti) * 100 : null;
+
+    const degree =
+      degreeVal === null
+        ? NA("SELF_FINANCING_DEGREE", "Grado di autofinanziamento", "%")
+        : {
+            code: "SELF_FINANCING_DEGREE",
+            name: "Grado di autofinanziamento",
+            value: Number(degreeVal.toFixed(1)),
+            unit: "%",
+            band: degreeVal >= 100 ? "OTTIMO" : degreeVal >= 70 ? "MEDIO" : "DEBOLE",
+            thresholds: "> 100% Buono · 70-100% Accettabile · < 70% Debole",
+            is_conform: degreeVal >= 70,
+            status: "calcolato",
+          };
+
+    const perCapita = !hasData
+      ? NA("NET_DEBT_PER_CAPITA", "Debito netto pro capite", "CHF/ab")
+      : {
+          code: "NET_DEBT_PER_CAPITA",
+          name: "Debito netto pro capite",
+          value: debitoPc,
+          unit: "CHF/ab",
+          band: debitoPc < 2500 ? "OTTIMO" : debitoPc <= 5000 ? "MEDIO" : "CRITICO",
+          thresholds: "< 2'500 Buono · 2'500-5'000 Medio · > 5'000 Elevato",
+          is_conform: debitoPc <= 5000,
+          status: "calcolato",
+        };
 
     return {
       ust_code: m.ust_code,
@@ -45,78 +79,14 @@ export async function GET(req: NextRequest) {
       fiscal_year: year,
       conformity_score: s.sel_conformity,
       indicators: [
-        {
-          code: "SELF_FINANCING_DEGREE",
-          name: "Grado di autofinanziamento",
-          value: Number(degreeVal.toFixed(2)),
-          unit: "%",
-          band: degreeVal >= 100 ? "OTTIMO" : degreeVal >= 70 ? "MEDIO" : "DEBOLE",
-          thresholds: "> 100% Buono · 70-100% Accettabile · < 70% Debole",
-          is_conform: degreeVal >= 70,
-        },
-        {
-          code: "SELF_FINANCING_CAPACITY",
-          name: "Capacità di autofinanziamento",
-          value: capacityVal,
-          unit: "%",
-          band: "MEDIO",
-          thresholds: "> 20% Buona · 10-20% Media · < 10% Debole",
-          is_conform: true,
-        },
-        {
-          code: "INTEREST_BURDEN_RATIO",
-          name: "Quota oneri finanziari (Interessi)",
-          value: interestRatioVal,
-          unit: "%",
-          band: "OTTIMO",
-          thresholds: "< 2% Buono · 2-5% Medio · > 5% Elevato",
-          is_conform: true,
-        },
-        {
-          code: "CAPITAL_SERVICE_RATIO",
-          name: "Quota del servizio del debito",
-          value: serviceRatioVal,
-          unit: "%",
-          band: "MEDIO",
-          thresholds: "< 5% Sostenibile · 5-15% Medio · > 15% Critico",
-          is_conform: true,
-        },
-        {
-          code: "NET_DEBT_RATIO",
-          name: "Quota del debito netto",
-          value: debtRatioVal,
-          unit: "%",
-          band: "OTTIMO",
-          thresholds: "< 100% Basso · 100-150% Medio · > 150% Elevato",
-          is_conform: true,
-        },
-        {
-          code: "NET_DEBT_PER_CAPITA",
-          name: "Debito netto pro capite",
-          value: debitoPc,
-          unit: "CHF/ab",
-          band: debitoPc < 2500 ? "OTTIMO" : debitoPc <= 5000 ? "MEDIO" : "CRITICO",
-          thresholds: "< 2'500 Buono · 2'500-5'000 Medio · > 5'000 Elevato",
-          is_conform: debitoPc <= 5000,
-        },
-        {
-          code: "INVESTMENT_RATIO",
-          name: "Quota degli investimenti",
-          value: investRatioVal,
-          unit: "%",
-          band: "MEDIO",
-          thresholds: "> 25% Intensa · 15-25% Media · < 15% Debole",
-          is_conform: true,
-        },
-        {
-          code: "EQUITY_RATIO",
-          name: "Quota del capitale proprio",
-          value: equityRatioVal,
-          unit: "%",
-          band: "OTTIMO",
-          thresholds: "> 40% Buona · 20-40% Media · < 20% Debole",
-          is_conform: true,
-        },
+        degree,
+        NA("SELF_FINANCING_CAPACITY", "Capacità di autofinanziamento", "%"),
+        NA("INTEREST_BURDEN_RATIO", "Quota oneri finanziari (Interessi)", "%"),
+        NA("CAPITAL_SERVICE_RATIO", "Quota del servizio del debito", "%"),
+        NA("NET_DEBT_RATIO", "Quota del debito netto", "%"),
+        perCapita,
+        NA("INVESTMENT_RATIO", "Quota degli investimenti", "%"),
+        NA("EQUITY_RATIO", "Quota del capitale proprio", "%"),
       ],
       delibera_riferimento: s.latest_mm_reference,
     };
