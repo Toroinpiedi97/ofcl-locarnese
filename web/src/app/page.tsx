@@ -1,7 +1,6 @@
 import { getDistrictDataset } from "@/lib/data/mca2-dal";
 import { DashboardDesktop } from "@/components/dashboard/DashboardDesktop";
 import { DashboardMobile } from "@/components/dashboard/DashboardMobile";
-
 export default async function HomePage() {
   const municipalities = await getDistrictDataset();
 

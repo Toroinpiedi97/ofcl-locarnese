@@ -18,7 +18,7 @@ export interface QuickCard30sProps {
   year?: number;
 }
 
-export function QuickCard30s({ municipality }: QuickCard30sProps) {
+export function QuickCard30s({ municipality, year = 2026 }: QuickCard30sProps) {
   const { summary_30s } = municipality;
 
   const isAvanzo = summary_30s.risultato_ordinario_chf >= 0;
@@ -34,7 +34,7 @@ export function QuickCard30s({ municipality }: QuickCard30sProps) {
                 UST {municipality.ust_code}
               </span>
               <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                Circolo di {municipality.circle}
+                Circolo di {municipality.circle} · Anno {year}
               </span>
             </div>
             <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white mt-1">

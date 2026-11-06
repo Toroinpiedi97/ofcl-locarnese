@@ -1,0 +1,781 @@
+[
+  {
+    "ust_code": 5091,
+    "name": "Ascona",
+    "slug": "ascona",
+    "circle": "Isole",
+    "population": 5290,
+    "multipliers_history": {
+      "2022": {
+        "pf": 75,
+        "pg": 75
+      },
+      "2023": {
+        "pf": 75,
+        "pg": 75
+      },
+      "2024": {
+        "pf": 75,
+        "pg": 75
+      },
+      "2025": {
+        "pf": 75,
+        "pg": 75
+      },
+      "2026": {
+        "pf": 75,
+        "pg": 75
+      }
+    },
+    "tax_multiplier_pf": 75,
+    "tax_multiplier_pg": 75,
+    "waste_base_fee": "80.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "80.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 115,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 3000,
+      "canteen_meal_chf": 9,
+      "climate_fund_active": true
+    }
+  },
+  {
+    "ust_code": 5096,
+    "name": "Brione sopra Minusio",
+    "slug": "brione-sopra-minusio",
+    "circle": "Navegna",
+    "population": 432,
+    "multipliers_history": {
+      "2022": {
+        "pf": 78,
+        "pg": 78
+      },
+      "2023": {
+        "pf": 78,
+        "pg": 78
+      },
+      "2024": {
+        "pf": 78,
+        "pg": 78
+      },
+      "2025": {
+        "pf": 78,
+        "pg": 78
+      },
+      "2026": {
+        "pf": 78,
+        "pg": 78
+      }
+    },
+    "tax_multiplier_pf": 78,
+    "tax_multiplier_pg": 78,
+    "waste_base_fee": "110.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "110.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 3000,
+      "canteen_meal_chf": 9,
+      "climate_fund_active": true
+    }
+  },
+  {
+    "ust_code": 5097,
+    "name": "Brissago",
+    "slug": "brissago",
+    "circle": "Isole",
+    "population": 1577,
+    "multipliers_history": {
+      "2022": {
+        "pf": 85,
+        "pg": 85
+      },
+      "2023": {
+        "pf": 85,
+        "pg": 85
+      },
+      "2024": {
+        "pf": 85,
+        "pg": 85
+      },
+      "2025": {
+        "pf": 85,
+        "pg": 85
+      },
+      "2026": {
+        "pf": 85,
+        "pg": 85
+      }
+    },
+    "tax_multiplier_pf": 85,
+    "tax_multiplier_pg": 85,
+    "waste_base_fee": "130.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "130.00 CHF/anno",
+      "waste_bag_35l_chf": 1.1,
+      "dog_tax_chf": 80,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 3000,
+      "canteen_meal_chf": 8.5,
+      "climate_fund_active": true
+    }
+  },
+  {
+    "ust_code": 5108,
+    "name": "Gordola",
+    "slug": "gordola",
+    "circle": "Navegna",
+    "population": 4877,
+    "multipliers_history": {
+      "2022": {
+        "pf": 84,
+        "pg": 84
+      },
+      "2023": {
+        "pf": 88,
+        "pg": 88
+      },
+      "2024": {
+        "pf": 86,
+        "pg": 86
+      },
+      "2025": {
+        "pf": 86,
+        "pg": 86
+      },
+      "2026": {
+        "pf": 88,
+        "pg": 88
+      }
+    },
+    "tax_multiplier_pf": 88,
+    "tax_multiplier_pg": 88,
+    "waste_base_fee": "80.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "80.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 3000,
+      "canteen_meal_chf": 9,
+      "climate_fund_active": true
+    }
+  },
+  {
+    "ust_code": 5112,
+    "name": "Lavertezzo",
+    "slug": "lavertezzo",
+    "circle": "Verzasca",
+    "population": 1235,
+    "multipliers_history": {
+      "2022": {
+        "pf": 100,
+        "pg": 100
+      },
+      "2023": {
+        "pf": 100,
+        "pg": 100
+      },
+      "2024": {
+        "pf": 100,
+        "pg": 100
+      },
+      "2025": {
+        "pf": 100,
+        "pg": 100
+      },
+      "2026": {
+        "pf": 100,
+        "pg": 100
+      }
+    },
+    "tax_multiplier_pf": 100,
+    "tax_multiplier_pg": 100,
+    "waste_base_fee": "100.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "100.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 1,
+      "birth_bonus_chf": 3000,
+      "canteen_meal_chf": 8.5,
+      "climate_fund_active": true
+    }
+  },
+  {
+    "ust_code": 5113,
+    "name": "Locarno",
+    "slug": "locarno",
+    "circle": "Locarno",
+    "population": 16463,
+    "multipliers_history": {
+      "2022": {
+        "pf": 90,
+        "pg": 90
+      },
+      "2023": {
+        "pf": 90,
+        "pg": 90
+      },
+      "2024": {
+        "pf": 90,
+        "pg": 90
+      },
+      "2025": {
+        "pf": 90,
+        "pg": 97
+      },
+      "2026": {
+        "pf": 90,
+        "pg": 97
+      }
+    },
+    "tax_multiplier_pf": 90,
+    "tax_multiplier_pg": 97,
+    "waste_base_fee": "110.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "110.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 1.5,
+      "birth_bonus_chf": 3000,
+      "canteen_meal_chf": 7.5,
+      "climate_fund_active": true
+    }
+  },
+  {
+    "ust_code": 5115,
+    "name": "Losone",
+    "slug": "losone",
+    "circle": "Isole",
+    "population": 6780,
+    "multipliers_history": {
+      "2022": {
+        "pf": 90,
+        "pg": 90
+      },
+      "2023": {
+        "pf": 90,
+        "pg": 90
+      },
+      "2024": {
+        "pf": 90,
+        "pg": 90
+      },
+      "2025": {
+        "pf": 90,
+        "pg": 90
+      },
+      "2026": {
+        "pf": 90,
+        "pg": 90
+      }
+    },
+    "tax_multiplier_pf": 90,
+    "tax_multiplier_pg": 90,
+    "waste_base_fee": "90.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "90.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 3000,
+      "canteen_meal_chf": 8,
+      "climate_fund_active": true
+    }
+  },
+  {
+    "ust_code": 5117,
+    "name": "Mergoscia",
+    "slug": "mergoscia",
+    "circle": "Navegna",
+    "population": 194,
+    "multipliers_history": {
+      "2022": {
+        "pf": 100,
+        "pg": 100
+      },
+      "2023": {
+        "pf": 100,
+        "pg": 100
+      },
+      "2024": {
+        "pf": 100,
+        "pg": 100
+      },
+      "2025": {
+        "pf": 100,
+        "pg": 100
+      },
+      "2026": {
+        "pf": 100,
+        "pg": 100
+      }
+    },
+    "tax_multiplier_pf": 100,
+    "tax_multiplier_pg": 100,
+    "waste_base_fee": "120.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "120.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 3000,
+      "canteen_meal_chf": 9,
+      "climate_fund_active": false
+    }
+  },
+  {
+    "ust_code": 5118,
+    "name": "Minusio",
+    "slug": "minusio",
+    "circle": "Navegna",
+    "population": 7273,
+    "multipliers_history": {
+      "2022": {
+        "pf": 78,
+        "pg": 78
+      },
+      "2023": {
+        "pf": 78,
+        "pg": 78
+      },
+      "2024": {
+        "pf": 78,
+        "pg": 78
+      },
+      "2025": {
+        "pf": 82,
+        "pg": 82
+      },
+      "2026": {
+        "pf": 82,
+        "pg": 82
+      }
+    },
+    "tax_multiplier_pf": 82,
+    "tax_multiplier_pg": 82,
+    "waste_base_fee": "85.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "85.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 90,
+      "real_estate_tax_permille": 1,
+      "birth_bonus_chf": 3000,
+      "canteen_meal_chf": 8.5,
+      "climate_fund_active": true
+    }
+  },
+  {
+    "ust_code": 5120,
+    "name": "Muralto",
+    "slug": "muralto",
+    "circle": "Locarno",
+    "population": 2513,
+    "multipliers_history": {
+      "2022": {
+        "pf": 78,
+        "pg": 78
+      },
+      "2023": {
+        "pf": 78,
+        "pg": 78
+      },
+      "2024": {
+        "pf": 73,
+        "pg": 73
+      },
+      "2025": {
+        "pf": 75,
+        "pg": 75
+      },
+      "2026": {
+        "pf": 85,
+        "pg": 85
+      }
+    },
+    "tax_multiplier_pf": 85,
+    "tax_multiplier_pg": 85,
+    "waste_base_fee": "80.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "80.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 1,
+      "birth_bonus_chf": 3000,
+      "canteen_meal_chf": 8,
+      "climate_fund_active": true
+    }
+  },
+  {
+    "ust_code": 5121,
+    "name": "Orselina",
+    "slug": "orselina",
+    "circle": "Locarno",
+    "population": 682,
+    "multipliers_history": {
+      "2022": {
+        "pf": 75,
+        "pg": 75
+      },
+      "2023": {
+        "pf": 75,
+        "pg": 75
+      },
+      "2024": {
+        "pf": 82,
+        "pg": 82
+      },
+      "2025": {
+        "pf": 82,
+        "pg": 82
+      },
+      "2026": {
+        "pf": 82,
+        "pg": 82
+      }
+    },
+    "tax_multiplier_pf": 82,
+    "tax_multiplier_pg": 82,
+    "waste_base_fee": "90.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "90.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 3000,
+      "canteen_meal_chf": 9,
+      "climate_fund_active": true
+    }
+  },
+  {
+    "ust_code": 5125,
+    "name": "Ronco sopra Ascona",
+    "slug": "ronco-sopra-ascona",
+    "circle": "Isole",
+    "population": 516,
+    "multipliers_history": {
+      "2022": {
+        "pf": 75,
+        "pg": 75
+      },
+      "2023": {
+        "pf": 75,
+        "pg": 75
+      },
+      "2024": {
+        "pf": 75,
+        "pg": 75
+      },
+      "2025": {
+        "pf": 75,
+        "pg": 75
+      },
+      "2026": {
+        "pf": 75,
+        "pg": 75
+      }
+    },
+    "tax_multiplier_pf": 75,
+    "tax_multiplier_pg": 75,
+    "waste_base_fee": "90.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "90.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 3000,
+      "canteen_meal_chf": 9,
+      "climate_fund_active": true
+    }
+  },
+  {
+    "ust_code": 5131,
+    "name": "Tenero-Contra",
+    "slug": "tenero-contra",
+    "circle": "Navegna",
+    "population": 3417,
+    "multipliers_history": {
+      "2022": {
+        "pf": 93,
+        "pg": 93
+      },
+      "2023": {
+        "pf": 93,
+        "pg": 93
+      },
+      "2024": {
+        "pf": 93,
+        "pg": 93
+      },
+      "2025": {
+        "pf": 93,
+        "pg": 93
+      },
+      "2026": {
+        "pf": 93,
+        "pg": 93
+      }
+    },
+    "tax_multiplier_pf": 93,
+    "tax_multiplier_pg": 93,
+    "waste_base_fee": "85.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "85.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 90,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 3000,
+      "canteen_meal_chf": 8,
+      "climate_fund_active": true
+    }
+  },
+  {
+    "ust_code": 5136,
+    "name": "Onsernone",
+    "slug": "onsernone",
+    "circle": "Onsernone",
+    "population": 643,
+    "multipliers_history": {
+      "2022": {
+        "pf": 95,
+        "pg": 95
+      },
+      "2023": {
+        "pf": 95,
+        "pg": 95
+      },
+      "2024": {
+        "pf": 95,
+        "pg": 95
+      },
+      "2025": {
+        "pf": 95,
+        "pg": 95
+      },
+      "2026": {
+        "pf": 95,
+        "pg": 95
+      }
+    },
+    "tax_multiplier_pf": 95,
+    "tax_multiplier_pg": 95,
+    "waste_base_fee": "130.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "130.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 3000,
+      "canteen_meal_chf": 8,
+      "climate_fund_active": false
+    }
+  },
+  {
+    "ust_code": 5138,
+    "name": "Cugnasco-Gerra",
+    "slug": "cugnasco-gerra",
+    "circle": "Navegna",
+    "population": 2838,
+    "multipliers_history": {
+      "2022": {
+        "pf": 86,
+        "pg": 86
+      },
+      "2023": {
+        "pf": 86,
+        "pg": 86
+      },
+      "2024": {
+        "pf": 88,
+        "pg": 88
+      },
+      "2025": {
+        "pf": 90,
+        "pg": 90
+      },
+      "2026": {
+        "pf": 88,
+        "pg": 88
+      }
+    },
+    "tax_multiplier_pf": 88,
+    "tax_multiplier_pg": 88,
+    "waste_base_fee": "85.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "85.00 CHF/anno",
+      "waste_bag_35l_chf": 1.15,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 3000,
+      "canteen_meal_chf": 8.5,
+      "climate_fund_active": true
+    }
+  },
+  {
+    "ust_code": 5396,
+    "name": "Terre di Pedemonte",
+    "slug": "terre-di-pedemonte",
+    "circle": "Melezza",
+    "population": 2646,
+    "multipliers_history": {
+      "2022": {
+        "pf": 85,
+        "pg": 85
+      },
+      "2023": {
+        "pf": 85,
+        "pg": 85
+      },
+      "2024": {
+        "pf": 85,
+        "pg": 85
+      },
+      "2025": {
+        "pf": 85,
+        "pg": 85
+      },
+      "2026": {
+        "pf": 85,
+        "pg": 85
+      }
+    },
+    "tax_multiplier_pf": 85,
+    "tax_multiplier_pg": 85,
+    "waste_base_fee": "100.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "100.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 3000,
+      "canteen_meal_chf": 8.5,
+      "climate_fund_active": true
+    }
+  },
+  {
+    "ust_code": 5397,
+    "name": "Centovalli",
+    "slug": "centovalli",
+    "circle": "Melezza",
+    "population": 1049,
+    "multipliers_history": {
+      "2022": {
+        "pf": 95,
+        "pg": 95
+      },
+      "2023": {
+        "pf": 95,
+        "pg": 95
+      },
+      "2024": {
+        "pf": 95,
+        "pg": 95
+      },
+      "2025": {
+        "pf": 95,
+        "pg": 95
+      },
+      "2026": {
+        "pf": 95,
+        "pg": 120
+      }
+    },
+    "tax_multiplier_pf": 95,
+    "tax_multiplier_pg": 120,
+    "waste_base_fee": "110.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "110.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 1.5,
+      "birth_bonus_chf": 3000,
+      "canteen_meal_chf": 8.5,
+      "climate_fund_active": true
+    }
+  },
+  {
+    "ust_code": 5398,
+    "name": "Gambarogno",
+    "slug": "gambarogno",
+    "circle": "Gambarogno",
+    "population": 4977,
+    "multipliers_history": {
+      "2022": {
+        "pf": 85,
+        "pg": 85
+      },
+      "2023": {
+        "pf": 85,
+        "pg": 85
+      },
+      "2024": {
+        "pf": 85,
+        "pg": 85
+      },
+      "2025": {
+        "pf": 85,
+        "pg": 100
+      },
+      "2026": {
+        "pf": 85,
+        "pg": 100
+      }
+    },
+    "tax_multiplier_pf": 85,
+    "tax_multiplier_pg": 100,
+    "waste_base_fee": "90.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "90.00 CHF/anno",
+      "waste_bag_35l_chf": 1.2,
+      "dog_tax_chf": 100,
+      "real_estate_tax_permille": 0,
+      "birth_bonus_chf": 3000,
+      "canteen_meal_chf": 8.5,
+      "climate_fund_active": true
+    }
+  },
+  {
+    "ust_code": 5399,
+    "name": "Verzasca",
+    "slug": "verzasca",
+    "circle": "Verzasca",
+    "population": 749,
+    "multipliers_history": {
+      "2022": {
+        "pf": 95,
+        "pg": 95
+      },
+      "2023": {
+        "pf": 95,
+        "pg": 95
+      },
+      "2024": {
+        "pf": 100,
+        "pg": 100
+      },
+      "2025": {
+        "pf": 100,
+        "pg": 100
+      },
+      "2026": {
+        "pf": 88,
+        "pg": 88
+      }
+    },
+    "tax_multiplier_pf": 88,
+    "tax_multiplier_pg": 88,
+    "waste_base_fee": "120.00 CHF/anno",
+    "civic_tariffs": {
+      "waste_base_fee": "120.00 CHF/anno",
+      "waste_bag_35l_chf": 1.3,
+      "dog_tax_chf": 115,
+      "real_estate_tax_permille": 1,
+      "birth_bonus_chf": 3000,
+      "canteen_meal_chf": 8.5,
+      "climate_fund_active": true
+    }
+  }
+]

@@ -124,6 +124,10 @@
           {
             "name": "conforme_sel",
             "type": "boolean"
+          },
+          {
+            "name": "stato",
+            "type": "string"
           }
         ]
       }

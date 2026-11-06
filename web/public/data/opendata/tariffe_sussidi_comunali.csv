@@ -1,20 +1,20 @@
 ust_code,comune,circolo,abitanti,tassa_base_rifiuti,sacco_35l_chf,imposta_immobiliare,tassa_cani_annua_chf,assegno_nascita_chf,mensa_scolastica_pasto_chf,fondo_clima_attivo
-5091,Ascona,Isole,5290,80.00 CHF/anno,1.30,1.0..1.5 ‰,100.00,500.00,8.00-10.00,True
-5096,Brione sopra Minusio,Navegna,432,85.00 CHF/anno,1.30,1.0..1.5 ‰,100.00,500.00,8.00-10.00,True
-5097,Brissago,Isole,1577,95.00 CHF/anno,1.30,1.0..1.5 ‰,100.00,500.00,8.00-10.00,True
-5108,Gordola,Navegna,4877,80.00 CHF/anno,1.30,1.0..1.5 ‰,100.00,500.00,8.00-10.00,True
-5112,Lavertezzo,Verzasca,1235,85.00 CHF/anno,1.30,1.0..1.5 ‰,100.00,500.00,8.00-10.00,True
-5113,Locarno,Locarno,16463,110.00 CHF/anno,1.30,1.0..1.5 ‰,100.00,500.00,8.00-10.00,True
-5115,Losone,Isole,6780,80.00 CHF/anno,1.30,0.0 ‰,100.00,500.00,8.00-10.00,True
-5117,Mergoscia,Navegna,204,90.00 CHF/anno,1.30,1.0..1.5 ‰,100.00,500.00,8.00-10.00,True
-5118,Minusio,Navegna,7380,85.00 CHF/anno,1.30,1.0..1.5 ‰,100.00,500.00,8.00-10.00,True
-5120,Muralto,Locarno,2604,80.00 CHF/anno,1.30,1.0..1.5 ‰,100.00,500.00,8.00-10.00,True
-5121,Orselina,Locarno,699,85.00 CHF/anno,1.30,1.0..1.5 ‰,100.00,500.00,8.00-10.00,True
-5125,Ronco sopra Ascona,Isole,516,90.00 CHF/anno,1.30,1.0..1.5 ‰,100.00,500.00,8.00-10.00,True
-5131,Tenero-Contra,Navegna,3397,80.00 CHF/anno,1.30,1.0..1.5 ‰,100.00,500.00,8.00-10.00,True
-5136,Onsernone,Onsernone,663,90.00 CHF/anno,1.30,1.0..1.5 ‰,100.00,500.00,8.00-10.00,True
-5138,Cugnasco-Gerra,Navegna,2862,80.00 CHF/anno,1.30,1.0..1.5 ‰,100.00,500.00,8.00-10.00,True
-5396,Terre di Pedemonte,Melezza,2644,80.00 CHF/anno,1.30,1.0..1.5 ‰,100.00,500.00,8.00-10.00,True
-5397,Centovalli,Melezza,1102,90.00 CHF/anno,1.30,1.0..1.5 ‰,100.00,500.00,8.00-10.00,True
-5398,Gambarogno,Gambarogno,4977,90.00 CHF/anno,1.30,1.0..1.5 ‰,100.00,500.00,8.00-10.00,True
-5399,Verzasca,Verzasca,826,90.00 CHF/anno,1.30,1.0..1.5 ‰,100.00,500.00,8.00-10.00,True
+5091,Ascona,Isole,5290,80.00 CHF/anno,1.30,0.0 ‰,115.00,3000.00,9.00,True
+5096,Brione sopra Minusio,Navegna,432,110.00 CHF/anno,1.30,0.0 ‰,100.00,3000.00,9.00,True
+5097,Brissago,Isole,1577,130.00 CHF/anno,1.10,0.0 ‰,80.00,3000.00,8.50,True
+5108,Gordola,Navegna,4877,80.00 CHF/anno,1.30,0.0 ‰,100.00,3000.00,9.00,True
+5112,Lavertezzo,Verzasca,1235,100.00 CHF/anno,1.30,1.0 ‰,100.00,3000.00,8.50,True
+5113,Locarno,Locarno,16463,110.00 CHF/anno,1.30,1.5 ‰,100.00,3000.00,7.50,True
+5115,Losone,Isole,6780,90.00 CHF/anno,1.30,0.0 ‰,100.00,3000.00,8.00,True
+5117,Mergoscia,Navegna,194,120.00 CHF/anno,1.30,0.0 ‰,100.00,3000.00,9.00,False
+5118,Minusio,Navegna,7273,85.00 CHF/anno,1.30,1.0 ‰,90.00,3000.00,8.50,True
+5120,Muralto,Locarno,2513,80.00 CHF/anno,1.30,1.0 ‰,100.00,3000.00,8.00,True
+5121,Orselina,Locarno,682,90.00 CHF/anno,1.30,0.0 ‰,100.00,3000.00,9.00,True
+5125,Ronco sopra Ascona,Isole,516,90.00 CHF/anno,1.30,0.0 ‰,100.00,3000.00,9.00,True
+5131,Tenero-Contra,Navegna,3417,85.00 CHF/anno,1.30,0.0 ‰,90.00,3000.00,8.00,True
+5136,Onsernone,Onsernone,643,130.00 CHF/anno,1.30,0.0 ‰,100.00,3000.00,8.00,False
+5138,Cugnasco-Gerra,Navegna,2838,85.00 CHF/anno,1.15,0.0 ‰,100.00,3000.00,8.50,True
+5396,Terre di Pedemonte,Melezza,2646,100.00 CHF/anno,1.30,0.0 ‰,100.00,3000.00,8.50,True
+5397,Centovalli,Melezza,1049,110.00 CHF/anno,1.30,1.5 ‰,100.00,3000.00,8.50,True
+5398,Gambarogno,Gambarogno,4977,90.00 CHF/anno,1.20,0.0 ‰,100.00,3000.00,8.50,True
+5399,Verzasca,Verzasca,749,120.00 CHF/anno,1.30,1.0 ‰,115.00,3000.00,8.50,True

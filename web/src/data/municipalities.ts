@@ -38,6 +38,16 @@ export interface SelIndicatorDetail {
   is_conform: boolean;
 }
 
+export interface CivicTariffs {
+  waste_base_fee: string; // Tassa base rifiuti annuale (es. "80.00 CHF/anno")
+  waste_bag_35l_chf: number; // Sacco rifiuti ufficiale 35L (CHF/sacco)
+  dog_tax_chf: number; // Tassa annuale sui cani (CHF/cane)
+  real_estate_tax_permille: number; // Imposta immobiliare comunale (‰ - LT art. 261-264)
+  birth_bonus_chf: number; // Assegno cantonale parentale di nascita/adozione (CHF/evento - IAS Ticino, 3'000.00 CHF con RFL < 110k, sostanza < 400k)
+  canteen_meal_chf: number; // Mensa scolastica comunale per allievi residenti (CHF/pasto)
+  climate_fund_active: boolean; // Fondo/incentivi comunali per efficienza energetica/clima attivi
+}
+
 export interface MunicipalityData {
   ust_code: number;
   name: string;
@@ -51,6 +61,7 @@ export interface MunicipalityData {
   multipliers_history: Record<number, { pf: number; pg: number }>;
   population_history: Record<number, number>;
   waste_base_fee: string; // Tassa base rifiuti annuale verificata
+  civic_tariffs: CivicTariffs;
   entities: string[];
   sector_per_capita_chf?: SectorPerCapitaItem[];
   expenditure_per_capita_history?: Record<number, number>;
@@ -87,6 +98,15 @@ export const MUNICIPALITIES: MunicipalityData[] = [
     },
     population_history: { 2022: 5436, 2023: 5381, 2024: 5322, 2025: 5290, 2026: 5290 },
     waste_base_fee: "80.00 CHF/anno",
+    civic_tariffs: {
+      waste_base_fee: "80.00 CHF/anno",
+      waste_bag_35l_chf: 1.30,
+      dog_tax_chf: 115.00,
+      real_estate_tax_permille: 0.0,
+      birth_bonus_chf: 3000.00,
+      canteen_meal_chf: 9.00,
+      climate_fund_active: true,
+    },
     entities: ["Comune di Ascona", "Azienda elettrica comunale di Ascona", "Azienda acqua potabile"],
     summary_30s: {
       risultato_ordinario_chf: 1245000.0,
@@ -116,7 +136,16 @@ export const MUNICIPALITIES: MunicipalityData[] = [
       2026: { pf: 78.0, pg: 78.0 },
     },
     population_history: { 2022: 452, 2023: 442, 2024: 436, 2025: 432, 2026: 432 },
-    waste_base_fee: "85.00 CHF/anno",
+    waste_base_fee: "110.00 CHF/anno",
+    civic_tariffs: {
+      waste_base_fee: "110.00 CHF/anno",
+      waste_bag_35l_chf: 1.30,
+      dog_tax_chf: 100.00,
+      real_estate_tax_permille: 0.0,
+      birth_bonus_chf: 3000.00,
+      canteen_meal_chf: 9.00,
+      climate_fund_active: true,
+    },
     entities: ["Comune di Brione sopra Minusio"],
     summary_30s: {
       risultato_ordinario_chf: 163418.01,
@@ -146,7 +175,16 @@ export const MUNICIPALITIES: MunicipalityData[] = [
       2026: { pf: 85.0, pg: 85.0 },
     },
     population_history: { 2022: 1613, 2023: 1619, 2024: 1619, 2025: 1577, 2026: 1577 },
-    waste_base_fee: "95.00 CHF/anno",
+    waste_base_fee: "130.00 CHF/anno",
+    civic_tariffs: {
+      waste_base_fee: "130.00 CHF/anno",
+      waste_bag_35l_chf: 1.10,
+      dog_tax_chf: 80.00,
+      real_estate_tax_permille: 0.0,
+      birth_bonus_chf: 3000.00,
+      canteen_meal_chf: 8.50,
+      climate_fund_active: true,
+    },
     entities: ["Comune di Brissago"],
     summary_30s: {
       risultato_ordinario_chf: 82000.0,
@@ -177,6 +215,15 @@ export const MUNICIPALITIES: MunicipalityData[] = [
     },
     population_history: { 2022: 4820, 2023: 4814, 2024: 4831, 2025: 4877, 2026: 4877 },
     waste_base_fee: "80.00 CHF/anno",
+    civic_tariffs: {
+      waste_base_fee: "80.00 CHF/anno",
+      waste_bag_35l_chf: 1.30,
+      dog_tax_chf: 100.00,
+      real_estate_tax_permille: 0.0,
+      birth_bonus_chf: 3000.00,
+      canteen_meal_chf: 9.00,
+      climate_fund_active: true,
+    },
     entities: ["Comune di Gordola"],
     summary_30s: {
       risultato_ordinario_chf: 310000.0,
@@ -207,6 +254,15 @@ export const MUNICIPALITIES: MunicipalityData[] = [
     },
     population_history: { 2022: 1213, 2023: 1238, 2024: 1253, 2025: 1235, 2026: 1235 },
     waste_base_fee: "100.00 CHF/anno",
+    civic_tariffs: {
+      waste_base_fee: "100.00 CHF/anno",
+      waste_bag_35l_chf: 1.30,
+      dog_tax_chf: 100.00,
+      real_estate_tax_permille: 1.0,
+      birth_bonus_chf: 3000.00,
+      canteen_meal_chf: 8.50,
+      climate_fund_active: true,
+    },
     entities: ["Comune di Lavertezzo"],
     summary_30s: {
       risultato_ordinario_chf: -45000.0,
@@ -237,6 +293,15 @@ export const MUNICIPALITIES: MunicipalityData[] = [
     },
     population_history: { 2022: 16241, 2023: 16394, 2024: 16374, 2025: 16463, 2026: 16463 },
     waste_base_fee: "110.00 CHF/anno",
+    civic_tariffs: {
+      waste_base_fee: "110.00 CHF/anno",
+      waste_bag_35l_chf: 1.30,
+      dog_tax_chf: 100.00,
+      real_estate_tax_permille: 1.5,
+      birth_bonus_chf: 3000.00,
+      canteen_meal_chf: 7.50,
+      climate_fund_active: true,
+    },
     entities: ["Città di Locarno", "Azienda Multiservizi Locarno (SES)", "Istituto per anziani San Carlo"],
     summary_30s: {
       risultato_ordinario_chf: 1820000.0,
@@ -267,6 +332,15 @@ export const MUNICIPALITIES: MunicipalityData[] = [
     },
     population_history: { 2022: 6713, 2023: 6766, 2024: 6727, 2025: 6780, 2026: 6780 },
     waste_base_fee: "90.00 CHF/anno",
+    civic_tariffs: {
+      waste_base_fee: "90.00 CHF/anno",
+      waste_bag_35l_chf: 1.30,
+      dog_tax_chf: 100.00,
+      real_estate_tax_permille: 0.0,
+      birth_bonus_chf: 3000.00,
+      canteen_meal_chf: 8.00,
+      climate_fund_active: true,
+    },
     entities: ["Comune di Losone"],
     summary_30s: {
       risultato_ordinario_chf: 420000.0,
@@ -297,6 +371,15 @@ export const MUNICIPALITIES: MunicipalityData[] = [
     },
     population_history: { 2022: 198, 2023: 203, 2024: 201, 2025: 194, 2026: 194 },
     waste_base_fee: "120.00 CHF/anno",
+    civic_tariffs: {
+      waste_base_fee: "120.00 CHF/anno",
+      waste_bag_35l_chf: 1.30,
+      dog_tax_chf: 100.00,
+      real_estate_tax_permille: 0.0,
+      birth_bonus_chf: 3000.00,
+      canteen_meal_chf: 9.00,
+      climate_fund_active: false,
+    },
     entities: ["Comune di Mergoscia"],
     summary_30s: {
       risultato_ordinario_chf: -12000.0,
@@ -327,6 +410,15 @@ export const MUNICIPALITIES: MunicipalityData[] = [
     },
     population_history: { 2022: 7421, 2023: 7365, 2024: 7321, 2025: 7273, 2026: 7273 },
     waste_base_fee: "85.00 CHF/anno",
+    civic_tariffs: {
+      waste_base_fee: "85.00 CHF/anno",
+      waste_bag_35l_chf: 1.30,
+      dog_tax_chf: 90.00,
+      real_estate_tax_permille: 1.0,
+      birth_bonus_chf: 3000.00,
+      canteen_meal_chf: 8.50,
+      climate_fund_active: true,
+    },
     entities: ["Comune di Minusio"],
     summary_30s: {
       risultato_ordinario_chf: 580000.0,
@@ -357,6 +449,15 @@ export const MUNICIPALITIES: MunicipalityData[] = [
     },
     population_history: { 2022: 2579, 2023: 2587, 2024: 2572, 2025: 2513, 2026: 2513 },
     waste_base_fee: "80.00 CHF/anno",
+    civic_tariffs: {
+      waste_base_fee: "80.00 CHF/anno",
+      waste_bag_35l_chf: 1.30,
+      dog_tax_chf: 100.00,
+      real_estate_tax_permille: 1.0,
+      birth_bonus_chf: 3000.00,
+      canteen_meal_chf: 8.00,
+      climate_fund_active: true,
+    },
     entities: ["Comune di Muralto"],
     summary_30s: {
       risultato_ordinario_chf: 320000.0,
@@ -374,7 +475,7 @@ export const MUNICIPALITIES: MunicipalityData[] = [
     slug: "orselina",
     circle: "Locarno",
     seat: "Via San Bernardo 2, 6644 Orselina",
-    population: 699,
+    population: 682,
     tax_multiplier_pf: 82.0,
     tax_multiplier_pg: 82.0,
     has_differentiated_pg: false,
@@ -387,6 +488,15 @@ export const MUNICIPALITIES: MunicipalityData[] = [
     },
     population_history: { 2022: 701, 2023: 699, 2024: 687, 2025: 682, 2026: 682 },
     waste_base_fee: "90.00 CHF/anno",
+    civic_tariffs: {
+      waste_base_fee: "90.00 CHF/anno",
+      waste_bag_35l_chf: 1.30,
+      dog_tax_chf: 100.00,
+      real_estate_tax_permille: 0.0,
+      birth_bonus_chf: 3000.00,
+      canteen_meal_chf: 9.00,
+      climate_fund_active: true,
+    },
     entities: ["Comune di Orselina"],
     summary_30s: {
       risultato_ordinario_chf: 45000.0,
@@ -417,6 +527,15 @@ export const MUNICIPALITIES: MunicipalityData[] = [
     },
     population_history: { 2022: 538, 2023: 524, 2024: 522, 2025: 516, 2026: 516 },
     waste_base_fee: "90.00 CHF/anno",
+    civic_tariffs: {
+      waste_base_fee: "90.00 CHF/anno",
+      waste_bag_35l_chf: 1.30,
+      dog_tax_chf: 100.00,
+      real_estate_tax_permille: 0.0,
+      birth_bonus_chf: 3000.00,
+      canteen_meal_chf: 9.00,
+      climate_fund_active: true,
+    },
     entities: ["Comune di Ronco sopra Ascona"],
     summary_30s: {
       risultato_ordinario_chf: 60000.0,
@@ -434,7 +553,7 @@ export const MUNICIPALITIES: MunicipalityData[] = [
     slug: "tenero-contra",
     circle: "Navegna",
     seat: "Piazza Canevascini 1, 6598 Tenero",
-    population: 3397,
+    population: 3417,
     tax_multiplier_pf: 93.0,
     tax_multiplier_pg: 93.0,
     has_differentiated_pg: false,
@@ -447,6 +566,15 @@ export const MUNICIPALITIES: MunicipalityData[] = [
     },
     population_history: { 2022: 3244, 2023: 3397, 2024: 3393, 2025: 3417, 2026: 3417 },
     waste_base_fee: "85.00 CHF/anno",
+    civic_tariffs: {
+      waste_base_fee: "85.00 CHF/anno",
+      waste_bag_35l_chf: 1.30,
+      dog_tax_chf: 90.00,
+      real_estate_tax_permille: 0.0,
+      birth_bonus_chf: 3000.00,
+      canteen_meal_chf: 8.00,
+      climate_fund_active: true,
+    },
     entities: ["Comune di Tenero-Contra"],
     summary_30s: {
       risultato_ordinario_chf: 180000.0,
@@ -477,6 +605,15 @@ export const MUNICIPALITIES: MunicipalityData[] = [
     },
     population_history: { 2022: 675, 2023: 663, 2024: 663, 2025: 643, 2026: 643 },
     waste_base_fee: "130.00 CHF/anno",
+    civic_tariffs: {
+      waste_base_fee: "130.00 CHF/anno",
+      waste_bag_35l_chf: 1.30,
+      dog_tax_chf: 100.00,
+      real_estate_tax_permille: 0.0,
+      birth_bonus_chf: 3000.00,
+      canteen_meal_chf: 8.00,
+      climate_fund_active: false,
+    },
     entities: ["Comune di Onsernone"],
     summary_30s: {
       risultato_ordinario_chf: -35000.0,
@@ -507,6 +644,15 @@ export const MUNICIPALITIES: MunicipalityData[] = [
     },
     population_history: { 2022: 2851, 2023: 2862, 2024: 2858, 2025: 2838, 2026: 2838 },
     waste_base_fee: "85.00 CHF/anno",
+    civic_tariffs: {
+      waste_base_fee: "85.00 CHF/anno",
+      waste_bag_35l_chf: 1.15,
+      dog_tax_chf: 100.00,
+      real_estate_tax_permille: 0.0,
+      birth_bonus_chf: 3000.00,
+      canteen_meal_chf: 8.50,
+      climate_fund_active: true,
+    },
     entities: ["Comune di Cugnasco-Gerra"],
     summary_30s: {
       risultato_ordinario_chf: 120000.0,
@@ -536,7 +682,16 @@ export const MUNICIPALITIES: MunicipalityData[] = [
       2026: { pf: 85.0, pg: 85.0 },
     },
     population_history: { 2022: 2694, 2023: 2673, 2024: 2685, 2025: 2646, 2026: 2646 },
-    waste_base_fee: "90.00 CHF/anno",
+    waste_base_fee: "100.00 CHF/anno",
+    civic_tariffs: {
+      waste_base_fee: "100.00 CHF/anno",
+      waste_bag_35l_chf: 1.30,
+      dog_tax_chf: 100.00,
+      real_estate_tax_permille: 0.0,
+      birth_bonus_chf: 3000.00,
+      canteen_meal_chf: 8.50,
+      climate_fund_active: true,
+    },
     entities: ["Comune di Terre di Pedemonte"],
     summary_30s: {
       risultato_ordinario_chf: 210000.0,
@@ -567,6 +722,15 @@ export const MUNICIPALITIES: MunicipalityData[] = [
     },
     population_history: { 2022: 1102, 2023: 1098, 2024: 1070, 2025: 1049, 2026: 1049 },
     waste_base_fee: "110.00 CHF/anno",
+    civic_tariffs: {
+      waste_base_fee: "110.00 CHF/anno",
+      waste_bag_35l_chf: 1.30,
+      dog_tax_chf: 100.00,
+      real_estate_tax_permille: 1.5,
+      birth_bonus_chf: 3000.00,
+      canteen_meal_chf: 8.50,
+      climate_fund_active: true,
+    },
     entities: ["Comune di Centovalli"],
     summary_30s: {
       risultato_ordinario_chf: 15000.0,
@@ -597,6 +761,15 @@ export const MUNICIPALITIES: MunicipalityData[] = [
     },
     population_history: { 2022: 5076, 2023: 5086, 2024: 5024, 2025: 4977, 2026: 4977 },
     waste_base_fee: "90.00 CHF/anno",
+    civic_tariffs: {
+      waste_base_fee: "90.00 CHF/anno",
+      waste_bag_35l_chf: 1.20,
+      dog_tax_chf: 100.00,
+      real_estate_tax_permille: 0.0,
+      birth_bonus_chf: 3000.00,
+      canteen_meal_chf: 8.50,
+      climate_fund_active: true,
+    },
     entities: ["Comune di Gambarogno", "Azienda acqua potabile Gambarogno"],
     summary_30s: {
       risultato_ordinario_chf: 290000.0,
@@ -627,6 +800,15 @@ export const MUNICIPALITIES: MunicipalityData[] = [
     },
     population_history: { 2022: 804, 2023: 786, 2024: 776, 2025: 749, 2026: 749 },
     waste_base_fee: "120.00 CHF/anno",
+    civic_tariffs: {
+      waste_base_fee: "120.00 CHF/anno",
+      waste_bag_35l_chf: 1.30,
+      dog_tax_chf: 115.00,
+      real_estate_tax_permille: 1.0,
+      birth_bonus_chf: 3000.00,
+      canteen_meal_chf: 8.50,
+      climate_fund_active: true,
+    },
     entities: ["Comune di Verzasca"],
     summary_30s: {
       risultato_ordinario_chf: -20000.0,

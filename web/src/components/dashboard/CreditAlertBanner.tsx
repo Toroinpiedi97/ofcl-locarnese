@@ -20,6 +20,7 @@ export function CreditAlertBanner({
   municipalityName,
   slug,
   hasOverruns,
+  overrunCount = 1,
   overrunDetails = {
     account_code: "615.5010.200",
     description: "Sistemazione tornante Jacomello",
@@ -40,7 +41,7 @@ export function CreditAlertBanner({
                 Monitoraggio Crediti d&apos;Opera (Art. 15 LOC)
               </span>
               <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-red-950 border border-red-500/30 text-red-300 font-semibold">
-                S01 SORPASSO
+                {overrunCount > 1 ? `${overrunCount} SORPASSI` : "S01 SORPASSO"}
               </span>
             </div>
             <p className="text-xs text-slate-300 mt-1 leading-relaxed">

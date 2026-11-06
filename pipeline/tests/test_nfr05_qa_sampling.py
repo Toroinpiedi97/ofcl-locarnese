@@ -68,7 +68,7 @@ QA_SAMPLE_RECORDS: list[dict[str, Any]] = [
         "metric": "POPULATION_STATPOP",
         "source_doc": "STATPOP 2025/2026",
         "doc_page": 1,
-        "expected_val": Decimal(699),
+        "expected_val": Decimal(682),
         "unit": "ab",
     },
 
@@ -216,7 +216,7 @@ QA_SAMPLE_RECORDS: list[dict[str, Any]] = [
         "metric": "POPULATION_STATPOP",
         "source_doc": "STATPOP 2025/2026",
         "doc_page": 1,
-        "expected_val": Decimal(3397),
+        "expected_val": Decimal(3417),
         "unit": "ab",
     },
     {

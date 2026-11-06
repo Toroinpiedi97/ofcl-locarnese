@@ -89,6 +89,10 @@
       {
         "name": "conforme_sel",
         "type": "boolean"
+      },
+      {
+        "name": "stato",
+        "type": "string"
       }
     ],
     "tariffe_sussidi_comunali": [

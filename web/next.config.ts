@@ -57,6 +57,17 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         headers: securityHeaders,
       },
+      {
+        // File open data: cache CDN lunga per ridurre banda/invocazioni Vercel
+        // (invalidata a ogni deploy; i dati cambiano solo a pubblicazione).
+        source: "/data/opendata/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800",
+          },
+        ],
+      },
     ];
   },
 };

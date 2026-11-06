@@ -20,27 +20,33 @@ import pyarrow.parquet as pq
 
 logger = logging.getLogger(__name__)
 
-DISTRICT_MUNICIPALITIES: list[dict[str, Any]] = [
-    {"ust_code": 5091, "name": "Ascona", "slug": "ascona", "circle": "Isole", "pop": 5290, "pf": 75.0, "pg": 75.0, "waste": "80.00 CHF/anno"},
-    {"ust_code": 5096, "name": "Brione sopra Minusio", "slug": "brione-sopra-minusio", "circle": "Navegna", "pop": 432, "pf": 78.0, "pg": 78.0, "waste": "85.00 CHF/anno"},
-    {"ust_code": 5097, "name": "Brissago", "slug": "brissago", "circle": "Isole", "pop": 1577, "pf": 85.0, "pg": 85.0, "waste": "95.00 CHF/anno"},
-    {"ust_code": 5108, "name": "Gordola", "slug": "gordola", "circle": "Navegna", "pop": 4877, "pf": 88.0, "pg": 88.0, "waste": "80.00 CHF/anno"},
-    {"ust_code": 5112, "name": "Lavertezzo", "slug": "lavertezzo", "circle": "Verzasca", "pop": 1235, "pf": 88.0, "pg": 88.0, "waste": "85.00 CHF/anno"},
-    {"ust_code": 5113, "name": "Locarno", "slug": "locarno", "circle": "Locarno", "pop": 16463, "pf": 90.0, "pg": 97.0, "waste": "110.00 CHF/anno"},
-    {"ust_code": 5115, "name": "Losone", "slug": "losone", "circle": "Isole", "pop": 6780, "pf": 90.0, "pg": 90.0, "waste": "80.00 CHF/anno"},
-    {"ust_code": 5117, "name": "Mergoscia", "slug": "mergoscia", "circle": "Navegna", "pop": 204, "pf": 95.0, "pg": 95.0, "waste": "90.00 CHF/anno"},
-    {"ust_code": 5118, "name": "Minusio", "slug": "minusio", "circle": "Navegna", "pop": 7380, "pf": 82.0, "pg": 82.0, "waste": "85.00 CHF/anno"},
-    {"ust_code": 5120, "name": "Muralto", "slug": "muralto", "circle": "Locarno", "pop": 2604, "pf": 85.0, "pg": 85.0, "waste": "80.00 CHF/anno"},
-    {"ust_code": 5121, "name": "Orselina", "slug": "orselina", "circle": "Locarno", "pop": 699, "pf": 75.0, "pg": 75.0, "waste": "85.00 CHF/anno"},
-    {"ust_code": 5125, "name": "Ronco sopra Ascona", "slug": "ronco-sopra-ascona", "circle": "Isole", "pop": 516, "pf": 75.0, "pg": 75.0, "waste": "90.00 CHF/anno"},
-    {"ust_code": 5131, "name": "Tenero-Contra", "slug": "tenero-contra", "circle": "Navegna", "pop": 3397, "pf": 88.0, "pg": 88.0, "waste": "80.00 CHF/anno"},
-    {"ust_code": 5136, "name": "Onsernone", "slug": "onsernone", "circle": "Onsernone", "pop": 663, "pf": 95.0, "pg": 95.0, "waste": "90.00 CHF/anno"},
-    {"ust_code": 5138, "name": "Cugnasco-Gerra", "slug": "cugnasco-gerra", "circle": "Navegna", "pop": 2862, "pf": 88.0, "pg": 88.0, "waste": "80.00 CHF/anno"},
-    {"ust_code": 5396, "name": "Terre di Pedemonte", "slug": "terre-di-pedemonte", "circle": "Melezza", "pop": 2644, "pf": 85.0, "pg": 85.0, "waste": "80.00 CHF/anno"},
-    {"ust_code": 5397, "name": "Centovalli", "slug": "centovalli", "circle": "Melezza", "pop": 1102, "pf": 95.0, "pg": 120.0, "waste": "90.00 CHF/anno"},
-    {"ust_code": 5398, "name": "Gambarogno", "slug": "gambarogno", "circle": "Gambarogno", "pop": 4977, "pf": 85.0, "pg": 100.0, "waste": "90.00 CHF/anno"},
-    {"ust_code": 5399, "name": "Verzasca", "slug": "verzasca", "circle": "Verzasca", "pop": 826, "pf": 88.0, "pg": 88.0, "waste": "90.00 CHF/anno"},
-]
+_ANAGRAFICA_PATH = Path(__file__).resolve().parents[4] / "registry" / "anagrafica_web.json"
+
+
+def _load_district_municipalities() -> list[dict[str, Any]]:
+    """Anagrafica da fonte unica (web/src/data/municipalities.ts via `pnpm export:anagrafica`).
+
+    Evita copie divergenti: ogni campo anagrafico degli open data deriva da qui.
+    """
+    raw = json.loads(_ANAGRAFICA_PATH.read_text(encoding="utf-8"))
+    return [
+        {
+            "ust_code": r["ust_code"],
+            "name": r["name"],
+            "slug": r["slug"],
+            "circle": r["circle"],
+            "pop": r["population"],
+            "pf": r["tax_multiplier_pf"],
+            "pg": r["tax_multiplier_pg"],
+            "waste": r["waste_base_fee"],
+            "history": r["multipliers_history"],
+            "civic_tariffs": r.get("civic_tariffs", {}),
+        }
+        for r in raw
+    ]
+
+
+DISTRICT_MUNICIPALITIES: list[dict[str, Any]] = _load_district_municipalities()
 
 VERIFIED_CONSUNTIVI_2025: dict[int, dict[str, Any]] = {
     5091: {  # Ascona
@@ -124,8 +130,8 @@ def build_opendata_package(output_dir: Path) -> Path:
                 "comune": m["name"],
                 "anno": 2025,
                 "tipo_atto": "CONSUNTIVO",
-                "moltiplicatore_pf": m["pf"],
-                "moltiplicatore_pg": m["pg"],
+                "moltiplicatore_pf": m["history"].get("2025", {"pf": m["pf"]})["pf"],
+                "moltiplicatore_pg": m["history"].get("2025", {"pg": m["pg"]})["pg"],
                 **consuntivo,
             })
         else:
@@ -134,8 +140,8 @@ def build_opendata_package(output_dir: Path) -> Path:
                 "comune": m["name"],
                 "anno": 2025,
                 "tipo_atto": "PREVENTIVO",
-                "moltiplicatore_pf": m["pf"],
-                "moltiplicatore_pg": m["pg"],
+                "moltiplicatore_pf": m["history"].get("2025", {"pf": m["pf"]})["pf"],
+                "moltiplicatore_pg": m["history"].get("2025", {"pg": m["pg"]})["pg"],
                 "spese_correnti_chf": "",
                 "ricavi_correnti_chf": "",
                 "risultato_ordinario_chf": "",
@@ -157,52 +163,46 @@ def build_opendata_package(output_dir: Path) -> Path:
     )
 
     # 2. Dataset: indicatori_sel
+    # REGOLA ANTI-STRAFALCIONE: si pubblica solo cio' che e' calcolabile dai dati
+    # verificati. Gli indicatori privi di input verificati restano VUOTI con
+    # stato "non_disponibile" (mai valori placeholder ne' 0.0 fittizi).
+    sel_catalog: list[tuple[str, str, str]] = [
+        ("SELF_FINANCING_DEGREE", "Grado di autofinanziamento", "%"),
+        ("SELF_FINANCING_CAPACITY", "Capacità di autofinanziamento", "%"),
+        ("INTEREST_BURDEN_RATIO", "Quota oneri finanziari", "%"),
+        ("CAPITAL_SERVICE_RATIO", "Quota servizio del debito", "%"),
+        ("NET_DEBT_RATIO", "Quota debito netto", "%"),
+        ("NET_DEBT_PER_CAPITA", "Debito netto pro capite", "CHF/ab"),
+        ("INVESTMENT_RATIO", "Quota degli investimenti", "%"),
+        ("EQUITY_RATIO", "Quota capitale proprio", "%"),
+    ]
     sel_rows: list[dict[str, Any]] = []
     for m in DISTRICT_MUNICIPALITIES:
         ust_code = int(m["ust_code"])
-        if ust_code in VERIFIED_CONSUNTIVI_2025:
-            deb_pc = float(VERIFIED_CONSUNTIVI_2025[ust_code]["debito_netto_pc_chf"])
-            for ind_code, name, val, unit in [
-                ("SELF_FINANCING_DEGREE", "Grado di autofinanziamento", 114.2, "%"),
-                ("SELF_FINANCING_CAPACITY", "Capacità di autofinanziamento", 18.5, "%"),
-                ("INTEREST_BURDEN_RATIO", "Quota oneri finanziari", 1.8, "%"),
-                ("CAPITAL_SERVICE_RATIO", "Quota servizio del debito", 6.2, "%"),
-                ("NET_DEBT_RATIO", "Quota debito netto", 85.0, "%"),
-                ("NET_DEBT_PER_CAPITA", "Debito netto pro capite", deb_pc, "CHF/ab"),
-                ("INVESTMENT_RATIO", "Quota degli investimenti", 22.4, "%"),
-                ("EQUITY_RATIO", "Quota capitale proprio", 44.5, "%"),
-            ]:
-                sel_rows.append({
-                    "ust_code": ust_code,
-                    "comune": m["name"],
-                    "anno": 2025,
-                    "indicatore_codice": ind_code,
-                    "indicatore_nome": name,
-                    "valore": val,
-                    "unita": unit,
-                    "conforme_sel": True,
-                })
-        else:
-            for ind_code, name, unit in [
-                ("SELF_FINANCING_DEGREE", "Grado di autofinanziamento", "%"),
-                ("SELF_FINANCING_CAPACITY", "Capacità di autofinanziamento", "%"),
-                ("INTEREST_BURDEN_RATIO", "Quota oneri finanziari", "%"),
-                ("CAPITAL_SERVICE_RATIO", "Quota servizio del debito", "%"),
-                ("NET_DEBT_RATIO", "Quota debito netto", "%"),
-                ("NET_DEBT_PER_CAPITA", "Debito netto pro capite", "CHF/ab"),
-                ("INVESTMENT_RATIO", "Quota degli investimenti", "%"),
-                ("EQUITY_RATIO", "Quota capitale proprio", "%"),
-            ]:
-                sel_rows.append({
-                    "ust_code": ust_code,
-                    "comune": m["name"],
-                    "anno": 2025,
-                    "indicatore_codice": ind_code,
-                    "indicatore_nome": name,
-                    "valore": 0.0,
-                    "unita": unit,
-                    "conforme_sel": False,
-                })
+        cons = VERIFIED_CONSUNTIVI_2025.get(ust_code)
+        computed: dict[str, float] = {}
+        if cons:
+            autofin = float(cons["autofinanziamento_chf"])
+            inv = float(cons["investimenti_netti_chf"])
+            ricavi = float(cons["ricavi_correnti_chf"])
+            computed["NET_DEBT_PER_CAPITA"] = float(cons["debito_netto_pc_chf"])
+            if inv > 0:
+                computed["SELF_FINANCING_DEGREE"] = round(autofin / inv * 100, 1)
+            if ricavi > 0:
+                computed["SELF_FINANCING_CAPACITY"] = round(autofin / ricavi * 100, 1)
+        for ind_code, name, unit in sel_catalog:
+            val = computed.get(ind_code)
+            sel_rows.append({
+                "ust_code": ust_code,
+                "comune": m["name"],
+                "anno": 2025,
+                "indicatore_codice": ind_code,
+                "indicatore_nome": name,
+                "valore": val,
+                "unita": unit,
+                "conforme_sel": None,
+                "stato": "calcolato" if val is not None else "non_disponibile",
+            })
 
     _export_csv_variants(
         output_dir,
@@ -210,25 +210,26 @@ def build_opendata_package(output_dir: Path) -> Path:
         sel_rows,
         fieldnames=[
             "ust_code", "comune", "anno", "indicatore_codice", "indicatore_nome",
-            "valore", "unita", "conforme_sel",
+            "valore", "unita", "conforme_sel", "stato",
         ],
     )
 
     # 3. Dataset: tariffe_sussidi_comunali (Quadranti A-E)
     civic_rows: list[dict[str, Any]] = []
     for m in DISTRICT_MUNICIPALITIES:
+        ct = m.get("civic_tariffs", {})
         civic_rows.append({
             "ust_code": m["ust_code"],
             "comune": m["name"],
             "circolo": m["circle"],
             "abitanti": m["pop"],
-            "tassa_base_rifiuti": m["waste"],
-            "sacco_35l_chf": "1.30",
-            "imposta_immobiliare": "0.0 ‰" if m["slug"] == "losone" else "1.0..1.5 ‰",
-            "tassa_cani_annua_chf": "100.00",
-            "assegno_nascita_chf": "500.00",
-            "mensa_scolastica_pasto_chf": "8.00-10.00",
-            "fondo_clima_attivo": True,
+            "tassa_base_rifiuti": ct.get("waste_base_fee", m["waste"]),
+            "sacco_35l_chf": f"{float(ct.get('waste_bag_35l_chf', 1.3)):.2f}",
+            "imposta_immobiliare": f"{float(ct.get('real_estate_tax_permille', 0.0)):.1f} ‰",
+            "tassa_cani_annua_chf": f"{float(ct.get('dog_tax_chf', 100.0)):.2f}",
+            "assegno_nascita_chf": f"{float(ct.get('birth_bonus_chf', 3000.0)):.2f}",
+            "mensa_scolastica_pasto_chf": f"{float(ct.get('canteen_meal_chf', 8.5)):.2f}",
+            "fondo_clima_attivo": bool(ct.get("climate_fund_active", True)),
         })
 
     _export_csv_variants(
@@ -307,6 +308,7 @@ def build_opendata_package(output_dir: Path) -> Path:
                         {"name": "valore", "type": "number"},
                         {"name": "unita", "type": "string"},
                         {"name": "conforme_sel", "type": "boolean"},
+                        {"name": "stato", "type": "string"},
                     ]
                 },
             },
