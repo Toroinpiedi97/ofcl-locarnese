@@ -108,9 +108,12 @@ export function CivicDeepDiveBento({ municipality }: CivicDeepDiveBentoProps) {
 
             <ul className="space-y-2.5 text-xs">
               <li className="flex items-start justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2">
-                <span className="text-slate-600 dark:text-slate-400">Assegno Comunale di Nascita</span>
-                <span className="font-mono font-bold text-emerald-700 dark:text-emerald-400">
-                  {municipality.civic_tariffs.birth_bonus_chf.toFixed(2)} CHF / neonato
+                <div>
+                  <span className="text-slate-600 dark:text-slate-400 block">Assegno Parentale di Nascita</span>
+                  <span className="text-[10px] text-slate-600 dark:text-slate-400 block">Cantonale IAS (RL 856.100, RFL &lt; 110k, sostanza &lt; 400k)</span>
+                </div>
+                <span className="font-mono font-bold text-emerald-700 dark:text-emerald-400 shrink-0 text-right">
+                  {municipality.civic_tariffs.birth_bonus_chf.toLocaleString("it-CH", { minimumFractionDigits: 2 })} CHF
                 </span>
               </li>
               <li className="flex items-start justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2">
@@ -132,7 +135,7 @@ export function CivicDeepDiveBento({ municipality }: CivicDeepDiveBentoProps) {
             </ul>
           </div>
           <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-600 dark:text-slate-400">
-            Contributi integrativi ai sussidi cantonali
+            Richieste tramite Sportello LAPS e Agenzia AVS comunale entro 6 mesi
           </div>
         </div>
 

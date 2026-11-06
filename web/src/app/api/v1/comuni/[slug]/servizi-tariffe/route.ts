@@ -42,6 +42,7 @@ export async function GET(
     },
     quadrante_b_famiglie_infanzia: {
       assegno_nascita_chf: mun.civic_tariffs.birth_bonus_chf,
+      assegno_parentale_note: "Prestazione cantonale IAS Bellinzona (RL 856.100, 3'000.00 CHF una tantum, RFL < 110k, sostanza < 400k)",
       retta_nido_infanzia: "Tariffa calmierata per fasce di reddito",
       mensa_scolastica_pasto_chf: `${mun.civic_tariffs.canteen_meal_chf.toFixed(2)} CHF`,
       sussidi_sport_musica_giovani_chf: "Fino a 200.00 CHF / giovane",

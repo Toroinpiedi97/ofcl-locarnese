@@ -227,7 +227,7 @@ def build_opendata_package(output_dir: Path) -> Path:
             "sacco_35l_chf": f"{float(ct.get('waste_bag_35l_chf', 1.3)):.2f}",
             "imposta_immobiliare": f"{float(ct.get('real_estate_tax_permille', 0.0)):.1f} ‰",
             "tassa_cani_annua_chf": f"{float(ct.get('dog_tax_chf', 100.0)):.2f}",
-            "assegno_nascita_chf": f"{float(ct.get('birth_bonus_chf', 500.0)):.2f}",
+            "assegno_nascita_chf": f"{float(ct.get('birth_bonus_chf', 3000.0)):.2f}",
             "mensa_scolastica_pasto_chf": f"{float(ct.get('canteen_meal_chf', 8.5)):.2f}",
             "fondo_clima_attivo": bool(ct.get("climate_fund_active", True)),
         })

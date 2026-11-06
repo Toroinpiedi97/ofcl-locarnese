@@ -330,8 +330,9 @@ export function checkOpenData(files: CsvInputs): IntegrityReport {
   }
   if (tar.length !== 19) errors.push(`tariffe: attese 19 righe, trovate ${tar.length}`);
 
-  // Colonne tariffarie identiche per tutti i Comuni: segnalare come da verificare
-  for (const col of ["sacco_35l_chf", "tassa_cani_annua_chf", "assegno_nascita_chf", "mensa_scolastica_pasto_chf"]) {
+  // Colonne tariffarie comunali identiche per tutti i Comuni: segnalare come da verificare
+  // Nota: assegno_nascita_chf è uniforme a 3'000.00 CHF per legge cantonale (RL 856.100 IAS Ticino)
+  for (const col of ["sacco_35l_chf", "tassa_cani_annua_chf", "mensa_scolastica_pasto_chf"]) {
     if (new Set(tar.map((r) => r[col])).size === 1) {
       warnings.push(`tariffe.${col}: valore unico (${tar[0]?.[col]}) per tutti i Comuni, probabile default non verificato`);
     }

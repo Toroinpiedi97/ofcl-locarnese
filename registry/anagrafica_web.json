@@ -35,7 +35,7 @@
       "waste_bag_35l_chf": 1.3,
       "dog_tax_chf": 115,
       "real_estate_tax_permille": 0,
-      "birth_bonus_chf": 500,
+      "birth_bonus_chf": 3000,
       "canteen_meal_chf": 9,
       "climate_fund_active": true
     }
@@ -76,7 +76,7 @@
       "waste_bag_35l_chf": 1.3,
       "dog_tax_chf": 100,
       "real_estate_tax_permille": 0,
-      "birth_bonus_chf": 500,
+      "birth_bonus_chf": 3000,
       "canteen_meal_chf": 9,
       "climate_fund_active": true
     }
@@ -117,7 +117,7 @@
       "waste_bag_35l_chf": 1.1,
       "dog_tax_chf": 80,
       "real_estate_tax_permille": 0,
-      "birth_bonus_chf": 600,
+      "birth_bonus_chf": 3000,
       "canteen_meal_chf": 8.5,
       "climate_fund_active": true
     }
@@ -158,7 +158,7 @@
       "waste_bag_35l_chf": 1.3,
       "dog_tax_chf": 100,
       "real_estate_tax_permille": 0,
-      "birth_bonus_chf": 500,
+      "birth_bonus_chf": 3000,
       "canteen_meal_chf": 9,
       "climate_fund_active": true
     }
@@ -199,7 +199,7 @@
       "waste_bag_35l_chf": 1.3,
       "dog_tax_chf": 100,
       "real_estate_tax_permille": 1,
-      "birth_bonus_chf": 500,
+      "birth_bonus_chf": 3000,
       "canteen_meal_chf": 8.5,
       "climate_fund_active": true
     }
@@ -240,7 +240,7 @@
       "waste_bag_35l_chf": 1.3,
       "dog_tax_chf": 100,
       "real_estate_tax_permille": 1.5,
-      "birth_bonus_chf": 800,
+      "birth_bonus_chf": 3000,
       "canteen_meal_chf": 7.5,
       "climate_fund_active": true
     }
@@ -281,7 +281,7 @@
       "waste_bag_35l_chf": 1.3,
       "dog_tax_chf": 100,
       "real_estate_tax_permille": 0,
-      "birth_bonus_chf": 1000,
+      "birth_bonus_chf": 3000,
       "canteen_meal_chf": 8,
       "climate_fund_active": true
     }
@@ -322,7 +322,7 @@
       "waste_bag_35l_chf": 1.3,
       "dog_tax_chf": 100,
       "real_estate_tax_permille": 0,
-      "birth_bonus_chf": 500,
+      "birth_bonus_chf": 3000,
       "canteen_meal_chf": 9,
       "climate_fund_active": false
     }
@@ -363,7 +363,7 @@
       "waste_bag_35l_chf": 1.3,
       "dog_tax_chf": 90,
       "real_estate_tax_permille": 1,
-      "birth_bonus_chf": 500,
+      "birth_bonus_chf": 3000,
       "canteen_meal_chf": 8.5,
       "climate_fund_active": true
     }
@@ -404,7 +404,7 @@
       "waste_bag_35l_chf": 1.3,
       "dog_tax_chf": 100,
       "real_estate_tax_permille": 1,
-      "birth_bonus_chf": 700,
+      "birth_bonus_chf": 3000,
       "canteen_meal_chf": 8,
       "climate_fund_active": true
     }
@@ -445,7 +445,7 @@
       "waste_bag_35l_chf": 1.3,
       "dog_tax_chf": 100,
       "real_estate_tax_permille": 0,
-      "birth_bonus_chf": 500,
+      "birth_bonus_chf": 3000,
       "canteen_meal_chf": 9,
       "climate_fund_active": true
     }
@@ -486,7 +486,7 @@
       "waste_bag_35l_chf": 1.3,
       "dog_tax_chf": 100,
       "real_estate_tax_permille": 0,
-      "birth_bonus_chf": 500,
+      "birth_bonus_chf": 3000,
       "canteen_meal_chf": 9,
       "climate_fund_active": true
     }
@@ -527,7 +527,7 @@
       "waste_bag_35l_chf": 1.3,
       "dog_tax_chf": 90,
       "real_estate_tax_permille": 0,
-      "birth_bonus_chf": 600,
+      "birth_bonus_chf": 3000,
       "canteen_meal_chf": 8,
       "climate_fund_active": true
     }
@@ -568,7 +568,7 @@
       "waste_bag_35l_chf": 1.3,
       "dog_tax_chf": 100,
       "real_estate_tax_permille": 0,
-      "birth_bonus_chf": 1000,
+      "birth_bonus_chf": 3000,
       "canteen_meal_chf": 8,
       "climate_fund_active": false
     }
@@ -609,7 +609,7 @@
       "waste_bag_35l_chf": 1.15,
       "dog_tax_chf": 100,
       "real_estate_tax_permille": 0,
-      "birth_bonus_chf": 500,
+      "birth_bonus_chf": 3000,
       "canteen_meal_chf": 8.5,
       "climate_fund_active": true
     }
@@ -650,7 +650,7 @@
       "waste_bag_35l_chf": 1.3,
       "dog_tax_chf": 100,
       "real_estate_tax_permille": 0,
-      "birth_bonus_chf": 500,
+      "birth_bonus_chf": 3000,
       "canteen_meal_chf": 8.5,
       "climate_fund_active": true
     }
@@ -691,7 +691,7 @@
       "waste_bag_35l_chf": 1.3,
       "dog_tax_chf": 100,
       "real_estate_tax_permille": 1.5,
-      "birth_bonus_chf": 700,
+      "birth_bonus_chf": 3000,
       "canteen_meal_chf": 8.5,
       "climate_fund_active": true
     }
@@ -732,7 +732,7 @@
       "waste_bag_35l_chf": 1.2,
       "dog_tax_chf": 100,
       "real_estate_tax_permille": 0,
-      "birth_bonus_chf": 500,
+      "birth_bonus_chf": 3000,
       "canteen_meal_chf": 8.5,
       "climate_fund_active": true
     }
@@ -773,7 +773,7 @@
       "waste_bag_35l_chf": 1.3,
       "dog_tax_chf": 115,
       "real_estate_tax_permille": 1,
-      "birth_bonus_chf": 1000,
+      "birth_bonus_chf": 3000,
       "canteen_meal_chf": 8.5,
       "climate_fund_active": true
     }
