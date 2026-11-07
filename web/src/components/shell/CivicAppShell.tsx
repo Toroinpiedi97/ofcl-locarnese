@@ -25,8 +25,8 @@ export function CivicAppShell({ children }: CivicAppShellProps) {
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-[#ebf2f7] text-slate-900 relative">
-      {/* Sfondo Topografico Fisso del Locarnese (Isolinee Cimetta/Cardada & Lago Maggiore - Sfumato delicato) */}
-      <LocarneseTopoWatermark opacity={0.22} />
+      {/* Sfondo Topografico Fisso del Locarnese (Isolinee Cimetta/Cardada, Ghiridone & Lago Maggiore) */}
+      <LocarneseTopoWatermark opacity={0.38} />
 
       {/* Skip Link per Accessibilità Tastiera WAI-ARIA */}
       <a
