@@ -4,7 +4,10 @@
 -- ==============================================================================
 
 -- 1. TABELLE CIVIC DEEP DIVE (Quadranti A-E: Tasse, Tariffe, Famiglie, Terza Età, Mobilità, Sportello)
-create table ref.civic_benefit_def (
+alter table ref.municipality add column if not exists active boolean not null default true;
+alter table raw.document_version add column if not exists published_at timestamptz;
+
+create table if not exists ref.civic_benefit_def (
   code            text primary key,
   quadrant        text not null check (quadrant in ('A_TARIFFE','B_FAMIGLIE','C_TERZA_ETA','D_CLIMA_MOBILITA','E_FISCO_SPORTELLO')),
   label_it        text not null,
