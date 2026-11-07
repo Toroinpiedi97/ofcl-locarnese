@@ -18,9 +18,12 @@ export interface MunicipalitiesTableProps {
   onSelectMunicipality: (municipality: MunicipalityData) => void;
   onToggleMap?: () => void;
   isMapActive?: boolean;
+  selectedYear?: string;
+  onSelectYear?: (year: string) => void;
+  className?: string;
 }
 
-type SortField = "name" | "multiplier_pf" | "debito_pc" | "autofin";
+type SortField = "name" | "multiplier_pf" | "debito_pc" | "debito_totale" | "autofin";
 type SortDirection = "asc" | "desc";
 
 export function MunicipalitiesTable({
@@ -29,6 +32,9 @@ export function MunicipalitiesTable({
   onSelectMunicipality,
   onToggleMap,
   isMapActive = false,
+  selectedYear = "2024",
+  onSelectYear,
+  className,
 }: MunicipalitiesTableProps) {
   const { t } = useCivicLang();
   const [filterQuery, setFilterQuery] = useState("");
@@ -57,7 +63,7 @@ export function MunicipalitiesTable({
     );
   });
 
-  // Ordinamento
+  // Ordinamento con supporto a Debito Totale
   const sorted = [...filtered].sort((a, b) => {
     let diff = 0;
     switch (sortField) {
@@ -70,6 +76,12 @@ export function MunicipalitiesTable({
       case "debito_pc":
         diff = a.summary_30s.debito_netto_pc_chf - b.summary_30s.debito_netto_pc_chf;
         break;
+      case "debito_totale": {
+        const debA = a.summary_30s.debito_netto_pc_chf * a.population;
+        const debB = b.summary_30s.debito_netto_pc_chf * b.population;
+        diff = debA - debB;
+        break;
+      }
       case "autofin":
         diff = a.summary_30s.autofinanziamento_chf - b.summary_30s.autofinanziamento_chf;
         break;
@@ -77,7 +89,7 @@ export function MunicipalitiesTable({
     return sortDirection === "asc" ? diff : -diff;
   });
 
-  const displayedRows = showAllRows ? sorted : sorted.slice(0, 7);
+  const displayedRows = showAllRows ? sorted : sorted.slice(0, 8);
 
   function renderSortIcon(field: SortField) {
     if (sortField !== field) {
@@ -91,14 +103,36 @@ export function MunicipalitiesTable({
   }
 
   return (
-    <div className="flex flex-col justify-between h-full">
+    <div className={cn("flex flex-col justify-between h-full w-full select-none", className)}>
       <div>
-        {/* Intestazione Card Tabella */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-200/80">
-          <div className="flex items-center gap-2">
+        {/* Intestazione Card Tabella Comparativa con Filtro Anno integrato */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-200/80 gap-3">
+          <div className="flex items-center gap-2.5 flex-wrap">
             <h2 className="text-sm font-bold text-slate-900 tracking-tight">
-              {t.tableTitle}
+              Tabella Comparativa Comuni ({selectedYear})
             </h2>
+
+            {/* Filtro Anno diretto */}
+            {onSelectYear && (
+              <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs">
+                {["2024", "2025", "2026"].map((yr) => (
+                  <button
+                    key={yr}
+                    type="button"
+                    onClick={() => onSelectYear(yr)}
+                    className={cn(
+                      "px-2 py-0.5 rounded-md font-bold transition-all cursor-pointer text-[10px] font-mono",
+                      selectedYear === yr
+                        ? "bg-white text-[#0F3854] shadow-xs"
+                        : "text-slate-500 hover:text-slate-900"
+                    )}
+                  >
+                    {yr}
+                  </button>
+                ))}
+              </div>
+            )}
+
             {isMapActive && (
               <span className="font-mono text-[10px] px-2 py-0.5 rounded-full bg-cyan-100 text-cyan-900 font-bold">
                 Mappa Attiva
@@ -130,17 +164,18 @@ export function MunicipalitiesTable({
                 )}
               >
                 <MapIcon className="w-3.5 h-3.5" />
-                <span>Mappa Vettoriale</span>
+                <span className="hidden sm:inline">Mappa</span>
               </button>
             )}
           </div>
         </div>
 
-        {/* Tabella Comparativa con Sparklines Inline */}
+        {/* Tabella Comparativa con Debito Netto Totale + Debito pro capite */}
         <div className="overflow-x-auto mt-2">
           <table className="w-full text-left border-collapse text-xs select-none">
             <thead>
               <tr className="border-b border-slate-200/80 text-slate-500 font-semibold text-[11px]">
+                {/* 1. Comune */}
                 <th
                   onClick={() => handleSort("name")}
                   className="py-2.5 pr-2 cursor-pointer hover:text-slate-900 whitespace-nowrap"
@@ -150,6 +185,8 @@ export function MunicipalitiesTable({
                     {renderSortIcon("name")}
                   </div>
                 </th>
+
+                {/* 2. Moltiplicatore */}
                 <th
                   onClick={() => handleSort("multiplier_pf")}
                   className="py-2.5 px-2 cursor-pointer hover:text-slate-900 whitespace-nowrap text-right"
@@ -159,35 +196,50 @@ export function MunicipalitiesTable({
                     {renderSortIcon("multiplier_pf")}
                   </div>
                 </th>
+
+                {/* 3. Debito Totale Comune (Nuovo requisito 2.4) */}
+                <th
+                  onClick={() => handleSort("debito_totale")}
+                  className="py-2.5 px-2 cursor-pointer hover:text-slate-900 whitespace-nowrap text-right"
+                >
+                  <div className="flex items-center justify-end gap-1">
+                    <span>Debito Totale</span>
+                    {renderSortIcon("debito_totale")}
+                  </div>
+                </th>
+
+                {/* 4. Debito pro capite */}
                 <th
                   onClick={() => handleSort("debito_pc")}
                   className="py-2.5 px-2 cursor-pointer hover:text-slate-900 whitespace-nowrap text-right"
                 >
                   <div className="flex items-center justify-end gap-1">
-                    <span>{t.tableColDebt}</span>
+                    <span>Debito p.c.</span>
                     {renderSortIcon("debito_pc")}
                   </div>
                 </th>
+
+                {/* 5. Autofinanziamento */}
                 <th
                   onClick={() => handleSort("autofin")}
                   className="py-2.5 px-2 cursor-pointer hover:text-slate-900 whitespace-nowrap text-right"
                 >
                   <div className="flex items-center justify-end gap-1">
-                    <span>{t.tableColAutofin}</span>
+                    <span>Autofinanziamento</span>
                     {renderSortIcon("autofin")}
                   </div>
                 </th>
+
+                {/* 6. Azione Seleziona */}
                 <th className="py-2.5 pl-2 text-center whitespace-nowrap">
-                  {t.tableColActions}
+                  Scheda
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
               {displayedRows.map((m) => {
                 const isSelected = m.ust_code === selectedUstCode;
-                const mult = m.tax_multiplier_pf;
-                const sparklineColor =
-                  mult <= 80 ? "#10b981" : mult <= 88 ? "#2563eb" : "#f59e0b";
+                const debitoTotale = m.summary_30s.debito_netto_pc_chf * m.population;
 
                 return (
                   <tr
@@ -207,63 +259,52 @@ export function MunicipalitiesTable({
                         : "hover:bg-white/60 text-slate-800"
                     )}
                   >
-                    {/* 1. Comune con UST e Dot */}
+                    {/* 1. Comune con UST e Nome */}
                     <td className="py-2.5 pr-2">
                       <div className="flex items-center gap-1.5">
-                        <span
-                          className="w-2 h-2 rounded-full shrink-0"
-                          style={{ backgroundColor: sparklineColor }}
-                        />
                         <span className="font-mono text-[10px] px-1 py-0.2 rounded bg-slate-200/90 text-slate-700 font-bold shrink-0">
                           {m.ust_code}
                         </span>
-                        <span className="font-bold text-slate-900 group-hover:text-blue-900">
-                          {m.name}
-                        </span>
+                        <div>
+                          <span className="font-bold text-slate-900 group-hover:text-blue-900 block leading-tight">
+                            {m.name}
+                          </span>
+                          <span className="text-[10px] text-slate-500">
+                            {m.population.toLocaleString("de-CH")} ab.
+                          </span>
+                        </div>
                       </div>
                     </td>
 
-                    {/* 2. Moltiplicatore con Mini Sparkline SVG Inline */}
+                    {/* 2. Moltiplicatore */}
                     <td className="py-2.5 px-2 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <span className="font-mono font-bold text-slate-900 tabular-nums">
-                          {m.tax_multiplier_pf}%
-                        </span>
-                        <svg className="w-10 h-3.5 shrink-0 hidden sm:block" viewBox="0 0 50 16">
-                          <path
-                            d={
-                              mult <= 80
-                                ? "M 2 12 Q 15 14 25 8 T 48 4"
-                                : mult <= 88
-                                ? "M 2 14 Q 15 10 25 12 T 48 6"
-                                : "M 2 6 Q 15 8 25 12 T 48 14"
-                            }
-                            fill="none"
-                            stroke={sparklineColor}
-                            strokeWidth="2.2"
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                      </div>
+                      <span className="font-mono font-bold text-slate-900 tabular-nums">
+                        {m.tax_multiplier_pf}%
+                      </span>
                       {m.has_differentiated_pg && (
-                        <span className="text-[9px] text-amber-800 block">
+                        <span className="text-[9px] text-amber-800 block font-mono">
                           PG: {m.tax_multiplier_pg}%
                         </span>
                       )}
                     </td>
 
-                    {/* 3. Debito p.c. */}
+                    {/* 3. Debito Netto Totale (Nuovo requisito convivenza) */}
+                    <td className="py-2.5 px-2 text-right font-mono tabular-nums text-slate-900 font-semibold">
+                      {formatChfCompact(debitoTotale)}
+                    </td>
+
+                    {/* 4. Debito pro capite */}
                     <td className="py-2.5 px-2 text-right font-mono tabular-nums text-slate-700">
                       {Math.round(m.summary_30s.debito_netto_pc_chf).toLocaleString("de-CH")}{" "}
                       <span className="text-[10px] text-slate-500">CHF</span>
                     </td>
 
-                    {/* 4. Autofinanziamento */}
+                    {/* 5. Autofinanziamento */}
                     <td className="py-2.5 px-2 text-right font-mono font-bold tabular-nums text-emerald-700">
                       {formatChfCompact(m.summary_30s.autofinanziamento_chf)}
                     </td>
 
-                    {/* 5. Azioni */}
+                    {/* 6. Azione Scheda MCA2 */}
                     <td className="py-2.5 pl-2 text-center">
                       <button
                         type="button"
@@ -276,7 +317,7 @@ export function MunicipalitiesTable({
                           isSelected && "bg-white shadow-xs text-blue-900 border-blue-300 font-extrabold"
                         )}
                       >
-                        {t.tableActionDetails}
+                        {isSelected ? "Attivo" : "Seleziona"}
                       </button>
                     </td>
                   </tr>

@@ -14,7 +14,6 @@ import {
   ChevronRight,
   ShieldCheck,
   FileText,
-  Search,
   Activity,
   History,
   Lock,
@@ -29,7 +28,7 @@ interface CivicSidebarProps {
   className?: string;
 }
 
-export function CivicSidebar({ onOpenSearch, className }: CivicSidebarProps) {
+export function CivicSidebar({ className }: CivicSidebarProps) {
   const pathname = usePathname();
   const { lang, setLang, t } = useCivicLang();
 
@@ -37,21 +36,21 @@ export function CivicSidebar({ onOpenSearch, className }: CivicSidebarProps) {
     {
       id: "dashboard",
       href: "/",
-      label: t.navDashboard,
+      label: t.navDashboard, // "Panoramica Locarnese"
       icon: BarChart3,
       isActive: pathname === "/",
     },
     {
       id: "confronta",
       href: "/confronta",
-      label: t.navConfronta,
+      label: t.navConfronta, // "Confronta i Comuni"
       icon: Scale,
       isActive: pathname === "/confronta",
     },
     {
       id: "comuni",
       href: "/comuni/locarno",
-      label: t.navComuni,
+      label: t.navComuni, // "I Dettagli dei 19 Comuni"
       icon: Building2,
       isActive: pathname.startsWith("/comuni/"),
       hasPopover: true,
@@ -59,7 +58,7 @@ export function CivicSidebar({ onOpenSearch, className }: CivicSidebarProps) {
     {
       id: "segnala",
       href: "/segnala",
-      label: t.navSegnala,
+      label: t.navSegnala, // "Supporto & Segnalazioni"
       icon: Ticket,
       isActive: pathname === "/segnala",
       isTicketTrigger: true,
@@ -67,7 +66,7 @@ export function CivicSidebar({ onOpenSearch, className }: CivicSidebarProps) {
     {
       id: "opendata",
       href: "/open-data",
-      label: t.navOpenData,
+      label: t.navOpenData, // "Open Data"
       icon: Download,
       isActive: pathname === "/open-data",
     },
@@ -82,11 +81,8 @@ export function CivicSidebar({ onOpenSearch, className }: CivicSidebarProps) {
       )}
     >
       <div className="space-y-3.5">
-        {/* Micro-barra civica Trasparenza + Selettore Lingua IT | DE */}
-        <div className="flex items-center justify-between pb-3 pt-0.5 border-b border-slate-200/80 text-slate-500 text-xs">
-          <span className="text-[11px] font-semibold truncate pr-2 text-slate-600">
-            {t.microBarTitle}
-          </span>
+        {/* Selettore Lingua IT | DE essenziale */}
+        <div className="flex items-center justify-end pb-2 pt-0.5 border-b border-slate-200/80 text-xs">
           <div className="flex items-center gap-1 shrink-0 font-mono text-[10px] font-bold">
             <button
               type="button"
@@ -100,7 +96,7 @@ export function CivicSidebar({ onOpenSearch, className }: CivicSidebarProps) {
             >
               IT
             </button>
-            <span className="opacity-40">|</span>
+            <span className="opacity-40 text-slate-400">|</span>
             <button
               type="button"
               onClick={() => setLang("DE")}
@@ -137,29 +133,8 @@ export function CivicSidebar({ onOpenSearch, className }: CivicSidebarProps) {
           </div>
         </Link>
 
-        {/* Input Ricerca Rapida Cmd+K */}
-        {onOpenSearch && (
-          <button
-            type="button"
-            onClick={onOpenSearch}
-            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-white/90 hover:bg-white border border-slate-200 text-xs text-slate-600 shadow-xs transition-all cursor-pointer"
-          >
-            <div className="flex items-center gap-2">
-              <Search className="w-3.5 h-3.5 text-slate-400" />
-              <span>Cerca nel distretto...</span>
-            </div>
-            <kbd className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-bold border border-slate-200/80">
-              ⌘K
-            </kbd>
-          </button>
-        )}
-
-        {/* Menu Navigazione Civica */}
+        {/* Menu di Navigazione Principale (Nuova Nomenclatura a 6 Voci) */}
         <nav className="space-y-1" aria-label="Menu principale">
-          <div className="text-[10px] font-bold tracking-wider text-slate-400 uppercase px-3 pt-1 pb-1">
-            Navigazione Civica
-          </div>
-
           {navItems.map((item) => {
             const Icon = item.icon;
 
@@ -257,7 +232,7 @@ export function CivicSidebar({ onOpenSearch, className }: CivicSidebarProps) {
             );
           })}
 
-          {/* Sottomenu Impostazioni & Documenti */}
+          {/* Voce 6: Impostazioni */}
           <Popover>
             <PopoverTrigger asChild>
               <button
@@ -364,15 +339,6 @@ export function CivicSidebar({ onOpenSearch, className }: CivicSidebarProps) {
             </PopoverContent>
           </Popover>
         </nav>
-      </div>
-
-      {/* Stato certificazione discreto in basso */}
-      <div className="pt-2.5 mt-2.5 border-t border-slate-200/80 text-xs text-slate-500 space-y-0.5">
-        <div className="flex items-center justify-between font-bold text-slate-700 text-[11px]">
-          <span>{t.certificationStatus}</span>
-          <span className="w-2 h-2 rounded-full bg-emerald-500" />
-        </div>
-        <div className="text-slate-500 text-[10px] font-mono leading-snug">{t.precisionMca2}</div>
       </div>
     </aside>
   );

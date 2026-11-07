@@ -73,3 +73,38 @@ export function formatChfCompact(val: number | null | undefined): string {
   }
   return `${sign}CHF ${abs.toFixed(2)}`;
 }
+
+/**
+ * Formattazione compatta svizzera per assi di grafici (Opzione A+C):
+ * 1'000 -> 1k, 100'000 -> 100k, 1'200'000 -> 1.2M
+ */
+export function formatCompactNumber(val: number | string | null | undefined): string {
+  if (val === null || val === undefined || val === "") return "";
+  const num = typeof val === "number" ? val : parseFloat(String(val));
+  if (isNaN(num)) return String(val);
+
+  const abs = Math.abs(num);
+  const sign = num < 0 ? "-" : "";
+
+  if (abs >= 1_000_000_000) {
+    const b = (abs / 1_000_000_000).toFixed(1).replace(/\.0$/, "");
+    return `${sign}${b}B`;
+  }
+  if (abs >= 1_000_000) {
+    const m = (abs / 1_000_000).toFixed(1).replace(/\.0$/, "");
+    return `${sign}${m}M`;
+  }
+  if (abs >= 1_000) {
+    const k = (abs / 1_000).toFixed(abs >= 10_000 ? 0 : 1).replace(/\.0$/, "");
+    return `${sign}${k}k`;
+  }
+  return `${sign}${abs}`;
+}
+
+/**
+ * Formatta etichetta asse con indicazione CHF compatta.
+ */
+export function formatChfAxis(val: number | string | null | undefined): string {
+  const compact = formatCompactNumber(val);
+  return compact ? `${compact}` : "";
+}

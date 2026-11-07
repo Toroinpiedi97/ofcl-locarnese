@@ -8,7 +8,7 @@ export const DistrictTrendLineChart = dynamic(
     import("./DistrictTrendLineChart").then((mod) => mod.DistrictTrendLineChart),
   {
     ssr: false,
-    loading: () => <ChartFrostSkeleton height={195} label="Caricamento serie storica..." />,
+    loading: () => <ChartFrostSkeleton height={280} label="Caricamento serie storica..." />,
   }
 );
 
@@ -17,7 +17,7 @@ export const SectorPerCapitaBarChart = dynamic(
     import("./SectorPerCapitaBarChart").then((mod) => mod.SectorPerCapitaBarChart),
   {
     ssr: false,
-    loading: () => <ChartFrostSkeleton height={195} label="Caricamento spesa per settori..." />,
+    loading: () => <ChartFrostSkeleton height={280} label="Caricamento spesa per settori..." />,
   }
 );
 

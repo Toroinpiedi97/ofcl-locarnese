@@ -5,17 +5,12 @@ import { useRouter } from "next/navigation";
 import type { MunicipalityData } from "@/data/municipalities";
 import { MunicipalitiesTable } from "./MunicipalitiesTable";
 import { TerritorialMap } from "./TerritorialMap";
-import { MunicipalityGlassDrawer } from "./MunicipalityGlassDrawer";
+import { Mca2AnalyticCard } from "./Mca2AnalyticCard";
+import { GlobalFilterBar } from "./GlobalFilterBar";
 import { DistrictTrendLineChart, SectorPerCapitaBarChart } from "@/components/charts";
 import { CultPopoverTicket } from "@/components/cult/CultPopoverTicket";
 import { useCivicLang } from "@/lib/i18n-civic";
-import {
-  Download,
-  Ticket,
-  ChevronDown,
-  ShieldCheck,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Download, Ticket, ShieldCheck } from "lucide-react";
 
 export interface DashboardDesktopProps {
   municipalities: MunicipalityData[];
@@ -30,22 +25,51 @@ export function DashboardDesktop({
   const { t } = useCivicLang();
   const [, startTransition] = useTransition();
 
-  const [selectedUstCode, setSelectedUstCode] = useState<number>(defaultUstCode);
-  const [compareUstCode, setCompareUstCode] = useState<number>(5115); // Losone come confronto
-  const [selectedYear, setSelectedYear] = useState<string>("2025");
+  // Stato Filtro Globale Unico
+  const [selectedUstCodes, setSelectedUstCodes] = useState<number[]>([defaultUstCode]);
+  const [selectedYear, setSelectedYear] = useState<string>("2024");
   const [viewMode, setViewMode] = useState<"table" | "map">("table");
-  const [drawerOpen, setDrawerOpen] = useState(true);
   const [exactKpi, setExactKpi] = useState(false);
 
-  const selectedMunicipality =
-    municipalities.find((m) => m.ust_code === selectedUstCode) ?? municipalities[0];
-  const compareMunicipality =
-    municipalities.find((m) => m.ust_code === compareUstCode) ?? municipalities[1];
+  // Comune principale per la Scheda Analitica MCA2
+  const [activeMuniCode, setActiveMuniCode] = useState<number>(defaultUstCode);
 
-  function handleSelectMunicipality(m: MunicipalityData) {
+  // Lista di comuni selezionati per i grafici (max 4)
+  const selectedMunicipalities = municipalities.filter((m) =>
+    selectedUstCodes.includes(m.ust_code)
+  );
+
+  // Comune per la Scheda Analitica MCA2
+  const activeMunicipality =
+    municipalities.find((m) => m.ust_code === activeMuniCode) ??
+    selectedMunicipalities[0] ??
+    municipalities[0];
+
+  function handleToggleUstCode(ustCode: number) {
+    setSelectedUstCodes((prev) => {
+      if (prev.includes(ustCode)) {
+        if (prev.length <= 1) return prev;
+        return prev.filter((c) => c !== ustCode);
+      } else {
+        if (prev.length >= 4) return prev;
+        return [...prev, ustCode];
+      }
+    });
+    setActiveMuniCode(ustCode);
+  }
+
+  function handleSelectMunicipalityFromTable(m: MunicipalityData) {
     startTransition(() => {
-      setSelectedUstCode(m.ust_code);
-      setDrawerOpen(true);
+      setActiveMuniCode(m.ust_code);
+      // Se non è già tra i comuni selezionati, aggiungilo se c'è spazio, altrimenti imposta come primario
+      if (!selectedUstCodes.includes(m.ust_code)) {
+        if (selectedUstCodes.length < 4) {
+          setSelectedUstCodes((prev) => [...prev, m.ust_code]);
+        } else {
+          setSelectedUstCodes([m.ust_code]);
+        }
+      }
+
       try {
         const url = new URL(window.location.href);
         url.searchParams.set("comune", m.slug);
@@ -79,7 +103,7 @@ export function DashboardDesktop({
   return (
     <div className="p-5 lg:p-7 space-y-5">
       {/* ===================================================================
-           1. TOP BAR: Titolo istituzionale a sinistra + Controlli a destra
+           1. TOP BAR: Titolo Istituzionale + Azioni Primarie (Senza "Dettagli" né "2025 Consuntivo")
            =================================================================== */}
       <header className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
         <div className="min-w-0">
@@ -100,23 +124,8 @@ export function DashboardDesktop({
           </p>
         </div>
 
-        <div className="flex flex-wrap xl:flex-nowrap items-center gap-2.5 shrink-0">
-          {/* Year Dropdown Pill */}
-          <div className="relative shrink-0">
-            <select
-              value={selectedYear}
-              onChange={(e) => setSelectedYear(e.target.value)}
-              aria-label="Anno di bilancio"
-              className="ofl-year-pill appearance-none rounded-full pl-3.5 pr-8 py-2 text-xs font-bold text-slate-900 cursor-pointer focus:outline-none"
-            >
-              <option value="2025">2025 (Consuntivo '24 / Prev '25)</option>
-              <option value="2024">2024 (Consuntivo Ufficiale)</option>
-              <option value="2026">2026 (Piano Finanziario)</option>
-            </select>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-500 pointer-events-none absolute right-2.5 top-2.5" />
-          </div>
-
-          {/* Blue Pill: Scarica Open Data */}
+        <div className="flex items-center gap-2.5 shrink-0">
+          {/* Pulsante Scarica Open Data */}
           <button
             type="button"
             onClick={handleTriggerOpenData}
@@ -126,9 +135,9 @@ export function DashboardDesktop({
             <span>{t.downloadOpenData}</span>
           </button>
 
-          {/* Amber Pill: Segnala / Apri Ticket */}
+          {/* Pulsante Segnala / Apri Ticket */}
           <CultPopoverTicket
-            initialUstCode={selectedUstCode}
+            initialUstCode={activeMuniCode}
             triggerButton={
               <button
                 type="button"
@@ -139,20 +148,23 @@ export function DashboardDesktop({
               </button>
             }
           />
-
-          {/* Pulsante Toggle Drawer Dettaglio */}
-          <button
-            type="button"
-            onClick={() => setDrawerOpen((prev) => !prev)}
-            className="ofl-btn-frost rounded-full px-3 py-2 text-xs font-bold flex items-center gap-1 cursor-pointer"
-          >
-            <span>{drawerOpen ? "Chiudi Dettagli ✕" : "Dettagli ◂"}</span>
-          </button>
         </div>
       </header>
 
       {/* ===================================================================
-           2. RIGA 4 KPI CARDS CON MINI-SPARKLINE SVG
+           2. CARD FILTRO GLOBALE UNICA (Anno + Selezione fino a 4 Comuni con "+")
+           =================================================================== */}
+      <GlobalFilterBar
+        allMunicipalities={municipalities}
+        selectedUstCodes={selectedUstCodes}
+        onToggleUstCode={handleToggleUstCode}
+        onSetSelectedUstCodes={setSelectedUstCodes}
+        selectedYear={selectedYear}
+        onSelectYear={setSelectedYear}
+      />
+
+      {/* ===================================================================
+           3. RIGA 4 KPI CARDS CON MINI-SPARKLINE SVG
            =================================================================== */}
       <section
         className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4"
@@ -284,111 +296,91 @@ export function DashboardDesktop({
       </section>
 
       {/* ===================================================================
-           3. GRIGLIA CENTRALE: Grafici a Sinistra + Tabella & Drawer a Destra
+           4. RIGA SUPERIORE GRAFICI: CARD 1 & CARD 3 (100% SPAZIO DINAMICO)
            =================================================================== */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-stretch">
-        {/* COLONNA SINISTRA (5/12): I DUE GRAFICI NIVO */}
-        <div className="xl:col-span-5 flex flex-col gap-5">
-          {/* Grafico Alto: Andamento Spese e Ricavi */}
-          <div className="ofl-card rounded-2xl p-5 flex-1 flex flex-col justify-between relative">
-            <div>
-              <h2 className="text-sm font-bold text-slate-900 tracking-tight">
-                {t.lineChartTitle}
-              </h2>
-              {/* Legenda con selettore del comune di confronto */}
-              <div className="flex items-center justify-center gap-4 text-xs font-medium text-slate-700 my-2 flex-wrap">
-                <span className="inline-flex items-center gap-1.5 font-bold text-slate-900">
-                  <span className="w-2.5 h-2.5 rounded-full bg-blue-600" />
-                  <span>{selectedMunicipality.name}</span>
-                </span>
-
-                <span className="inline-flex items-center gap-1.5 text-slate-800 font-bold">
-                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-                  <select
-                    value={compareUstCode}
-                    onChange={(e) => setCompareUstCode(Number(e.target.value))}
-                    aria-label="Comune di confronto"
-                    className="bg-transparent font-bold text-slate-900 cursor-pointer focus:outline-none underline decoration-dotted"
-                  >
-                    {municipalities
-                      .filter((m) => m.ust_code !== selectedUstCode)
-                      .map((m) => (
-                        <option key={m.ust_code} value={m.ust_code}>
-                          {m.name}
-                        </option>
-                      ))}
-                  </select>
-                </span>
-
-                <span className="inline-flex items-center gap-1.5 text-slate-500 font-bold">
-                  <span className="w-2.5 h-2.5 rounded-full bg-sky-400" />
-                  <span>Media Distretto</span>
-                </span>
-              </div>
-            </div>
-
-            <DistrictTrendLineChart
-              primaryMun={selectedMunicipality}
-              compareMun={compareMunicipality}
-              height={195}
-            />
+        {/* Card 1: Andamento Spese e Ricavi (xl:col-span-6) */}
+        <div className="xl:col-span-6 ofl-card rounded-2xl p-5 flex flex-col justify-between min-h-[360px] relative">
+          <div className="mb-2">
+            <h2 className="text-sm font-bold text-slate-900 tracking-tight">
+              {t.lineChartTitle}
+            </h2>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              Confronto spesa pro capite 2019–2026 sui comuni selezionati
+            </p>
           </div>
 
-          {/* Grafico Basso: Spesa Pro Capite per Settore */}
-          <div className="ofl-card rounded-2xl p-5 flex-1 flex flex-col justify-between relative">
-            <div>
-              <h2 className="text-sm font-bold text-slate-900 tracking-tight">
-                {t.barChartTitle} ({selectedMunicipality.name})
-              </h2>
-              <p className="text-[11px] text-slate-500 mt-0.5">
-                Dettaglio conti di bilancio MCA2 per macrosettore
-              </p>
-            </div>
-
-            <SectorPerCapitaBarChart
-              municipality={selectedMunicipality}
-              height={195}
+          <div className="flex-1 w-full min-h-[280px]">
+            <DistrictTrendLineChart
+              municipalities={selectedMunicipalities}
+              showDistrictAverage={true}
+              height="100%"
             />
           </div>
         </div>
 
-        {/* COLONNA DESTRA (7/12): TABELLA / MAPPA + DRAWER IN VETRO SATINATO */}
-        <div className="xl:col-span-7 ofl-card rounded-2xl p-5 relative overflow-hidden min-h-[500px] flex flex-col justify-between">
-          <div className={cn("transition-all duration-300", drawerOpen && "xl:pr-[290px]")}>
-            {viewMode === "table" ? (
-              <MunicipalitiesTable
-                municipalities={municipalities}
-                selectedUstCode={selectedUstCode}
-                onSelectMunicipality={handleSelectMunicipality}
-                onToggleMap={() => setViewMode("map")}
-                isMapActive={false}
-              />
-            ) : (
-              <div className="space-y-3">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-200/80">
-                  <h3 className="text-sm font-bold text-slate-900">Mappa Vettoriale Distretto</h3>
-                  <button
-                    type="button"
-                    onClick={() => setViewMode("table")}
-                    className="ofl-btn-frost rounded-lg px-2.5 py-1 text-xs font-semibold cursor-pointer"
-                  >
-                    Torna alla Tabella
-                  </button>
-                </div>
-                <TerritorialMap
-                  municipalities={municipalities}
-                  selectedUstCode={selectedUstCode}
-                  onSelectMunicipality={handleSelectMunicipality}
-                />
-              </div>
-            )}
+        {/* Card 3: Spesa Pro Capite per Settore con Drilldown Gerarchico (xl:col-span-6) */}
+        <div className="xl:col-span-6 ofl-card rounded-2xl p-5 flex flex-col justify-between min-h-[360px] relative">
+          <div className="mb-2">
+            <h2 className="text-sm font-bold text-slate-900 tracking-tight">
+              Spesa Pro Capite per Settore ({selectedYear})
+            </h2>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              Struttura gerarchica MCA2 a 4 livelli (Dicastero → Gruppo → Funzione → Conto)
+            </p>
           </div>
 
-          {/* DRAWER DESTRO ANALITICO */}
-          <MunicipalityGlassDrawer
-            municipality={selectedMunicipality}
-            open={drawerOpen}
-            onClose={() => setDrawerOpen(false)}
+          <div className="flex-1 w-full min-h-[280px]">
+            <SectorPerCapitaBarChart
+              municipalities={selectedMunicipalities}
+              height="100%"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* ===================================================================
+           5. RIGA INFERIORE: TABELLA COMPARATIVA (CARD 2A) + SCHEDA MCA2 (CARD 2B)
+           =================================================================== */}
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-stretch">
+        {/* Card 2A: Tabella Comparativa Comuni (xl:col-span-7) */}
+        <div className="xl:col-span-7 ofl-card rounded-2xl p-5 flex flex-col justify-between min-h-[460px]">
+          {viewMode === "table" ? (
+            <MunicipalitiesTable
+              municipalities={municipalities}
+              selectedUstCode={activeMuniCode}
+              onSelectMunicipality={handleSelectMunicipalityFromTable}
+              onToggleMap={() => setViewMode("map")}
+              isMapActive={false}
+              selectedYear={selectedYear}
+              onSelectYear={setSelectedYear}
+            />
+          ) : (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-200/80">
+                <h3 className="text-sm font-bold text-slate-900">Mappa Vettoriale Distretto</h3>
+                <button
+                  type="button"
+                  onClick={() => setViewMode("table")}
+                  className="ofl-btn-frost rounded-lg px-2.5 py-1 text-xs font-semibold cursor-pointer"
+                >
+                  Torna alla Tabella
+                </button>
+              </div>
+              <TerritorialMap
+                municipalities={municipalities}
+                selectedUstCode={activeMuniCode}
+                onSelectMunicipality={handleSelectMunicipalityFromTable}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Card 2B: Scheda Analitica MCA2 Separata e Minimale (xl:col-span-5) */}
+        <div className="xl:col-span-5 flex flex-col min-h-[460px]">
+          <Mca2AnalyticCard
+            municipality={activeMunicipality}
+            className="h-full"
           />
         </div>
       </div>
