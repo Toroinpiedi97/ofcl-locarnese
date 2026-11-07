@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { CivicSidebar } from "./CivicSidebar";
+import { MobileTopBar } from "./MobileTopBar";
+import { MobileMenuDrawer } from "./MobileMenuDrawer";
 import { MobileBottomNav } from "./MobileBottomNav";
 import { LocarneseTopoWatermark } from "./LocarneseTopoWatermark";
 import { CommandSearchDialog } from "./CommandSearchDialog";
@@ -17,6 +19,7 @@ export function CivicAppShell({ children }: CivicAppShellProps) {
   const pathname = usePathname();
   const { t } = useCivicLang();
   const [searchOpen, setSearchOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // Isolamento totale della console curatore (/admin)
   if (pathname?.startsWith("/admin")) {
@@ -36,6 +39,12 @@ export function CivicAppShell({ children }: CivicAppShellProps) {
         Salta al contenuto principale
       </a>
 
+      {/* Top Bar Mobile Fissa (solo su smartphone / schermi piccoli < lg) */}
+      <MobileTopBar
+        onOpenSearch={() => setSearchOpen(true)}
+        onOpenMenu={() => setMenuOpen(true)}
+      />
+
       {/* Spazio riservato a sinistra per la Sidebar Fissa a Isola (288px) */}
       <div className="hidden lg:block w-72 shrink-0 pointer-events-none" aria-hidden="true" />
 
@@ -43,13 +52,13 @@ export function CivicAppShell({ children }: CivicAppShellProps) {
       <CivicSidebar onOpenSearch={() => setSearchOpen(true)} />
 
       {/* Canvas Principale Satinato Trasparente */}
-      <div className="ofl-canvas flex-1 flex flex-col justify-between min-w-0 min-h-screen relative z-10 pb-16 lg:pb-0">
+      <div className="ofl-canvas flex-1 flex flex-col justify-between min-w-0 min-h-screen relative z-10 pb-20 lg:pb-0">
         <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
           {children}
         </main>
 
         {/* Footer Istituzionale nel Canvas */}
-        <footer className="px-5 lg:px-6 py-3 border-t border-slate-200/80 bg-white/40 backdrop-blur-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] text-slate-500">
+        <footer className="px-5 lg:px-6 py-3 border-t border-slate-200/80 bg-white/40 backdrop-blur-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] text-slate-600 font-medium">
           <div>
             <span>{t.footerLegalSeal}</span>
           </div>
@@ -87,6 +96,16 @@ export function CivicAppShell({ children }: CivicAppShellProps) {
 
       {/* Bottom Bar Mobile Fissa (solo su smartphone / schermi piccoli) */}
       <MobileBottomNav />
+
+      {/* Drawer Menu Hamburger Mobile */}
+      <MobileMenuDrawer
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        onOpenSearch={() => {
+          setMenuOpen(false);
+          setSearchOpen(true);
+        }}
+      />
 
       {/* Modale Ricerca Globale Cmd+K */}
       <CommandSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />

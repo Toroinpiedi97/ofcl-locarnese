@@ -21,6 +21,10 @@ import {
   AlertTriangle,
   ShieldCheck,
   Calendar,
+  Info,
+  ChevronDown,
+  ChevronUp,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -33,6 +37,8 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
   const [filterQuery, setFilterQuery] = useState("");
   const [selectedYear, setSelectedYear] = useState<string>("2024");
   const [activeMunicipality, setActiveMunicipality] = useState<MunicipalityData | null>(null);
+  const [isHeroCollapsed, setIsHeroCollapsed] = useState(false);
+  const [showQuickGuide, setShowQuickGuide] = useState(false);
 
   // Filtro Comuni
   const filtered = municipalities.filter((m) => {
@@ -65,48 +71,106 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
 
   return (
     <div className="w-full space-y-4 select-none">
-      {/* Header Mobile Compatto con Logo OFL & Switch Lingua */}
-      <div className="flex items-center justify-between p-3 rounded-2xl ofl-card shadow-xs">
-        <Link href="/" className="flex items-center gap-2.5">
-          <div className="w-8 h-9 rounded-b-xl rounded-t-md bg-[#0F3854] text-white flex flex-col items-center justify-between p-0.5 shrink-0 shadow-xs">
-            <span className="font-mono text-[8px] font-bold">+ TI</span>
-            <span className="text-sky-300 text-xs">☩</span>
-            <span className="w-full h-1 bg-red-600 rounded-b-lg"></span>
+      {/* Card Hero di Benvenuto & Presentazione Civica (Collassabile) */}
+      <div className="ofl-card rounded-2xl p-4 shadow-xs border border-white/80 transition-all">
+        {isHeroCollapsed ? (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="p-1 rounded-lg bg-sky-100 text-sky-800">
+                <Sparkles className="w-3.5 h-3.5" />
+              </span>
+              <span className="text-xs font-bold text-slate-900">
+                OFCL · 19 Comuni del Locarnese
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsHeroCollapsed(false)}
+              className="text-[11px] font-semibold text-sky-700 hover:text-sky-900 flex items-center gap-1 min-h-[36px] px-2 rounded-lg cursor-pointer"
+            >
+              <span>Espandi guida</span>
+              <ChevronDown className="w-3.5 h-3.5" />
+            </button>
           </div>
+        ) : (
           <div>
-            <div className="text-base font-extrabold text-slate-900 leading-tight">OFL</div>
-            <div className="text-[10px] text-slate-500 font-mono">Locarnese MCA2</div>
-          </div>
-        </Link>
+            <div className="flex items-start justify-between gap-2">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-sky-100 text-[#0F3854] text-[10px] font-bold font-mono border border-sky-200">
+                <ShieldCheck className="w-3 h-3 text-[#0F3854]" />
+                <span>PRESIDIO CIVICO INDIPENDENTE</span>
+              </span>
 
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-sky-100 text-sky-900 text-[10px] font-bold font-mono border border-sky-200">
-            <ShieldCheck className="w-3 h-3 text-[#0F3854]" />
-            <span>19 Comuni</span>
-          </span>
-          <div className="flex items-center gap-1 font-mono text-[10px] font-bold bg-slate-100 p-0.5 rounded-lg border border-slate-200">
-            <button
-              type="button"
-              onClick={() => setLang("IT")}
-              className={cn(
-                "px-1.5 py-0.5 rounded transition-colors",
-                lang === "IT" ? "bg-white text-sky-800 shadow-xs" : "text-slate-400"
+              <button
+                type="button"
+                onClick={() => setIsHeroCollapsed(true)}
+                aria-label="Comprimi presentazione"
+                className="text-slate-400 hover:text-slate-700 p-1 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg cursor-pointer"
+                title="Comprimi presentazione"
+              >
+                <ChevronUp className="w-4 h-4" />
+              </button>
+            </div>
+
+            <h2 className="text-sm sm:text-base font-extrabold text-slate-950 tracking-tight mt-2 leading-snug">
+              I Bilanci dei 19 Comuni del Locarnese
+            </h2>
+            <p className="text-xs text-slate-600 leading-relaxed mt-1">
+              Osservatorio per la trasparenza finanziaria: conti armonizzati MCA2 al centesimo (<span className="font-mono font-semibold text-slate-800">0.01 CHF</span>), indicatori ufficiali SEL e sorpassi dei crediti d&apos;opera (art. 15 LOC).
+            </p>
+
+            {/* 3 Metriche Chiave del Distretto */}
+            <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-slate-200/80 text-center">
+              <div className="p-2 rounded-xl bg-slate-50/80 border border-slate-200/60">
+                <div className="font-mono text-sm font-extrabold text-[#0F3854]">19</div>
+                <div className="text-[10px] text-slate-500 font-medium">Comuni UST</div>
+              </div>
+              <div className="p-2 rounded-xl bg-slate-50/80 border border-slate-200/60">
+                <div className="font-mono text-sm font-extrabold text-[#0F3854]">~66&apos;000</div>
+                <div className="text-[10px] text-slate-500 font-medium">Abitanti</div>
+              </div>
+              <div className="p-2 rounded-xl bg-slate-50/80 border border-slate-200/60">
+                <div className="font-mono text-sm font-extrabold text-emerald-700">0.01 CHF</div>
+                <div className="text-[10px] text-slate-500 font-medium">MCA2 Esatto</div>
+              </div>
+            </div>
+
+            {/* Guida Rapida Collassabile */}
+            <div className="mt-2.5 pt-2 border-t border-slate-200/60">
+              <button
+                type="button"
+                onClick={() => setShowQuickGuide((prev) => !prev)}
+                className="w-full flex items-center justify-between text-[11px] font-semibold text-slate-700 hover:text-slate-950 py-1 cursor-pointer"
+              >
+                <div className="flex items-center gap-1.5 text-sky-800">
+                  <Info className="w-3.5 h-3.5 text-sky-700" />
+                  <span>Come esplorare i dati? (30 secondi)</span>
+                </div>
+                {showQuickGuide ? (
+                  <ChevronUp className="w-3.5 h-3.5 text-slate-500" />
+                ) : (
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
+                )}
+              </button>
+
+              {showQuickGuide && (
+                <div className="mt-2 space-y-1.5 text-[11px] text-slate-600 bg-white/70 p-2.5 rounded-xl border border-slate-200/80 animate-in fade-in duration-150">
+                  <div className="flex items-start gap-2">
+                    <span className="font-mono font-bold text-sky-700 shrink-0">1.</span>
+                    <span>Tocca un comune dalla lista per aprire la <strong>Scheda Rapida 30s</strong> (moltiplicatore, debito netto pro capite e autofinanziamento).</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="font-mono font-bold text-sky-700 shrink-0">2.</span>
+                    <span>Usa il selettore per cambiare esercizio tra <strong>2024</strong>, <strong>2025</strong> e <strong>Preventivo 2026</strong>.</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="font-mono font-bold text-sky-700 shrink-0">3.</span>
+                    <span>Apri il menu in alto <span className="font-bold">☰</span> o la barra inferiore per confrontare i comuni o accedere agli atti PDF.</span>
+                  </div>
+                </div>
               )}
-            >
-              IT
-            </button>
-            <button
-              type="button"
-              onClick={() => setLang("DE")}
-              className={cn(
-                "px-1.5 py-0.5 rounded transition-colors",
-                lang === "DE" ? "bg-white text-sky-800 shadow-xs" : "text-slate-400"
-              )}
-            >
-              DE
-            </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Selettore Anno Mobile Compatto (2024, 2025, 01.2026) */}

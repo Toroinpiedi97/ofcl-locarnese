@@ -130,7 +130,7 @@ export function MunicipalitiesTable({
                         "px-2 py-0.5 rounded-md font-bold transition-all cursor-pointer text-[10px] font-mono flex items-center gap-0.5",
                         isSel
                           ? "bg-white text-[#0F3854] shadow-xs"
-                          : "text-slate-500 hover:text-slate-900"
+                          : "text-slate-600 hover:text-slate-900"
                       )}
                       title={isPrev ? "Preventivo 01.2026" : `Consuntivo ${yr}`}
                     >

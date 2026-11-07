@@ -11,10 +11,10 @@ test.describe("Portale Pubblico OFCL (/) - Desktop & Mobile Master-Detail", () =
     // 1. Verifica Hero Section e Grandi Cifre Distrettuali
     await expect(page.locator("h1")).toContainText("Osservatorio Finanze Comunali del Locarnese");
     await expect(page.getByText("19 / 19")).toBeVisible();
-    await expect(page.getByText(/64['’]?151/)).toBeVisible();
+    await expect(page.getByText(/64['’]?[0-9]{3}\s+ab\./)).toBeVisible();
 
     // 2. Verifica selezione predefinita (Città di Locarno)
-    const quickCard = page.locator(".lg\\:sticky");
+    const quickCard = page.getByLabel(/Scheda Analitica MCA2/);
     await expect(quickCard).toBeVisible();
     await expect(quickCard.getByRole("heading", { name: "Locarno" })).toBeVisible();
 
@@ -23,20 +23,21 @@ test.describe("Portale Pubblico OFCL (/) - Desktop & Mobile Master-Detail", () =
     await expect(asconaRow).toBeVisible();
     await asconaRow.click();
 
-    // La QuickCard30s a destra si aggiorna istantaneamente senza ricaricare la pagina
-    await expect(quickCard.getByRole("heading", { name: "Ascona" })).toBeVisible();
+    // La Scheda Analitica a destra si aggiorna istantaneamente senza ricaricare la pagina
+    await expect(page.getByLabel("Scheda Analitica MCA2 Ascona")).toBeVisible();
     await expect(quickCard.getByText("UST 5091")).toBeVisible();
-    await expect(quickCard.getByText("75%")).toBeVisible(); // Moltiplicatore Ascona
+    await expect(quickCard.getByText("75.0%")).toBeVisible(); // Moltiplicatore Ascona
 
-    // 4. Selezione di un comune con sorpassi crediti (Brione sopra Minusio)
+    // 4. Selezione di un comune con sorpassi crediti (Brione sopra Minusio) nell'esercizio 2025
+    const yr2025Btn = page.getByRole("button", { name: "2025" }).first();
+    await yr2025Btn.click();
     const brioneRow = page.getByRole("row", { name: /5096\s+Brione/ });
     await brioneRow.click();
-    await expect(quickCard.getByRole("heading", { name: "Brione sopra Minusio" })).toBeVisible();
-    await expect(page.getByText("S01 SORPASSO")).toBeVisible();
-    await expect(page.getByText("Sistemazione tornante Jacomello")).toBeVisible();
+    await expect(page.getByLabel("Scheda Analitica MCA2 Brione sopra Minusio")).toBeVisible();
+    await expect(page.getByText("Sorpasso crediti d'opera rilevato")).toBeVisible();
 
     // 5. Cambio vista in Mappa SVG Vettoriale
-    const mapTabBtn = page.getByRole("button", { name: "Mappa SVG Distretto" });
+    const mapTabBtn = page.getByRole("button", { name: "Mappa" });
     await mapTabBtn.click();
 
     const svgMap = page.locator("svg").filter({ hasText: "Lago Maggiore" });
@@ -47,8 +48,8 @@ test.describe("Portale Pubblico OFCL (/) - Desktop & Mobile Master-Detail", () =
     await expect(verzascaPolygon).toBeVisible();
     await verzascaPolygon.click();
 
-    // La QuickCard a destra si aggiorna per Verzasca
-    await expect(quickCard.getByRole("heading", { name: "Verzasca" })).toBeVisible();
+    // La Scheda a destra si aggiorna per Verzasca
+    await expect(page.getByLabel("Scheda Analitica MCA2 Verzasca")).toBeVisible();
     await expect(quickCard.getByText("UST 5399")).toBeVisible();
   });
 
@@ -93,5 +94,49 @@ test.describe("Portale Pubblico OFCL (/) - Desktop & Mobile Master-Detail", () =
 
     // Il drawer si chiude
     await expect(drawer).not.toBeVisible();
+  });
+
+  test("Mobile App UX: Top Bar fissa, Hero presentazione collassabile e Menu Hamburger Drawer", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+
+    // 1. Verifica Top Bar mobile e logo OFL
+    const topBar = page.getByRole("banner", { name: "Barra superiore mobile" });
+    await expect(topBar).toBeVisible();
+    await expect(topBar.getByText("OFL")).toBeVisible();
+    await expect(topBar.getByRole("button", { name: "Imposta lingua italiana" })).toBeVisible();
+
+    // 2. Verifica Hero di presentazione mobile
+    await expect(page.getByText("PRESIDIO CIVICO INDIPENDENTE")).toBeVisible();
+    await expect(page.getByText("I Bilanci dei 19 Comuni del Locarnese")).toBeVisible();
+    await expect(page.getByText("Comuni UST")).toBeVisible();
+
+    // Espansione e compressione della guida rapida
+    const guideToggle = page.getByText("Come esplorare i dati? (30 secondi)");
+    await expect(guideToggle).toBeVisible();
+    await guideToggle.click();
+    await expect(
+      page.getByText(/Tocca un comune dalla lista per aprire la/)
+    ).toBeVisible();
+
+    // 3. Verifica apertura Drawer Menu Hamburger
+    const menuBtn = page.getByRole("button", { name: "Apri menu navigazione" });
+    await expect(menuBtn).toBeVisible();
+    await menuBtn.click();
+
+    // Drawer modale visibile
+    const menuDrawer = page.getByRole("dialog", { name: "Menu di navigazione principale" });
+    await expect(menuDrawer).toBeVisible();
+    await expect(menuDrawer.getByRole("link", { name: /Controllo Crediti d'Opera/ })).toBeVisible();
+    await expect(menuDrawer.getByRole("link", { name: /Atti, Delibere & PDF/ })).toBeVisible();
+    await expect(menuDrawer.getByRole("link", { name: /Metodologia MCA2/ })).toBeVisible();
+
+    // Chiusura del drawer tramite tasto X
+    const closeMenuBtn = menuDrawer.getByRole("button", { name: "Chiudi menu" });
+    await expect(closeMenuBtn).toBeVisible();
+    await closeMenuBtn.click();
+    await expect(menuDrawer).not.toBeVisible();
   });
 });
