@@ -1,4 +1,6 @@
 import { getPresignedPdfUrl } from "@/lib/r2";
+import { createClient } from "@/lib/supabase/server";
+import { MUNICIPALITIES } from "@/data/municipalities";
 import SplitViewCurator, { CellItem, ValidationItem } from "./SplitViewCurator";
 
 // Seed certificato di Brione sopra Minusio Consuntivo 2025 per revisione immediata
@@ -113,23 +115,123 @@ export default async function CuratorReviewPage({
 }) {
   const { versionId } = await params;
 
+  let municipalityName = "Brione sopra Minusio";
+  let ustCode = 5096;
+  let documentTitle = "MM 566 Consuntivo 2025";
+  let mmNumber = "2026/566";
+  let year = 2025;
+  let status: "NEEDS_REVIEW" | "VALIDATED" | "APPROVED" | "PUBLISHED" = "NEEDS_REVIEW";
+  let documentId = "doc-5096-2025";
+  let r2Key = `pdf/5096/168f1f85c51701560f1cb3d06cb74f9ce981337517ba6ff1c7f5b26047505aee.pdf`;
+  let cells: CellItem[] = SEED_CELLS;
+  let checks: ValidationItem[] = SEED_CHECKS;
+
+  try {
+    const supabase = await createClient();
+    const coreSchema = supabase.schema("core" as any) as any;
+    const [verRes, clsRes, ledRes, valRes] = await Promise.all([
+      supabase
+        .schema("raw")
+        .from("document_version")
+        .select(
+          `
+          id,
+          document_id,
+          storage_path,
+          status,
+          document:document_id (
+            id,
+            ust_code,
+            title_raw
+          )
+        `
+        )
+        .eq("id", versionId)
+        .maybeSingle(),
+      coreSchema
+        .from("classification")
+        .select("*")
+        .eq("version_id", versionId)
+        .maybeSingle(),
+      coreSchema
+        .from("ledger_value")
+        .select("*")
+        .eq("version_id", versionId)
+        .order("page", { ascending: true })
+        .limit(100),
+      coreSchema
+        .from("validation_result")
+        .select("*")
+        .eq("version_id", versionId)
+        .order("rule_code", { ascending: true }),
+    ]);
+
+    if (verRes.data) {
+      const vData: any = verRes.data;
+      const doc: any = Array.isArray(vData.document) ? vData.document[0] : vData.document;
+      const cls: any = clsRes.data;
+      if (vData.storage_path) r2Key = vData.storage_path;
+      if (
+        vData.status === "NEEDS_REVIEW" ||
+        vData.status === "VALIDATED" ||
+        vData.status === "APPROVED" ||
+        vData.status === "PUBLISHED"
+      ) {
+        status = vData.status;
+      }
+      if (vData.document_id) documentId = vData.document_id;
+      if (doc?.ust_code) {
+        ustCode = doc.ust_code;
+        municipalityName =
+          MUNICIPALITIES.find((m) => m.ust_code === ustCode)?.name ||
+          `Comune UST ${ustCode}`;
+      }
+      if (doc?.title_raw) documentTitle = doc.title_raw;
+      if (cls?.mm_number) mmNumber = cls.mm_number;
+      if (cls?.fiscal_year) year = cls.fiscal_year;
+    }
+
+    if (ledRes.data && ledRes.data.length > 0) {
+      cells = ledRes.data.map((row: any) => ({
+        id: String(row.id),
+        metric_key: row.account_code || "voce_mca2",
+        label: row.label_raw || `Conto ${row.account_code}`,
+        statement: (row.statement === "CI" || row.statement === "BIL" ? row.statement : "CE") as CellItem["statement"],
+        amount_chf: String(row.amount_chf ?? row.amount_raw ?? "0.00"),
+        page: Number(row.page) || 1,
+        bbox: Array.isArray(row.bbox) && row.bbox.length === 4 ? (row.bbox as [number, number, number, number]) : [100, 100, 400, 115],
+        status: row.status === "NEEDS_REVIEW" ? "NEEDS_REVIEW" : "VALIDATED",
+      }));
+    }
+
+    if (valRes.data && valRes.data.length > 0) {
+      checks = (valRes.data as any[]).map((v) => ({
+        code: v.rule_code,
+        passed: Boolean(v.passed),
+        message: v.message,
+        severity: v.severity === "WARNING" ? "WARNING" : "BLOCKING",
+      }));
+    }
+  } catch {
+    // Offline fallback a SEED_CELLS e SEED_CHECKS
+  }
+
   // Generazione del Presigned URL per visualizzare il PDF originale da Cloudflare R2
-  const r2Key = `pdf/5096/168f1f85c51701560f1cb3d06cb74f9ce981337517ba6ff1c7f5b26047505aee.pdf`;
   const presignedPdfUrl = await getPresignedPdfUrl(r2Key, 900); // 15 minuti di validità
 
   return (
     <SplitViewCurator
       versionId={versionId}
-      municipalityName="Brione sopra Minusio"
-      ustCode={5096}
-      documentTitle="MM 566 Consuntivo 2025"
-      mmNumber="2026/566"
-      year={2025}
-      status="NEEDS_REVIEW"
+      municipalityName={municipalityName}
+      ustCode={ustCode}
+      documentTitle={documentTitle}
+      mmNumber={mmNumber}
+      year={year}
+      status={status}
       pdfUrl={presignedPdfUrl}
-      documentId="doc-5096-2025"
-      initialCells={SEED_CELLS}
-      checks={SEED_CHECKS}
+      documentId={documentId}
+      initialCells={cells}
+      checks={checks}
     />
   );
 }

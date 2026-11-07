@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import type { MunicipalityData } from "@/data/municipalities";
 import { QuickCard30s } from "./QuickCard30s";
 import { CreditAlertBanner } from "./CreditAlertBanner";
+import { useCivicLang } from "@/lib/i18n-civic";
 import {
   Search,
   X,
@@ -12,6 +14,7 @@ import {
   TrendingDown,
   Building2,
   AlertTriangle,
+  ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +23,7 @@ export interface DashboardMobileProps {
 }
 
 export function DashboardMobile({ municipalities }: DashboardMobileProps) {
+  const { lang, setLang } = useCivicLang();
   const [filterQuery, setFilterQuery] = useState("");
   const [activeMunicipality, setActiveMunicipality] = useState<MunicipalityData | null>(null);
 
@@ -53,16 +57,60 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
   }, [activeMunicipality]);
 
   return (
-    <div className="w-full space-y-4">
+    <div className="w-full space-y-4 select-none">
+      {/* Header Mobile Compatto con Logo OFL & Switch Lingua */}
+      <div className="flex items-center justify-between p-3 rounded-2xl ofl-card shadow-xs">
+        <Link href="/" className="flex items-center gap-2.5">
+          <div className="w-8 h-9 rounded-b-xl rounded-t-md bg-[#0F3854] text-white flex flex-col items-center justify-between p-0.5 shrink-0 shadow-xs">
+            <span className="font-mono text-[8px] font-bold">+ TI</span>
+            <span className="text-sky-300 text-xs">☩</span>
+            <span className="w-full h-1 bg-red-600 rounded-b-lg"></span>
+          </div>
+          <div>
+            <div className="text-base font-extrabold text-slate-900 leading-tight">OFL</div>
+            <div className="text-[10px] text-slate-500 font-mono">Locarnese MCA2</div>
+          </div>
+        </Link>
+
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-sky-100 text-sky-900 text-[10px] font-bold font-mono border border-sky-200">
+            <ShieldCheck className="w-3 h-3 text-[#0F3854]" />
+            <span>19 Comuni</span>
+          </span>
+          <div className="flex items-center gap-1 font-mono text-[10px] font-bold bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+            <button
+              type="button"
+              onClick={() => setLang("IT")}
+              className={cn(
+                "px-1.5 py-0.5 rounded transition-colors",
+                lang === "IT" ? "bg-white text-sky-800 shadow-xs" : "text-slate-400"
+              )}
+            >
+              IT
+            </button>
+            <button
+              type="button"
+              onClick={() => setLang("DE")}
+              className={cn(
+                "px-1.5 py-0.5 rounded transition-colors",
+                lang === "DE" ? "bg-white text-sky-800 shadow-xs" : "text-slate-400"
+              )}
+            >
+              DE
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Barra di ricerca rapida con target comodo */}
       <div className="relative">
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
         <input
           type="search"
           value={filterQuery}
           onChange={(e) => setFilterQuery(e.target.value)}
           placeholder="Cerca comune o codice UST (es. Locarno, 5091)..."
-          className="ofl-input-pill w-full min-h-[44px] pl-10 pr-4 py-2.5 rounded-xl text-xs sm:text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none"
+          className="ofl-input-pill w-full min-h-[44px] pl-10 pr-4 py-2.5 rounded-xl text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
         />
       </div>
 
@@ -99,7 +147,7 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
                   <div className="font-mono text-sm font-bold tabular-nums text-[#0F3854]">
                     {m.tax_multiplier_pf}%
                   </div>
-                  <div className="text-[10px] font-mono text-slate-600 font-medium">
+                  <div className="text-[10px] font-mono text-slate-500 font-medium">
                     PF 2026
                   </div>
                 </div>
@@ -121,7 +169,7 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
                       {(m.summary_30s.risultato_ordinario_chf / 1000).toFixed(0)}k
                     </span>
                   </div>
-                  <div className="text-[10px] text-slate-600">
+                  <div className="text-[10px] text-slate-500">
                     {isAvanzo ? "Avanzo" : "Disavanzo"}
                   </div>
                 </div>
@@ -170,8 +218,8 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Maniglia trascinamento & Bottone chiusura comodo */}
-            <div className="flex items-center justify-between border-b border-slate-300/40 pb-3">
-              <div className="w-12 h-1.5 rounded-full bg-slate-400/60" />
+            <div className="flex items-center justify-between border-b border-slate-200/80 pb-3">
+              <div className="w-12 h-1.5 rounded-full bg-slate-300" />
               <button
                 type="button"
                 onClick={() => setActiveMunicipality(null)}

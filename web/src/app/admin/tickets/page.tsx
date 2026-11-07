@@ -1,18 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MessageSquareText, CheckCircle2, Clock, XCircle } from "lucide-react";
+import {
+  fetchLiveTicketsAction,
+  updateTicketStatusAction,
+  type FeedbackTicketDto,
+} from "./actions";
 
-interface FeedbackTicket {
-  id: string;
-  ust_code: number;
-  municipality_name: string;
-  category: "DISCREPANZA_CIFRA" | "SEGNALAZIONE_ATTO" | "ACCESSIBILITA" | "ALTRO";
-  message: string;
-  page_url?: string;
-  status: "NEW" | "IN_REVIEW" | "RESOLVED" | "DISMISSED";
-  created_at: string;
-}
+type FeedbackTicket = FeedbackTicketDto;
 
 const INITIAL_TICKETS: FeedbackTicket[] = [
   {
@@ -51,10 +47,25 @@ export default function CuratorTicketsPage() {
   const [tickets, setTickets] = useState<FeedbackTicket[]>(INITIAL_TICKETS);
   const [filter, setFilter] = useState<string>("ALL");
 
-  function updateStatus(id: string, newStatus: FeedbackTicket["status"]) {
+  useEffect(() => {
+    fetchLiveTicketsAction()
+      .then((live) => {
+        if (live && live.length > 0) {
+          const liveIds = new Set(live.map((t) => t.id));
+          setTickets([
+            ...live,
+            ...INITIAL_TICKETS.filter((t) => !liveIds.has(t.id)),
+          ]);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  async function updateStatus(id: string, newStatus: FeedbackTicket["status"]) {
     setTickets((prev) =>
       prev.map((t) => (t.id === id ? { ...t, status: newStatus } : t))
     );
+    await updateTicketStatusAction(id, newStatus);
   }
 
   const filteredTickets = tickets.filter((t) => {

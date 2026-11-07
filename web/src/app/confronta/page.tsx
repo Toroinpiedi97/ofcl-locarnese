@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { MUNICIPALITIES, type MunicipalityData } from "@/data/municipalities";
+import { fetchLiveDistrictAction } from "@/lib/data/actions";
 import {
   ArrowUpDown,
   Download,
@@ -83,11 +84,20 @@ const METRICS: MetricConfig[] = [
 ];
 
 export default function ConfrontaPage() {
+  const [municipalities, setMunicipalities] = useState<MunicipalityData[]>(MUNICIPALITIES);
   const [selectedUstCodes, setSelectedUstCodes] = useState<number[]>(
     MUNICIPALITIES.map((m) => m.ust_code)
   );
   const [activeMetricKey, setActiveMetricKey] = useState<MetricKey>("tax_multiplier_pf");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+
+  useEffect(() => {
+    fetchLiveDistrictAction()
+      .then((live) => {
+        if (live && live.length > 0) setMunicipalities(live);
+      })
+      .catch(() => {});
+  }, []);
 
   const activeMetric = METRICS.find((m) => m.key === activeMetricKey) ?? METRICS[0];
 
@@ -103,7 +113,7 @@ export default function ConfrontaPage() {
   }
 
   function selectAll() {
-    setSelectedUstCodes(MUNICIPALITIES.map((m) => m.ust_code));
+    setSelectedUstCodes(municipalities.map((m) => m.ust_code));
   }
 
   function selectUrbanPolo() {
@@ -138,8 +148,8 @@ export default function ConfrontaPage() {
   }
 
   const selectedMunicipalities = useMemo(() => {
-    return MUNICIPALITIES.filter((m) => selectedUstCodes.includes(m.ust_code));
-  }, [selectedUstCodes]);
+    return municipalities.filter((m) => selectedUstCodes.includes(m.ust_code));
+  }, [municipalities, selectedUstCodes]);
 
   const sortedMunicipalities = useMemo(() => {
     return [...selectedMunicipalities].sort((a, b) => {

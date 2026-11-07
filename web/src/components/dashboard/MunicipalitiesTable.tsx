@@ -77,7 +77,7 @@ export function MunicipalitiesTable({
     return sortDirection === "asc" ? diff : -diff;
   });
 
-  const displayedRows = showAllRows ? sorted : sorted.slice(0, 6);
+  const displayedRows = showAllRows ? sorted : sorted.slice(0, 7);
 
   function renderSortIcon(field: SortField) {
     if (sortField !== field) {
@@ -94,7 +94,7 @@ export function MunicipalitiesTable({
     <div className="flex flex-col justify-between h-full">
       <div>
         {/* Intestazione Card Tabella */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-300/40">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-200/80">
           <div className="flex items-center gap-2">
             <h2 className="text-sm font-bold text-slate-900 tracking-tight">
               {t.tableTitle}
@@ -113,9 +113,9 @@ export function MunicipalitiesTable({
                 type="text"
                 value={filterQuery}
                 onChange={(e) => setFilterQuery(e.target.value)}
-                placeholder="Filtra..."
+                placeholder="Filtra comune..."
                 aria-label="Filtra comuni per nome o codice UST"
-                className="ofl-input-pill rounded-lg pl-7 pr-2 py-1 text-xs text-slate-800 w-24 sm:w-32 focus:outline-none"
+                className="ofl-input-pill rounded-lg pl-7 pr-2 py-1 text-xs text-slate-800 w-28 sm:w-36 focus:outline-none"
               />
             </div>
             {onToggleMap && (
@@ -130,20 +130,20 @@ export function MunicipalitiesTable({
                 )}
               >
                 <MapIcon className="w-3.5 h-3.5" />
-                <span>Mappa SVG Distretto</span>
+                <span>Mappa Vettoriale</span>
               </button>
             )}
           </div>
         </div>
 
-        {/* Tabella Comparativa 5 Colonne */}
+        {/* Tabella Comparativa con Sparklines Inline */}
         <div className="overflow-x-auto mt-2">
           <table className="w-full text-left border-collapse text-xs select-none">
             <thead>
-              <tr className="border-b border-slate-300/40 text-slate-500 font-semibold text-[11px]">
+              <tr className="border-b border-slate-200/80 text-slate-500 font-semibold text-[11px]">
                 <th
                   onClick={() => handleSort("name")}
-                  className="py-2 pr-2 cursor-pointer hover:text-slate-900 whitespace-nowrap"
+                  className="py-2.5 pr-2 cursor-pointer hover:text-slate-900 whitespace-nowrap"
                 >
                   <div className="flex items-center gap-1">
                     <span>{t.tableColMun}</span>
@@ -152,7 +152,7 @@ export function MunicipalitiesTable({
                 </th>
                 <th
                   onClick={() => handleSort("multiplier_pf")}
-                  className="py-2 px-2 cursor-pointer hover:text-slate-900 whitespace-nowrap text-right"
+                  className="py-2.5 px-2 cursor-pointer hover:text-slate-900 whitespace-nowrap text-right"
                 >
                   <div className="flex items-center justify-end gap-1">
                     <span>{t.tableColMult}</span>
@@ -161,7 +161,7 @@ export function MunicipalitiesTable({
                 </th>
                 <th
                   onClick={() => handleSort("debito_pc")}
-                  className="py-2 px-2 cursor-pointer hover:text-slate-900 whitespace-nowrap text-right"
+                  className="py-2.5 px-2 cursor-pointer hover:text-slate-900 whitespace-nowrap text-right"
                 >
                   <div className="flex items-center justify-end gap-1">
                     <span>{t.tableColDebt}</span>
@@ -170,21 +170,24 @@ export function MunicipalitiesTable({
                 </th>
                 <th
                   onClick={() => handleSort("autofin")}
-                  className="py-2 px-2 cursor-pointer hover:text-slate-900 whitespace-nowrap text-right"
+                  className="py-2.5 px-2 cursor-pointer hover:text-slate-900 whitespace-nowrap text-right"
                 >
                   <div className="flex items-center justify-end gap-1">
                     <span>{t.tableColAutofin}</span>
                     {renderSortIcon("autofin")}
                   </div>
                 </th>
-                <th className="py-2 pl-2 text-right whitespace-nowrap">
+                <th className="py-2.5 pl-2 text-center whitespace-nowrap">
                   {t.tableColActions}
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-300/30">
+            <tbody className="divide-y divide-slate-100 font-medium">
               {displayedRows.map((m) => {
                 const isSelected = m.ust_code === selectedUstCode;
+                const mult = m.tax_multiplier_pf;
+                const sparklineColor =
+                  mult <= 80 ? "#10b981" : mult <= 88 ? "#2563eb" : "#f59e0b";
 
                 return (
                   <tr
@@ -200,25 +203,48 @@ export function MunicipalitiesTable({
                     className={cn(
                       "cursor-pointer transition-colors group",
                       isSelected
-                        ? "bg-white/80 font-medium shadow-xs"
-                        : "hover:bg-white/40 text-slate-800"
+                        ? "bg-sky-50/80 font-medium shadow-xs"
+                        : "hover:bg-white/60 text-slate-800"
                     )}
                   >
-                    {/* 1. Comune con UST */}
+                    {/* 1. Comune con UST e Dot */}
                     <td className="py-2.5 pr-2">
                       <div className="flex items-center gap-1.5">
+                        <span
+                          className="w-2 h-2 rounded-full shrink-0"
+                          style={{ backgroundColor: sparklineColor }}
+                        />
                         <span className="font-mono text-[10px] px-1 py-0.2 rounded bg-slate-200/90 text-slate-700 font-bold shrink-0">
                           {m.ust_code}
                         </span>
-                        <span className="font-semibold text-slate-900 group-hover:text-blue-900">
+                        <span className="font-bold text-slate-900 group-hover:text-blue-900">
                           {m.name}
                         </span>
                       </div>
                     </td>
 
-                    {/* 2. Multiplicatore */}
-                    <td className="py-2.5 px-2 text-right font-mono font-bold text-slate-900 tabular-nums">
-                      <span>{m.tax_multiplier_pf}%</span>
+                    {/* 2. Moltiplicatore con Mini Sparkline SVG Inline */}
+                    <td className="py-2.5 px-2 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <span className="font-mono font-bold text-slate-900 tabular-nums">
+                          {m.tax_multiplier_pf}%
+                        </span>
+                        <svg className="w-10 h-3.5 shrink-0 hidden sm:block" viewBox="0 0 50 16">
+                          <path
+                            d={
+                              mult <= 80
+                                ? "M 2 12 Q 15 14 25 8 T 48 4"
+                                : mult <= 88
+                                ? "M 2 14 Q 15 10 25 12 T 48 6"
+                                : "M 2 6 Q 15 8 25 12 T 48 14"
+                            }
+                            fill="none"
+                            stroke={sparklineColor}
+                            strokeWidth="2.2"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      </div>
                       {m.has_differentiated_pg && (
                         <span className="text-[9px] text-amber-800 block">
                           PG: {m.tax_multiplier_pg}%
@@ -233,12 +259,12 @@ export function MunicipalitiesTable({
                     </td>
 
                     {/* 4. Autofinanziamento */}
-                    <td className="py-2.5 px-2 text-right font-mono font-bold tabular-nums text-slate-900">
+                    <td className="py-2.5 px-2 text-right font-mono font-bold tabular-nums text-emerald-700">
                       {formatChfCompact(m.summary_30s.autofinanziamento_chf)}
                     </td>
 
                     {/* 5. Azioni */}
-                    <td className="py-2.5 pl-2 text-right">
+                    <td className="py-2.5 pl-2 text-center">
                       <button
                         type="button"
                         onClick={(e) => {
@@ -246,8 +272,8 @@ export function MunicipalitiesTable({
                           onSelectMunicipality(m);
                         }}
                         className={cn(
-                          "ofl-btn-frost rounded-lg px-2 py-1 text-[11px] font-bold cursor-pointer transition-all",
-                          isSelected && "bg-white shadow-xs text-blue-900 border-blue-300"
+                          "ofl-btn-frost rounded-lg px-2.5 py-1 text-[11px] font-bold cursor-pointer transition-all",
+                          isSelected && "bg-white shadow-xs text-blue-900 border-blue-300 font-extrabold"
                         )}
                       >
                         {t.tableActionDetails}
@@ -262,7 +288,7 @@ export function MunicipalitiesTable({
       </div>
 
       {/* Footer Griglia */}
-      <div className="pt-2 mt-2 border-t border-slate-300/30 flex items-center justify-between text-xs text-slate-600">
+      <div className="pt-2 mt-2 border-t border-slate-200/60 flex items-center justify-between text-xs text-slate-600">
         <span>
           {sorted.length} su {municipalities.length} {t.tableTotalCount}
         </span>

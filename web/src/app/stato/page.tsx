@@ -1,4 +1,4 @@
-import { MUNICIPALITIES } from "@/data/municipalities";
+import { getDistrictDataset } from "@/lib/data/mca2-dal";
 import { CheckCircle2, ShieldCheck } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -31,7 +31,8 @@ const CMS_MAPPING: Record<number, { family: string; delay: number }> = {
   5399: { family: "ASSOLO", delay: 30 },
 };
 
-export default function StatoPage() {
+export default async function StatoPage() {
+  const municipalities = await getDistrictDataset();
   return (
     <div className="space-y-6 pb-12">
       <header className="ofl-card p-6">
@@ -124,7 +125,7 @@ export default function StatoPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 font-mono">
-                {MUNICIPALITIES.map((m) => {
+                {municipalities.map((m) => {
                   const cms = CMS_MAPPING[m.ust_code] || { family: "ASSOLO", delay: 30 };
                   return (
                     <tr key={m.ust_code} className="hover:bg-slate-900/5">

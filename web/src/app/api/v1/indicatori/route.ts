@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { MUNICIPALITIES } from "@/data/municipalities";
+import { getDistrictDataset } from "@/lib/data/mca2-dal";
 import { apiSuccess, apiOptions } from "@/lib/api-response";
 
 export async function OPTIONS() {
@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
   const yearParam = searchParams.get("anno") || "2025";
   const year = Number(yearParam);
 
-  let targetList = MUNICIPALITIES;
+  let targetList = await getDistrictDataset();
   if (filterParam) {
     const isNum = !isNaN(Number(filterParam)) && !isNaN(parseFloat(filterParam));
     targetList = targetList.filter((m) =>

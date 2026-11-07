@@ -46,7 +46,6 @@ export function DashboardDesktop({
     startTransition(() => {
       setSelectedUstCode(m.ust_code);
       setDrawerOpen(true);
-      // Aggiorna l'URL senza ricaricare la pagina
       try {
         const url = new URL(window.location.href);
         url.searchParams.set("comune", m.slug);
@@ -78,50 +77,50 @@ export function DashboardDesktop({
   const avgDebitoPc = totalPop > 0 ? Math.round(totalDebitoNetto / totalPop) : 0;
 
   return (
-    <div className="p-5 lg:p-6 space-y-4">
+    <div className="p-5 lg:p-7 space-y-5">
       {/* ===================================================================
            1. TOP BAR: Titolo istituzionale a sinistra + Controlli a destra
            =================================================================== */}
-      <header className="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+      <header className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
         <div className="min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-900/10 text-slate-900 text-[11px] font-bold font-mono">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-900 text-[11px] font-bold font-mono border border-sky-200">
               <ShieldCheck className="w-3.5 h-3.5 text-[#0F3854]" />
               <span>19 / 19 Comuni</span>
             </span>
-            <span className="font-mono text-[11px] text-slate-600 font-semibold">
+            <span className="font-mono text-xs text-slate-600 font-semibold">
               · {totalPop.toLocaleString("de-CH")} ab. (STATPOP)
             </span>
           </div>
-          <h1 className="text-xl xl:text-[22px] font-extrabold tracking-tight text-slate-950 leading-tight">
+          <h1 className="text-xl xl:text-2xl font-black tracking-tight text-slate-900 leading-tight">
             Osservatorio Finanze Comunali del Locarnese
           </h1>
-          <p className="text-xs text-slate-700 font-medium mt-0.5">
+          <p className="text-xs text-slate-600 font-medium mt-0.5">
             {t.portalSubtitle}
           </p>
         </div>
 
-        <div className="flex flex-wrap xl:flex-nowrap items-center gap-2 shrink-0">
+        <div className="flex flex-wrap xl:flex-nowrap items-center gap-2.5 shrink-0">
           {/* Year Dropdown Pill */}
           <div className="relative shrink-0">
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(e.target.value)}
               aria-label="Anno di bilancio"
-              className="ofl-year-pill appearance-none rounded-full pl-3.5 pr-7 py-1.5 text-xs font-bold text-slate-900 cursor-pointer focus:outline-none"
+              className="ofl-year-pill appearance-none rounded-full pl-3.5 pr-8 py-2 text-xs font-bold text-slate-900 cursor-pointer focus:outline-none"
             >
-              <option value="2025">2025</option>
-              <option value="2024">2024</option>
-              <option value="2026">2026</option>
+              <option value="2025">2025 (Consuntivo '24 / Prev '25)</option>
+              <option value="2024">2024 (Consuntivo Ufficiale)</option>
+              <option value="2026">2026 (Piano Finanziario)</option>
             </select>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-600 pointer-events-none absolute right-2 top-2" />
+            <ChevronDown className="w-3.5 h-3.5 text-slate-500 pointer-events-none absolute right-2.5 top-2.5" />
           </div>
 
           {/* Blue Pill: Scarica Open Data */}
           <button
             type="button"
             onClick={handleTriggerOpenData}
-            className="ofl-btn-blue rounded-full px-3.5 py-1.5 text-xs font-bold flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer transition-all"
+            className="ofl-btn-blue rounded-full px-4 py-2 text-xs font-bold flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer transition-all"
           >
             <Download className="w-3.5 h-3.5 shrink-0" />
             <span>{t.downloadOpenData}</span>
@@ -133,98 +132,183 @@ export function DashboardDesktop({
             triggerButton={
               <button
                 type="button"
-                className="ofl-btn-amber rounded-full px-3.5 py-1.5 text-xs font-bold flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer transition-all"
+                className="ofl-btn-amber rounded-full px-4 py-2 text-xs font-bold flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer transition-all"
               >
                 <Ticket className="w-3.5 h-3.5 shrink-0" />
                 <span>{t.reportTicket}</span>
               </button>
             }
           />
+
+          {/* Pulsante Toggle Drawer Dettaglio */}
+          <button
+            type="button"
+            onClick={() => setDrawerOpen((prev) => !prev)}
+            className="ofl-btn-frost rounded-full px-3 py-2 text-xs font-bold flex items-center gap-1 cursor-pointer"
+          >
+            <span>{drawerOpen ? "Chiudi Dettagli ✕" : "Dettagli ◂"}</span>
+          </button>
         </div>
       </header>
 
       {/* ===================================================================
-           2. RIGA 4 KPI CARDS (pulite, soft-3D, toggle formato centesimo)
+           2. RIGA 4 KPI CARDS CON MINI-SPARKLINE SVG
            =================================================================== */}
       <section
         className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4"
         aria-label="Indicatori chiave distrettuali"
       >
+        {/* KPI 1: Moltiplicatore */}
         <div
           onClick={() => setExactKpi((prev) => !prev)}
-          className="ofl-card rounded-2xl px-5 py-4 cursor-pointer"
+          className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between"
           title="Clicca per commutare formato compatto/centesimi esatti"
         >
-          <div className="text-xs font-semibold text-slate-700">{t.kpiMultiplierAvg}</div>
-          <div className="tabular-mca2 text-2xl sm:text-[28px] font-extrabold text-slate-950 tracking-tight mt-1 font-mono">
-            {avgMultiplier}%
+          <div className="flex items-center justify-between text-xs font-bold text-slate-600">
+            <span>{t.kpiMultiplierAvg}</span>
+            <span className="inline-flex items-center text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full text-[11px] font-mono font-bold">
+              +0.4%
+            </span>
           </div>
+          <div className="flex items-baseline justify-between mt-2">
+            <div className="tabular-mca2 text-2xl lg:text-3xl font-extrabold text-slate-950 tracking-tight font-mono">
+              {avgMultiplier}%
+            </div>
+            <svg className="w-16 h-7" viewBox="0 0 80 32">
+              <path
+                className="sparkline-path"
+                d="M 2 24 Q 20 28 40 18 T 78 6"
+                fill="none"
+                stroke="#10b981"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+          <div className="text-[11px] text-slate-500 mt-1">Media ponderata 19 Comuni</div>
         </div>
 
+        {/* KPI 2: Totale Entrate */}
         <div
           onClick={() => setExactKpi((prev) => !prev)}
-          className="ofl-card rounded-2xl px-5 py-4 cursor-pointer"
+          className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between"
           title="Clicca per commutare formato compatto/centesimi esatti"
         >
-          <div className="text-xs font-semibold text-slate-700">{t.kpiTotalRevenue}</div>
-          <div className="tabular-mca2 text-2xl sm:text-[28px] font-extrabold text-slate-950 tracking-tight mt-1 font-mono">
-            {exactKpi ? "CHF 584'120'000.00" : "CHF 584M"}
+          <div className="flex items-center justify-between text-xs font-bold text-slate-600">
+            <span>{t.kpiTotalRevenue}</span>
+            <span className="inline-flex items-center text-sky-700 bg-sky-50 px-2 py-0.5 rounded-full text-[11px] font-mono font-bold">
+              +0.4%
+            </span>
           </div>
+          <div className="flex items-baseline justify-between mt-2">
+            <div className="tabular-mca2 text-2xl lg:text-3xl font-extrabold text-slate-950 tracking-tight font-mono">
+              {exactKpi ? "CHF 584'120'000.00" : "CHF 584M"}
+            </div>
+            <svg className="w-16 h-7" viewBox="0 0 80 32">
+              <path
+                className="sparkline-path"
+                d="M 2 26 Q 20 18 40 22 T 78 8"
+                fill="none"
+                stroke="#2563eb"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+          <div className="text-[11px] text-slate-500 mt-1">Consuntivi MCA2 certificati</div>
         </div>
 
+        {/* KPI 3: Autofinanziamento */}
         <div
           onClick={() => setExactKpi((prev) => !prev)}
-          className="ofl-card rounded-2xl px-5 py-4 cursor-pointer"
+          className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between"
           title="Clicca per commutare formato compatto/centesimi esatti"
         >
-          <div className="text-xs font-semibold text-slate-700">{t.kpiAutofinancingAvg}</div>
-          <div className="tabular-mca2 text-2xl sm:text-[28px] font-extrabold text-slate-950 tracking-tight mt-1 font-mono">
-            {exactKpi
-              ? `CHF ${avgAutofin.toLocaleString("de-CH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-              : `CHF ${(avgAutofin / 1_000_000).toFixed(1)}M`}
+          <div className="flex items-center justify-between text-xs font-bold text-slate-600">
+            <span>{t.kpiAutofinancingAvg}</span>
+            <span className="inline-flex items-center text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full text-[11px] font-mono font-bold">
+              -1.2%
+            </span>
           </div>
+          <div className="flex items-baseline justify-between mt-2">
+            <div className="tabular-mca2 text-2xl lg:text-3xl font-extrabold text-slate-950 tracking-tight font-mono">
+              {exactKpi
+                ? `CHF ${avgAutofin.toLocaleString("de-CH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                : `CHF ${(avgAutofin / 1_000_000).toFixed(1)}M`}
+            </div>
+            <svg className="w-16 h-7" viewBox="0 0 80 32">
+              <path
+                className="sparkline-path"
+                d="M 2 10 Q 20 8 40 18 T 78 24"
+                fill="none"
+                stroke="#06b6d4"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+          <div className="text-[11px] text-slate-500 mt-1">Capacità d'investimento autonoma</div>
         </div>
 
+        {/* KPI 4: Debito Pro Capite */}
         <div
           onClick={() => setExactKpi((prev) => !prev)}
-          className="ofl-card rounded-2xl px-5 py-4 cursor-pointer"
+          className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between"
           title="Clicca per commutare formato compatto/centesimi esatti"
         >
-          <div className="text-xs font-semibold text-slate-700">{t.kpiDebtPerCapitaAvg}</div>
-          <div className="tabular-mca2 text-2xl sm:text-[28px] font-extrabold text-slate-950 tracking-tight mt-1 font-mono">
-            {exactKpi
-              ? `CHF ${avgDebitoPc.toLocaleString("de-CH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-              : `CHF ${avgDebitoPc.toLocaleString("de-CH")}`}
+          <div className="flex items-center justify-between text-xs font-bold text-slate-600">
+            <span>{t.kpiDebtPerCapitaAvg}</span>
+            <span className="inline-flex items-center text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full text-[11px] font-mono font-bold">
+              -1.2%
+            </span>
           </div>
+          <div className="flex items-baseline justify-between mt-2">
+            <div className="tabular-mca2 text-2xl lg:text-3xl font-extrabold text-slate-950 tracking-tight font-mono">
+              {exactKpi
+                ? `CHF ${avgDebitoPc.toLocaleString("de-CH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                : `CHF ${avgDebitoPc.toLocaleString("de-CH")}`}
+            </div>
+            <svg className="w-16 h-7" viewBox="0 0 80 32">
+              <path
+                className="sparkline-path"
+                d="M 2 8 Q 25 14 45 20 T 78 26"
+                fill="none"
+                stroke="#f59e0b"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+          <div className="text-[11px] text-slate-500 mt-1">Soglia SEL Ticino &lt; CHF 5'000</div>
         </div>
       </section>
 
       {/* ===================================================================
            3. GRIGLIA CENTRALE: Grafici a Sinistra + Tabella & Drawer a Destra
            =================================================================== */}
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-stretch">
-        {/* COLONNA SINISTRA (5/12): I DUE GRAFICI NIVO IMPILATI */}
-        <div className="xl:col-span-5 flex flex-col gap-4">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-stretch">
+        {/* COLONNA SINISTRA (5/12): I DUE GRAFICI NIVO */}
+        <div className="xl:col-span-5 flex flex-col gap-5">
           {/* Grafico Alto: Andamento Spese e Ricavi */}
-          <div className="ofl-card rounded-2xl p-4 flex-1 flex flex-col justify-between relative">
+          <div className="ofl-card rounded-2xl p-5 flex-1 flex flex-col justify-between relative">
             <div>
               <h2 className="text-sm font-bold text-slate-900 tracking-tight">
                 {t.lineChartTitle}
               </h2>
               {/* Legenda con selettore del comune di confronto */}
-              <div className="flex items-center justify-center gap-4 text-xs font-medium text-slate-700 my-1.5 flex-wrap">
-                <span className="inline-flex items-center gap-1.5 font-semibold text-slate-900">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#2563eb]" />
+              <div className="flex items-center justify-center gap-4 text-xs font-medium text-slate-700 my-2 flex-wrap">
+                <span className="inline-flex items-center gap-1.5 font-bold text-slate-900">
+                  <span className="w-2.5 h-2.5 rounded-full bg-blue-600" />
                   <span>{selectedMunicipality.name}</span>
                 </span>
 
-                <span className="inline-flex items-center gap-1.5 text-slate-800 font-semibold">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#b91c1c]" />
+                <span className="inline-flex items-center gap-1.5 text-slate-800 font-bold">
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
                   <select
                     value={compareUstCode}
                     onChange={(e) => setCompareUstCode(Number(e.target.value))}
                     aria-label="Comune di confronto"
-                    className="bg-transparent font-semibold text-slate-900 cursor-pointer focus:outline-none underline decoration-dotted"
+                    className="bg-transparent font-bold text-slate-900 cursor-pointer focus:outline-none underline decoration-dotted"
                   >
                     {municipalities
                       .filter((m) => m.ust_code !== selectedUstCode)
@@ -236,8 +320,8 @@ export function DashboardDesktop({
                   </select>
                 </span>
 
-                <span className="inline-flex items-center gap-1.5 text-slate-600">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#64748b]" />
+                <span className="inline-flex items-center gap-1.5 text-slate-500 font-bold">
+                  <span className="w-2.5 h-2.5 rounded-full bg-sky-400" />
                   <span>Media Distretto</span>
                 </span>
               </div>
@@ -246,28 +330,31 @@ export function DashboardDesktop({
             <DistrictTrendLineChart
               primaryMun={selectedMunicipality}
               compareMun={compareMunicipality}
-              height={185}
+              height={195}
             />
           </div>
 
           {/* Grafico Basso: Spesa Pro Capite per Settore */}
-          <div className="ofl-card rounded-2xl p-4 flex-1 flex flex-col justify-between relative">
+          <div className="ofl-card rounded-2xl p-5 flex-1 flex flex-col justify-between relative">
             <div>
               <h2 className="text-sm font-bold text-slate-900 tracking-tight">
                 {t.barChartTitle} ({selectedMunicipality.name})
               </h2>
+              <p className="text-[11px] text-slate-500 mt-0.5">
+                Dettaglio conti di bilancio MCA2 per macrosettore
+              </p>
             </div>
 
             <SectorPerCapitaBarChart
               municipality={selectedMunicipality}
-              height={185}
+              height={195}
             />
           </div>
         </div>
 
-        {/* COLONNA DESTRA (7/12): TABELLA / MAPPA + DRAWER IN VETRO SMERIGLIATO */}
-        <div className="xl:col-span-7 ofl-card rounded-2xl p-4 sm:p-5 relative overflow-hidden min-h-[470px] flex flex-col justify-between">
-          <div className={cn("transition-all duration-300", drawerOpen && "xl:pr-[232px]")}>
+        {/* COLONNA DESTRA (7/12): TABELLA / MAPPA + DRAWER IN VETRO SATINATO */}
+        <div className="xl:col-span-7 ofl-card rounded-2xl p-5 relative overflow-hidden min-h-[500px] flex flex-col justify-between">
+          <div className={cn("transition-all duration-300", drawerOpen && "xl:pr-[290px]")}>
             {viewMode === "table" ? (
               <MunicipalitiesTable
                 municipalities={municipalities}
@@ -278,7 +365,7 @@ export function DashboardDesktop({
               />
             ) : (
               <div className="space-y-3">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-300/40">
+                <div className="flex items-center justify-between pb-2 border-b border-slate-200/80">
                   <h3 className="text-sm font-bold text-slate-900">Mappa Vettoriale Distretto</h3>
                   <button
                     type="button"
@@ -297,18 +384,7 @@ export function DashboardDesktop({
             )}
           </div>
 
-          {/* Pulsante per riaprire il Drawer se chiuso */}
-          {!drawerOpen && (
-            <button
-              type="button"
-              onClick={() => setDrawerOpen(true)}
-              className="absolute top-4 right-4 ofl-btn-frost rounded-xl px-3 py-1.5 text-xs font-bold shadow-sm z-10 cursor-pointer"
-            >
-              Dettagli ◂
-            </button>
-          )}
-
-          {/* DRAWER DESTRO IN VETRO SMERIGLIATO */}
+          {/* DRAWER DESTRO ANALITICO */}
           <MunicipalityGlassDrawer
             municipality={selectedMunicipality}
             open={drawerOpen}

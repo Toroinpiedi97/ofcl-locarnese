@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { INVESTMENT_CREDITS } from "@/data/credits";
+import { INVESTMENT_CREDITS, type InvestmentCredit } from "@/data/credits";
 import { MUNICIPALITIES } from "@/data/municipalities";
+import { fetchLiveCreditsAction } from "@/lib/data/actions";
 import { CreditProgressBarChart } from "@/components/charts";
 import {
   AlertTriangle,
@@ -17,21 +18,30 @@ import {
 } from "lucide-react";
 
 export default function DistrictCreditsPage() {
+  const [credits, setCredits] = useState<InvestmentCredit[]>(INVESTMENT_CREDITS);
   const [filterOverrunsOnly, setFilterOverrunsOnly] = useState<boolean>(false);
   const [selectedUst, setSelectedUst] = useState<number | "ALL">("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const totalVoted = INVESTMENT_CREDITS.reduce((acc, c) => acc + c.voted_credit_chf, 0);
-  const totalSpent = INVESTMENT_CREDITS.reduce((acc, c) => acc + c.spent_total_chf, 0);
-  const totalResidual = INVESTMENT_CREDITS.reduce((acc, c) => acc + c.residual_chf, 0);
-  const overrunsList = INVESTMENT_CREDITS.filter((c) => c.is_overrun);
+  useEffect(() => {
+    fetchLiveCreditsAction()
+      .then((live) => {
+        if (live && live.length > 0) setCredits(live);
+      })
+      .catch(() => {});
+  }, []);
+
+  const totalVoted = credits.reduce((acc, c) => acc + c.voted_credit_chf, 0);
+  const totalSpent = credits.reduce((acc, c) => acc + c.spent_total_chf, 0);
+  const totalResidual = credits.reduce((acc, c) => acc + c.residual_chf, 0);
+  const overrunsList = credits.filter((c) => c.is_overrun);
   const totalOverrunAmount = overrunsList.reduce(
     (acc, c) => acc + Math.abs(c.residual_chf),
     0
   );
 
   const filteredCredits = useMemo(() => {
-    return INVESTMENT_CREDITS.filter((c) => {
+    return credits.filter((c) => {
       if (filterOverrunsOnly && !c.is_overrun) return false;
       if (selectedUst !== "ALL" && c.ust_code !== selectedUst) return false;
       if (searchQuery.trim().length > 0) {
@@ -45,7 +55,7 @@ export default function DistrictCreditsPage() {
       }
       return true;
     });
-  }, [filterOverrunsOnly, selectedUst, searchQuery]);
+  }, [credits, filterOverrunsOnly, selectedUst, searchQuery]);
 
   return (
     <div className="space-y-6 pb-12">

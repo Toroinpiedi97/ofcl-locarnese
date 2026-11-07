@@ -1,7 +1,10 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { MUNICIPALITIES } from "@/data/municipalities";
-import { INVESTMENT_CREDITS } from "@/data/credits";
+import {
+  getMunicipalityProfile,
+  getPublicCreditsDataset,
+} from "@/lib/data/mca2-dal";
 import { CreditProgressBarChart } from "@/components/charts";
 import {
   CheckCircle2,
@@ -23,7 +26,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const mun = MUNICIPALITIES.find((m) => m.slug === slug);
+  const mun = await getMunicipalityProfile(slug);
   if (!mun) return { title: "Comune non trovato · OFCL" };
 
   return {
@@ -34,13 +37,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function MunicipalityCreditsPage({ params }: PageProps) {
   const { slug } = await params;
-  const mun = MUNICIPALITIES.find((m) => m.slug === slug);
+  const [mun, allCredits] = await Promise.all([
+    getMunicipalityProfile(slug),
+    getPublicCreditsDataset(),
+  ]);
 
   if (!mun) {
     notFound();
   }
 
-  const credits = INVESTMENT_CREDITS.filter((c) => c.municipality_slug === slug);
+  const credits = allCredits.filter((c) => c.municipality_slug === slug);
   const totalVoted = credits.reduce((acc, c) => acc + c.voted_credit_chf, 0);
   const overruns = credits.filter((c) => c.is_overrun);
 

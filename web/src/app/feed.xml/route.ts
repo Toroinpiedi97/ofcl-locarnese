@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
-import { OFFICIAL_DOCUMENTS } from "@/data/documents";
-import { INVESTMENT_CREDITS } from "@/data/credits";
+import {
+  getPublicDocumentsDataset,
+  getPublicCreditsDataset,
+} from "@/lib/data/mca2-dal";
 
 function escapeXml(unsafe: string): string {
   return unsafe.replace(/[<>&'"]/g, (c) => {
@@ -25,8 +27,13 @@ export async function GET() {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dati.ofcl.ch";
   const nowRfc822 = new Date().toUTCString();
 
+  const [credits, documents] = await Promise.all([
+    getPublicCreditsDataset(),
+    getPublicDocumentsDataset(),
+  ]);
+
   // 1. Alert Sorpassi di Credito (Art. 15 LOC)
-  const overruns = INVESTMENT_CREDITS.filter((c) => c.is_overrun).map((c) => {
+  const overruns = credits.filter((c) => c.is_overrun).map((c) => {
     const overrunChf = Math.abs(c.residual_chf).toLocaleString("it-CH", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -50,7 +57,7 @@ export async function GET() {
   });
 
   // 2. Pubblicazioni Documenti Ufficiali
-  const docItems = OFFICIAL_DOCUMENTS.map((d) => ({
+  const docItems = documents.map((d) => ({
     title: `[ATTO PUBBLICATO] ${d.municipality_name}: ${d.title}`,
     link: `${baseUrl}/documenti`,
     guid: `ofcl-doc-${d.id}`,

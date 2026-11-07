@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { MUNICIPALITIES } from "@/data/municipalities";
+import { getMunicipalityProfile } from "@/lib/data/mca2-dal";
 import { apiSuccess, apiOptions } from "@/lib/api-response";
 
 export async function OPTIONS() {
@@ -11,7 +11,7 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  const mun = MUNICIPALITIES.find((m) => m.slug.toLowerCase() === slug.toLowerCase());
+  const mun = await getMunicipalityProfile(slug);
 
   if (!mun) {
     return NextResponse.json(

@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { CivicSidebar } from "./CivicSidebar";
+import { MobileBottomNav } from "./MobileBottomNav";
+import { LocarneseTopoWatermark } from "./LocarneseTopoWatermark";
 import { CommandSearchDialog } from "./CommandSearchDialog";
 import { useCivicLang } from "@/lib/i18n-civic";
 
@@ -22,7 +24,10 @@ export function CivicAppShell({ children }: CivicAppShellProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-[#1b2028] text-slate-900">
+    <div className="min-h-screen flex flex-col lg:flex-row bg-[#ebf2f7] text-slate-900 relative">
+      {/* Sfondo Topografico Fisso del Locarnese (Isolinee Cimetta/Cardada & Lago Maggiore) */}
+      <LocarneseTopoWatermark opacity={0.65} />
+
       {/* Skip Link per Accessibilità Tastiera WAI-ARIA */}
       <a
         href="#main-content"
@@ -31,17 +36,17 @@ export function CivicAppShell({ children }: CivicAppShellProps) {
         Salta al contenuto principale
       </a>
 
-      {/* Sidebar Civica Sinistra */}
+      {/* Sidebar Civica Sinistra Satinata */}
       <CivicSidebar onOpenSearch={() => setSearchOpen(true)} />
 
-      {/* Canvas Principale Satinato */}
-      <div className="ofl-canvas flex-1 flex flex-col justify-between min-w-0 min-h-screen relative overflow-hidden">
+      {/* Canvas Principale Satinato Trasparente */}
+      <div className="ofl-canvas flex-1 flex flex-col justify-between min-w-0 min-h-screen relative z-10 pb-16 lg:pb-0">
         <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
           {children}
         </main>
 
         {/* Footer Istituzionale nel Canvas */}
-        <footer className="px-5 lg:px-6 py-3 border-t border-slate-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] text-slate-600">
+        <footer className="px-5 lg:px-6 py-3 border-t border-slate-200/80 bg-white/40 backdrop-blur-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] text-slate-500">
           <div>
             <span>{t.footerLegalSeal}</span>
           </div>
@@ -76,6 +81,9 @@ export function CivicAppShell({ children }: CivicAppShellProps) {
           </div>
         </footer>
       </div>
+
+      {/* Bottom Bar Mobile Fissa (solo su smartphone / schermi piccoli) */}
+      <MobileBottomNav />
 
       {/* Modale Ricerca Globale Cmd+K */}
       <CommandSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />

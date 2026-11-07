@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { INVESTMENT_CREDITS } from "@/data/credits";
+import { getPublicCreditsDataset } from "@/lib/data/mca2-dal";
 import { apiSuccess, apiOptions } from "@/lib/api-response";
 
 export async function OPTIONS() {
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     searchParams.get("overruns_only") === "true" ||
     searchParams.get("overrun_only") === "true";
 
-  let list = INVESTMENT_CREDITS;
+  let list = await getPublicCreditsDataset();
 
   if (filterParam) {
     const isNum = !isNaN(Number(filterParam)) && !isNaN(parseFloat(filterParam));

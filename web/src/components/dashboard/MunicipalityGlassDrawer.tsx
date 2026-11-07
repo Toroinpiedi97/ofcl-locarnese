@@ -8,6 +8,7 @@ import {
   Download,
   ArrowUpRight,
   AlertTriangle,
+  Ticket,
 } from "lucide-react";
 import type { MunicipalityData } from "@/data/municipalities";
 import { IndicatorsSelBar } from "./IndicatorsSelBar";
@@ -58,50 +59,61 @@ export function MunicipalityGlassDrawer({
 
   return (
     <aside
-      className="ofl-glass-drawer lg:sticky absolute top-0 right-0 bottom-0 w-full sm:w-[230px] rounded-l-2xl p-3.5 flex flex-col justify-between z-20 select-none overflow-y-auto"
+      className="ofl-glass-drawer lg:sticky absolute top-0 right-0 bottom-0 w-full sm:w-[280px] rounded-l-2xl p-4 flex flex-col justify-between z-20 select-none overflow-y-auto space-y-4"
       aria-label={`${t.drawerTitle} ${municipality.name}`}
     >
-      <div>
+      <div className="space-y-4">
         {/* Intestazione + X di chiusura */}
-        <div className="flex items-center justify-between gap-1 pb-2 border-b border-slate-300/40">
-          <h3 className="text-xs font-bold text-slate-900 truncate">
-            {municipality.name}
-          </h3>
+        <div className="flex items-center justify-between gap-1 pb-2 border-b border-slate-200/80">
+          <div>
+            <div className="text-[10px] font-mono font-bold text-sky-800 uppercase tracking-wider">
+              SCHEDA ANALITICA MCA2
+            </div>
+            <h3 className="text-sm font-extrabold text-slate-900 truncate">
+              {municipality.name}
+            </h3>
+          </div>
           <button
             type="button"
             onClick={onClose}
             aria-label="Chiudi pannello per vedere tutta la tabella"
             title="Chiudi pannello per vedere tutta la tabella"
-            className="w-6 h-6 rounded-full hover:bg-slate-400/30 flex items-center justify-center text-slate-700 font-bold text-xs cursor-pointer transition-colors shrink-0"
+            className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 font-bold text-xs cursor-pointer transition-colors shrink-0"
           >
-            <X className="w-3.5 h-3.5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Badge Civico Istituzionale centrato */}
-        <div className="flex flex-col items-center my-3">
-          <div className="w-14 h-16 rounded-b-3xl rounded-t-lg bg-gradient-to-b from-white to-slate-200 p-1 shadow-md border border-white flex flex-col items-center justify-between">
-            <div className="w-full rounded-t bg-[#0F3854] text-white text-center font-mono text-[11px] font-extrabold py-0.5">
-              UST {municipality.ust_code}
+        {/* Badge Civico & Dati Sintetici */}
+        <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/80 border border-slate-200/70 shadow-xs">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-9 rounded-b-xl rounded-t-md bg-[#0F3854] text-white flex flex-col items-center justify-between p-0.5 shrink-0">
+              <span className="font-mono text-[8px] font-bold">+ TI</span>
+              <span className="font-mono text-[9px] font-bold">{municipality.ust_code}</span>
             </div>
-            <div className="text-xs font-extrabold text-slate-900 tracking-tight font-mono">
+            <div>
+              <div className="text-xs font-bold text-slate-900">Circolo di {municipality.circle}</div>
+              <div className="text-[10px] text-slate-500 font-mono">
+                {municipality.population.toLocaleString("de-CH")} ab.
+              </div>
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="font-mono text-sm font-extrabold text-[#0F3854]">
               {municipality.tax_multiplier_pf}%
             </div>
-            <div className="w-full h-2.5 rounded-b-2xl bg-gradient-to-r from-sky-600 to-cyan-500" />
+            <div className="text-[10px] text-slate-400 font-mono">Moltiplicatore</div>
           </div>
-          <span className="text-[10px] text-slate-500 font-mono mt-1">
-            Circolo di {municipality.circle}
-          </span>
         </div>
 
         {/* Banner sorpasso crediti se attivo ex Art. 15 LOC */}
         {hasOverruns && (
-          <div className="mb-3 p-2 rounded-xl bg-red-100/90 border border-red-300 text-red-950 text-[11px] space-y-1">
+          <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-950 text-xs space-y-1">
             <div className="flex items-center gap-1 font-bold text-red-800">
               <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-              <span>S01 SORPASSO</span>
+              <span>S01 SORPASSO CREDITI</span>
             </div>
-            <p className="text-[10px] text-red-900 leading-tight">
+            <p className="text-[11px] text-red-900 leading-tight">
               {municipality.slug === "brione-sopra-minusio"
                 ? "Sistemazione tornante Jacomello (-16'130.65 CHF)"
                 : "Rilevata spesa superiore al credito votato."}
@@ -115,40 +127,66 @@ export function MunicipalityGlassDrawer({
           </div>
         )}
 
-        {/* Checklist a 5 punti ufficiale */}
-        <ul className="space-y-1.5 text-xs font-semibold text-slate-800 my-3">
-          <li className="flex items-center gap-2">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-            <span>Dati MCA2 completi</span>
-          </li>
-          <li className="flex items-center gap-2">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-            <span>Rendiconto finanziario</span>
-          </li>
-          <li className="flex items-center gap-2">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-            <span>Investimenti e cantieri</span>
-          </li>
-          <li className="flex items-center gap-2">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-            <span>Debito pro capite</span>
-          </li>
-          <li className="flex items-center gap-2">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-            <span>Dati aperti (open data)</span>
-          </li>
-        </ul>
+        {/* Indicatori Finanziari SEL Cantone Ticino */}
+        <div>
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center justify-between">
+            <span>Indicatori SEL (Sezione Enti Locali)</span>
+            <span className="text-emerald-700 font-bold">{municipality.summary_30s.sel_conformity}</span>
+          </div>
+
+          <div className="space-y-1.5 text-xs">
+            <div className="p-2 rounded-lg bg-white/70 border border-slate-200/60 flex items-center justify-between">
+              <span className="text-slate-600">Autofinanziamento</span>
+              <span className="font-mono font-bold text-emerald-700">
+                CHF {(municipality.summary_30s.autofinanziamento_chf / 1_000_000).toFixed(1)}M
+              </span>
+            </div>
+            <div className="p-2 rounded-lg bg-white/70 border border-slate-200/60 flex items-center justify-between">
+              <span className="text-slate-600">Debito Netto p.c.</span>
+              <span className="font-mono font-bold text-slate-900">
+                CHF {Math.round(municipality.summary_30s.debito_netto_pc_chf).toLocaleString("de-CH")}
+              </span>
+            </div>
+            <div className="p-2 rounded-lg bg-white/70 border border-slate-200/60 flex items-center justify-between">
+              <span className="text-slate-600">Investimenti Netti</span>
+              <span className="font-mono font-bold text-slate-900">
+                CHF {(municipality.summary_30s.investimenti_netti_chf / 1_000_000).toFixed(1)}M
+              </span>
+            </div>
+          </div>
+        </div>
 
         {/* Micro-Cruscotto a 8 segmenti SEL */}
-        <div className="my-3 pt-2 border-t border-slate-300/40">
+        <div className="pt-1 border-t border-slate-200/60">
           <IndicatorsSelBar
             scoreConform={municipality.summary_30s.sel_conformity}
             compact
           />
         </div>
 
+        {/* Checklist Contabile MCA2 Ufficiale */}
+        <div>
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+            Verifica Contabile MCA2
+          </div>
+          <ul className="space-y-1 text-xs font-medium text-slate-700">
+            <li className="flex items-center gap-1.5 text-emerald-800">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+              <span>Dati MCA2 completi e quadrati</span>
+            </li>
+            <li className="flex items-center gap-1.5 text-emerald-800">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+              <span>Rendiconto finanziario validato</span>
+            </li>
+            <li className="flex items-center gap-1.5 text-emerald-800">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+              <span>Allegato f (Crediti) verificato</span>
+            </li>
+          </ul>
+        </div>
+
         {/* Azioni Tattili: Scheda Completa & Scarica CSV */}
-        <div className="space-y-1.5 mt-3">
+        <div className="space-y-2 pt-1">
           <Link
             href={`/comuni/${municipality.slug}`}
             onMouseEnter={handlePrefetch}
@@ -161,21 +199,19 @@ export function MunicipalityGlassDrawer({
           <button
             type="button"
             onClick={handleDownloadCsv}
-            className="ofl-btn-frost w-full rounded-xl py-1.5 px-3 text-[11px] font-bold flex items-center justify-center gap-1.5 cursor-pointer"
+            className="ofl-btn-frost w-full rounded-xl py-2 px-3 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer"
           >
-            <Download className="w-3 h-3 text-slate-700" />
+            <Download className="w-3.5 h-3.5 text-slate-700" />
             <span>{t.drawerDownload}</span>
           </button>
         </div>
       </div>
 
-      {/* Sezione Basso-Dx: Ticket e Segnalazioni */}
-      <div className="pt-3 mt-3 border-t border-slate-300/40">
+      {/* Sezione Basso: Ticket e Segnalazioni */}
+      <div className="pt-3 border-t border-slate-200/80">
         <div className="flex items-center justify-between text-xs font-bold text-slate-900 mb-2">
-          <span className="flex items-center gap-1">
-            <span className="inline-flex items-center justify-center rounded bg-amber-400 px-1 py-0.5 text-slate-900 font-mono text-[10px]">
-              🎫
-            </span>
+          <span className="flex items-center gap-1.5">
+            <Ticket className="w-3.5 h-3.5 text-amber-500" />
             <span>{t.drawerTicketsTitle}</span>
           </span>
           <CultPopoverTicket
@@ -183,9 +219,9 @@ export function MunicipalityGlassDrawer({
             triggerButton={
               <button
                 type="button"
-                className="text-[10px] font-bold text-blue-700 hover:underline cursor-pointer"
+                className="text-[11px] font-bold text-amber-700 hover:underline cursor-pointer"
               >
-                {t.drawerAddTicket}
+                + Apri Segnalazione
               </button>
             }
           />

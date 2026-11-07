@@ -135,26 +135,95 @@ export default async function CuratorQueuePage() {
 
   // Tentativo di caricamento dati live se PostgreSQL è attivo
   try {
-    const { data, error } = await supabase
-      .schema("raw")
-      .from("document_version")
-      .select(`
-        id,
-        status,
-        confidence,
-        created_at,
-        document:raw_document_id (
-          ust_code,
-          title_raw,
-          contains_personal_data
+    const [verRes, classRes, valRes, munRes] = await Promise.all([
+      supabase
+        .schema("raw")
+        .from("document_version")
+        .select(
+          `
+          id,
+          status,
+          fetched_at,
+          document:document_id (
+            ust_code,
+            title_raw,
+            contains_personal_data
+          )
+        `
         )
-      `)
-      .order("created_at", { ascending: false })
-      .limit(50);
+        .order("fetched_at", { ascending: false })
+        .limit(50),
+      supabase.schema("core" as any).from("classification").select("*"),
+      supabase
+        .schema("core" as any)
+        .from("validation_result")
+        .select("version_id, severity, passed"),
+      supabase.schema("ref").from("municipality").select("ust_code, name"),
+    ]);
 
-    if (!error && data && data.length > 0) {
-      // Mappatura dati live
-      // (Se vuoto o schema non ancora sincronizzato, fallback_queue garantisce UX operativa)
+    if (!verRes.error && verRes.data && verRes.data.length > 0) {
+      const munMap = new Map<number, string>(
+        (munRes.data || []).map((m: any) => [m.ust_code, m.name])
+      );
+      const classMap = new Map<string, any>(
+        (classRes.data || []).map((c: any) => [c.version_id, c])
+      );
+      const valStats = new Map<string, { blocking: number; warning: number }>();
+      for (const v of (valRes.data as any[]) || []) {
+        if (v.passed) continue;
+        const curr = valStats.get(v.version_id) || { blocking: 0, warning: 0 };
+        if (v.severity === "BLOCKING") curr.blocking += 1;
+        else if (v.severity === "WARNING") curr.warning += 1;
+        valStats.set(v.version_id, curr);
+      }
+
+      const liveMapped: QueueItem[] = verRes.data.map((row: any) => {
+        const doc = Array.isArray(row.document) ? row.document[0] : row.document;
+        const cls = classMap.get(row.id);
+        const vStat = valStats.get(row.id) || { blocking: 0, warning: 0 };
+        const ustCode = doc?.ust_code ?? 5113;
+        const munName =
+          munMap.get(ustCode) ||
+          FALLBACK_QUEUE.find((f) => f.ust_code === ustCode)?.municipality_name ||
+          `Comune UST ${ustCode}`;
+        const rawDocType = cls?.doc_type || "CONSUNTIVO";
+        const statementType: QueueItem["statement_type"] =
+          rawDocType === "PREVENTIVO"
+            ? "PREVENTIVO"
+            : rawDocType === "CREDITO_INVESTIMENTO"
+            ? "CREDITO"
+            : "CONSUNTIVO";
+        const mappedStatus: QueueItem["status"] =
+          row.status === "PUBLISHED" ||
+          row.status === "APPROVED" ||
+          row.status === "VALIDATED"
+            ? row.status
+            : "NEEDS_REVIEW";
+
+        return {
+          id: row.id,
+          ust_code: ustCode,
+          municipality_name: munName,
+          document_title:
+            doc?.title_raw || `${statementType} ${cls?.fiscal_year || 2025} (${munName})`,
+          mm_number: cls?.mm_number || null,
+          statement_year: cls?.fiscal_year || 2025,
+          statement_type: statementType,
+          status: mappedStatus,
+          blocking_count: vStat.blocking,
+          warning_count: vStat.warning,
+          confidence: cls?.confidence ? Number(cls.confidence) : 1.0,
+          has_overrun: false,
+          contains_personal_data: Boolean(doc?.contains_personal_data),
+          created_at: row.fetched_at || new Date().toISOString(),
+        };
+      });
+
+      const liveIds = new Set(liveMapped.map((item) => item.id));
+      queueItems = [
+        ...liveMapped,
+        ...FALLBACK_QUEUE.filter((f) => !liveIds.has(f.id)),
+      ];
     }
   } catch {
     // Silenzioso in ambiente offline: usa FALLBACK_QUEUE

@@ -20,9 +20,11 @@ export const getDistrictDataset = unstable_cache(
       const supabase = createPublicAnonClient();
 
       // Query parallela alle viste pubbliche PostgreSQL (schema api)
-      const [munRes, indRes] = await Promise.all([
+      const [munRes, indRes, sumRes, civicRes] = await Promise.all([
         supabase.schema("api").from("municipalities").select("*"),
         supabase.schema("api").from("indicators").select("*"),
+        supabase.schema("api").from("summary_by_year").select("*"),
+        supabase.schema("api").from("municipal_civic_guide").select("*"),
       ]);
 
       if (munRes.error || !munRes.data || munRes.data.length === 0) {
@@ -54,9 +56,74 @@ export const getDistrictDataset = unstable_cache(
         }
       }
 
+      // Mappa sintesi contabile annuale (api.summary_by_year - ultimo anno disponibile per ente COMUNE)
+      const dbSummaryMap = new Map<
+        number,
+        DatabaseSummaryRow
+      >();
+      type DatabaseSummaryRow = NonNullable<typeof sumRes.data>[number];
+      if (sumRes.data) {
+        for (const row of sumRes.data) {
+          if (row.entity_kind && row.entity_kind !== "COMUNE") continue;
+          const prev = dbSummaryMap.get(row.ust_code);
+          if (!prev || row.ref_year >= prev.ref_year) {
+            dbSummaryMap.set(row.ust_code, row);
+          }
+        }
+      }
+
+      // Mappa tariffe e sussidi civici verificati (api.municipal_civic_guide)
+      const dbCivicMap = new Map<number, NonNullable<typeof civicRes.data>>();
+      if (civicRes.data) {
+        for (const item of civicRes.data) {
+          if (!dbCivicMap.has(item.ust_code)) {
+            dbCivicMap.set(item.ust_code, []);
+          }
+          dbCivicMap.get(item.ust_code)!.push(item);
+        }
+      }
+
       return MUNICIPALITIES.map((base) => {
         const dbRow = dbMunMap.get(base.ust_code);
         if (!dbRow) return base;
+
+        const sumRow = dbSummaryMap.get(base.ust_code);
+        const civicItems = dbCivicMap.get(base.ust_code);
+        const indList =
+          dbIndMap.get(base.ust_code) ?? getMunicipalitySelIndicators(base);
+
+        // Calcolo dinamico metriche di sintesi se presenti in api.summary_by_year
+        const risultatoOperativo = sumRow
+          ? Number(sumRow.ricavi_operativi) -
+            Number(sumRow.spese_operative) +
+            (Number(sumRow.ricavi_finanziari_44) - Number(sumRow.spese_finanziarie_34))
+          : base.summary_30s.risultato_ordinario_chf;
+
+        const investimentiNetti = sumRow
+          ? Number(sumRow.uscite_investimenti_ba) - Number(sumRow.entrate_investimenti_ba)
+          : base.summary_30s.investimenti_netti_chf;
+
+        // Aggiornamento dinamico tariffe civiche se presenti in api.municipal_civic_guide
+        const updatedCivic = { ...base.civic_tariffs };
+        if (civicItems && civicItems.length > 0) {
+          for (const ci of civicItems) {
+            if (ci.benefit_code === "WASTE_BASE_FEE" && ci.value_display) {
+              updatedCivic.waste_base_fee = ci.value_display;
+            } else if (ci.benefit_code === "WASTE_BAG_35L" && ci.amount_min_chf !== null) {
+              updatedCivic.waste_bag_35l_chf = Number(ci.amount_min_chf);
+            } else if (ci.benefit_code === "DOG_TAX" && ci.amount_min_chf !== null) {
+              updatedCivic.dog_tax_chf = Number(ci.amount_min_chf);
+            } else if (ci.benefit_code === "REAL_ESTATE_TAX" && ci.pct_value !== null) {
+              updatedCivic.real_estate_tax_permille = Number(ci.pct_value);
+            } else if (ci.benefit_code === "BIRTH_BONUS" && ci.amount_min_chf !== null) {
+              updatedCivic.birth_bonus_chf = Number(ci.amount_min_chf);
+            } else if (ci.benefit_code === "CANTEEN_MEAL" && ci.amount_min_chf !== null) {
+              updatedCivic.canteen_meal_chf = Number(ci.amount_min_chf);
+            } else if (ci.benefit_code === "CLIMATE_FUND") {
+              updatedCivic.climate_fund_active = ci.status === "ACTIVE";
+            }
+          }
+        }
 
         return {
           ...base,
@@ -66,8 +133,14 @@ export const getDistrictDataset = unstable_cache(
           has_differentiated_pg:
             dbRow.tax_multiplier_pg !== null &&
             dbRow.tax_multiplier_pg !== dbRow.tax_multiplier_pf,
-          sel_indicators_detail:
-            dbIndMap.get(base.ust_code) ?? getMunicipalitySelIndicators(base),
+          waste_base_fee: updatedCivic.waste_base_fee,
+          civic_tariffs: updatedCivic,
+          sel_indicators_detail: indList,
+          summary_30s: {
+            ...base.summary_30s,
+            risultato_ordinario_chf: risultatoOperativo,
+            investimenti_netti_chf: investimentiNetti,
+          },
         };
       });
     } catch {

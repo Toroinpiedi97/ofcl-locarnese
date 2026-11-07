@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { OFFICIAL_DOCUMENTS } from "@/data/documents";
+import { getPublicDocumentsDataset } from "@/lib/data/mca2-dal";
 import { apiSuccess, apiOptions } from "@/lib/api-response";
 
 export async function OPTIONS() {
@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
   const kind = searchParams.get("kind");
   const yearParam = searchParams.get("anno");
 
-  let list = OFFICIAL_DOCUMENTS;
+  let list = await getPublicDocumentsDataset();
 
   if (ust) {
     const ustNum = Number(ust);

@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { UploadCloud, CheckCircle2, AlertCircle, FileText, Lock } from "lucide-react";
+import { MUNICIPALITIES } from "@/data/municipalities";
+import { uploadDocumentManualAction } from "./actions";
 
 export default function CuratorUploadPage() {
   const [municipality, setMunicipality] = useState("5113"); // Default: Città di Locarno
   const [statementType, setStatementType] = useState("CONSUNTIVO");
-  const [year, setYear] = useState("2024");
+  const [year, setYear] = useState("2025");
   const [mmNumber, setMmNumber] = useState("");
   const [notes, setNotes] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -23,17 +25,33 @@ export default function CuratorUploadPage() {
     setUploading(true);
     setFeedback(null);
 
-    // Simulazione upload tracciato con SHA-256 e metadata (Guardrail C-02 & T042)
-    setTimeout(() => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("municipality", municipality);
+      formData.append("statementType", statementType);
+      formData.append("year", year);
+      formData.append("mmNumber", mmNumber);
+      formData.append("notes", notes);
+
+      const res = await uploadDocumentManualAction(formData);
       setUploading(false);
       setFeedback({
-        text: `Fascicolo '${file.name}' caricato con successo su Cloudflare R2 con provenienza MANUAL_UPLOAD (Atto: MM ${mmNumber || "n.d."}).`,
-        type: "ok",
+        text: res.message,
+        type: res.success ? "ok" : "err",
       });
-      setFile(null);
-      setMmNumber("");
-      setNotes("");
-    }, 1200);
+      if (res.success) {
+        setFile(null);
+        setMmNumber("");
+        setNotes("");
+      }
+    } catch {
+      setUploading(false);
+      setFeedback({
+        text: "Errore imprevisto durante il caricamento del fascicolo.",
+        type: "err",
+      });
+    }
   }
 
   return (
@@ -86,11 +104,11 @@ export default function CuratorUploadPage() {
                 className="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:border-cyan-500"
               >
                 <option value="5113">Città di Locarno (UST 5113)</option>
-                <option value="5096">Brione sopra Minusio (UST 5096)</option>
-                <option value="5115">Losone (UST 5115)</option>
-                <option value="5091">Ascona (UST 5091)</option>
-                <option value="5112">Lavertezzo (UST 5112)</option>
-                <option value="5399">Verzasca (UST 5399)</option>
+                {MUNICIPALITIES.filter((m) => m.ust_code !== 5113).map((m) => (
+                  <option key={m.ust_code} value={String(m.ust_code)}>
+                    {m.name} (UST {m.ust_code})
+                  </option>
+                ))}
               </select>
             </div>
 

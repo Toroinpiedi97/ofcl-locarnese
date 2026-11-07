@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { MUNICIPALITIES } from "@/data/municipalities";
+import { getMunicipalityProfile } from "@/lib/data/mca2-dal";
 import { QuickCard30s } from "@/components/dashboard/QuickCard30s";
 import { TaxImpactSimulator } from "@/components/dashboard/TaxImpactSimulator";
 import { CivicDeepDiveBento } from "@/components/dashboard/CivicDeepDiveBento";
@@ -26,7 +27,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const mun = MUNICIPALITIES.find((m) => m.slug === slug);
+  const mun = await getMunicipalityProfile(slug);
   if (!mun) return { title: "Comune non trovato · OFCL" };
 
   return {
@@ -37,7 +38,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function MunicipalityDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const mun = MUNICIPALITIES.find((m) => m.slug === slug);
+  const mun = await getMunicipalityProfile(slug);
 
   if (!mun) {
     notFound();

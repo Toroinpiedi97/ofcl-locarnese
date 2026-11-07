@@ -1,4 +1,4 @@
-import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { consume } from "@/lib/guardrails";
 
@@ -20,6 +20,29 @@ function getS3Client(): S3Client | null {
       secretAccessKey,
     },
   });
+}
+
+/**
+ * Carica un fascicolo PDF su Cloudflare R2 con chiave deterministica pdf/{ust}/{sha256}.pdf.
+ */
+export async function uploadPdfToR2(
+  r2Key: string,
+  body: Uint8Array
+): Promise<{ uploadedToR2: boolean; storagePath: string }> {
+  const s3 = getS3Client();
+  if (!s3) {
+    return { uploadedToR2: false, storagePath: r2Key };
+  }
+
+  const command = new PutObjectCommand({
+    Bucket: bucketName,
+    Key: r2Key,
+    Body: body,
+    ContentType: "application/pdf",
+  });
+
+  await s3.send(command);
+  return { uploadedToR2: true, storagePath: r2Key };
 }
 
 /**

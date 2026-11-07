@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { OFFICIAL_DOCUMENTS } from "@/data/documents";
+import { OFFICIAL_DOCUMENTS, type OfficialDocument } from "@/data/documents";
 import { MUNICIPALITIES } from "@/data/municipalities";
+import { fetchLiveDocumentsAction } from "@/lib/data/actions";
 import {
   FileText,
   Search,
@@ -14,12 +15,21 @@ import {
 } from "lucide-react";
 
 export default function DocumentiPage() {
+  const [documents, setDocuments] = useState<OfficialDocument[]>(OFFICIAL_DOCUMENTS);
   const [selectedKind, setSelectedKind] = useState<string>("ALL");
   const [selectedUst, setSelectedUst] = useState<number | "ALL">("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
+  useEffect(() => {
+    fetchLiveDocumentsAction()
+      .then((live) => {
+        if (live && live.length > 0) setDocuments(live);
+      })
+      .catch(() => {});
+  }, []);
+
   const filteredDocs = useMemo(() => {
-    return OFFICIAL_DOCUMENTS.filter((doc) => {
+    return documents.filter((doc) => {
       if (selectedKind !== "ALL" && doc.document_kind !== selectedKind) return false;
       if (selectedUst !== "ALL" && doc.ust_code !== selectedUst) return false;
       if (searchQuery.trim().length > 0) {
@@ -32,7 +42,7 @@ export default function DocumentiPage() {
       }
       return true;
     });
-  }, [selectedKind, selectedUst, searchQuery]);
+  }, [documents, selectedKind, selectedUst, searchQuery]);
 
   return (
     <div className="space-y-6 pb-12">
