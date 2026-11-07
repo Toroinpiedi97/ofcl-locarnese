@@ -36,6 +36,18 @@ function SegnalaContent() {
     e.preventDefault();
     setErrorMsg(null);
 
+    if (!ustCode) {
+      setErrorMsg("Seleziona il comune di riferimento.");
+      return;
+    }
+
+    if (!metric || metric.trim().length < 2) {
+      setErrorMsg(
+        "Indica l'oggetto o il riferimento all'atto ufficiale (es. Consuntivo 2024 · p. 18)."
+      );
+      return;
+    }
+
     if (message.trim().length < 10) {
       setErrorMsg("La segnalazione deve contenere almeno 10 caratteri.");
       return;
@@ -137,11 +149,12 @@ function SegnalaContent() {
                   htmlFor={ustId}
                   className="text-xs font-bold text-slate-700 block mb-1"
                 >
-                  Comune di Riferimento
+                  Comune di Riferimento <span className="text-red-500 font-bold">*</span>
                 </label>
                 <select
                   id={ustId}
                   value={ustCode || ""}
+                  required
                   onChange={(e) => setUstCode(e.target.value ? Number(e.target.value) : undefined)}
                   className="w-full min-h-[44px] px-3.5 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-cyan-600 cursor-pointer"
                 >
@@ -160,14 +173,16 @@ function SegnalaContent() {
                   htmlFor="metric-input"
                   className="text-xs font-bold text-slate-700 block mb-1"
                 >
-                  Oggetto o Cifra Contabile (opzionale)
+                  Riferimento Atto Ufficiale o Cifra Contabile <span className="text-red-500 font-bold">*</span>
                 </label>
                 <input
                   id="metric-input"
                   type="text"
+                  required
+                  minLength={2}
                   value={metric}
                   onChange={(e) => setMetric(e.target.value)}
-                  placeholder="Es. Moltiplicatore 2026, Residuo Credito tornante Jacomello, Autofinanziamento..."
+                  placeholder="Es. Consuntivo 2024 · p. 18, Moltiplicatore 2026, Residuo Credito tornante..."
                   className="w-full min-h-[44px] px-3.5 rounded-xl text-xs bg-white border border-slate-300 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-600 font-medium"
                 />
               </div>
