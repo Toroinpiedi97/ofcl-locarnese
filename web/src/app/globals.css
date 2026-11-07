@@ -44,13 +44,17 @@ body {
    1. OFCL GLACIER SATIN DESIGN SYSTEM (Sidebar Smerigliata + Canvas Trasparente)
    ========================================================================= */
 
-/* SIDEBAR CHIARA SATINATA IN VETRO SMERIGLIATO */
+/* SIDEBAR CHIARA SATINATA IN VETRO SMERIGLIATO (CARD A ISOLA COMPATTA FISSA IN ALTO) */
 .ofl-sidebar {
-  background: rgba(248, 250, 252, 0.78);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-right: 1px solid rgba(226, 232, 240, 0.85);
-  box-shadow: 4px 0 24px rgba(15, 23, 42, 0.04);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 1.25rem;
+  box-shadow:
+    0 10px 25px -5px rgba(15, 23, 42, 0.08),
+    0 2px 8px rgba(15, 23, 42, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
 }
 
 .ofl-nav-active {

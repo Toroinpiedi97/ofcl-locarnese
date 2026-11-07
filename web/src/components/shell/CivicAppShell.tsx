@@ -25,8 +25,8 @@ export function CivicAppShell({ children }: CivicAppShellProps) {
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-[#ebf2f7] text-slate-900 relative">
-      {/* Sfondo Topografico Fisso del Locarnese (Isolinee Cimetta/Cardada & Lago Maggiore) */}
-      <LocarneseTopoWatermark opacity={0.65} />
+      {/* Sfondo Topografico Fisso del Locarnese (Isolinee Cimetta/Cardada & Lago Maggiore - Sfumato delicato) */}
+      <LocarneseTopoWatermark opacity={0.22} />
 
       {/* Skip Link per Accessibilità Tastiera WAI-ARIA */}
       <a
@@ -36,7 +36,10 @@ export function CivicAppShell({ children }: CivicAppShellProps) {
         Salta al contenuto principale
       </a>
 
-      {/* Sidebar Civica Sinistra Satinata */}
+      {/* Spazio riservato a sinistra per la Sidebar Fissa a Isola (288px) */}
+      <div className="hidden lg:block w-72 shrink-0 pointer-events-none" aria-hidden="true" />
+
+      {/* Sidebar Civica Sinistra Satinata (Fissa in alto, card a isola compatta) */}
       <CivicSidebar onOpenSearch={() => setSearchOpen(true)} />
 
       {/* Canvas Principale Satinato Trasparente */}

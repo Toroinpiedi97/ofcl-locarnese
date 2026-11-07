@@ -76,11 +76,12 @@ export function CivicSidebar({ onOpenSearch, className }: CivicSidebarProps) {
   return (
     <aside
       className={cn(
-        "ofl-sidebar w-64 shrink-0 p-5 hidden lg:flex flex-col justify-between text-slate-800 z-20 select-none",
+        "ofl-sidebar w-64 p-4 hidden lg:flex flex-col text-slate-800 z-30 select-none",
+        "fixed top-4 left-4 h-fit max-h-[calc(100vh-2rem)] overflow-y-auto",
         className
       )}
     >
-      <div className="space-y-5">
+      <div className="space-y-3.5">
         {/* Micro-barra civica Trasparenza + Selettore Lingua IT | DE */}
         <div className="flex items-center justify-between pb-3 pt-0.5 border-b border-slate-200/80 text-slate-500 text-xs">
           <span className="text-[11px] font-semibold truncate pr-2 text-slate-600">
@@ -366,12 +367,12 @@ export function CivicSidebar({ onOpenSearch, className }: CivicSidebarProps) {
       </div>
 
       {/* Stato certificazione discreto in basso */}
-      <div className="pt-4 border-t border-slate-200/80 text-xs text-slate-500 space-y-1">
-        <div className="flex items-center justify-between font-bold text-slate-700">
+      <div className="pt-2.5 mt-2.5 border-t border-slate-200/80 text-xs text-slate-500 space-y-0.5">
+        <div className="flex items-center justify-between font-bold text-slate-700 text-[11px]">
           <span>{t.certificationStatus}</span>
           <span className="w-2 h-2 rounded-full bg-emerald-500" />
         </div>
-        <div className="text-slate-500 text-[11px] font-mono leading-snug">{t.precisionMca2}</div>
+        <div className="text-slate-500 text-[10px] font-mono leading-snug">{t.precisionMca2}</div>
       </div>
     </aside>
   );
