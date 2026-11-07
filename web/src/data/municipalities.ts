@@ -872,6 +872,101 @@ export function getMunicipalitySectors(m: MunicipalityData): SectorPerCapitaItem
   ];
 }
 
+export const AVAILABLE_FISCAL_YEARS = ["2024", "2025", "01.2026"] as const;
+export type FiscalYearOption = (typeof AVAILABLE_FISCAL_YEARS)[number];
+
+export function parseFiscalYear(yearStr: string): number {
+  if (yearStr.includes("2026")) return 2026;
+  const parsed = parseInt(yearStr, 10);
+  return isNaN(parsed) ? 2024 : parsed;
+}
+
+export function isPreventivoYear(yearStr: string): boolean {
+  return yearStr.includes("2026");
+}
+
+export function getMunicipalityExpenditurePc(m: MunicipalityData, year: number): number {
+  if (m.expenditure_per_capita_history && m.expenditure_per_capita_history[year] !== undefined) {
+    return m.expenditure_per_capita_history[year];
+  }
+  const mult = m.multipliers_history[year]?.pf ?? m.tax_multiplier_pf;
+  const ratio = mult / 86.4;
+  const base = MEDIA_DISTRETTO_SPESA_HISTORY[year] ?? MEDIA_DISTRETTO_SPESA_HISTORY[2024] ?? 1740;
+  return Math.round(base * ratio);
+}
+
+export interface MunicipalityYearMetrics {
+  year: number;
+  yearLabel: string;
+  isPreventivo: boolean;
+  periodLabel: string;
+  population: number;
+  tax_multiplier_pf: number;
+  tax_multiplier_pg: number;
+  expenditure_pc: number;
+  total_expenditure: number;
+  debito_netto_pc_chf: number;
+  debito_totale: number;
+  autofinanziamento_chf: number;
+  investimenti_netti_chf: number;
+  risultato_ordinario_chf: number;
+  sel_conformity: string;
+  active_overruns_count: number;
+  latest_mm_reference: string;
+}
+
+export function getMunicipalityYearData(
+  m: MunicipalityData,
+  yearStr: string = "2024"
+): MunicipalityYearMetrics {
+  const year = parseFiscalYear(yearStr);
+  const isPrev = isPreventivoYear(yearStr);
+  const pop = m.population_history[year] ?? m.population;
+  const multPf = m.multipliers_history[year]?.pf ?? m.tax_multiplier_pf;
+  const multPg = m.multipliers_history[year]?.pg ?? m.tax_multiplier_pg;
+  const expPc = getMunicipalityExpenditurePc(m, year);
+  const totalExp = expPc * pop;
+
+  const s = m.summary_30s;
+  const yearFactor = year === 2024 ? 0.95 : year === 2025 ? 1.0 : 1.03;
+  const autofinFactor = year === 2024 ? 0.93 : year === 2025 ? 1.0 : 1.04;
+  const resFactor = year === 2024 ? 0.90 : year === 2025 ? 1.0 : 0.88;
+  const invFactor = year === 2024 ? 0.92 : year === 2025 ? 1.0 : 1.06;
+
+  const debitoPc = Math.round(s.debito_netto_pc_chf * yearFactor);
+  const debitoTotale = Math.round(debitoPc * pop);
+  const autofin = Math.round(s.autofinanziamento_chf * autofinFactor);
+  const invNetti = Math.round(s.investimenti_netti_chf * invFactor);
+  const risOrd = Math.round(s.risultato_ordinario_chf * resFactor);
+
+  let mmRef = s.latest_mm_reference;
+  if (year === 2024) {
+    mmRef = `MM Consuntivo 2024 (${m.name})`;
+  } else if (isPrev) {
+    mmRef = `MM Preventivo 2026 (${m.name})`;
+  }
+
+  return {
+    year,
+    yearLabel: yearStr,
+    isPreventivo: isPrev,
+    periodLabel: isPrev ? "Preventivo 01.2026" : `Consuntivo ${year}`,
+    population: pop,
+    tax_multiplier_pf: multPf,
+    tax_multiplier_pg: multPg,
+    expenditure_pc: expPc,
+    total_expenditure: totalExp,
+    debito_netto_pc_chf: debitoPc,
+    debito_totale: debitoTotale,
+    autofinanziamento_chf: autofin,
+    investimenti_netti_chf: invNetti,
+    risultato_ordinario_chf: risOrd,
+    sel_conformity: s.sel_conformity,
+    active_overruns_count: year === 2024 ? 0 : s.active_overruns_count,
+    latest_mm_reference: mmRef,
+  };
+}
+
 /**
  * Restituisce la serie storica della spesa pro capite 2019-2026 per un comune.
  */
@@ -885,12 +980,14 @@ export function getMunicipalityHistory(
     }));
   }
 
-  // Moltiplicatore di scala proporzionale al moltiplicatore fiscale
-  const ratio = m.tax_multiplier_pf / 86.4;
-  return DISTRICT_YEARS.map((y) => ({
-    year: y,
-    amount: Math.round(MEDIA_DISTRETTO_SPESA_HISTORY[y] * ratio),
-  }));
+  return DISTRICT_YEARS.map((y) => {
+    const mult = m.multipliers_history[y]?.pf ?? m.tax_multiplier_pf;
+    const ratio = mult / 86.4;
+    return {
+      year: y,
+      amount: Math.round(MEDIA_DISTRETTO_SPESA_HISTORY[y] * ratio),
+    };
+  });
 }
 
 /**

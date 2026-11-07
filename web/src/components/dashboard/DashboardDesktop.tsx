@@ -3,6 +3,11 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { MunicipalityData } from "@/data/municipalities";
+import {
+  parseFiscalYear,
+  isPreventivoYear,
+  getMunicipalityYearData,
+} from "@/data/municipalities";
 import { MunicipalitiesTable } from "./MunicipalitiesTable";
 import { TerritorialMap } from "./TerritorialMap";
 import { Mca2AnalyticCard } from "./Mca2AnalyticCard";
@@ -11,6 +16,7 @@ import { DistrictTrendLineChart, SectorPerCapitaBarChart } from "@/components/ch
 import { CultPopoverTicket } from "@/components/cult/CultPopoverTicket";
 import { useCivicLang } from "@/lib/i18n-civic";
 import { Download, Ticket, ShieldCheck } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export interface DashboardDesktopProps {
   municipalities: MunicipalityData[];
@@ -84,18 +90,26 @@ export function DashboardDesktop({
     router.push("/open-data");
   }
 
-  // Calcoli grandezze distrettuali
-  const totalPop = municipalities.reduce((acc, m) => acc + m.population, 0);
+  // Calcoli grandezze distrettuali sincronizzati dinamicamente con l'anno selezionato
+  const numericYear = parseFiscalYear(selectedYear);
+  const isPrev = isPreventivoYear(selectedYear);
+
+  const yearMetricsList = municipalities.map((m) => getMunicipalityYearData(m, selectedYear));
+  const totalPop = yearMetricsList.reduce((acc, ym) => acc + ym.population, 0);
   const avgMultiplier = (
-    municipalities.reduce((acc, m) => acc + m.tax_multiplier_pf, 0) / municipalities.length
+    yearMetricsList.reduce((acc, ym) => acc + ym.tax_multiplier_pf, 0) / yearMetricsList.length
   ).toFixed(1);
-  const totalAutofin = municipalities.reduce(
-    (acc, m) => acc + m.summary_30s.autofinanziamento_chf,
+  const totalSpesaDistretto = yearMetricsList.reduce(
+    (acc, ym) => acc + ym.total_expenditure,
     0
   );
-  const avgAutofin = municipalities.length > 0 ? totalAutofin / municipalities.length : 0;
-  const totalDebitoNetto = municipalities.reduce(
-    (acc, m) => acc + m.summary_30s.debito_netto_pc_chf * m.population,
+  const totalAutofin = yearMetricsList.reduce(
+    (acc, ym) => acc + ym.autofinanziamento_chf,
+    0
+  );
+  const avgAutofin = yearMetricsList.length > 0 ? totalAutofin / yearMetricsList.length : 0;
+  const totalDebitoNetto = yearMetricsList.reduce(
+    (acc, ym) => acc + ym.debito_totale,
     0
   );
   const avgDebitoPc = totalPop > 0 ? Math.round(totalDebitoNetto / totalPop) : 0;
@@ -107,13 +121,23 @@ export function DashboardDesktop({
            =================================================================== */}
       <header className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
         <div className="min-w-0">
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-900 text-[11px] font-bold font-mono border border-sky-200">
               <ShieldCheck className="w-3.5 h-3.5 text-[#0F3854]" />
               <span>19 / 19 Comuni</span>
             </span>
             <span className="font-mono text-xs text-slate-600 font-semibold">
-              · {totalPop.toLocaleString("de-CH")} ab. (STATPOP)
+              · {totalPop.toLocaleString("de-CH")} ab. (STATPOP {numericYear})
+            </span>
+            <span
+              className={cn(
+                "font-mono text-xs font-bold px-2.5 py-0.5 rounded-full border",
+                isPrev
+                  ? "bg-amber-50 text-amber-900 border-amber-200"
+                  : "bg-emerald-50 text-emerald-900 border-emerald-200"
+              )}
+            >
+              {isPrev ? "Preventivo 01.2026" : `Consuntivo ${selectedYear}`}
             </span>
           </div>
           <h1 className="text-xl xl:text-2xl font-black tracking-tight text-slate-900 leading-tight">
@@ -176,10 +200,10 @@ export function DashboardDesktop({
           className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between"
           title="Clicca per commutare formato compatto/centesimi esatti"
         >
-          <div className="flex items-center justify-between text-xs font-bold text-slate-600">
-            <span>{t.kpiMultiplierAvg}</span>
-            <span className="inline-flex items-center text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full text-[11px] font-mono font-bold">
-              +0.4%
+          <div className="flex items-center justify-between text-xs font-bold text-slate-600 gap-1">
+            <span className="truncate">{t.kpiMultiplierAvg}</span>
+            <span className="inline-flex items-center text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full text-[11px] font-mono font-bold shrink-0">
+              {isPrev ? "01.2026" : selectedYear}
             </span>
           </div>
           <div className="flex items-baseline justify-between mt-2">
@@ -197,24 +221,28 @@ export function DashboardDesktop({
               />
             </svg>
           </div>
-          <div className="text-[11px] text-slate-500 mt-1">Media ponderata 19 Comuni</div>
+          <div className="text-[11px] text-slate-500 mt-1">
+            Media ponderata 19 Comuni ({selectedYear})
+          </div>
         </div>
 
-        {/* KPI 2: Totale Entrate */}
+        {/* KPI 2: Totale Spese Correnti Distretto */}
         <div
           onClick={() => setExactKpi((prev) => !prev)}
           className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between"
           title="Clicca per commutare formato compatto/centesimi esatti"
         >
-          <div className="flex items-center justify-between text-xs font-bold text-slate-600">
-            <span>{t.kpiTotalRevenue}</span>
-            <span className="inline-flex items-center text-sky-700 bg-sky-50 px-2 py-0.5 rounded-full text-[11px] font-mono font-bold">
-              +0.4%
+          <div className="flex items-center justify-between text-xs font-bold text-slate-600 gap-1">
+            <span className="truncate">Spesa Totale Distretto</span>
+            <span className="inline-flex items-center text-sky-700 bg-sky-50 px-2 py-0.5 rounded-full text-[11px] font-mono font-bold shrink-0">
+              {isPrev ? "Prev." : "Cons."}
             </span>
           </div>
           <div className="flex items-baseline justify-between mt-2">
             <div className="tabular-mca2 text-2xl lg:text-3xl font-extrabold text-slate-950 tracking-tight font-mono">
-              {exactKpi ? "CHF 584'120'000.00" : "CHF 584M"}
+              {exactKpi
+                ? `CHF ${totalSpesaDistretto.toLocaleString("de-CH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                : `CHF ${(totalSpesaDistretto / 1_000_000).toFixed(1)}M`}
             </div>
             <svg className="w-16 h-7" viewBox="0 0 80 32">
               <path
@@ -227,7 +255,9 @@ export function DashboardDesktop({
               />
             </svg>
           </div>
-          <div className="text-[11px] text-slate-500 mt-1">Consuntivi MCA2 certificati</div>
+          <div className="text-[11px] text-slate-500 mt-1">
+            {isPrev ? "Preventivo consolidato 01.2026" : `Consuntivo consolidato ${selectedYear}`}
+          </div>
         </div>
 
         {/* KPI 3: Autofinanziamento */}
@@ -236,10 +266,10 @@ export function DashboardDesktop({
           className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between"
           title="Clicca per commutare formato compatto/centesimi esatti"
         >
-          <div className="flex items-center justify-between text-xs font-bold text-slate-600">
-            <span>{t.kpiAutofinancingAvg}</span>
-            <span className="inline-flex items-center text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full text-[11px] font-mono font-bold">
-              -1.2%
+          <div className="flex items-center justify-between text-xs font-bold text-slate-600 gap-1">
+            <span className="truncate">{t.kpiAutofinancingAvg}</span>
+            <span className="inline-flex items-center text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full text-[11px] font-mono font-bold shrink-0">
+              {isPrev ? "Prev." : "Cons."}
             </span>
           </div>
           <div className="flex items-baseline justify-between mt-2">
@@ -259,7 +289,9 @@ export function DashboardDesktop({
               />
             </svg>
           </div>
-          <div className="text-[11px] text-slate-500 mt-1">Capacità d'investimento autonoma</div>
+          <div className="text-[11px] text-slate-500 mt-1">
+            Capacità d&apos;investimento autonoma ({selectedYear})
+          </div>
         </div>
 
         {/* KPI 4: Debito Pro Capite */}
@@ -268,10 +300,10 @@ export function DashboardDesktop({
           className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between"
           title="Clicca per commutare formato compatto/centesimi esatti"
         >
-          <div className="flex items-center justify-between text-xs font-bold text-slate-600">
-            <span>{t.kpiDebtPerCapitaAvg}</span>
-            <span className="inline-flex items-center text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full text-[11px] font-mono font-bold">
-              -1.2%
+          <div className="flex items-center justify-between text-xs font-bold text-slate-600 gap-1">
+            <span className="truncate">{t.kpiDebtPerCapitaAvg}</span>
+            <span className="inline-flex items-center text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full text-[11px] font-mono font-bold shrink-0">
+              {isPrev ? "Prev." : "Cons."}
             </span>
           </div>
           <div className="flex items-baseline justify-between mt-2">
@@ -291,7 +323,9 @@ export function DashboardDesktop({
               />
             </svg>
           </div>
-          <div className="text-[11px] text-slate-500 mt-1">Soglia SEL Ticino &lt; CHF 5'000</div>
+          <div className="text-[11px] text-slate-500 mt-1">
+            Soglia SEL Ticino &lt; CHF 5&apos;000 ({selectedYear})
+          </div>
         </div>
       </section>
 
@@ -314,6 +348,7 @@ export function DashboardDesktop({
             <DistrictTrendLineChart
               municipalities={selectedMunicipalities}
               showDistrictAverage={true}
+              selectedYear={selectedYear}
               height="100%"
             />
           </div>
@@ -333,6 +368,7 @@ export function DashboardDesktop({
           <div className="flex-1 w-full min-h-[280px]">
             <SectorPerCapitaBarChart
               municipalities={selectedMunicipalities}
+              selectedYear={selectedYear}
               height="100%"
             />
           </div>
@@ -380,6 +416,7 @@ export function DashboardDesktop({
         <div className="xl:col-span-5 flex flex-col min-h-[460px]">
           <Mca2AnalyticCard
             municipality={activeMunicipality}
+            selectedYear={selectedYear}
             className="h-full"
           />
         </div>

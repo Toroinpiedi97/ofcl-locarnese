@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { MunicipalityData } from "@/data/municipalities";
+import { AVAILABLE_FISCAL_YEARS } from "@/data/municipalities";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Plus, X, Calendar, Filter } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -86,31 +87,40 @@ export function GlobalFilterBar({
           <span>Filtro Globale:</span>
         </div>
 
-        {/* Selettore Anno con Pillola Satinata */}
+        {/* Selettore Anno con Pillola Satinata (2024, 2025, 01.2026 Preventivo) */}
         <div className="flex items-center gap-1 bg-slate-100/90 p-1 rounded-xl border border-slate-200/80">
           <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5 shrink-0" />
-          {["2024", "2025", "2026"].map((yr) => {
+          {AVAILABLE_FISCAL_YEARS.map((yr) => {
             const isSel = selectedYear === yr;
+            const isPrev = yr.includes("2026");
             return (
               <button
                 key={yr}
                 type="button"
                 onClick={() => onSelectYear(yr)}
                 className={cn(
-                  "px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer font-mono",
+                  "px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer font-mono flex items-center gap-1",
                   isSel
                     ? "bg-white text-[#0F3854] shadow-xs border border-slate-200"
                     : "text-slate-600 hover:text-slate-900"
                 )}
+                title={isPrev ? "Preventivo e situazione al 01.2026" : `Consuntivo approvato ${yr}`}
               >
-                {yr}
+                <span>{yr}</span>
+                {isPrev && (
+                  <span className="text-[9px] px-1 py-0.2 rounded bg-amber-100 text-amber-900 font-sans font-medium">
+                    Prev.
+                  </span>
+                )}
               </button>
             );
           })}
         </div>
 
         <span className="text-[11px] text-slate-500 hidden xl:inline">
-          (Sincronizza grafici, indicatori e tabelle)
+          {selectedYear.includes("2026")
+            ? "(Dati di Preventivo e moltiplicatori al 01.2026)"
+            : `(Consuntivi certificati ${selectedYear} su tutti i grafici e tabelle)`}
         </span>
       </div>
 

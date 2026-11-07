@@ -24,12 +24,14 @@ import { cn } from "@/lib/utils";
 
 interface SectorPerCapitaBarChartProps {
   municipalities: MunicipalityData[]; // Comuni selezionati nel filtro globale
+  selectedYear?: string;
   height?: number | string;
   className?: string;
 }
 
 export function SectorPerCapitaBarChart({
   municipalities,
+  selectedYear = "2024",
   height = "100%",
   className,
 }: SectorPerCapitaBarChartProps) {
@@ -41,10 +43,10 @@ export function SectorPerCapitaBarChart({
 
   const currentMunicipality = municipalities[activeMuniIndex] || municipalities[0];
 
-  // Calcola l'albero MCA2 completo a 4 livelli per il comune attivo
+  // Calcola l'albero MCA2 completo a 4 livelli per il comune attivo per l'anno selezionato
   const hierarchyTree = useMemo(() => {
-    return getMunicipalityHierarchyTree(currentMunicipality);
-  }, [currentMunicipality]);
+    return getMunicipalityHierarchyTree(currentMunicipality, selectedYear);
+  }, [currentMunicipality, selectedYear]);
 
   // Risolve i nodi visibili in base al percorso di drilldown corrente
   const { currentNodes, parentTitle, breadcrumb } = useMemo(() => {
@@ -186,6 +188,19 @@ export function SectorPerCapitaBarChart({
               ))}
             </div>
           )}
+
+          {/* Badge Anno Attivo */}
+          <span
+            className={cn(
+              "font-mono text-[10px] font-bold px-2 py-0.5 rounded-full border hidden sm:inline-flex items-center gap-1",
+              selectedYear.includes("2026")
+                ? "bg-amber-50 text-amber-900 border-amber-200"
+                : "bg-emerald-50 text-emerald-900 border-emerald-200"
+            )}
+          >
+            <span>{selectedYear}</span>
+            <span>{selectedYear.includes("2026") ? "Prev." : "Cons."}</span>
+          </span>
 
           {/* Download Popover */}
           <Popover>

@@ -9,6 +9,7 @@ import {
   Map as MapIcon,
 } from "lucide-react";
 import type { MunicipalityData } from "@/data/municipalities";
+import { getMunicipalityYearData, AVAILABLE_FISCAL_YEARS } from "@/data/municipalities";
 import { formatChfCompact, cn } from "@/lib/utils";
 import { useCivicLang } from "@/lib/i18n-civic";
 
@@ -63,27 +64,26 @@ export function MunicipalitiesTable({
     );
   });
 
-  // Ordinamento con supporto a Debito Totale
+  // Ordinamento con supporto a Debito Totale basato sull'anno selezionato
   const sorted = [...filtered].sort((a, b) => {
+    const dataA = getMunicipalityYearData(a, selectedYear);
+    const dataB = getMunicipalityYearData(b, selectedYear);
     let diff = 0;
     switch (sortField) {
       case "name":
         diff = a.name.localeCompare(b.name);
         break;
       case "multiplier_pf":
-        diff = a.tax_multiplier_pf - b.tax_multiplier_pf;
+        diff = dataA.tax_multiplier_pf - dataB.tax_multiplier_pf;
         break;
       case "debito_pc":
-        diff = a.summary_30s.debito_netto_pc_chf - b.summary_30s.debito_netto_pc_chf;
+        diff = dataA.debito_netto_pc_chf - dataB.debito_netto_pc_chf;
         break;
-      case "debito_totale": {
-        const debA = a.summary_30s.debito_netto_pc_chf * a.population;
-        const debB = b.summary_30s.debito_netto_pc_chf * b.population;
-        diff = debA - debB;
+      case "debito_totale":
+        diff = dataA.debito_totale - dataB.debito_totale;
         break;
-      }
       case "autofin":
-        diff = a.summary_30s.autofinanziamento_chf - b.summary_30s.autofinanziamento_chf;
+        diff = dataA.autofinanziamento_chf - dataB.autofinanziamento_chf;
         break;
     }
     return sortDirection === "asc" ? diff : -diff;
@@ -108,28 +108,39 @@ export function MunicipalitiesTable({
         {/* Intestazione Card Tabella Comparativa con Filtro Anno integrato */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-200/80 gap-3">
           <div className="flex items-center gap-2.5 flex-wrap">
-            <h2 className="text-sm font-bold text-slate-900 tracking-tight">
-              Tabella Comparativa Comuni ({selectedYear})
+            <h2 className="text-sm font-bold text-slate-900 tracking-tight flex items-center gap-1.5">
+              <span>Tabella Comparativa Comuni</span>
+              <span className="font-mono text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 border border-slate-200">
+                {selectedYear.includes("2026") ? "01.2026 (Prev.)" : `Cons. ${selectedYear}`}
+              </span>
             </h2>
 
             {/* Filtro Anno diretto */}
             {onSelectYear && (
               <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs">
-                {["2024", "2025", "2026"].map((yr) => (
-                  <button
-                    key={yr}
-                    type="button"
-                    onClick={() => onSelectYear(yr)}
-                    className={cn(
-                      "px-2 py-0.5 rounded-md font-bold transition-all cursor-pointer text-[10px] font-mono",
-                      selectedYear === yr
-                        ? "bg-white text-[#0F3854] shadow-xs"
-                        : "text-slate-500 hover:text-slate-900"
-                    )}
-                  >
-                    {yr}
-                  </button>
-                ))}
+                {AVAILABLE_FISCAL_YEARS.map((yr) => {
+                  const isSel = selectedYear === yr;
+                  const isPrev = yr.includes("2026");
+                  return (
+                    <button
+                      key={yr}
+                      type="button"
+                      onClick={() => onSelectYear(yr)}
+                      className={cn(
+                        "px-2 py-0.5 rounded-md font-bold transition-all cursor-pointer text-[10px] font-mono flex items-center gap-0.5",
+                        isSel
+                          ? "bg-white text-[#0F3854] shadow-xs"
+                          : "text-slate-500 hover:text-slate-900"
+                      )}
+                      title={isPrev ? "Preventivo 01.2026" : `Consuntivo ${yr}`}
+                    >
+                      <span>{yr}</span>
+                      {isPrev && (
+                        <span className="text-[8px] text-amber-700 font-sans font-medium">P</span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             )}
 
@@ -239,7 +250,7 @@ export function MunicipalitiesTable({
             <tbody className="divide-y divide-slate-100 font-medium">
               {displayedRows.map((m) => {
                 const isSelected = m.ust_code === selectedUstCode;
-                const debitoTotale = m.summary_30s.debito_netto_pc_chf * m.population;
+                const yearData = getMunicipalityYearData(m, selectedYear);
 
                 return (
                   <tr
@@ -270,38 +281,38 @@ export function MunicipalitiesTable({
                             {m.name}
                           </span>
                           <span className="text-[10px] text-slate-500">
-                            {m.population.toLocaleString("de-CH")} ab.
+                            {yearData.population.toLocaleString("de-CH")} ab.
                           </span>
                         </div>
                       </div>
                     </td>
 
-                    {/* 2. Moltiplicatore */}
+                    {/* 2. Moltiplicatore Anno Selezionato */}
                     <td className="py-2.5 px-2 text-right">
                       <span className="font-mono font-bold text-slate-900 tabular-nums">
-                        {m.tax_multiplier_pf}%
+                        {yearData.tax_multiplier_pf.toFixed(1)}%
                       </span>
                       {m.has_differentiated_pg && (
                         <span className="text-[9px] text-amber-800 block font-mono">
-                          PG: {m.tax_multiplier_pg}%
+                          PG: {yearData.tax_multiplier_pg.toFixed(1)}%
                         </span>
                       )}
                     </td>
 
-                    {/* 3. Debito Netto Totale (Nuovo requisito convivenza) */}
+                    {/* 3. Debito Netto Totale Anno Selezionato */}
                     <td className="py-2.5 px-2 text-right font-mono tabular-nums text-slate-900 font-semibold">
-                      {formatChfCompact(debitoTotale)}
+                      {formatChfCompact(yearData.debito_totale)}
                     </td>
 
-                    {/* 4. Debito pro capite */}
+                    {/* 4. Debito pro capite Anno Selezionato */}
                     <td className="py-2.5 px-2 text-right font-mono tabular-nums text-slate-700">
-                      {Math.round(m.summary_30s.debito_netto_pc_chf).toLocaleString("de-CH")}{" "}
+                      {Math.round(yearData.debito_netto_pc_chf).toLocaleString("de-CH")}{" "}
                       <span className="text-[10px] text-slate-500">CHF</span>
                     </td>
 
-                    {/* 5. Autofinanziamento */}
+                    {/* 5. Autofinanziamento Anno Selezionato */}
                     <td className="py-2.5 px-2 text-right font-mono font-bold tabular-nums text-emerald-700">
-                      {formatChfCompact(m.summary_30s.autofinanziamento_chf)}
+                      {formatChfCompact(yearData.autofinanziamento_chf)}
                     </td>
 
                     {/* 6. Azione Scheda MCA2 */}

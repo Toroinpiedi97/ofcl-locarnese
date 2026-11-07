@@ -11,20 +11,26 @@ import {
   TrendingDown,
 } from "lucide-react";
 import type { MunicipalityData } from "@/data/municipalities";
+import { getMunicipalityYearData } from "@/data/municipalities";
 import { IndicatorsSelBar } from "./IndicatorsSelBar";
 import { formatChfCompact, cn } from "@/lib/utils";
 
 export interface Mca2AnalyticCardProps {
   municipality: MunicipalityData;
+  selectedYear?: string;
   className?: string;
 }
 
-export function Mca2AnalyticCard({ municipality, className }: Mca2AnalyticCardProps) {
+export function Mca2AnalyticCard({
+  municipality,
+  selectedYear = "2024",
+  className,
+}: Mca2AnalyticCardProps) {
   const router = useRouter();
-  const s = municipality.summary_30s;
-  const isAvanzo = s.risultato_ordinario_chf >= 0;
-  const hasOverruns = (s.active_overruns_count ?? 0) > 0;
-  const debitoTotale = s.debito_netto_pc_chf * municipality.population;
+  const yearData = getMunicipalityYearData(municipality, selectedYear);
+  const isAvanzo = yearData.risultato_ordinario_chf >= 0;
+  const hasOverruns = (yearData.active_overruns_count ?? 0) > 0;
+  const debitoTotale = yearData.debito_totale;
 
   function handlePrefetch() {
     router.prefetch(`/comuni/${municipality.slug}`);
@@ -34,15 +40,15 @@ export function Mca2AnalyticCard({ municipality, className }: Mca2AnalyticCardPr
     const csvContent =
       "\uFEFF" +
       [
-        "Codice_UST;Comune;Circolo;Abitanti;Moltiplicatore_PF;Risultato_Ordinario_CHF;Autofinanziamento_CHF;Investimenti_Netti_CHF;Debito_Netto_PC_CHF;Debito_Totale_CHF;Conformita_SEL;Atto_Riferimento",
-        `${municipality.ust_code};"${municipality.name}";"${municipality.circle}";${municipality.population};${municipality.tax_multiplier_pf};${s.risultato_ordinario_chf};${s.autofinanziamento_chf};${s.investimenti_netti_chf};${s.debito_netto_pc_chf};${debitoTotale};"${s.sel_conformity}";"${s.latest_mm_reference}"`,
+        "Codice_UST;Comune;Circolo;Anno_Fiscale;Tipo_Atto;Abitanti;Moltiplicatore_PF;Risultato_Ordinario_CHF;Autofinanziamento_CHF;Investimenti_Netti_CHF;Debito_Netto_PC_CHF;Debito_Totale_CHF;Conformita_SEL;Atto_Riferimento",
+        `${municipality.ust_code};"${municipality.name}";"${municipality.circle}";"${selectedYear}";"${yearData.isPreventivo ? "PREVENTIVO" : "CONSUNTIVO"}";${yearData.population};${yearData.tax_multiplier_pf};${yearData.risultato_ordinario_chf};${yearData.autofinanziamento_chf};${yearData.investimenti_netti_chf};${yearData.debito_netto_pc_chf};${debitoTotale};"${yearData.sel_conformity}";"${yearData.latest_mm_reference}"`,
       ].join("\r\n");
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `ofcl-scheda-mca2-${municipality.slug}.csv`;
+    link.download = `ofcl-scheda-mca2-${municipality.slug}-${selectedYear}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -61,19 +67,29 @@ export function Mca2AnalyticCard({ municipality, className }: Mca2AnalyticCardPr
         {/* 1. Header Scheda: Rigoroso, minimale, senza gradienti pesanti */}
         <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-200/80">
           <div>
-            <div className="flex items-center gap-1.5 mb-1">
+            <div className="flex items-center gap-1.5 mb-1 flex-wrap">
               <span className="font-mono text-[10px] font-bold px-1.5 py-0.2 rounded bg-slate-200 text-slate-800">
                 UST {municipality.ust_code}
               </span>
               <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
                 Scheda Analitica MCA2
               </span>
+              <span
+                className={cn(
+                  "font-mono text-[10px] font-bold px-2 py-0.2 rounded-full border",
+                  yearData.isPreventivo
+                    ? "bg-amber-50 text-amber-900 border-amber-200"
+                    : "bg-emerald-50 text-emerald-900 border-emerald-200"
+                )}
+              >
+                {yearData.periodLabel}
+              </span>
             </div>
             <h3 className="text-lg font-black tracking-tight text-slate-900 leading-tight">
               {municipality.name}
             </h3>
             <div className="text-xs text-slate-500 mt-0.5">
-              Circolo di {municipality.circle} · {municipality.population.toLocaleString("de-CH")} ab.
+              Circolo di {municipality.circle} · {yearData.population.toLocaleString("de-CH")} ab.
             </div>
           </div>
 
@@ -82,11 +98,11 @@ export function Mca2AnalyticCard({ municipality, className }: Mca2AnalyticCardPr
               Moltiplicatore
             </span>
             <div className="font-mono text-xl font-black text-[#0F3854]">
-              {municipality.tax_multiplier_pf}%
+              {yearData.tax_multiplier_pf.toFixed(1)}%
             </div>
             {municipality.has_differentiated_pg && (
               <span className="text-[9px] font-mono text-amber-800 block">
-                PG: {municipality.tax_multiplier_pg}%
+                PG: {yearData.tax_multiplier_pg.toFixed(1)}%
               </span>
             )}
           </div>
@@ -127,7 +143,7 @@ export function Mca2AnalyticCard({ municipality, className }: Mca2AnalyticCardPr
               )}
             >
               {isAvanzo ? "+" : ""}
-              {formatChfCompact(s.risultato_ordinario_chf)}
+              {formatChfCompact(yearData.risultato_ordinario_chf)}
             </div>
             <div className="text-[10px] text-slate-500 mt-0.5">
               {isAvanzo ? "Avanzo d'esercizio" : "Disavanzo"}
@@ -138,7 +154,7 @@ export function Mca2AnalyticCard({ municipality, className }: Mca2AnalyticCardPr
           <div className="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200/70">
             <div className="text-slate-500 text-[10px]">Autofinanziamento</div>
             <div className="font-mono font-bold text-sm tabular-nums text-slate-900 mt-1">
-              {formatChfCompact(s.autofinanziamento_chf)}
+              {formatChfCompact(yearData.autofinanziamento_chf)}
             </div>
             <div className="text-[10px] text-slate-500 mt-0.5">Risorse proprie nette</div>
           </div>
@@ -147,7 +163,7 @@ export function Mca2AnalyticCard({ municipality, className }: Mca2AnalyticCardPr
           <div className="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200/70">
             <div className="text-slate-500 text-[10px]">Debito pro capite</div>
             <div className="font-mono font-bold text-sm tabular-nums text-slate-900 mt-1">
-              CHF {Math.round(s.debito_netto_pc_chf).toLocaleString("de-CH")}
+              CHF {Math.round(yearData.debito_netto_pc_chf).toLocaleString("de-CH")}
             </div>
             <div className="text-[10px] text-slate-500 mt-0.5">Soglia SEL &lt; 5k</div>
           </div>
@@ -165,7 +181,7 @@ export function Mca2AnalyticCard({ municipality, className }: Mca2AnalyticCardPr
         {/* 4. Indicatori Finanziari SEL Cantone Ticino */}
         <div className="pt-2 border-t border-slate-200/70">
           <IndicatorsSelBar
-            scoreConform={s.sel_conformity}
+            scoreConform={yearData.sel_conformity}
             compact={true}
           />
         </div>
@@ -177,7 +193,7 @@ export function Mca2AnalyticCard({ municipality, className }: Mca2AnalyticCardPr
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
               <span>Quadratura MCA2 Certificata</span>
             </span>
-            <span className="font-mono text-[10px] text-slate-500">{s.latest_mm_reference}</span>
+            <span className="font-mono text-[10px] text-slate-500">{yearData.latest_mm_reference}</span>
           </div>
           <div className="text-[11px] text-slate-500 leading-tight">
             Tutti i conti CE, CI e Bilancio verificati e conformi alle direttive SEL (Art. 192 LOC).

@@ -3,6 +3,11 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import type { MunicipalityData } from "@/data/municipalities";
+import {
+  AVAILABLE_FISCAL_YEARS,
+  getMunicipalityYearData,
+  parseFiscalYear,
+} from "@/data/municipalities";
 import { QuickCard30s } from "./QuickCard30s";
 import { CreditAlertBanner } from "./CreditAlertBanner";
 import { useCivicLang } from "@/lib/i18n-civic";
@@ -15,6 +20,7 @@ import {
   Building2,
   AlertTriangle,
   ShieldCheck,
+  Calendar,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +31,7 @@ export interface DashboardMobileProps {
 export function DashboardMobile({ municipalities }: DashboardMobileProps) {
   const { lang, setLang } = useCivicLang();
   const [filterQuery, setFilterQuery] = useState("");
+  const [selectedYear, setSelectedYear] = useState<string>("2024");
   const [activeMunicipality, setActiveMunicipality] = useState<MunicipalityData | null>(null);
 
   // Filtro Comuni
@@ -102,6 +109,41 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
         </div>
       </div>
 
+      {/* Selettore Anno Mobile Compatto (2024, 2025, 01.2026) */}
+      <div className="flex items-center justify-between p-2 px-3 rounded-2xl ofl-card shadow-xs">
+        <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
+          <Calendar className="w-3.5 h-3.5 text-sky-700" />
+          <span>Esercizio:</span>
+        </div>
+        <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-xl border border-slate-200">
+          {AVAILABLE_FISCAL_YEARS.map((yr) => {
+            const isSel = selectedYear === yr;
+            const isPrev = yr.includes("2026");
+            return (
+              <button
+                key={yr}
+                type="button"
+                onClick={() => setSelectedYear(yr)}
+                className={cn(
+                  "px-2.5 py-1 rounded-lg text-xs font-bold transition-all font-mono flex items-center gap-1 cursor-pointer",
+                  isSel
+                    ? "bg-white text-[#0F3854] shadow-xs border border-slate-200"
+                    : "text-slate-500 hover:text-slate-900"
+                )}
+                title={isPrev ? "Preventivo 01.2026" : `Consuntivo ${yr}`}
+              >
+                <span>{yr}</span>
+                {isPrev && (
+                  <span className="text-[9px] px-1 py-0.2 rounded bg-amber-100 text-amber-900 font-sans font-medium">
+                    Prev.
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Barra di ricerca rapida con target comodo */}
       <div className="relative">
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -117,8 +159,9 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
       {/* Lista verticale card con tap target >= 44px */}
       <div className="space-y-2.5" role="list">
         {filtered.map((m) => {
-          const isAvanzo = m.summary_30s.risultato_ordinario_chf >= 0;
-          const hasOverruns = (m.summary_30s.active_overruns_count ?? 0) > 0;
+          const yearData = getMunicipalityYearData(m, selectedYear);
+          const isAvanzo = yearData.risultato_ordinario_chf >= 0;
+          const hasOverruns = (yearData.active_overruns_count ?? 0) > 0;
 
           return (
             <button
@@ -133,7 +176,7 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
                     {m.ust_code}
                   </span>
                   <span className="text-xs text-slate-600 truncate">
-                    Circolo di {m.circle}
+                    Circolo di {m.circle} · {yearData.population.toLocaleString("de-CH")} ab.
                   </span>
                 </div>
                 <div className="text-sm font-bold text-slate-950 truncate mt-0.5">
@@ -145,10 +188,10 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
               <div className="flex items-center gap-3 shrink-0">
                 <div className="text-right">
                   <div className="font-mono text-sm font-bold tabular-nums text-[#0F3854]">
-                    {m.tax_multiplier_pf}%
+                    {yearData.tax_multiplier_pf.toFixed(1)}%
                   </div>
                   <div className="text-[10px] font-mono text-slate-500 font-medium">
-                    PF 2026
+                    PF {selectedYear}
                   </div>
                 </div>
 
@@ -166,7 +209,7 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
                     )}
                     <span>
                       {isAvanzo ? "+" : ""}
-                      {(m.summary_30s.risultato_ordinario_chf / 1000).toFixed(0)}k
+                      {(yearData.risultato_ordinario_chf / 1000).toFixed(0)}k
                     </span>
                   </div>
                   <div className="text-[10px] text-slate-500">
@@ -230,9 +273,12 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
               </button>
             </div>
 
-            {/* Scheda dei 30 Secondi completa */}
+            {/* Scheda dei 30 Secondi completa con anno dinamico */}
             <div id="drawer-title">
-              <QuickCard30s municipality={activeMunicipality} year={2025} />
+              <QuickCard30s
+                municipality={activeMunicipality}
+                year={parseFiscalYear(selectedYear)}
+              />
             </div>
 
             {/* Smart Alert Sorpassi se presenti */}

@@ -8,6 +8,7 @@ import {
   DISTRICT_YEARS,
   MEDIA_DISTRETTO_SPESA_HISTORY,
   getMunicipalityHistory,
+  parseFiscalYear,
 } from "@/data/municipalities";
 import { formatCompactNumber } from "@/lib/utils";
 import { exportSvgElement, type ExportFormat } from "@/lib/chart-export";
@@ -18,6 +19,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 interface DistrictTrendLineChartProps {
   municipalities: MunicipalityData[]; // Da 1 a 4 comuni selezionati
   showDistrictAverage?: boolean;
+  selectedYear?: string;
   height?: number | string;
   className?: string;
 }
@@ -25,6 +27,7 @@ interface DistrictTrendLineChartProps {
 export function DistrictTrendLineChart({
   municipalities,
   showDistrictAverage = true,
+  selectedYear,
   height = "100%",
   className,
 }: DistrictTrendLineChartProps) {
@@ -101,8 +104,15 @@ export function DistrictTrendLineChart({
       <div className="flex items-center justify-between pb-2 mb-1 border-b border-slate-200/80">
         <div className="flex items-center gap-2 flex-wrap text-xs">
           <span className="font-bold text-slate-700">Serie Storica (2019–2026)</span>
-          <span className="text-[11px] text-slate-500 font-mono">
-            · Unità: CHF pro capite (k = migliaia)
+          {selectedYear && (
+            <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-100 text-[#0F3854] border border-sky-200">
+              {selectedYear.includes("2026")
+                ? "Evidenziato: 01.2026 (Prev.)"
+                : `Evidenziato: ${selectedYear} (Cons.)`}
+            </span>
+          )}
+          <span className="text-[11px] text-slate-500 font-mono hidden sm:inline">
+            · CHF pro capite (k = 1&apos;000)
           </span>
         </div>
 
@@ -183,6 +193,25 @@ export function DistrictTrendLineChart({
             max: "auto",
             stacked: false,
           }}
+          markers={
+            selectedYear
+              ? [
+                  {
+                    axis: "x" as const,
+                    value: String(parseFiscalYear(selectedYear)),
+                    lineStyle: {
+                      stroke: "#0284c7",
+                      strokeWidth: 2,
+                      strokeDasharray: "4 4",
+                    },
+                    legend: selectedYear.includes("2026") ? "01.2026 Prev." : `${selectedYear} Cons.`,
+                    legendOrientation: "vertical" as const,
+                    legendPosition: "top-left" as const,
+                    textStyle: { fill: "#0369a1", fontSize: 10, fontWeight: 700 },
+                  },
+                ]
+              : undefined
+          }
           curve="monotoneX"
           axisTop={null}
           axisRight={null}

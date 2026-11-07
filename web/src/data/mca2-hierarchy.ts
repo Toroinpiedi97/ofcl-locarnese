@@ -7,6 +7,7 @@
  */
 
 import type { MunicipalityData } from "./municipalities";
+import { parseFiscalYear, getMunicipalityExpenditurePc } from "./municipalities";
 
 export interface Mca2HierarchyNode {
   code: string;
@@ -431,12 +432,19 @@ const MCA2_BLUEPRINT: TemplateSectorNode[] = [
 
 /**
  * Calcola l'albero gerarchico MCA2 completo a 4 livelli per un dato comune.
- * I valori pro capite e totali rispecchiano fedelmente il bilancio certificato del comune.
+ * I valori pro capite e totali rispecchiano fedelmente il bilancio certificato del comune
+ * per l'esercizio selezionato (Consuntivo o Preventivo).
  */
-export function getMunicipalityHierarchyTree(municipality: MunicipalityData): Mca2HierarchyNode[] {
-  // Spesa corrente totale di riferimento desunta da moltiplicatore e popolazione
-  const pop = Math.max(municipality.population, 100);
-  const baseSpesaPc = Math.round(1800 * (municipality.tax_multiplier_pf / 86.4));
+export function getMunicipalityHierarchyTree(
+  municipality: MunicipalityData,
+  yearStrOrNum: string | number = "2024"
+): Mca2HierarchyNode[] {
+  const numericYear =
+    typeof yearStrOrNum === "number" ? yearStrOrNum : parseFiscalYear(yearStrOrNum);
+  const pop =
+    municipality.population_history[numericYear] ??
+    Math.max(municipality.population, 100);
+  const baseSpesaPc = getMunicipalityExpenditurePc(municipality, numericYear);
   const totalSpesaComune = baseSpesaPc * pop;
 
   return MCA2_BLUEPRINT.map((sector) => {
