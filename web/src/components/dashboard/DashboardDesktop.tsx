@@ -196,8 +196,17 @@ export function DashboardDesktop({
       >
         {/* KPI 1: Moltiplicatore */}
         <div
+          role="button"
+          tabIndex={0}
           onClick={() => setExactKpi((prev) => !prev)}
-          className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between min-w-0"
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              setExactKpi((prev) => !prev);
+            }
+          }}
+          aria-pressed={exactKpi}
+          className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between min-w-0 focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50"
           title="Clicca per commutare formato compatto/centesimi esatti"
         >
           <div className="flex items-center justify-between text-xs font-bold text-slate-600 gap-1 min-w-0">
@@ -210,7 +219,7 @@ export function DashboardDesktop({
             <div className="tabular-mca2 text-2xl lg:text-3xl font-extrabold text-slate-950 tracking-tight font-mono truncate">
               {avgMultiplier}%
             </div>
-            <svg className="w-16 h-7 shrink-0" viewBox="0 0 80 32">
+            <svg aria-hidden="true" className="w-16 h-7 shrink-0" viewBox="0 0 80 32">
               <path
                 className="sparkline-path"
                 d="M 2 24 Q 20 28 40 18 T 78 6"
@@ -228,8 +237,17 @@ export function DashboardDesktop({
 
         {/* KPI 2: Totale Spese Correnti Distretto */}
         <div
+          role="button"
+          tabIndex={0}
           onClick={() => setExactKpi((prev) => !prev)}
-          className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between min-w-0"
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              setExactKpi((prev) => !prev);
+            }
+          }}
+          aria-pressed={exactKpi}
+          className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between min-w-0 focus:outline-hidden focus:ring-2 focus:ring-sky-500/50"
           title="Clicca per commutare formato compatto/centesimi esatti"
         >
           <div className="flex items-center justify-between text-xs font-bold text-slate-600 gap-1 min-w-0">
@@ -244,7 +262,7 @@ export function DashboardDesktop({
                 ? `CHF ${totalSpesaDistretto.toLocaleString("de-CH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                 : `CHF ${(totalSpesaDistretto / 1_000_000).toFixed(1)}M`}
             </div>
-            <svg className="w-16 h-7 shrink-0" viewBox="0 0 80 32">
+            <svg aria-hidden="true" className="w-16 h-7 shrink-0" viewBox="0 0 80 32">
               <path
                 className="sparkline-path"
                 d="M 2 26 Q 20 18 40 22 T 78 8"
@@ -262,8 +280,17 @@ export function DashboardDesktop({
 
         {/* KPI 3: Autofinanziamento */}
         <div
+          role="button"
+          tabIndex={0}
           onClick={() => setExactKpi((prev) => !prev)}
-          className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between min-w-0"
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              setExactKpi((prev) => !prev);
+            }
+          }}
+          aria-pressed={exactKpi}
+          className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between min-w-0 focus:outline-hidden focus:ring-2 focus:ring-cyan-500/50"
           title="Clicca per commutare formato compatto/centesimi esatti"
         >
           <div className="flex items-center justify-between text-xs font-bold text-slate-600 gap-1 min-w-0">
@@ -278,7 +305,7 @@ export function DashboardDesktop({
                 ? `CHF ${avgAutofin.toLocaleString("de-CH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                 : `CHF ${(avgAutofin / 1_000_000).toFixed(1)}M`}
             </div>
-            <svg className="w-16 h-7 shrink-0" viewBox="0 0 80 32">
+            <svg aria-hidden="true" className="w-16 h-7 shrink-0" viewBox="0 0 80 32">
               <path
                 className="sparkline-path"
                 d="M 2 10 Q 20 8 40 18 T 78 24"
@@ -296,8 +323,17 @@ export function DashboardDesktop({
 
         {/* KPI 4: Debito Pro Capite */}
         <div
+          role="button"
+          tabIndex={0}
           onClick={() => setExactKpi((prev) => !prev)}
-          className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between min-w-0"
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              setExactKpi((prev) => !prev);
+            }
+          }}
+          aria-pressed={exactKpi}
+          className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between min-w-0 focus:outline-hidden focus:ring-2 focus:ring-amber-500/50"
           title="Clicca per commutare formato compatto/centesimi esatti"
         >
           <div className="flex items-center justify-between text-xs font-bold text-slate-600 gap-1 min-w-0">
@@ -312,7 +348,7 @@ export function DashboardDesktop({
                 ? `CHF ${avgDebitoPc.toLocaleString("de-CH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                 : `CHF ${avgDebitoPc.toLocaleString("de-CH")}`}
             </div>
-            <svg className="w-16 h-7 shrink-0" viewBox="0 0 80 32">
+            <svg aria-hidden="true" className="w-16 h-7 shrink-0" viewBox="0 0 80 32">
               <path
                 className="sparkline-path"
                 d="M 2 8 Q 25 14 45 20 T 78 26"

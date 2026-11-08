@@ -25,6 +25,7 @@
     {
       "name": "bilanci_mca2",
       "path": "bilanci_mca2.csv",
+      "profile": "tabular-data-resource",
       "format": "csv",
       "mediatype": "text/csv",
       "encoding": "utf-8",
@@ -88,6 +89,7 @@
     {
       "name": "indicatori_sel",
       "path": "indicatori_sel.csv",
+      "profile": "tabular-data-resource",
       "format": "csv",
       "mediatype": "text/csv",
       "encoding": "utf-8",
@@ -135,6 +137,7 @@
     {
       "name": "tariffe_sussidi_comunali",
       "path": "tariffe_sussidi_comunali.csv",
+      "profile": "tabular-data-resource",
       "format": "csv",
       "mediatype": "text/csv",
       "encoding": "utf-8",

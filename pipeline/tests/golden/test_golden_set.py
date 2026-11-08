@@ -66,6 +66,7 @@ def test_golden_brione_consuntivo_2025_exact_match() -> None:
         for metric, exp_val in exp_ce.items():
             assert metric in rg_cells, f"Metrica mancante nel Riassunto: {metric}"
             extracted_val = rg_cells[metric].amount_chf
+            assert extracted_val is not None
             expected_decimal = Decimal(exp_val)
             delta = abs(extracted_val - expected_decimal)
             assert delta == Decimal("0.00"), f"Errore centesimale su {metric}: estratto {extracted_val} != atteso {expected_decimal}"
@@ -74,6 +75,7 @@ def test_golden_brione_consuntivo_2025_exact_match() -> None:
         for metric, exp_val in exp_ci.items():
             assert metric in rg_cells, f"Metrica mancante nel Riassunto CI: {metric}"
             extracted_val = rg_cells[metric].amount_chf
+            assert extracted_val is not None
             expected_decimal = Decimal(exp_val)
             delta = abs(extracted_val - expected_decimal)
             assert delta == Decimal("0.00"), f"Errore centesimale su {metric}: estratto {extracted_val} != atteso {expected_decimal}"
@@ -82,6 +84,7 @@ def test_golden_brione_consuntivo_2025_exact_match() -> None:
         for metric, exp_val in exp_cf.items():
             assert metric in rg_cells, f"Metrica mancante nel Finanziamento: {metric}"
             extracted_val = rg_cells[metric].amount_chf
+            assert extracted_val is not None
             expected_decimal = Decimal(exp_val)
             delta = abs(extracted_val - expected_decimal)
             assert delta == Decimal("0.00"), f"Errore centesimale su {metric}: estratto {extracted_val} != atteso {expected_decimal}"
@@ -90,6 +93,7 @@ def test_golden_brione_consuntivo_2025_exact_match() -> None:
         for metric, exp_val in exp_bil.items():
             assert metric in rg_cells, f"Metrica mancante nel Bilancio: {metric}"
             extracted_val = rg_cells[metric].amount_chf
+            assert extracted_val is not None
             expected_decimal = Decimal(exp_val)
             delta = abs(extracted_val - expected_decimal)
             assert delta == Decimal("0.00"), f"Errore centesimale su {metric}: estratto {extracted_val} != atteso {expected_decimal}"

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import type { MunicipalityData } from "@/data/municipalities";
 import {
   AVAILABLE_FISCAL_YEARS,
@@ -10,7 +9,6 @@ import {
 } from "@/data/municipalities";
 import { QuickCard30s } from "./QuickCard30s";
 import { CreditAlertBanner } from "./CreditAlertBanner";
-import { useCivicLang } from "@/lib/i18n-civic";
 import {
   Search,
   X,
@@ -33,7 +31,6 @@ export interface DashboardMobileProps {
 }
 
 export function DashboardMobile({ municipalities }: DashboardMobileProps) {
-  const { lang, setLang } = useCivicLang();
   const [filterQuery, setFilterQuery] = useState("");
   const [selectedYear, setSelectedYear] = useState<string>("2024");
   const [activeMunicipality, setActiveMunicipality] = useState<MunicipalityData | null>(null);
@@ -70,7 +67,7 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
   }, [activeMunicipality]);
 
   return (
-    <div className="w-full space-y-4 select-none">
+    <div className="w-full space-y-4">
       {/* Card Hero di Benvenuto & Presentazione Civica (Collassabile) */}
       <div className="ofl-card rounded-2xl p-4 shadow-xs border border-white/80 transition-all">
         {isHeroCollapsed ? (

@@ -61,4 +61,5 @@ desktop.ini
 *.swo
 
 supabase/.temp/
+.agents/
 

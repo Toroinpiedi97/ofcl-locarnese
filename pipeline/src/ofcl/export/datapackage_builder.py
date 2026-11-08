@@ -12,6 +12,7 @@ import csv
 import json
 import logging
 import zipfile
+from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
@@ -180,12 +181,12 @@ def build_opendata_package(output_dir: Path) -> Path:
     for m in DISTRICT_MUNICIPALITIES:
         ust_code = int(m["ust_code"])
         cons = VERIFIED_CONSUNTIVI_2025.get(ust_code)
-        computed: dict[str, float] = {}
+        computed: dict[str, Decimal] = {}
         if cons:
-            autofin = float(cons["autofinanziamento_chf"])
-            inv = float(cons["investimenti_netti_chf"])
-            ricavi = float(cons["ricavi_correnti_chf"])
-            computed["NET_DEBT_PER_CAPITA"] = float(cons["debito_netto_pc_chf"])
+            autofin = Decimal(cons["autofinanziamento_chf"])
+            inv = Decimal(cons["investimenti_netti_chf"])
+            ricavi = Decimal(cons["ricavi_correnti_chf"])
+            computed["NET_DEBT_PER_CAPITA"] = round(Decimal(cons["debito_netto_pc_chf"]), 1)
             if inv > 0:
                 computed["SELF_FINANCING_DEGREE"] = round(autofin / inv * 100, 1)
             if ricavi > 0:
@@ -271,6 +272,7 @@ def build_opendata_package(output_dir: Path) -> Path:
             {
                 "name": "bilanci_mca2",
                 "path": "bilanci_mca2.csv",
+                "profile": "tabular-data-resource",
                 "format": "csv",
                 "mediatype": "text/csv",
                 "encoding": "utf-8",
@@ -295,6 +297,7 @@ def build_opendata_package(output_dir: Path) -> Path:
             {
                 "name": "indicatori_sel",
                 "path": "indicatori_sel.csv",
+                "profile": "tabular-data-resource",
                 "format": "csv",
                 "mediatype": "text/csv",
                 "encoding": "utf-8",
@@ -315,6 +318,7 @@ def build_opendata_package(output_dir: Path) -> Path:
             {
                 "name": "tariffe_sussidi_comunali",
                 "path": "tariffe_sussidi_comunali.csv",
+                "profile": "tabular-data-resource",
                 "format": "csv",
                 "mediatype": "text/csv",
                 "encoding": "utf-8",

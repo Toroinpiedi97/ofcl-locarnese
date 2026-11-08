@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import {
   FileText,
@@ -6,9 +5,6 @@ import {
   CheckCircle2,
   Clock,
   Filter,
-  ArrowRight,
-  ShieldAlert,
-  Search,
 } from "lucide-react";
 import QueueTableClient, { QueueItem } from "./QueueTableClient";
 

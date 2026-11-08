@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import Link from "next/link";
 import {
   MessageSquareText,
   CheckCircle2,
@@ -241,6 +240,7 @@ export default function CuratorTicketsPage() {
                     onClick={() => updateStatus(ticket.id, "IN_REVIEW")}
                     className="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-cyan-400 transition-colors"
                     title="Prendi in carico"
+                    aria-label="Prendi in carico"
                   >
                     <Clock className="w-4 h-4" />
                   </button>
@@ -250,6 +250,7 @@ export default function CuratorTicketsPage() {
                     onClick={() => updateStatus(ticket.id, "RESOLVED")}
                     className="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-emerald-400 transition-colors"
                     title="Segna come risolto"
+                    aria-label="Segna come risolto"
                   >
                     <CheckCircle2 className="w-4 h-4" />
                   </button>
@@ -259,6 +260,7 @@ export default function CuratorTicketsPage() {
                     onClick={() => updateStatus(ticket.id, "DISMISSED")}
                     className="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-red-400 transition-colors"
                     title="Archivia / Non pertinente"
+                    aria-label="Archivia / Non pertinente"
                   >
                     <XCircle className="w-4 h-4" />
                   </button>

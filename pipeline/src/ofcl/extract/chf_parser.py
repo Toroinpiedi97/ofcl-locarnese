@@ -17,11 +17,6 @@ from decimal import Decimal, InvalidOperation
 _NA_TOKENS = frozenset({"", "-", "--", "—", "n.d.", "n.d", "n.a.", "n.a", "null", "none"})
 _ZERO_TOKENS = frozenset({"0", "0.0", "0.00", "0,00", "0.-", "0.--", "0'00", "0.00.-"})
 
-# Pattern per riconoscere un numero formattato in stile svizzero/ticinese
-_CHF_NUMBER_RE = re.compile(
-    r"^[+-]?(?:\d{1,3}(?:['’\s]\d{3})+|\d+)(?:[.,](?:\d{1,2}|--|–|-))?$"
-)
-
 
 def parse_chf(raw_value: str | None, *, empty_as_none: bool = True) -> Decimal | None:
     """

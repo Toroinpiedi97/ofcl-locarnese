@@ -136,7 +136,6 @@ class PdfInspector:
 
                 # 2. Scansione pagine e Rilevamento Layout Family
                 # Raccogliamo i testi per sezioni e layout
-                all_headers: list[str] = []
                 sections: dict[str, list[int]] = {}
                 metadata: dict[str, Any] = {}
                 found_gecoti = False
@@ -150,7 +149,6 @@ class PdfInspector:
 
                     lines = text.splitlines()
                     header_text = " ".join(lines[:6])
-                    all_headers.append(header_text)
                     low_header = header_text.lower()
 
                     # Controllo marcatori Ge.Co.Ti. / CCE Gordola

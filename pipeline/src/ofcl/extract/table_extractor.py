@@ -72,11 +72,6 @@ class TableExtractor:
         with open(rg_yaml, encoding="utf-8") as f:
             self.rg_config = yaml.safe_load(f)
 
-        # Carica configurazione Indicatori SEL
-        ind_yaml = self.layout_path / "indicatori_sel.yaml"
-        with open(ind_yaml, encoding="utf-8") as f:
-            self.ind_config = yaml.safe_load(f)
-
     def extract_riassunto_generale(
         self,
         pdf: pdfplumber.PDF,

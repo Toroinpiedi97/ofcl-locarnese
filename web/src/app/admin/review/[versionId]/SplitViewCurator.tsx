@@ -120,8 +120,14 @@ export default function SplitViewCurator({
         return;
       }
 
-      // Ignora se l'utente sta scrivendo in un input o textarea
-      if (["INPUT", "TEXTAREA"].includes((e.target as HTMLElement).tagName)) {
+      // Ignora combinazioni con modificatori di sistema (es. Ctrl+A, Cmd+A, Ctrl+P, Cmd+P, Alt+...)
+      if (e.ctrlKey || e.metaKey || e.altKey) {
+        return;
+      }
+
+      // Ignora se l'utente sta interagendo con campi modulo o elementi editabili
+      const target = e.target as HTMLElement | null;
+      if (target && (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName))) {
         return;
       }
 
