@@ -12,7 +12,8 @@ import pytest
 
 from ofcl.extract.pdf_inspector import PdfInspector, inspect_pdf
 
-BRIONE_PDF_PATH = Path("../data/raw_pdfs/5096/168f1f85c51701560f1cb3d06cb74f9ce981337517ba6ff1c7f5b26047505aee.pdf")
+REPO_ROOT = Path(__file__).resolve().parents[2]
+BRIONE_PDF_PATH = REPO_ROOT / "data" / "raw_pdfs" / "5096" / "168f1f85c51701560f1cb3d06cb74f9ce981337517ba6ff1c7f5b26047505aee.pdf"
 
 
 @pytest.mark.skipif(not BRIONE_PDF_PATH.exists(), reason="PDF reale Brione non presente localmente")
