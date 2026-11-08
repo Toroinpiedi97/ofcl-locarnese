@@ -122,15 +122,15 @@ export function SectorPerCapitaBarChart({
     <div
       ref={containerRef}
       className={cn(
-        "w-full h-full flex flex-col justify-between select-none relative min-w-0",
+        "w-full flex-1 flex flex-col justify-between select-none relative min-w-0",
         className
       )}
       style={{ minHeight: typeof height === "number" ? height : 300 }}
     >
       {/* 1. Header Card: Breadcrumbs interattivi + Switch Comune (se multipli) + Download */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2 mb-2 border-b border-slate-200/80">
+      <div className="flex items-center justify-between gap-2 pb-2 mb-2 border-b border-slate-200/80">
         {/* Breadcrumb navigazione gerarchica */}
-        <div className="flex items-center gap-1.5 flex-wrap text-xs">
+        <div className="flex items-center gap-1.5 flex-wrap text-xs min-w-0">
           <button
             type="button"
             onClick={() => handleBreadcrumbClick(0)}
@@ -255,15 +255,15 @@ export function SectorPerCapitaBarChart({
       </div>
 
       {/* Sottotitolo livello attuale */}
-      <div className="flex items-center justify-between text-[11px] text-slate-500 mb-1 px-1">
-        <span className="flex items-center gap-1 font-medium">
-          <Layers className="w-3 h-3 text-sky-600" />
-          <span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] text-slate-500 mb-1 px-1">
+        <span className="flex items-center gap-1 font-medium min-w-0">
+          <Layers className="w-3 h-3 text-sky-600 shrink-0" />
+          <span className="truncate">
             {currentNodes[0]?.levelLabel || "Livello"}:{" "}
             <strong className="text-slate-800">{parentTitle}</strong>
           </span>
         </span>
-        <span className="font-mono text-[10px]">
+        <span className="font-mono text-[10px] text-slate-500 sm:text-right shrink-0">
           {drilldownPath.length < 3
             ? "Clicca su una barra per approfondire la voce ↗"
             : "Massimo livello di dettaglio contabile (Conto 4 cifre)"}
@@ -285,7 +285,7 @@ export function SectorPerCapitaBarChart({
             const hasChild = (data as any).hasChildren;
             return hasChild ? "#0284c7" : "#0d9488";
           }}
-          margin={{ top: 8, right: isNarrow ? 18 : 30, bottom: 28, left: isNarrow ? 100 : 160 }}
+          margin={{ top: 8, right: isNarrow ? 18 : 30, bottom: 34, left: isNarrow ? 104 : 160 }}
           padding={0.28}
           valueScale={{ type: "linear" }}
           indexScale={{ type: "band", round: true }}
@@ -348,7 +348,7 @@ export function SectorPerCapitaBarChart({
       </div>
 
       {/* 3. Footer con indicazione interattiva */}
-      <div className="pt-2 mt-1 border-t border-slate-200/60 flex items-center justify-between text-xs text-slate-500">
+      <div className="pt-2 mt-1 border-t border-slate-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs text-slate-500">
         <span>
           Visualizzate tutte le <strong>{chartData.length}</strong> voci disponibili nel livello
         </span>

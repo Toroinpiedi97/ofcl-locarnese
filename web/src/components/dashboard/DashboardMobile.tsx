@@ -174,12 +174,12 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
       </div>
 
       {/* Selettore Anno Mobile Compatto (2024, 2025, 01.2026) */}
-      <div className="flex items-center justify-between p-2 px-3 rounded-2xl ofl-card shadow-xs flex-wrap gap-2">
+      <div className="flex items-center justify-between p-2 px-2.5 sm:px-3 rounded-2xl ofl-card shadow-xs flex-wrap gap-2">
         <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
           <Calendar className="w-3.5 h-3.5 text-sky-700" />
           <span>Esercizio:</span>
         </div>
-        <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-xl border border-slate-200">
+        <div className="flex items-center gap-0.5 sm:gap-1 bg-slate-100 p-0.5 rounded-xl border border-slate-200">
           {AVAILABLE_FISCAL_YEARS.map((yr) => {
             const isSel = selectedYear === yr;
             const isPrev = yr.includes("2026");

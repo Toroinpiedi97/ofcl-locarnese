@@ -430,9 +430,9 @@ export function MunicipalityDetailView({
       </section>
 
       {/* 5. Riga Grafici Analitici Nivo: Trend Storico + Spesa per Settore MCA2 */}
-      <section aria-label="Grafici analitici del comune" className="grid grid-cols-1 xl:grid-cols-12 gap-5">
+      <section aria-label="Grafici analitici del comune" className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-stretch">
         {/* Trend Line vs Media Distretto */}
-        <div className="xl:col-span-7 ofl-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between min-w-0 shadow-xs">
+        <div className="xl:col-span-7 ofl-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between min-w-0 shadow-xs min-h-[360px]">
           <div className="flex items-center justify-between mb-2">
             <div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
@@ -445,7 +445,7 @@ export function MunicipalityDetailView({
             <span className="text-[10px] font-mono text-slate-500">MCA2 CE</span>
           </div>
 
-          <div className="h-[250px] w-full min-w-0 relative">
+          <div className="flex-1 w-full min-w-0 min-h-[260px] sm:min-h-[280px] relative">
             <DistrictTrendLineChart
               municipalities={[municipality]}
               showDistrictAverage={true}
@@ -456,7 +456,7 @@ export function MunicipalityDetailView({
         </div>
 
         {/* Drilldown Settoriale a 4 Livelli */}
-        <div className="xl:col-span-5 ofl-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between min-w-0 shadow-xs">
+        <div className="xl:col-span-5 ofl-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between min-w-0 shadow-xs min-h-[360px]">
           <div className="flex items-center justify-between mb-2">
             <div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
@@ -469,7 +469,7 @@ export function MunicipalityDetailView({
             <span className="text-[10px] font-mono text-slate-500">{selectedYear}</span>
           </div>
 
-          <div className="h-[250px] w-full min-w-0 relative">
+          <div className="flex-1 w-full min-w-0 relative">
             <SectorPerCapitaBarChart
               municipalities={[municipality]}
               selectedYear={selectedYear}

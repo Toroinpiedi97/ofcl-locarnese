@@ -12,7 +12,7 @@ export default async function HomePage() {
       </div>
 
       {/* Pipeline Mobile: Layout verticale fluido con Bottom Sheet touch */}
-      <div className="block lg:hidden p-4">
+      <div className="block lg:hidden p-3 sm:p-4">
         <DashboardMobile municipalities={municipalities} />
       </div>
     </div>

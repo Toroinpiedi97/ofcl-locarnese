@@ -91,5 +91,33 @@ test.describe("Scheda Comune Estesa (/comuni/[slug]) & Simulatore Imposte", () =
       await exactToggle.click();
       await expect(page.getByRole("button", { name: /Cifre compatte/i })).toBeVisible();
     }
+
+    // Verifica contenimento verticale della card Drilldown MCA2 (zero sforo sul blocco sottostante)
+    const drilldownMetrics = await page.evaluate(() => {
+      const heading = Array.from(document.querySelectorAll("h2")).find((h) =>
+        h.textContent?.includes("Composizione Spesa Corrente per Settore")
+      );
+      if (!heading) return null;
+      const card = heading.closest(".ofl-card");
+      if (!card) return null;
+
+      const svg = card.querySelector("svg");
+      const cardRect = card.getBoundingClientRect();
+      const svgRect = svg ? svg.getBoundingClientRect() : null;
+      const nextSectionHeading = document.getElementById("section-30s");
+      const nextRect = nextSectionHeading?.getBoundingClientRect() ?? null;
+
+      return {
+        cardBottom: cardRect.bottom,
+        svgBottom: svgRect?.bottom ?? 0,
+        nextTop: nextRect?.top ?? 0,
+        isSvgInsideCard: svgRect ? svgRect.bottom <= cardRect.bottom + 1 : false,
+        gapToNextSection: nextRect ? nextRect.top - cardRect.bottom : 0,
+      };
+    });
+
+    expect(drilldownMetrics).not.toBeNull();
+    expect(drilldownMetrics?.isSvgInsideCard).toBe(true);
+    expect(drilldownMetrics?.gapToNextSection).toBeGreaterThanOrEqual(16);
   });
 });
