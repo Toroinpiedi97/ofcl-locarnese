@@ -49,20 +49,20 @@ export function SelIndicatorsRadarChart({
     : [primaryMun.name, "Soglia SEL"];
 
   return (
-    <div style={{ height }} className="w-full relative select-none">
+    <div style={{ height }} className="w-full relative select-none overflow-hidden">
       <ResponsiveRadar
         data={data}
         ariaLabel="Grafico radar degli 8 indicatori finanziari SEL"
         keys={keys}
         indexBy="indicatore"
         maxValue={100}
-        margin={{ top: 25, right: 35, bottom: 25, left: 35 }}
+        margin={{ top: 28, right: 58, bottom: 28, left: 58 }}
         curve="linearClosed"
         borderWidth={2}
         borderColor={{ from: "color" }}
         gridLevels={4}
         gridShape="linear"
-        gridLabelOffset={12}
+        gridLabelOffset={8}
         enableDots={true}
         dotSize={6}
         dotColor={{ theme: "background" }}

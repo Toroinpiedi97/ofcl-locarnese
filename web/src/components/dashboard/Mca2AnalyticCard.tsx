@@ -11,7 +11,7 @@ import {
   TrendingDown,
 } from "lucide-react";
 import type { MunicipalityData } from "@/data/municipalities";
-import { getMunicipalityYearData } from "@/data/municipalities";
+import { getMunicipalityYearData, getMunicipalitySelIndicators } from "@/data/municipalities";
 import { IndicatorsSelBar } from "./IndicatorsSelBar";
 import { formatChfCompact, cn } from "@/lib/utils";
 
@@ -181,6 +181,7 @@ export function Mca2AnalyticCard({
         {/* 4. Indicatori Finanziari SEL Cantone Ticino */}
         <div className="pt-2 border-t border-slate-200/70">
           <IndicatorsSelBar
+            indicators={getMunicipalitySelIndicators(municipality)}
             scoreConform={yearData.sel_conformity}
             compact={true}
           />

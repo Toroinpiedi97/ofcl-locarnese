@@ -51,7 +51,7 @@ export default async function MunicipalityCreditsPage({ params }: PageProps) {
   const overruns = credits.filter((c) => c.is_overrun);
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="p-4 sm:p-5 lg:p-7 space-y-6 pb-12 max-w-full overflow-x-hidden">
       {/* Breadcrumb */}
       <nav aria-label="Percorso crediti" className="flex items-center justify-between text-xs font-mono text-slate-700">
         <div className="flex items-center gap-1.5 flex-wrap">
@@ -83,7 +83,7 @@ export default async function MunicipalityCreditsPage({ params }: PageProps) {
       </nav>
 
       {/* Intestazione .ofl-card */}
-      <header className="ofl-card p-6">
+      <header className="ofl-card rounded-2xl p-4 sm:p-6 overflow-hidden min-w-0 shadow-xs">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <div className="flex items-center gap-2 mb-2">
@@ -148,7 +148,7 @@ export default async function MunicipalityCreditsPage({ params }: PageProps) {
 
       {/* Grafico Nivo Avanzamento Opere del Comune */}
       {credits.length > 0 && (
-        <section aria-labelledby="mun-credit-chart" className="ofl-card p-5">
+        <section aria-labelledby="mun-credit-chart" className="ofl-card rounded-2xl p-4 sm:p-5 overflow-hidden min-w-0 shadow-xs">
           <div className="flex items-center justify-between mb-2">
             <h2 id="mun-credit-chart" className="text-xs font-bold text-slate-900 uppercase tracking-wider">
               Avanzamento Finanziario Opere · {mun.name}
@@ -175,10 +175,10 @@ export default async function MunicipalityCreditsPage({ params }: PageProps) {
           return (
             <div
               key={credit.id}
-              className={`ofl-card p-5 border transition-all ${
+              className={`ofl-card rounded-2xl p-4 sm:p-5 border transition-all overflow-hidden min-w-0 ${
                 isOverrun
                   ? "border-red-400 shadow-xs"
-                  : "border-slate-300"
+                  : "border-slate-300 shadow-2xs"
               }`}
             >
               <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">

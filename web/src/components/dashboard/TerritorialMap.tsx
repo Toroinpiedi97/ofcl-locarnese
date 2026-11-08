@@ -205,34 +205,34 @@ export function TerritorialMap({
 
     // Palette Solare / Acqua Calma basata su soglie fiscali
     if (multiplier <= 75.0) {
-      return "fill-emerald-600/85 hover:fill-emerald-500 stroke-white/40 dark:stroke-slate-800";
+      return "fill-emerald-600/85 hover:fill-emerald-500 stroke-white/40";
     }
     if (multiplier <= 85.0) {
-      return "fill-[#00A3C4]/85 hover:fill-[#00A3C4] stroke-white/40 dark:stroke-slate-800";
+      return "fill-[#00A3C4]/85 hover:fill-[#00A3C4] stroke-white/40";
     }
     if (multiplier <= 93.0) {
-      return "fill-amber-600/85 hover:fill-amber-500 stroke-white/40 dark:stroke-slate-800";
+      return "fill-amber-600/85 hover:fill-amber-500 stroke-white/40";
     }
-    return "fill-red-600/85 hover:fill-red-500 stroke-white/40 dark:stroke-slate-800";
+    return "fill-red-600/85 hover:fill-red-500 stroke-white/40";
   }
 
   const activeMun = munMap.get(hoveredUst || selectedUstCode);
 
   return (
-    <div className={`bento-card p-4 bg-white/95 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 flex flex-col justify-between ${className}`}>
+    <div className={`ofl-card rounded-2xl p-4 flex flex-col justify-between overflow-hidden min-w-0 ${className}`}>
       {/* Intestazione Mappa */}
       <div className="flex items-center justify-between mb-2">
         <div>
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
             Mappa Georeferenziata Vettoriale
           </span>
-          <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+          <h4 className="text-xs font-bold text-slate-900">
             19 Comuni · Comprensorio del Locarnese
           </h4>
         </div>
 
         {/* Mini Legenda Cromatica */}
-        <div className="flex items-center gap-2 text-[10px] font-mono text-slate-700 dark:text-slate-300">
+        <div className="flex items-center gap-2 text-[10px] font-mono text-slate-700">
           <span className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" /> ≤75%
           </span>
@@ -249,7 +249,7 @@ export function TerritorialMap({
       </div>
 
       {/* SVG Interattivo ad Alta Efficienza */}
-      <div className="relative w-full aspect-[4/3] max-h-[360px] bg-slate-100/80 dark:bg-slate-950/60 rounded-xl overflow-hidden border border-slate-200/60 dark:border-slate-800/80 flex items-center justify-center">
+      <div className="relative w-full aspect-[4/3] max-h-[360px] bg-slate-100/80 rounded-xl overflow-hidden border border-slate-200/80 flex items-center justify-center">
         <svg
           viewBox="80 20 620 590"
           className="w-full h-full select-none cursor-pointer filter drop-shadow-sm"
@@ -257,13 +257,13 @@ export function TerritorialMap({
           {/* Corpo Idrico: Lago Maggiore / Verbano */}
           <path
             d="M 270 410 C 310 420 330 460 310 520 C 290 570 240 600 220 620 L 370 620 C 380 540 370 480 340 430 Z"
-            className="fill-sky-400/25 dark:fill-cyan-900/40 stroke-cyan-400/50 stroke-[1]"
+            className="fill-sky-400/25 stroke-cyan-400/50 stroke-[1]"
           />
           <text
             x="290"
             y="520"
             transform="rotate(-55 290 520)"
-            className="fill-cyan-600/60 dark:fill-cyan-400/40 font-semibold text-[13px] tracking-widest uppercase pointer-events-none"
+            className="fill-cyan-600/60 font-semibold text-[13px] tracking-widest uppercase pointer-events-none"
           >
             Lago Maggiore (Verbano)
           </text>
@@ -298,7 +298,7 @@ export function TerritorialMap({
                   className={`pointer-events-none text-[9px] font-bold ${
                     isSelected
                       ? "fill-white font-extrabold"
-                      : "fill-slate-900 dark:fill-white/90"
+                      : "fill-slate-900"
                   }`}
                 >
                   {mun.name}
@@ -308,7 +308,7 @@ export function TerritorialMap({
                   y={node.labelY + 10}
                   textAnchor="middle"
                   className={`pointer-events-none text-[8px] font-mono ${
-                    isSelected ? "fill-cyan-100" : "fill-slate-800/80 dark:fill-slate-300"
+                    isSelected ? "fill-cyan-100" : "fill-slate-800"
                   }`}
                 >
                   {mun.tax_multiplier_pf}%
@@ -320,7 +320,7 @@ export function TerritorialMap({
 
         {/* Hover / Active Badge fluttuante */}
         {activeMun && (
-          <div className="absolute bottom-2.5 left-2.5 px-3 py-1.5 rounded-lg bg-slate-900/90 dark:bg-slate-950/90 backdrop-blur border border-slate-700 text-white text-xs shadow-lg pointer-events-none flex items-center gap-3">
+          <div className="absolute bottom-2.5 left-2.5 px-3 py-1.5 rounded-lg bg-slate-900/90 backdrop-blur border border-slate-700 text-white text-xs shadow-lg pointer-events-none flex items-center gap-3">
             <div>
               <div className="font-bold flex items-center gap-1.5">
                 <span>{activeMun.name}</span>
@@ -340,7 +340,7 @@ export function TerritorialMap({
         )}
       </div>
 
-      <div className="text-[10px] text-slate-600 dark:text-slate-400 mt-2 flex items-center justify-between">
+      <div className="text-[10px] text-slate-600 mt-2 flex items-center justify-between">
         <span>Fai clic su un comune per selezionarlo</span>
         <span className="font-mono">swissBOUNDARIES3D (MCA2)</span>
       </div>

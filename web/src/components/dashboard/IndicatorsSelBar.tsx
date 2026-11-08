@@ -117,7 +117,7 @@ function getBandColor(band: SingleIndicatorItem["band"]): {
       return {
         bg: "bg-emerald-500",
         border: "border-emerald-600",
-        text: "text-emerald-700 dark:text-emerald-400",
+        text: "text-emerald-400",
         dot: "🟢",
       };
     case "ACCETTABILE":
@@ -128,7 +128,7 @@ function getBandColor(band: SingleIndicatorItem["band"]): {
       return {
         bg: "bg-amber-500",
         border: "border-amber-600",
-        text: "text-amber-700 dark:text-amber-400",
+        text: "text-amber-400",
         dot: "🟡",
       };
     case "DEBOLE":
@@ -139,14 +139,14 @@ function getBandColor(band: SingleIndicatorItem["band"]): {
       return {
         bg: "bg-red-500",
         border: "border-red-600",
-        text: "text-red-700 dark:text-red-400",
+        text: "text-red-400",
         dot: "🔴",
       };
     default:
       return {
-        bg: "bg-slate-300 dark:bg-slate-700",
+        bg: "bg-slate-300",
         border: "border-slate-400",
-        text: "text-slate-500 dark:text-slate-400",
+        text: "text-slate-400",
         dot: "⚪",
       };
   }
@@ -159,26 +159,27 @@ export function IndicatorsSelBar({
 }: IndicatorsSelBarProps) {
   const [activeTooltip, setActiveTooltip] = useState<number | null>(null);
 
-  // Calcola il punteggio di conformità (buono o accettabile)
+  // Calcola il punteggio di conformità
   const conformCount = indicators.filter(
     (i) => i.band === "BUONO" || i.band === "NORMALE" || i.band === "OTTIMO" || i.band === "BASSO"
   ).length;
 
   const displayScore = scoreConform || `${conformCount}/${indicators.length}`;
+  const passedCount = scoreConform ? parseInt(scoreConform.split("/")[0], 10) : conformCount;
 
   return (
     <div className="flex flex-col gap-1.5 w-full">
       <div className="flex items-center justify-between text-[11px]">
-        <span className="text-slate-700 dark:text-slate-300 font-medium flex items-center gap-1">
+        <span className="text-slate-700 font-medium flex items-center gap-1">
           <span>Indicatori SEL (Art. 22 RGFCC)</span>
         </span>
         <span
-          className={`font-mono font-bold px-1.5 py-0.2 rounded text-[10px] ${
-            conformCount >= 6
-              ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400"
-              : conformCount >= 4
-              ? "bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400"
-              : "bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-400"
+          className={`font-mono font-bold px-2 py-0.5 rounded text-[10px] border ${
+            passedCount >= 6
+              ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+              : passedCount >= 4
+              ? "bg-amber-50 text-amber-800 border-amber-200"
+              : "bg-red-50 text-red-800 border-red-200"
           }`}
           title="Numero di indicatori finanziari in fascia verde/conforme rispetto alle soglie ufficiali SEL"
         >
@@ -186,54 +187,63 @@ export function IndicatorsSelBar({
         </span>
       </div>
 
-      {/* Barra micro-segmenti a 8 tacche con tooltip interattivo */}
+      {/* Barra micro-segmenti a 8 tacche con tap o hover */}
       <div className="relative flex items-center gap-1 w-full">
         {indicators.map((ind, idx) => {
           const colors = getBandColor(ind.band);
-          const isHovered = activeTooltip === idx;
+          const isSelected = activeTooltip === idx;
 
           return (
-            <div
+            <button
               key={ind.code}
-              className="relative flex-1 group"
+              type="button"
+              aria-label={`${ind.name}: ${ind.value !== null ? ind.value + " " + ind.unit : "n.d."} (${ind.band})`}
+              className="relative flex-1 group py-1 focus:outline-none"
               onMouseEnter={() => setActiveTooltip(idx)}
               onMouseLeave={() => setActiveTooltip(null)}
+              onClick={() => setActiveTooltip(activeTooltip === idx ? null : idx)}
             >
               <div
                 className={`w-full ${
                   compact ? "h-2" : "h-2.5"
-                } rounded-full transition-all duration-150 cursor-pointer ${colors.bg} hover:opacity-90 hover:scale-y-125`}
+                } rounded-full transition-all duration-150 cursor-pointer ${colors.bg} ${
+                  isSelected ? "scale-y-150 ring-2 ring-slate-400" : "hover:opacity-90 hover:scale-y-125"
+                }`}
               />
-
-              {/* Tooltip con formula SEL e soglia ufficiale */}
-              {isHovered && (
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 w-64 p-2.5 bg-slate-900 text-white rounded-lg shadow-xl border border-slate-700 text-xs animate-in fade-in zoom-in-95 pointer-events-none">
-                  <div className="flex items-center justify-between font-semibold border-b border-slate-800 pb-1 mb-1.5">
-                    <span className="text-slate-200">{ind.name}</span>
-                    <span className="text-sm">{colors.dot}</span>
-                  </div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-slate-400">Valore registrato:</span>
-                    <span className="font-mono font-bold text-cyan-400">
-                      {ind.value !== null ? `${ind.value} ${ind.unit}` : "n.d."}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between mb-1 text-[11px]">
-                    <span className="text-slate-400">Fascia cantonale:</span>
-                    <span className={`font-semibold ${colors.text}`}>{ind.band}</span>
-                  </div>
-                  <div className="mt-1 pt-1 border-t border-slate-800/80 text-[10px] text-slate-400 leading-tight">
-                    <div>
-                      <span className="text-slate-500">Formula:</span> {ind.formula}
-                    </div>
-                    <div className="mt-0.5 text-slate-500">{ind.threshold_hint}</div>
-                  </div>
-                </div>
-              )}
-            </div>
+            </button>
           );
         })}
       </div>
+
+      {/* Dettaglio indicatore attivo (inline entro i bordi della card per evitare overflow su mobile) */}
+      {activeTooltip !== null && indicators[activeTooltip] && (
+        <div className="mt-1.5 p-2.5 bg-slate-900 text-white rounded-xl shadow-md border border-slate-700 text-xs animate-in fade-in zoom-in-95">
+          <div className="flex items-center justify-between font-semibold border-b border-slate-800 pb-1 mb-1.5">
+            <span className="text-slate-200 truncate mr-2">{indicators[activeTooltip].name}</span>
+            <span className="text-sm shrink-0">{getBandColor(indicators[activeTooltip].band).dot}</span>
+          </div>
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-slate-400">Valore registrato:</span>
+            <span className="font-mono font-bold text-cyan-400">
+              {indicators[activeTooltip].value !== null
+                ? `${indicators[activeTooltip].value} ${indicators[activeTooltip].unit}`
+                : "n.d."}
+            </span>
+          </div>
+          <div className="flex items-center justify-between mb-1 text-[11px]">
+            <span className="text-slate-400">Fascia cantonale:</span>
+            <span className={`font-semibold ${getBandColor(indicators[activeTooltip].band).text}`}>
+              {indicators[activeTooltip].band}
+            </span>
+          </div>
+          <div className="mt-1 pt-1 border-t border-slate-800/80 text-[10px] text-slate-400 leading-tight">
+            <div>
+              <span className="text-slate-500">Formula:</span> {indicators[activeTooltip].formula}
+            </div>
+            <div className="mt-0.5 text-slate-500">{indicators[activeTooltip].threshold_hint}</div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

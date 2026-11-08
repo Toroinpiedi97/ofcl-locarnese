@@ -61,4 +61,35 @@ test.describe("Scheda Comune Estesa (/comuni/[slug]) & Simulatore Imposte", () =
       await expect(page.getByText("2'050.00 CHF")).toBeVisible();
     }
   });
+
+  test("Mobile viewport (390x844): assenza overflow orizzontale e dinamicità anno fiscale", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/comuni/brione-sopra-minusio");
+
+    // Verifica zero overflow orizzontale su viewport mobile iPhone 14 (390px)
+    const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+    expect(scrollWidth).toBeLessThanOrEqual(390);
+
+    // Header Comune e 4 indicatori card visibili
+    await expect(page.locator("h1")).toContainText("Comune di Brione sopra Minusio");
+    await expect(page.getByText("Risultato Ordinario").first()).toBeVisible();
+
+    // Toggle anno: switch a 2024
+    const btn2024 = page.getByRole("button", { name: "2024", exact: true });
+    await btn2024.click();
+    await expect(btn2024).toHaveAttribute("aria-pressed", "true");
+
+    // Verifica che non ci sia overflow dopo lo switch d'anno
+    const scrollWidthAfterYear = await page.evaluate(() => document.documentElement.scrollWidth);
+    expect(scrollWidthAfterYear).toBeLessThanOrEqual(390);
+
+    // Test toggle cifre esatte / compatte
+    const exactToggle = page.getByRole("button", { name: /Cifre esatte/i });
+    if (await exactToggle.isVisible()) {
+      await exactToggle.click();
+      await expect(page.getByRole("button", { name: /Cifre compatte/i })).toBeVisible();
+    }
+  });
 });

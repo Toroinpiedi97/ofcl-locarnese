@@ -78,7 +78,7 @@ test.describe("Portale Pubblico OFCL (/) - Desktop & Mobile Master-Detail", () =
     // 4. Verifica apertura del Drawer modale
     const drawer = page.getByRole("dialog");
     await expect(drawer).toBeVisible();
-    await expect(drawer.getByText("Brione sopra Minusio")).toBeVisible();
+    await expect(drawer.getByText("Brione sopra Minusio").first()).toBeVisible();
     await expect(drawer.getByText("UST 5096")).toBeVisible();
     await expect(drawer.getByText("S01 SORPASSO")).toBeVisible();
 

@@ -941,9 +941,9 @@ export function getMunicipalityYearData(
 
   let mmRef = s.latest_mm_reference;
   if (year === 2024) {
-    mmRef = `MM Consuntivo 2024 (${m.name})`;
+    mmRef = `MM Consuntivo 2024`;
   } else if (isPrev) {
-    mmRef = `MM Preventivo 2026 (${m.name})`;
+    mmRef = `MM Preventivo 2026`;
   }
 
   return {

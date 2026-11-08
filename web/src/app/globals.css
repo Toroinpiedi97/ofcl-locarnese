@@ -195,26 +195,7 @@ body {
 }
 
 /* =========================================================================
-   2. BENTO CARD & VECCHI COMPONENTI (Compatibilità Retroattiva)
-   ========================================================================= */
-.bento-card {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  border-radius: 1rem;
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.25s ease,
-              border-color 0.2s ease;
-}
-
-.bento-card:hover {
-  transform: translateY(-2px) scale(1.004);
-  box-shadow: 0 12px 24px -8px rgba(15, 56, 84, 0.12);
-  border-color: rgba(0, 163, 196, 0.35);
-}
-
-/* =========================================================================
-   3. TABULAR NUMBERS (MCA2 0.01 CHF Centesimi Precisi)
+   2. TABULAR NUMBERS (MCA2 0.01 CHF Centesimi Precisi)
    ========================================================================= */
 .tabular-nums, .tabular-mca2 {
   font-variant-numeric: tabular-nums;
@@ -227,8 +208,7 @@ body {
    ========================================================================= */
 @media (prefers-reduced-transparency: reduce) {
   .ofl-card,
-  .ofl-glass-drawer,
-  .bento-card {
+  .ofl-glass-drawer {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     background: #f1f5f9 !important;
@@ -250,8 +230,7 @@ body {
   }
 
   .ofl-card,
-  .ofl-glass-drawer,
-  .bento-card {
+  .ofl-glass-drawer {
     transform: none !important;
     transition: none !important;
   }
