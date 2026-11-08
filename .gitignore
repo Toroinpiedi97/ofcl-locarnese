@@ -49,6 +49,7 @@ out/
 /data/raw_pdfs/
 /data/cache/
 /data/reports/
+/data/opendata/
 *.pdf
 
 # Operating System
