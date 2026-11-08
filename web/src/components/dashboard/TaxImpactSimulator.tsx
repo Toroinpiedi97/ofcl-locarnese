@@ -94,22 +94,22 @@ export function TaxImpactSimulator({
   return (
     <div
       className={cn(
-        "ofl-card rounded-2xl p-4 sm:p-6 overflow-hidden min-w-0 shadow-xs",
+        "ofl-card rounded-2xl p-4 @sm:p-6 min-w-0 shadow-xs @container",
         className
       )}
     >
       {/* Header Simulatore */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+      <div className="flex flex-col @sm:flex-row @sm:items-center justify-between gap-3 mb-6">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-[#0F3854]/10 text-[#0F3854]">
+            <span className="p-1.5 rounded-lg bg-[#0F3854]/10 text-[#0F3854] shrink-0">
               <Calculator className="w-4 h-4" />
             </span>
             <span className="text-xs font-bold uppercase tracking-wider text-[#0F3854]">
               Simulatore d&apos;Imposta Comunale (Art. 292 segg. LT)
             </span>
           </div>
-          <h3 className="text-lg sm:text-xl font-bold text-slate-900 mt-1 break-words">
+          <h3 className="text-lg @sm:text-xl font-bold text-slate-900 mt-1 min-w-0 wrap-anywhere">
             Quanto incide il Moltiplicatore a {municipality.name}?
           </h3>
           <p className="text-xs text-slate-600 mt-0.5">
@@ -181,7 +181,7 @@ export function TaxImpactSimulator({
             </span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+          <div className="grid grid-cols-2 @sm:grid-cols-4 gap-2 mb-3">
             {presets.map((p) => (
               <button
                 key={p.value}
@@ -193,13 +193,13 @@ export function TaxImpactSimulator({
                     : "bg-white/80 border-slate-200 text-slate-700 hover:border-slate-300"
                 }`}
               >
-                <div className="font-mono font-bold tabular-nums truncate">{p.label}</div>
+                <div className="font-mono font-bold tabular-nums whitespace-nowrap">{p.label}</div>
                 <div className="text-[10px] opacity-80 truncate">{p.desc}</div>
               </button>
             ))}
           </div>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div className="flex flex-col @sm:flex-row items-stretch @sm:items-center gap-3">
             <input
               type="range"
               min="500"
@@ -210,7 +210,7 @@ export function TaxImpactSimulator({
               aria-label="Regola imposta cantonale base"
               className="flex-1 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#00A3C4]"
             />
-            <div className="relative w-full sm:w-36 shrink-0">
+            <div className="relative w-full @sm:w-36 shrink-0">
               <input
                 id={inputId}
                 type="number"
@@ -220,7 +220,7 @@ export function TaxImpactSimulator({
                 value={baseChf}
                 onChange={(e) => setBaseChf(Math.max(0, Number(e.target.value)))}
                 aria-label="Imposta cantonale base in CHF"
-                className="w-full py-1.5 px-2.5 pr-10 rounded-lg text-xs font-mono font-bold tabular-nums bg-white border border-slate-300 text-right text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A3C4]"
+                className="w-full py-1.5 px-2.5 pr-10 rounded-lg text-base @sm:text-xs font-mono font-bold tabular-nums bg-white border border-slate-300 text-right text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#00A3C4]"
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-mono text-slate-500 pointer-events-none">
                 CHF
@@ -250,12 +250,12 @@ export function TaxImpactSimulator({
       </div>
 
       {/* Griglia Risultati Simulazione */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 rounded-xl bg-white/70 border border-slate-200/80 mb-4 min-w-0 overflow-hidden">
+      <div className="grid grid-cols-1 @sm:grid-cols-3 gap-3 p-4 rounded-xl bg-white/70 border border-slate-200/80 mb-4 min-w-0">
         <div className="min-w-0">
           <span className="text-[11px] font-medium text-slate-600 block truncate">
             Imposta Comunale Annua
           </span>
-          <div className="font-mono text-xl sm:text-2xl font-bold tabular-nums text-slate-900 mt-0.5 break-words">
+          <div className="font-mono text-xl @sm:text-2xl font-bold tabular-nums text-slate-900 mt-0.5 whitespace-nowrap">
             {totalAnnualChf.toLocaleString("de-CH", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
@@ -272,7 +272,7 @@ export function TaxImpactSimulator({
             Scostamento vs Media Distretto
           </span>
           <div
-            className={`font-mono text-lg sm:text-xl font-bold tabular-nums flex items-center gap-1 mt-0.5 break-words ${
+            className={`font-mono text-lg @sm:text-xl font-bold tabular-nums flex items-center gap-1 mt-0.5 whitespace-nowrap ${
               deltaFromAvgChf < 0
                 ? "text-emerald-700"
                 : deltaFromAvgChf > 0
@@ -285,7 +285,7 @@ export function TaxImpactSimulator({
             ) : deltaFromAvgChf > 0 ? (
               <TrendingUp className="w-4 h-4 text-red-700 shrink-0" />
             ) : null}
-            <span className="truncate">
+            <span className="whitespace-nowrap tabular-nums">
               {deltaFromAvgChf > 0 ? "+" : ""}
               {deltaFromAvgChf.toLocaleString("de-CH", {
                 minimumFractionDigits: 2,
@@ -307,7 +307,7 @@ export function TaxImpactSimulator({
           <span className="text-[11px] font-medium text-slate-600 block truncate">
             Classifica Pressione Fiscale
           </span>
-          <div className="font-mono text-lg sm:text-xl font-bold tabular-nums text-[#0F3854] mt-0.5 break-words">
+          <div className="font-mono text-lg @sm:text-xl font-bold tabular-nums text-[#0F3854] mt-0.5 whitespace-nowrap">
             {rankIndex}°{" "}
             <span className="text-xs text-slate-600 font-normal">su 19 Comuni</span>
           </div>

@@ -15,7 +15,7 @@ export function MobileTopBar({ onOpenSearch, onOpenMenu }: MobileTopBarProps) {
 
   return (
     <header
-      className="sticky top-0 left-0 right-0 z-40 bg-white/92 backdrop-blur-xl border-b border-slate-200/90 px-3.5 py-2 flex items-center justify-between lg:hidden shadow-xs select-none"
+      className="sticky top-0 left-0 right-0 z-40 bg-white/92 backdrop-blur-xl border-b border-slate-200/90 px-3.5 py-2 pt-[calc(0.5rem+env(safe-area-inset-top,0px))] flex items-center justify-between lg:hidden shadow-xs select-none"
       aria-label="Barra superiore mobile"
     >
       {/* Marchio Istituzionale OFL Fisso */}

@@ -182,7 +182,7 @@ export function MunicipalitiesTable({
         </div>
 
         {/* Tabella Comparativa con Debito Netto Totale + Debito pro capite */}
-        <div className="overflow-x-auto mt-2">
+        <div className="overflow-x-auto mt-2 min-w-0" data-scroll-x="true">
           <table className="w-full text-left border-collapse text-xs select-none">
             <thead>
               <tr className="border-b border-slate-200/80 text-slate-500 font-semibold text-[11px]">

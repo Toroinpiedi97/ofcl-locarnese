@@ -47,7 +47,7 @@ export function MobileBottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-40 bg-white/92 backdrop-blur-xl border-t border-slate-200/90 px-4 py-2 flex items-center justify-around lg:hidden shadow-lg select-none"
+      className="fixed bottom-0 left-0 right-0 z-40 bg-white/92 backdrop-blur-xl border-t border-slate-200/90 px-4 py-2 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] flex items-center justify-around lg:hidden shadow-lg select-none"
       aria-label="Navigazione rapida mobile"
     >
       {items.map((item) => {

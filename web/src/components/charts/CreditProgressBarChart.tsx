@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { ResponsiveBar } from "@nivo/bar";
 import { nivoOflTheme } from "./nivo-ofl-theme";
 import type { InvestmentCredit } from "@/data/credits";
+import { useContainerWidth } from "@/lib/useContainerWidth";
 
 interface CreditProgressBarChartProps {
   credits: InvestmentCredit[];
@@ -14,17 +15,22 @@ export function CreditProgressBarChart({
   credits,
   height = 220,
 }: CreditProgressBarChartProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const containerWidth = useContainerWidth(containerRef);
+  const isNarrow = containerWidth > 0 && containerWidth < 390;
+
   const data = useMemo(() => {
+    const maxChars = isNarrow ? 12 : 25;
     return credits.slice(0, 5).map((c) => ({
-      opera: c.description.length > 25 ? `${c.description.slice(0, 23)}...` : c.description,
+      opera: c.description.length > maxChars ? `${c.description.slice(0, maxChars - 2)}…` : c.description,
       "Credito Votato": c.voted_credit_chf,
       "Spesa Cumulata": c.spent_total_chf,
       isOverrun: c.is_overrun ? 1 : 0,
     }));
-  }, [credits]);
+  }, [credits, isNarrow]);
 
   return (
-    <div style={{ height }} className="w-full relative select-none">
+    <div ref={containerRef} style={{ height }} className="w-full min-w-0 relative select-none">
       <ResponsiveBar
         data={data}
         ariaLabel="Grafico stato avanzamento crediti d'opera"
@@ -38,7 +44,7 @@ export function CreditProgressBarChart({
           }
           return id === "Credito Votato" ? "#0F3854" : "#10b981";
         }}
-        margin={{ top: 12, right: 16, bottom: 42, left: 130 }}
+        margin={{ top: 12, right: 16, bottom: 42, left: isNarrow ? 80 : 130 }}
         padding={0.3}
         layout="horizontal"
         valueScale={{ type: "linear" }}

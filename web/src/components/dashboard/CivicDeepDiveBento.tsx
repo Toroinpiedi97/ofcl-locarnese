@@ -38,11 +38,11 @@ export function CivicDeepDiveBento({
   return (
     <div className={cn("space-y-4", className)}>
       <div>
-        <div className="flex items-center gap-2">
-          <span className="p-1 rounded bg-[#00A3C4]/10 text-[#00A3C4]">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="p-1 rounded bg-[#00A3C4]/10 text-[#00A3C4] shrink-0">
             <Info className="w-4 h-4" />
           </span>
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 break-words">
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 min-w-0 wrap-anywhere">
             Vivere a {municipality.name}: Tasse, Servizi, Famiglie & Territorio
           </h2>
         </div>
@@ -52,7 +52,7 @@ export function CivicDeepDiveBento({
       </div>
 
       {/* Pill Filter Bar per Mobile & Tablet Rapido */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full scrollbar-none sm:hidden">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full w-full min-w-0 scrollbar-none sm:hidden" data-scroll-x="true">
         {filterButtons.map((btn) => (
           <button
             key={btn.id}
@@ -69,11 +69,11 @@ export function CivicDeepDiveBento({
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {/* Quadrante A: Tariffe di Causalità & Costi Obbligatori */}
         <div
           className={cn(
-            "ofl-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between overflow-hidden min-w-0 transition-all",
+            "ofl-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between min-w-0 transition-all",
             activeFilter !== "all" && activeFilter !== "waste" && "hidden sm:flex"
           )}
         >
@@ -128,7 +128,7 @@ export function CivicDeepDiveBento({
         {/* Quadrante B: Sostegno alle Famiglie, Infanzia & Educazione */}
         <div
           className={cn(
-            "ofl-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between overflow-hidden min-w-0 transition-all",
+            "ofl-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between min-w-0 transition-all",
             activeFilter !== "all" && activeFilter !== "families" && "hidden sm:flex"
           )}
         >
@@ -157,9 +157,9 @@ export function CivicDeepDiveBento({
                   CHF
                 </span>
               </li>
-              <li className="flex items-start justify-between gap-2 border-b border-slate-200/80 pb-2">
+              <li className="flex items-start justify-between gap-2 border-b border-slate-200/80 pb-2 flex-wrap">
                 <span className="text-slate-600">Nido d&apos;Infanzia & Parascolastico</span>
-                <span className="text-slate-800 text-right shrink-0">Tariffa calmierata per reddito</span>
+                <span className="text-slate-800 text-right">Tariffa calmierata per reddito</span>
               </li>
               <li className="flex items-start justify-between gap-2 border-b border-slate-200/80 pb-2">
                 <span className="text-slate-600">Mense Scolastiche</span>
@@ -183,7 +183,7 @@ export function CivicDeepDiveBento({
         {/* Quadrante C: Terza Età, Inclusione Sociale & Salute */}
         <div
           className={cn(
-            "ofl-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between overflow-hidden min-w-0 transition-all",
+            "ofl-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between min-w-0 transition-all",
             activeFilter !== "all" && activeFilter !== "social" && "hidden sm:flex"
           )}
         >
@@ -222,7 +222,7 @@ export function CivicDeepDiveBento({
         {/* Quadrante D: Sostenibilità Energetica, Clima & Trasporti */}
         <div
           className={cn(
-            "ofl-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between overflow-hidden min-w-0 transition-all",
+            "ofl-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between min-w-0 transition-all",
             activeFilter !== "all" && activeFilter !== "climate" && "hidden sm:flex"
           )}
         >
@@ -265,7 +265,7 @@ export function CivicDeepDiveBento({
         {/* Quadrante E: Sportello & Informazioni Istituzionali */}
         <div
           className={cn(
-            "ofl-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between md:col-span-2 lg:col-span-2 overflow-hidden min-w-0 transition-all",
+            "ofl-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between md:col-span-2 xl:col-span-2 min-w-0 transition-all",
             activeFilter !== "all" && activeFilter !== "desk" && "hidden sm:flex"
           )}
         >

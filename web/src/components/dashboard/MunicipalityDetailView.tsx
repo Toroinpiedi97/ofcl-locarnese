@@ -160,7 +160,7 @@ export function MunicipalityDetailView({
                 Sede Municipale: {municipality.seat}
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 break-words">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 min-w-0 wrap-anywhere">
               Comune di {municipality.name}
             </h1>
             <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl">
@@ -204,12 +204,12 @@ export function MunicipalityDetailView({
           </div>
 
           {/* Indicatori Rapidi Header */}
-          <div className="flex items-center gap-3 shrink-0">
-            <div className="px-4 py-2.5 rounded-xl bg-white/75 border border-slate-200/80 shadow-2xs text-right min-w-[120px]">
+          <div className="flex items-center gap-3 shrink-0 flex-wrap sm:flex-nowrap">
+            <div className="px-4 py-2.5 rounded-xl bg-white/75 border border-slate-200/80 shadow-2xs text-right min-w-0 sm:min-w-[120px] flex-1 sm:flex-initial">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
                 Moltiplicatore {selectedYear}
               </span>
-              <div className="font-mono text-2xl font-black tabular-nums text-[#0F3854]">
+              <div className="font-mono text-2xl font-black tabular-nums whitespace-nowrap text-[#0F3854]">
                 {yearData.tax_multiplier_pf}%
               </div>
               {municipality.has_differentiated_pg && (
@@ -219,11 +219,11 @@ export function MunicipalityDetailView({
               )}
             </div>
 
-            <div className="px-4 py-2.5 rounded-xl bg-white/75 border border-slate-200/80 shadow-2xs text-right min-w-[120px]">
+            <div className="px-4 py-2.5 rounded-xl bg-white/75 border border-slate-200/80 shadow-2xs text-right min-w-0 sm:min-w-[120px] flex-1 sm:flex-initial">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
                 Abitanti (STATPOP)
               </span>
-              <div className="font-mono text-2xl font-black tabular-nums text-slate-900">
+              <div className="font-mono text-2xl font-black tabular-nums whitespace-nowrap text-slate-900">
                 {yearData.population.toLocaleString("de-CH")}
               </div>
               <span className="text-[10px] text-slate-500 block">
@@ -432,7 +432,7 @@ export function MunicipalityDetailView({
       {/* 5. Riga Grafici Analitici Nivo: Trend Storico + Spesa per Settore MCA2 */}
       <section aria-label="Grafici analitici del comune" className="grid grid-cols-1 xl:grid-cols-12 gap-5">
         {/* Trend Line vs Media Distretto */}
-        <div className="xl:col-span-7 ofl-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between overflow-hidden min-w-0 shadow-xs">
+        <div className="xl:col-span-7 ofl-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between min-w-0 shadow-xs">
           <div className="flex items-center justify-between mb-2">
             <div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
@@ -445,7 +445,7 @@ export function MunicipalityDetailView({
             <span className="text-[10px] font-mono text-slate-500">MCA2 CE</span>
           </div>
 
-          <div className="h-[250px] w-full relative">
+          <div className="h-[250px] w-full min-w-0 relative">
             <DistrictTrendLineChart
               municipalities={[municipality]}
               showDistrictAverage={true}
@@ -456,7 +456,7 @@ export function MunicipalityDetailView({
         </div>
 
         {/* Drilldown Settoriale a 4 Livelli */}
-        <div className="xl:col-span-5 ofl-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between overflow-hidden min-w-0 shadow-xs">
+        <div className="xl:col-span-5 ofl-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between min-w-0 shadow-xs">
           <div className="flex items-center justify-between mb-2">
             <div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
@@ -469,7 +469,7 @@ export function MunicipalityDetailView({
             <span className="text-[10px] font-mono text-slate-500">{selectedYear}</span>
           </div>
 
-          <div className="h-[250px] w-full relative">
+          <div className="h-[250px] w-full min-w-0 relative">
             <SectorPerCapitaBarChart
               municipalities={[municipality]}
               selectedYear={selectedYear}

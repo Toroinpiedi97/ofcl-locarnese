@@ -58,7 +58,7 @@ export function Mca2AnalyticCard({
   return (
     <div
       className={cn(
-        "ofl-card rounded-2xl p-5 flex flex-col justify-between select-none relative",
+        "ofl-card rounded-2xl p-5 flex flex-col justify-between select-none relative min-w-0 @container",
         className
       )}
       aria-label={`Scheda Analitica MCA2 ${municipality.name}`}
@@ -66,7 +66,7 @@ export function Mca2AnalyticCard({
       <div className="space-y-4">
         {/* 1. Header Scheda: Rigoroso, minimale, senza gradienti pesanti */}
         <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-200/80">
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-1.5 mb-1 flex-wrap">
               <span className="font-mono text-[10px] font-bold px-1.5 py-0.2 rounded bg-slate-200 text-slate-800">
                 UST {municipality.ust_code}
@@ -85,10 +85,13 @@ export function Mca2AnalyticCard({
                 {yearData.periodLabel}
               </span>
             </div>
-            <h3 className="text-lg font-black tracking-tight text-slate-900 leading-tight">
+            <h3
+              title={municipality.name}
+              className="text-lg font-black tracking-tight text-slate-900 leading-tight min-w-0 line-clamp-2 wrap-anywhere"
+            >
               {municipality.name}
             </h3>
-            <div className="text-xs text-slate-500 mt-0.5">
+            <div className="text-xs text-slate-500 mt-0.5 truncate">
               Circolo di {municipality.circle} · {yearData.population.toLocaleString("de-CH")} ab.
             </div>
           </div>
@@ -97,7 +100,7 @@ export function Mca2AnalyticCard({
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
               Moltiplicatore
             </span>
-            <div className="font-mono text-xl font-black text-[#0F3854]">
+            <div className="font-mono text-xl font-black tabular-nums whitespace-nowrap text-[#0F3854]">
               {yearData.tax_multiplier_pf.toFixed(1)}%
             </div>
             {municipality.has_differentiated_pg && (
@@ -110,10 +113,10 @@ export function Mca2AnalyticCard({
 
         {/* 2. Banner sorpassi crediti se attivo */}
         {hasOverruns && (
-          <div className="p-2.5 rounded-xl bg-red-50/90 border border-red-200 text-red-950 text-xs flex items-center justify-between gap-2">
-            <div className="flex items-center gap-1.5 font-bold text-red-800">
+          <div className="p-2.5 rounded-xl bg-red-50/90 border border-red-200 text-red-950 text-xs flex items-center justify-between gap-2 min-w-0">
+            <div className="flex items-center gap-1.5 font-bold text-red-800 min-w-0">
               <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-              <span>Sorpasso crediti d&apos;opera rilevato</span>
+              <span className="truncate">Sorpasso crediti d&apos;opera rilevato</span>
             </div>
             <Link
               href={`/comuni/${municipality.slug}/crediti`}
@@ -127,7 +130,7 @@ export function Mca2AnalyticCard({
         {/* 3. Quattro Grandezze Contabili Chiave (Griglia 2x2 pulita) */}
         <div className="grid grid-cols-2 gap-2.5 text-xs">
           {/* Risultato Ordinario */}
-          <div className="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200/70">
+          <div className="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200/70 min-w-0">
             <div className="text-slate-500 text-[10px] flex items-center justify-between">
               <span>Risultato Ordinario</span>
               {isAvanzo ? (
@@ -138,43 +141,43 @@ export function Mca2AnalyticCard({
             </div>
             <div
               className={cn(
-                "font-mono font-bold text-sm tabular-nums mt-1",
+                "font-mono font-bold text-sm tabular-nums whitespace-nowrap mt-1",
                 isAvanzo ? "text-emerald-700" : "text-red-700"
               )}
             >
               {isAvanzo ? "+" : ""}
               {formatChfCompact(yearData.risultato_ordinario_chf)}
             </div>
-            <div className="text-[10px] text-slate-500 mt-0.5">
+            <div className="text-[10px] text-slate-500 mt-0.5 truncate">
               {isAvanzo ? "Avanzo d'esercizio" : "Disavanzo"}
             </div>
           </div>
 
           {/* Autofinanziamento */}
-          <div className="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200/70">
+          <div className="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200/70 min-w-0">
             <div className="text-slate-500 text-[10px]">Autofinanziamento</div>
-            <div className="font-mono font-bold text-sm tabular-nums text-slate-900 mt-1">
+            <div className="font-mono font-bold text-sm tabular-nums whitespace-nowrap text-slate-900 mt-1">
               {formatChfCompact(yearData.autofinanziamento_chf)}
             </div>
-            <div className="text-[10px] text-slate-500 mt-0.5">Risorse proprie nette</div>
+            <div className="text-[10px] text-slate-500 mt-0.5 truncate">Risorse proprie nette</div>
           </div>
 
           {/* Debito Netto pro capite */}
-          <div className="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200/70">
+          <div className="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200/70 min-w-0">
             <div className="text-slate-500 text-[10px]">Debito pro capite</div>
-            <div className="font-mono font-bold text-sm tabular-nums text-slate-900 mt-1">
+            <div className="font-mono font-bold text-sm tabular-nums whitespace-nowrap text-slate-900 mt-1">
               CHF {Math.round(yearData.debito_netto_pc_chf).toLocaleString("de-CH")}
             </div>
-            <div className="text-[10px] text-slate-500 mt-0.5">Soglia SEL &lt; 5k</div>
+            <div className="text-[10px] text-slate-500 mt-0.5 truncate">Soglia SEL &lt; 5k</div>
           </div>
 
           {/* Debito Totale Comune */}
-          <div className="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200/70">
+          <div className="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200/70 min-w-0">
             <div className="text-slate-500 text-[10px]">Debito Netto Totale</div>
-            <div className="font-mono font-bold text-sm tabular-nums text-slate-900 mt-1">
+            <div className="font-mono font-bold text-sm tabular-nums whitespace-nowrap text-slate-900 mt-1">
               {formatChfCompact(debitoTotale)}
             </div>
-            <div className="text-[10px] text-slate-500 mt-0.5">Capitale terzi netto</div>
+            <div className="text-[10px] text-slate-500 mt-0.5 truncate">Capitale terzi netto</div>
           </div>
         </div>
 

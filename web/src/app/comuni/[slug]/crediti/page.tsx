@@ -148,7 +148,7 @@ export default async function MunicipalityCreditsPage({ params }: PageProps) {
 
       {/* Grafico Nivo Avanzamento Opere del Comune */}
       {credits.length > 0 && (
-        <section aria-labelledby="mun-credit-chart" className="ofl-card rounded-2xl p-4 sm:p-5 overflow-hidden min-w-0 shadow-xs">
+        <section aria-labelledby="mun-credit-chart" className="ofl-card rounded-2xl p-4 sm:p-5 min-w-0 shadow-xs">
           <div className="flex items-center justify-between mb-2">
             <h2 id="mun-credit-chart" className="text-xs font-bold text-slate-900 uppercase tracking-wider">
               Avanzamento Finanziario Opere · {mun.name}
@@ -175,15 +175,15 @@ export default async function MunicipalityCreditsPage({ params }: PageProps) {
           return (
             <div
               key={credit.id}
-              className={`ofl-card rounded-2xl p-4 sm:p-5 border transition-all overflow-hidden min-w-0 ${
+              className={`ofl-card rounded-2xl p-4 sm:p-5 border transition-all min-w-0 @container ${
                 isOverrun
                   ? "border-red-400 shadow-xs"
                   : "border-slate-300 shadow-2xs"
               }`}
             >
-              <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                <div className="space-y-1 flex-1">
-                  <div className="flex items-center gap-2">
+              <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 min-w-0">
+                <div className="space-y-1 flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-mono text-[11px] px-2 py-0.5 rounded bg-slate-900/10 text-slate-800 font-semibold">
                       Conto {credit.account_code}
                     </span>
@@ -191,17 +191,17 @@ export default async function MunicipalityCreditsPage({ params }: PageProps) {
                       {credit.mm_reference}
                     </span>
                   </div>
-                  <h2 className="text-base sm:text-lg font-bold text-slate-900">
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900 min-w-0 wrap-anywhere">
                     {credit.description}
                   </h2>
                 </div>
 
-                <div className="flex items-center gap-4 shrink-0">
-                  <div className="text-right">
+                <div className="flex items-center gap-3 sm:gap-4 shrink-0 flex-wrap justify-between sm:justify-end min-w-0">
+                  <div className="text-right min-w-0">
                     <span className="text-[10px] uppercase font-bold text-slate-500 block">
                       Credito Votato
                     </span>
-                    <div className="font-mono text-base font-bold tabular-nums text-slate-900">
+                    <div className="font-mono text-sm sm:text-base font-bold tabular-nums whitespace-nowrap text-slate-900">
                       {credit.voted_credit_chf.toLocaleString("de-CH", {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
@@ -210,12 +210,12 @@ export default async function MunicipalityCreditsPage({ params }: PageProps) {
                     </div>
                   </div>
 
-                  <div className="text-right">
+                  <div className="text-right min-w-0">
                     <span className="text-[10px] uppercase font-bold text-slate-500 block">
                       {isOverrun ? "Sorpasso (Residuo)" : "Credito Residuo"}
                     </span>
                     <div
-                      className={`font-mono text-base font-bold tabular-nums ${
+                      className={`font-mono text-sm sm:text-base font-bold tabular-nums whitespace-nowrap ${
                         isOverrun ? "text-red-700" : "text-emerald-700"
                       }`}
                     >

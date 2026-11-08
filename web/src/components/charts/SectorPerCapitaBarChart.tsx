@@ -11,6 +11,7 @@ import {
 } from "@/data/mca2-hierarchy";
 import { formatCompactNumber, formatChfExact } from "@/lib/utils";
 import { exportSvgElement, type ExportFormat } from "@/lib/chart-export";
+import { useContainerWidth } from "@/lib/useContainerWidth";
 import {
   Download,
   ChevronRight,
@@ -36,6 +37,9 @@ export function SectorPerCapitaBarChart({
   className,
 }: SectorPerCapitaBarChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const containerWidth = useContainerWidth(containerRef);
+  const isNarrow = containerWidth > 0 && containerWidth < 420;
+
   const [activeMuniIndex, setActiveMuniIndex] = useState(0);
   const [drilldownPath, setDrilldownPath] = useState<string[]>([]);
   const [isExporting, setIsExporting] = useState(false);
@@ -55,17 +59,18 @@ export function SectorPerCapitaBarChart({
 
   // Prepara i dati per Nivo Bar
   const chartData = useMemo(() => {
+    const maxChars = isNarrow ? 15 : 28;
     return currentNodes.map((node) => ({
       code: node.code,
       name: node.name,
-      labelClean: node.name.length > 28 ? `${node.name.slice(0, 26)}…` : node.name,
+      labelClean: node.name.length > maxChars ? `${node.name.slice(0, maxChars - 2)}…` : node.name,
       amountPc: node.amountPc,
       amountTotal: node.amountTotal,
       level: node.level,
       levelLabel: node.levelLabel,
       hasChildren: node.children && node.children.length > 0 ? 1 : 0,
     }));
-  }, [currentNodes]);
+  }, [currentNodes, isNarrow]);
 
   // Navigazione drill-down
   function handleDrillDown(code: string) {
@@ -117,7 +122,7 @@ export function SectorPerCapitaBarChart({
     <div
       ref={containerRef}
       className={cn(
-        "w-full h-full flex flex-col justify-between select-none relative",
+        "w-full h-full flex flex-col justify-between select-none relative min-w-0",
         className
       )}
       style={{ minHeight: typeof height === "number" ? height : 300 }}
@@ -267,7 +272,7 @@ export function SectorPerCapitaBarChart({
 
       {/* 2. Grafico Nivo Bar Orizzontale Flessibile & Responsive */}
       <div
-        className="w-full flex-1 overflow-y-auto overflow-x-hidden relative"
+        className="w-full flex-1 overflow-y-auto overflow-x-hidden relative min-w-0"
         style={{ height: computedHeight, minHeight: 220 }}
       >
         <ResponsiveBar
@@ -280,7 +285,7 @@ export function SectorPerCapitaBarChart({
             const hasChild = (data as any).hasChildren;
             return hasChild ? "#0284c7" : "#0d9488";
           }}
-          margin={{ top: 8, right: 30, bottom: 28, left: 160 }}
+          margin={{ top: 8, right: isNarrow ? 18 : 30, bottom: 28, left: isNarrow ? 100 : 160 }}
           padding={0.28}
           valueScale={{ type: "linear" }}
           indexScale={{ type: "band", round: true }}

@@ -321,7 +321,7 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
           onClick={() => setActiveMunicipality(null)}
         >
           <div
-            className="w-full max-h-[88vh] overflow-y-auto rounded-t-3xl ofl-glass-drawer border-t border-white/80 shadow-2xl p-4 sm:p-6 space-y-4 animate-in slide-in-from-bottom duration-250"
+            className="w-full max-h-[88dvh] overflow-y-auto overscroll-contain rounded-t-3xl ofl-glass-drawer border-t border-white/80 shadow-2xl p-4 sm:p-6 space-y-4 animate-in slide-in-from-bottom duration-250"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Maniglia trascinamento & Bottone chiusura comodo */}
@@ -331,7 +331,7 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
                 type="button"
                 onClick={() => setActiveMunicipality(null)}
                 aria-label="Chiudi scheda"
-                className="min-h-[44px] min-w-[44px] -mr-2 flex items-center justify-center rounded-full text-slate-600 hover:text-slate-950 ofl-btn-frost transition-colors cursor-pointer"
+                className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-full text-slate-600 hover:text-slate-950 ofl-btn-frost transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>

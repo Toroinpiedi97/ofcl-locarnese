@@ -30,7 +30,7 @@ export function CreditAlertBanner({
 }: CreditAlertBannerProps) {
   if (hasOverruns) {
     return (
-      <div className="ofl-card rounded-2xl p-4 bg-red-50/90 border border-red-200/90 text-red-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs overflow-hidden min-w-0">
+      <div className="ofl-card rounded-2xl p-4 bg-red-50/90 border border-red-200/90 text-red-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs min-w-0">
         <div className="flex items-start gap-3 min-w-0">
           <div className="p-2 rounded-xl bg-red-100 text-red-700 shrink-0 mt-0.5 sm:mt-0">
             <AlertTriangle className="w-5 h-5 text-red-600" />
@@ -71,10 +71,10 @@ export function CreditAlertBanner({
   }
 
   return (
-    <div className="ofl-card rounded-2xl p-3.5 bg-emerald-50/80 border border-emerald-200/90 text-emerald-950 flex items-center justify-between gap-3 shadow-xs overflow-hidden min-w-0">
+    <div className="ofl-card rounded-2xl p-3.5 bg-emerald-50/80 border border-emerald-200/90 text-emerald-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs min-w-0">
       <div className="flex items-center gap-2.5 min-w-0">
         <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-        <span className="text-xs text-slate-700 truncate">
+        <span className="text-xs text-slate-700 min-w-0 wrap-anywhere">
           Crediti d&apos;opera conformi per <strong className="text-slate-900">{municipalityName}</strong>: nessuna spesa eccede il credito votato (Art. 15 LOC).
         </span>
       </div>

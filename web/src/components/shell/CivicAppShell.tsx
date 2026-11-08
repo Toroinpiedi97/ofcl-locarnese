@@ -27,7 +27,7 @@ export function CivicAppShell({ children }: CivicAppShellProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-[#ebf2f7] text-slate-900 relative">
+    <div className="min-h-dvh flex flex-col lg:flex-row bg-[#ebf2f7] text-slate-900 relative">
       {/* Sfondo Topografico Fisso del Locarnese (Isolinee Cimetta/Cardada, Ghiridone & Lago Maggiore) */}
       <LocarneseTopoWatermark opacity={0.38} />
 
@@ -52,7 +52,7 @@ export function CivicAppShell({ children }: CivicAppShellProps) {
       <CivicSidebar onOpenSearch={() => setSearchOpen(true)} />
 
       {/* Canvas Principale Satinato Trasparente */}
-      <div className="ofl-canvas flex-1 flex flex-col justify-between min-w-0 min-h-screen relative z-10 pb-20 lg:pb-0">
+      <div className="ofl-canvas flex-1 flex flex-col justify-between min-w-0 min-h-dvh relative z-10 pb-20 lg:pb-0">
         <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
           {children}
         </main>

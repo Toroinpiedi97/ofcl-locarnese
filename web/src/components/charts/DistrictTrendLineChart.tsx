@@ -12,6 +12,7 @@ import {
 } from "@/data/municipalities";
 import { formatCompactNumber } from "@/lib/utils";
 import { exportSvgElement, type ExportFormat } from "@/lib/chart-export";
+import { useContainerWidth } from "@/lib/useContainerWidth";
 import { MUNICIPALITY_SERIES_COLORS } from "@/components/dashboard/GlobalFilterBar";
 import { Download, ChevronDown } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -32,6 +33,9 @@ export function DistrictTrendLineChart({
   className,
 }: DistrictTrendLineChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const containerWidth = useContainerWidth(containerRef);
+  const isNarrow = containerWidth > 0 && containerWidth < 420;
+
   const [isExporting, setIsExporting] = useState(false);
   const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null);
 
@@ -97,7 +101,7 @@ export function DistrictTrendLineChart({
   return (
     <div
       ref={containerRef}
-      className="w-full h-full flex flex-col justify-between select-none relative"
+      className="w-full h-full flex flex-col justify-between select-none relative min-w-0"
       style={{ minHeight: typeof height === "number" ? height : 280 }}
     >
       {/* Intestazione interna: Barra di controllo esportazione e leggibilità */}
@@ -163,7 +167,7 @@ export function DistrictTrendLineChart({
       </div>
 
       {/* Sfondo Topografico Vettoriale Leggero */}
-      <div className="relative flex-1 w-full min-h-[220px]">
+      <div className="relative flex-1 w-full min-h-[220px] min-w-0">
         <svg
           className="absolute inset-0 w-full h-full pointer-events-none opacity-20"
           viewBox="0 0 500 200"
@@ -185,7 +189,7 @@ export function DistrictTrendLineChart({
           ariaLabel="Grafico andamento spese e ricavi storici 2019-2026"
           theme={nivoOflTheme}
           colors={colorsList}
-          margin={{ top: 14, right: 18, bottom: 32, left: 48 }}
+          margin={{ top: 14, right: isNarrow ? 14 : 18, bottom: isNarrow ? 38 : 32, left: isNarrow ? 44 : 52 }}
           xScale={{ type: "point" }}
           yScale={{
             type: "linear",
@@ -218,15 +222,15 @@ export function DistrictTrendLineChart({
           axisBottom={{
             tickSize: 4,
             tickPadding: 6,
-            tickRotation: 0,
+            tickRotation: isNarrow ? -30 : 0,
           }}
           axisLeft={{
             tickSize: 4,
             tickPadding: 6,
             tickRotation: 0,
             format: (v: number | string) => formatCompactNumber(v),
-            legend: "CHF / ab.",
-            legendOffset: -40,
+            legend: isNarrow ? "" : "CHF / ab.",
+            legendOffset: -42,
             legendPosition: "middle",
           }}
           enableGridX={false}

@@ -38,7 +38,7 @@ export function QuickCard30s({
   return (
     <div
       className={cn(
-        "ofl-card rounded-2xl p-4 sm:p-6 flex flex-col justify-between h-full overflow-hidden min-w-0",
+        "ofl-card rounded-2xl p-4 @sm:p-6 flex flex-col justify-between h-full min-w-0 @container",
         className
       )}
     >
@@ -54,7 +54,10 @@ export function QuickCard30s({
                 Circolo di {municipality.circle} · Anno {activeYear}
               </span>
             </div>
-            <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 mt-1 truncate">
+            <h3
+              title={municipality.name}
+              className="text-xl @sm:text-2xl font-bold tracking-tight text-slate-900 mt-1 min-w-0 line-clamp-2 wrap-anywhere"
+            >
               {municipality.name}
             </h3>
           </div>
@@ -63,7 +66,7 @@ export function QuickCard30s({
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 block">
               Moltiplicatore {activeYear}
             </span>
-            <div className="font-mono text-xl sm:text-2xl font-black tabular-nums text-[#0F3854]">
+            <div className="font-mono text-xl @sm:text-2xl font-black tabular-nums whitespace-nowrap text-[#0F3854]">
               {yearData.tax_multiplier_pf}%
             </div>
             {municipality.has_differentiated_pg && (
@@ -75,9 +78,9 @@ export function QuickCard30s({
         </div>
 
         {/* 4 Grandi Cifre Contabili al centesimo (0.01 CHF) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4">
+        <div className="grid grid-cols-1 @sm:grid-cols-2 gap-3 my-4">
           {/* 1. Risultato Ordinario (Avanzo / Disavanzo) */}
-          <div className="p-3 sm:p-3.5 rounded-xl bg-white/75 border border-slate-200/80 min-w-0 overflow-hidden">
+          <div className="p-3 @sm:p-3.5 rounded-xl bg-white/75 border border-slate-200/80 min-w-0">
             <div className="flex items-center justify-between text-xs text-slate-600 mb-1">
               <span className="flex items-center gap-1.5 font-medium truncate">
                 {isAvanzo ? (
@@ -95,7 +98,7 @@ export function QuickCard30s({
               </span>
             </div>
             <div
-              className={`font-mono text-base sm:text-lg font-bold tabular-nums break-words ${
+              className={`font-mono text-base @sm:text-lg font-bold tabular-nums whitespace-nowrap ${
                 isAvanzo ? "text-emerald-700" : "text-red-700"
               }`}
             >
@@ -112,7 +115,7 @@ export function QuickCard30s({
           </div>
 
           {/* 2. Autofinanziamento Indiretto */}
-          <div className="p-3 sm:p-3.5 rounded-xl bg-white/75 border border-slate-200/80 min-w-0 overflow-hidden">
+          <div className="p-3 @sm:p-3.5 rounded-xl bg-white/75 border border-slate-200/80 min-w-0">
             <div className="flex items-center justify-between text-xs text-slate-600 mb-1">
               <span className="flex items-center gap-1.5 font-medium truncate">
                 <PiggyBank className="w-3.5 h-3.5 text-cyan-600 shrink-0" />
@@ -125,7 +128,7 @@ export function QuickCard30s({
                 CF p.5 ↗
               </span>
             </div>
-            <div className="font-mono text-base sm:text-lg font-bold tabular-nums text-slate-900 break-words">
+            <div className="font-mono text-base @sm:text-lg font-bold tabular-nums whitespace-nowrap text-slate-900">
               {yearData.autofinanziamento_chf.toLocaleString("de-CH", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
@@ -136,7 +139,7 @@ export function QuickCard30s({
           </div>
 
           {/* 3. Investimenti Netti BA */}
-          <div className="p-3 sm:p-3.5 rounded-xl bg-white/75 border border-slate-200/80 min-w-0 overflow-hidden">
+          <div className="p-3 @sm:p-3.5 rounded-xl bg-white/75 border border-slate-200/80 min-w-0">
             <div className="flex items-center justify-between text-xs text-slate-600 mb-1">
               <span className="flex items-center gap-1.5 font-medium truncate">
                 <Building2 className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
@@ -149,7 +152,7 @@ export function QuickCard30s({
                 CI p.5 ↗
               </span>
             </div>
-            <div className="font-mono text-base sm:text-lg font-bold tabular-nums text-slate-900 break-words">
+            <div className="font-mono text-base @sm:text-lg font-bold tabular-nums whitespace-nowrap text-slate-900">
               {yearData.investimenti_netti_chf.toLocaleString("de-CH", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
@@ -160,7 +163,7 @@ export function QuickCard30s({
           </div>
 
           {/* 4. Debito Pubblico Netto pro Capite */}
-          <div className="p-3 sm:p-3.5 rounded-xl bg-white/75 border border-slate-200/80 min-w-0 overflow-hidden">
+          <div className="p-3 @sm:p-3.5 rounded-xl bg-white/75 border border-slate-200/80 min-w-0">
             <div className="flex items-center justify-between text-xs text-slate-600 mb-1">
               <span className="flex items-center gap-1.5 font-medium truncate">
                 <Wallet className="w-3.5 h-3.5 text-amber-600 shrink-0" />
@@ -173,7 +176,7 @@ export function QuickCard30s({
                 BIL/ab ↗
               </span>
             </div>
-            <div className="font-mono text-base sm:text-lg font-bold tabular-nums text-slate-900 break-words">
+            <div className="font-mono text-base @sm:text-lg font-bold tabular-nums whitespace-nowrap text-slate-900">
               {yearData.debito_netto_pc_chf.toLocaleString("de-CH", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,

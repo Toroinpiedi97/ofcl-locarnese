@@ -197,20 +197,20 @@ export function DashboardDesktop({
         {/* KPI 1: Moltiplicatore */}
         <div
           onClick={() => setExactKpi((prev) => !prev)}
-          className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between"
+          className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between min-w-0"
           title="Clicca per commutare formato compatto/centesimi esatti"
         >
-          <div className="flex items-center justify-between text-xs font-bold text-slate-600 gap-1">
+          <div className="flex items-center justify-between text-xs font-bold text-slate-600 gap-1 min-w-0">
             <span className="truncate">{t.kpiMultiplierAvg}</span>
             <span className="inline-flex items-center text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full text-[11px] font-mono font-bold shrink-0">
               {isPrev ? "01.2026" : selectedYear}
             </span>
           </div>
-          <div className="flex items-baseline justify-between mt-2">
-            <div className="tabular-mca2 text-2xl lg:text-3xl font-extrabold text-slate-950 tracking-tight font-mono">
+          <div className="flex items-baseline justify-between mt-2 min-w-0">
+            <div className="tabular-mca2 text-2xl lg:text-3xl font-extrabold text-slate-950 tracking-tight font-mono truncate">
               {avgMultiplier}%
             </div>
-            <svg className="w-16 h-7" viewBox="0 0 80 32">
+            <svg className="w-16 h-7 shrink-0" viewBox="0 0 80 32">
               <path
                 className="sparkline-path"
                 d="M 2 24 Q 20 28 40 18 T 78 6"
@@ -221,7 +221,7 @@ export function DashboardDesktop({
               />
             </svg>
           </div>
-          <div className="text-[11px] text-slate-500 mt-1">
+          <div className="text-[11px] text-slate-500 mt-1 truncate">
             Media ponderata 19 Comuni ({selectedYear})
           </div>
         </div>
@@ -229,22 +229,22 @@ export function DashboardDesktop({
         {/* KPI 2: Totale Spese Correnti Distretto */}
         <div
           onClick={() => setExactKpi((prev) => !prev)}
-          className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between"
+          className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between min-w-0"
           title="Clicca per commutare formato compatto/centesimi esatti"
         >
-          <div className="flex items-center justify-between text-xs font-bold text-slate-600 gap-1">
+          <div className="flex items-center justify-between text-xs font-bold text-slate-600 gap-1 min-w-0">
             <span className="truncate">Spesa Totale Distretto</span>
             <span className="inline-flex items-center text-sky-700 bg-sky-50 px-2 py-0.5 rounded-full text-[11px] font-mono font-bold shrink-0">
               {isPrev ? "Prev." : "Cons."}
             </span>
           </div>
-          <div className="flex items-baseline justify-between mt-2">
-            <div className="tabular-mca2 text-2xl lg:text-3xl font-extrabold text-slate-950 tracking-tight font-mono">
+          <div className="flex items-baseline justify-between mt-2 min-w-0">
+            <div className="tabular-mca2 text-2xl lg:text-3xl font-extrabold text-slate-950 tracking-tight font-mono truncate">
               {exactKpi
                 ? `CHF ${totalSpesaDistretto.toLocaleString("de-CH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                 : `CHF ${(totalSpesaDistretto / 1_000_000).toFixed(1)}M`}
             </div>
-            <svg className="w-16 h-7" viewBox="0 0 80 32">
+            <svg className="w-16 h-7 shrink-0" viewBox="0 0 80 32">
               <path
                 className="sparkline-path"
                 d="M 2 26 Q 20 18 40 22 T 78 8"
@@ -255,7 +255,7 @@ export function DashboardDesktop({
               />
             </svg>
           </div>
-          <div className="text-[11px] text-slate-500 mt-1">
+          <div className="text-[11px] text-slate-500 mt-1 truncate">
             {isPrev ? "Preventivo consolidato 01.2026" : `Consuntivo consolidato ${selectedYear}`}
           </div>
         </div>
@@ -263,22 +263,22 @@ export function DashboardDesktop({
         {/* KPI 3: Autofinanziamento */}
         <div
           onClick={() => setExactKpi((prev) => !prev)}
-          className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between"
+          className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between min-w-0"
           title="Clicca per commutare formato compatto/centesimi esatti"
         >
-          <div className="flex items-center justify-between text-xs font-bold text-slate-600 gap-1">
+          <div className="flex items-center justify-between text-xs font-bold text-slate-600 gap-1 min-w-0">
             <span className="truncate">{t.kpiAutofinancingAvg}</span>
             <span className="inline-flex items-center text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full text-[11px] font-mono font-bold shrink-0">
               {isPrev ? "Prev." : "Cons."}
             </span>
           </div>
-          <div className="flex items-baseline justify-between mt-2">
-            <div className="tabular-mca2 text-2xl lg:text-3xl font-extrabold text-slate-950 tracking-tight font-mono">
+          <div className="flex items-baseline justify-between mt-2 min-w-0">
+            <div className="tabular-mca2 text-2xl lg:text-3xl font-extrabold text-slate-950 tracking-tight font-mono truncate">
               {exactKpi
                 ? `CHF ${avgAutofin.toLocaleString("de-CH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                 : `CHF ${(avgAutofin / 1_000_000).toFixed(1)}M`}
             </div>
-            <svg className="w-16 h-7" viewBox="0 0 80 32">
+            <svg className="w-16 h-7 shrink-0" viewBox="0 0 80 32">
               <path
                 className="sparkline-path"
                 d="M 2 10 Q 20 8 40 18 T 78 24"
@@ -289,7 +289,7 @@ export function DashboardDesktop({
               />
             </svg>
           </div>
-          <div className="text-[11px] text-slate-500 mt-1">
+          <div className="text-[11px] text-slate-500 mt-1 truncate">
             Capacità d&apos;investimento autonoma ({selectedYear})
           </div>
         </div>
@@ -297,22 +297,22 @@ export function DashboardDesktop({
         {/* KPI 4: Debito Pro Capite */}
         <div
           onClick={() => setExactKpi((prev) => !prev)}
-          className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between"
+          className="ofl-card rounded-2xl p-4 cursor-pointer flex flex-col justify-between min-w-0"
           title="Clicca per commutare formato compatto/centesimi esatti"
         >
-          <div className="flex items-center justify-between text-xs font-bold text-slate-600 gap-1">
+          <div className="flex items-center justify-between text-xs font-bold text-slate-600 gap-1 min-w-0">
             <span className="truncate">{t.kpiDebtPerCapitaAvg}</span>
             <span className="inline-flex items-center text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full text-[11px] font-mono font-bold shrink-0">
               {isPrev ? "Prev." : "Cons."}
             </span>
           </div>
-          <div className="flex items-baseline justify-between mt-2">
-            <div className="tabular-mca2 text-2xl lg:text-3xl font-extrabold text-slate-950 tracking-tight font-mono">
+          <div className="flex items-baseline justify-between mt-2 min-w-0">
+            <div className="tabular-mca2 text-2xl lg:text-3xl font-extrabold text-slate-950 tracking-tight font-mono truncate">
               {exactKpi
                 ? `CHF ${avgDebitoPc.toLocaleString("de-CH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                 : `CHF ${avgDebitoPc.toLocaleString("de-CH")}`}
             </div>
-            <svg className="w-16 h-7" viewBox="0 0 80 32">
+            <svg className="w-16 h-7 shrink-0" viewBox="0 0 80 32">
               <path
                 className="sparkline-path"
                 d="M 2 8 Q 25 14 45 20 T 78 26"
@@ -323,7 +323,7 @@ export function DashboardDesktop({
               />
             </svg>
           </div>
-          <div className="text-[11px] text-slate-500 mt-1">
+          <div className="text-[11px] text-slate-500 mt-1 truncate">
             Soglia SEL Ticino &lt; CHF 5&apos;000 ({selectedYear})
           </div>
         </div>
@@ -334,7 +334,7 @@ export function DashboardDesktop({
            =================================================================== */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-stretch">
         {/* Card 1: Andamento Spese e Ricavi (xl:col-span-6) */}
-        <div className="xl:col-span-6 ofl-card rounded-2xl p-5 flex flex-col justify-between min-h-[360px] relative">
+        <div className="xl:col-span-6 ofl-card rounded-2xl p-5 flex flex-col justify-between min-h-[360px] relative min-w-0">
           <div className="mb-2">
             <h2 className="text-sm font-bold text-slate-900 tracking-tight">
               {t.lineChartTitle}
@@ -344,7 +344,7 @@ export function DashboardDesktop({
             </p>
           </div>
 
-          <div className="flex-1 w-full min-h-[280px]">
+          <div className="flex-1 w-full min-w-0 min-h-[280px]">
             <DistrictTrendLineChart
               municipalities={selectedMunicipalities}
               showDistrictAverage={true}
@@ -355,7 +355,7 @@ export function DashboardDesktop({
         </div>
 
         {/* Card 3: Spesa Pro Capite per Settore con Drilldown Gerarchico (xl:col-span-6) */}
-        <div className="xl:col-span-6 ofl-card rounded-2xl p-5 flex flex-col justify-between min-h-[360px] relative">
+        <div className="xl:col-span-6 ofl-card rounded-2xl p-5 flex flex-col justify-between min-h-[360px] relative min-w-0">
           <div className="mb-2">
             <h2 className="text-sm font-bold text-slate-900 tracking-tight">
               Spesa Pro Capite per Settore ({selectedYear})
@@ -365,7 +365,7 @@ export function DashboardDesktop({
             </p>
           </div>
 
-          <div className="flex-1 w-full min-h-[280px]">
+          <div className="flex-1 w-full min-w-0 min-h-[280px]">
             <SectorPerCapitaBarChart
               municipalities={selectedMunicipalities}
               selectedYear={selectedYear}
