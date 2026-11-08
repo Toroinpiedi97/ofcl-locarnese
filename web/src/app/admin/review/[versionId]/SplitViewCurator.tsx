@@ -13,6 +13,10 @@ import {
   ZoomIn,
   ZoomOut,
   ExternalLink,
+  Copy,
+  Check,
+  Layers,
+  FileText,
 } from "lucide-react";
 import {
   saveLedgerCorrectionAction,
@@ -79,21 +83,43 @@ export default function SplitViewCurator({
   const [feedbackMsg, setFeedbackMsg] = useState<{ text: string; type: "ok" | "err" } | null>(null);
   const [zoomLevel, setZoomLevel] = useState(125);
   const [containsPii, setContainsPii] = useState(false);
+  const [viewMode, setViewMode] = useState<"native" | "bbox">("native");
+  const [copiedBbox, setCopiedBbox] = useState(false);
 
   const activeCell = cells[activeCellIndex];
 
-  // Sincronizza la pagina attiva al cambio di cella
+  // Sincronizza la pagina attiva al cambio di cella e auto-scroll della riga
   const selectCell = useCallback((index: number) => {
     if (index >= 0 && index < cells.length) {
       setActiveCellIndex(index);
       const page = cells[index].page;
       if (page) setActivePage(page);
+      const rowEl = document.getElementById(`cell-row-${index}`);
+      if (rowEl) {
+        rowEl.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      }
     }
   }, [cells]);
 
-  // Gestione scorciatoie tastiera (J/K, A, R, P)
+  const handleCopyBbox = useCallback(() => {
+    if (!activeCell?.bbox) return;
+    const str = `[${activeCell.bbox.map((n) => Math.round(n * 10) / 10).join(", ")}]`;
+    navigator.clipboard?.writeText(str);
+    setCopiedBbox(true);
+    setTimeout(() => setCopiedBbox(false), 2000);
+  }, [activeCell]);
+
+  // Gestione scorciatoie tastiera (J/K, E, Esc, A, P)
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
+      // Se l'utente preme Escape mentre è in editing, chiudi la form
+      if (e.key === "Escape" && editingId) {
+        e.preventDefault();
+        setEditingId(null);
+        setEditReason("");
+        return;
+      }
+
       // Ignora se l'utente sta scrivendo in un input o textarea
       if (["INPUT", "TEXTAREA"].includes((e.target as HTMLElement).tagName)) {
         return;
@@ -105,6 +131,12 @@ export default function SplitViewCurator({
       } else if (e.key === "k" || e.key === "K" || e.key === "ArrowUp") {
         e.preventDefault();
         selectCell(activeCellIndex - 1);
+      } else if (e.key === "e" || e.key === "E") {
+        e.preventDefault();
+        if (activeCell) {
+          setEditingId(activeCell.id);
+          setEditAmount(activeCell.amount_chf);
+        }
       } else if (e.key === "a" || e.key === "A") {
         e.preventDefault();
         handleApprove();
@@ -116,7 +148,7 @@ export default function SplitViewCurator({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeCellIndex, selectCell]);
+  }, [activeCellIndex, selectCell, editingId, activeCell]);
 
   async function handleSaveCorrection(e: React.FormEvent) {
     e.preventDefault();
@@ -250,30 +282,74 @@ export default function SplitViewCurator({
         <div className="w-full md:w-1/2 flex flex-col border-r border-slate-800 bg-slate-900/40 overflow-hidden">
           {/* PDF Toolbar */}
           <div className="bg-slate-900/90 border-b border-slate-800 px-4 py-2 flex items-center justify-between text-xs text-slate-400">
-            <div className="flex items-center gap-3">
-              <span className="font-semibold text-slate-300">PDF Originale</span>
-              <span className="font-mono bg-slate-800 px-2 py-0.5 rounded text-cyan-400">
+            <div className="flex items-center gap-2">
+              {/* View Mode Toggle */}
+              <div className="flex items-center bg-slate-950 p-0.5 rounded-lg border border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setViewMode("native")}
+                  className={`px-2 py-1 rounded text-[11px] font-medium flex items-center gap-1.5 transition-colors cursor-pointer ${
+                    viewMode === "native"
+                      ? "bg-slate-800 text-white shadow-sm"
+                      : "text-slate-400 hover:text-slate-200"
+                  }`}
+                  title="Visualizza il documento PDF originale"
+                >
+                  <FileText className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>PDF Nativo</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode("bbox")}
+                  className={`px-2 py-1 rounded text-[11px] font-medium flex items-center gap-1.5 transition-colors cursor-pointer ${
+                    viewMode === "bbox"
+                      ? "bg-cyan-950 text-cyan-300 border border-cyan-500/40 shadow-sm"
+                      : "text-slate-400 hover:text-slate-200"
+                  }`}
+                  title="Visualizza la sovrapposizione geometrica BBOX"
+                >
+                  <Layers className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Overlay BBOX</span>
+                </button>
+              </div>
+
+              <span className="font-mono bg-slate-800 px-2 py-0.5 rounded text-cyan-400 text-[11px]">
                 Pag. {activePage}
               </span>
+
               {activeCell?.bbox && (
-                <span className="text-[10px] font-mono text-slate-400">
-                  BBOX [{activeCell.bbox.map((n) => Math.round(n)).join(", ")}]
-                </span>
+                <button
+                  type="button"
+                  onClick={handleCopyBbox}
+                  className="hidden sm:flex items-center gap-1 px-2 py-0.5 rounded bg-slate-800/80 hover:bg-slate-800 text-[10px] font-mono text-slate-300 hover:text-white transition-colors cursor-pointer"
+                  title="Copia coordinate BBOX negli appunti"
+                >
+                  {copiedBbox ? (
+                    <Check className="w-3 h-3 text-emerald-400" />
+                  ) : (
+                    <Copy className="w-3 h-3 text-cyan-400" />
+                  )}
+                  <span>
+                    BBOX [{activeCell.bbox.map((n) => Math.round(n)).join(", ")}]
+                  </span>
+                </button>
               )}
             </div>
 
             <div className="flex items-center gap-2">
               <button
+                type="button"
                 onClick={() => setZoomLevel((z) => Math.max(z - 15, 75))}
-                className="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-white"
+                className="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-white cursor-pointer"
                 title="Riduci Zoom"
               >
                 <ZoomOut className="w-3.5 h-3.5" />
               </button>
               <span className="font-mono text-[11px]">{zoomLevel}%</span>
               <button
+                type="button"
                 onClick={() => setZoomLevel((z) => Math.min(z + 15, 200))}
-                className="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-white"
+                className="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-white cursor-pointer"
                 title="Aumenta Zoom"
               >
                 <ZoomIn className="w-3.5 h-3.5" />
@@ -290,22 +366,145 @@ export default function SplitViewCurator({
             </div>
           </div>
 
-          {/* PDF Viewer Frame */}
-          <div className="flex-1 bg-slate-950 p-2 overflow-hidden flex items-center justify-center relative">
-            <iframe
-              key={`pdf-page-${activePage}-${zoomLevel}`}
-              src={`${pdfUrl}#page=${activePage}&zoom=${zoomLevel}`}
-              className="w-full h-full rounded border border-slate-800 bg-white"
-              title="PDF Originale"
-            />
+          {/* PDF Viewer Frame / SVG BBOX Canvas */}
+          <div className="flex-1 bg-slate-950 p-3 overflow-auto flex items-center justify-center relative">
+            {viewMode === "native" ? (
+              <iframe
+                key={`pdf-page-${activePage}-${zoomLevel}`}
+                src={`${pdfUrl}#page=${activePage}&zoom=${zoomLevel}`}
+                className="w-full h-full rounded border border-slate-800 bg-white"
+                title="PDF Originale"
+              />
+            ) : (
+              <div
+                className="relative bg-slate-900/60 p-4 rounded-xl border border-slate-800 shadow-2xl flex items-center justify-center max-w-full max-h-full overflow-auto"
+                style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: "center center" }}
+              >
+                <svg
+                  viewBox="0 0 595 842"
+                  className="w-[480px] h-[679px] max-w-full drop-shadow-2xl rounded border border-slate-700 select-none"
+                  aria-label="Rappresentazione geometrica A4 coordinate BBOX"
+                >
+                  {/* Foglio A4 Bianco */}
+                  <rect width="595" height="842" fill="#ffffff" rx="4" />
+
+                  {/* Intestazione Geometrica Simulatore Atto */}
+                  <text x="45" y="48" fontSize="12" fontWeight="bold" fill="#0f172a" fontFamily="sans-serif">
+                    {municipalityName.toUpperCase()} · DICASTERO FINANZE
+                  </text>
+                  <text x="45" y="66" fontSize="9" fill="#475569" fontFamily="sans-serif">
+                    {documentTitle} — Coordinate Ge.Co.Ti. Web (Pagina {activePage})
+                  </text>
+                  <line x1="45" y1="78" x2="550" y2="78" stroke="#cbd5e1" strokeWidth="1.5" />
+
+                  {/* Righe guida del tabulato finanziario */}
+                  {[120, 160, 200, 240, 280, 320, 360, 400, 440, 480, 520, 560, 600, 640, 680, 720].map((y) => (
+                    <line key={y} x1="45" y1={y} x2="550" y2={y} stroke="#f1f5f9" strokeWidth="1" />
+                  ))}
+
+                  {/* Altre celle sulla stessa pagina */}
+                  {cells
+                    .filter((c, idx) => c.page === activePage && idx !== activeCellIndex)
+                    .map((c) => {
+                      const x0 = c.bbox[0];
+                      const top = c.bbox[1];
+                      const w = Math.max(c.bbox[2] - c.bbox[0], 25);
+                      const h = Math.max(c.bbox[3] - c.bbox[1], 12);
+                      return (
+                        <g key={c.id}>
+                          <rect
+                            x={x0}
+                            y={top}
+                            width={w}
+                            height={h}
+                            fill="rgba(148, 163, 184, 0.15)"
+                            stroke="#94a3b8"
+                            strokeWidth="1"
+                            strokeDasharray="3 2"
+                            rx="2"
+                          />
+                          <text
+                            x={x0}
+                            y={Math.max(top - 3, 15)}
+                            fontSize="7"
+                            fill="#64748b"
+                            fontFamily="monospace"
+                          >
+                            {c.metric_key}
+                          </text>
+                        </g>
+                      );
+                    })}
+
+                  {/* Cella attiva con evidenziazione geometrica ad alto contrasto */}
+                  {activeCell && activeCell.page === activePage && (
+                    <g>
+                      {/* Alone pulsante */}
+                      <rect
+                        x={activeCell.bbox[0] - 3}
+                        y={activeCell.bbox[1] - 3}
+                        width={Math.max(activeCell.bbox[2] - activeCell.bbox[0] + 6, 36)}
+                        height={Math.max(activeCell.bbox[3] - activeCell.bbox[1] + 6, 20)}
+                        rx="4"
+                        fill="none"
+                        stroke="#06b6d4"
+                        strokeWidth="2"
+                        strokeDasharray="4 2"
+                        opacity="0.8"
+                        className="animate-pulse"
+                      />
+                      {/* Box principale evidenziato */}
+                      <rect
+                        x={activeCell.bbox[0]}
+                        y={activeCell.bbox[1]}
+                        width={Math.max(activeCell.bbox[2] - activeCell.bbox[0], 30)}
+                        height={Math.max(activeCell.bbox[3] - activeCell.bbox[1], 14)}
+                        rx="2"
+                        fill="rgba(6, 182, 212, 0.3)"
+                        stroke="#0891b2"
+                        strokeWidth="2"
+                      />
+                      {/* Badge coordinate e valore */}
+                      <g
+                        transform={`translate(${Math.min(activeCell.bbox[0], 380)}, ${
+                          activeCell.bbox[1] > 35 ? activeCell.bbox[1] - 22 : activeCell.bbox[1] + 24
+                        })`}
+                      >
+                        <rect x="0" y="0" width="170" height="18" rx="3" fill="#0f172a" />
+                        <text
+                          x="6"
+                          y="13"
+                          fontSize="9"
+                          fontWeight="bold"
+                          fill="#38bdf8"
+                          fontFamily="monospace"
+                        >
+                          {Number(activeCell.amount_chf).toLocaleString("de-CH", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}{" "}
+                          CHF · [{activeCell.bbox.map((n) => Math.round(n)).join(",")}]
+                        </text>
+                      </g>
+                    </g>
+                  )}
+                </svg>
+              </div>
+            )}
           </div>
 
           {/* Keyboard Shortcuts Hint Bar */}
           <div className="bg-slate-900/90 border-t border-slate-800 px-4 py-2 flex items-center justify-between text-[11px] text-slate-400">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 flex-wrap">
               <span className="flex items-center gap-1">
                 <Keyboard className="w-3.5 h-3.5 text-cyan-400" />
-                <span className="font-mono text-cyan-400 font-semibold">[J/K]</span> Scorri righe
+                <span className="font-mono text-cyan-400 font-semibold">[J/K]</span> Righe
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="font-mono text-amber-400 font-semibold">[E]</span> Rettifica
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="font-mono text-slate-400 font-semibold">[Esc]</span> Annulla
               </span>
               <span className="flex items-center gap-1">
                 <span className="font-mono text-emerald-400 font-semibold">[A]</span> Approva
@@ -314,7 +513,7 @@ export default function SplitViewCurator({
                 <span className="font-mono text-purple-400 font-semibold">[P]</span> Toggle PII
               </span>
             </div>
-            <span className="text-slate-500">Sincronizzazione automatica su coordinate #page</span>
+            <span className="text-slate-500 hidden sm:inline">Coordinate A4 [0..595, 0..842]</span>
           </div>
         </div>
 
@@ -341,6 +540,7 @@ export default function SplitViewCurator({
               return (
                 <div
                   key={cell.id}
+                  id={`cell-row-${idx}`}
                   onClick={() => selectCell(idx)}
                   className={`p-3 rounded-lg border transition-all cursor-pointer ${
                     isSelected

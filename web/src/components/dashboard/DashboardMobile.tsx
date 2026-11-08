@@ -119,18 +119,18 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
             </p>
 
             {/* 3 Metriche Chiave del Distretto */}
-            <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-slate-200/80 text-center">
-              <div className="p-2 rounded-xl bg-slate-50/80 border border-slate-200/60">
-                <div className="font-mono text-sm font-extrabold text-[#0F3854]">19</div>
-                <div className="text-[10px] text-slate-500 font-medium">Comuni UST</div>
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mt-3 pt-3 border-t border-slate-200/80 text-center">
+              <div className="p-1.5 sm:p-2 rounded-xl bg-slate-50/80 border border-slate-200/60 min-w-0">
+                <div className="font-mono text-xs sm:text-sm font-extrabold text-[#0F3854]">19</div>
+                <div className="text-[9px] sm:text-[10px] text-slate-500 font-medium truncate">Comuni UST</div>
               </div>
-              <div className="p-2 rounded-xl bg-slate-50/80 border border-slate-200/60">
-                <div className="font-mono text-sm font-extrabold text-[#0F3854]">~66&apos;000</div>
-                <div className="text-[10px] text-slate-500 font-medium">Abitanti</div>
+              <div className="p-1.5 sm:p-2 rounded-xl bg-slate-50/80 border border-slate-200/60 min-w-0">
+                <div className="font-mono text-xs sm:text-sm font-extrabold text-[#0F3854]">~66&apos;000</div>
+                <div className="text-[9px] sm:text-[10px] text-slate-500 font-medium truncate">Abitanti</div>
               </div>
-              <div className="p-2 rounded-xl bg-slate-50/80 border border-slate-200/60">
-                <div className="font-mono text-sm font-extrabold text-emerald-700">0.01 CHF</div>
-                <div className="text-[10px] text-slate-500 font-medium">MCA2 Esatto</div>
+              <div className="p-1.5 sm:p-2 rounded-xl bg-slate-50/80 border border-slate-200/60 min-w-0">
+                <div className="font-mono text-xs sm:text-sm font-extrabold text-emerald-700 whitespace-nowrap tabular-nums">0.01 CHF</div>
+                <div className="text-[9px] sm:text-[10px] text-slate-500 font-medium truncate">MCA2 Esatto</div>
               </div>
             </div>
 
@@ -174,7 +174,7 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
       </div>
 
       {/* Selettore Anno Mobile Compatto (2024, 2025, 01.2026) */}
-      <div className="flex items-center justify-between p-2 px-3 rounded-2xl ofl-card shadow-xs">
+      <div className="flex items-center justify-between p-2 px-3 rounded-2xl ofl-card shadow-xs flex-wrap gap-2">
         <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
           <Calendar className="w-3.5 h-3.5 text-sky-700" />
           <span>Esercizio:</span>
@@ -189,7 +189,7 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
                 type="button"
                 onClick={() => setSelectedYear(yr)}
                 className={cn(
-                  "px-2.5 py-1 rounded-lg text-xs font-bold transition-all font-mono flex items-center gap-1 cursor-pointer",
+                  "px-2 sm:px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all font-mono flex items-center gap-1 cursor-pointer",
                   isSel
                     ? "bg-white text-[#0F3854] shadow-xs border border-slate-200"
                     : "text-slate-500 hover:text-slate-900"

@@ -1,7 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { MessageSquareText, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import Link from "next/link";
+import {
+  MessageSquareText,
+  CheckCircle2,
+  Clock,
+  XCircle,
+  ExternalLink,
+  Search,
+  Filter,
+  X,
+} from "lucide-react";
 import {
   fetchLiveTicketsAction,
   updateTicketStatusAction,
@@ -45,7 +55,9 @@ const INITIAL_TICKETS: FeedbackTicket[] = [
 
 export default function CuratorTicketsPage() {
   const [tickets, setTickets] = useState<FeedbackTicket[]>(INITIAL_TICKETS);
-  const [filter, setFilter] = useState<string>("ALL");
+  const [statusFilter, setStatusFilter] = useState<string>("ALL");
+  const [categoryFilter, setCategoryFilter] = useState<string>("ALL");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   useEffect(() => {
     fetchLiveTicketsAction()
@@ -68,10 +80,20 @@ export default function CuratorTicketsPage() {
     await updateTicketStatusAction(id, newStatus);
   }
 
-  const filteredTickets = tickets.filter((t) => {
-    if (filter === "ALL") return true;
-    return t.status === filter;
-  });
+  const filteredTickets = useMemo(() => {
+    return tickets.filter((t) => {
+      if (statusFilter !== "ALL" && t.status !== statusFilter) return false;
+      if (categoryFilter !== "ALL" && t.category !== categoryFilter) return false;
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase().trim();
+        const matchesMsg = t.message.toLowerCase().includes(q);
+        const matchesMun = t.municipality_name.toLowerCase().includes(q);
+        const matchesUst = String(t.ust_code).includes(q);
+        return matchesMsg || matchesMun || matchesUst;
+      }
+      return true;
+    });
+  }, [tickets, statusFilter, categoryFilter, searchQuery]);
 
   return (
     <div className="p-8 max-w-6xl mx-auto w-full">
@@ -86,20 +108,75 @@ export default function CuratorTicketsPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          {["ALL", "NEW", "IN_REVIEW", "RESOLVED"].map((st) => (
+        {/* Filtri di Stato */}
+        <div className="flex items-center gap-1.5 bg-slate-900 p-1 rounded-lg border border-slate-800">
+          {[
+            { key: "ALL", label: "Tutti" },
+            { key: "NEW", label: "Nuovi" },
+            { key: "IN_REVIEW", label: "In Revisione" },
+            { key: "RESOLVED", label: "Risolti" },
+          ].map(({ key, label }) => (
             <button
-              key={st}
-              onClick={() => setFilter(st)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-                filter === st
-                  ? "bg-cyan-600 text-white"
-                  : "bg-slate-900 border border-slate-800 text-slate-400 hover:text-white"
+              key={key}
+              onClick={() => setStatusFilter(key)}
+              className={`px-3 py-1.5 rounded text-xs font-medium transition-colors cursor-pointer ${
+                statusFilter === key
+                  ? "bg-slate-800 text-white font-semibold shadow-sm"
+                  : "text-slate-400 hover:text-white"
               }`}
             >
-              {st}
+              {label}
             </button>
           ))}
+        </div>
+      </div>
+
+      {/* Seconda Barra Filtri: Categorie & Ricerca */}
+      <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-4 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-xs text-slate-400 flex items-center gap-1 mr-1">
+            <Filter className="w-3.5 h-3.5 text-slate-500" />
+            <span>Categoria:</span>
+          </span>
+          {[
+            { key: "ALL", label: "Tutte" },
+            { key: "DISCREPANZA_CIFRA", label: "Discrepanza Cifra" },
+            { key: "SEGNALAZIONE_ATTO", label: "Segnalazione Atto" },
+            { key: "ACCESSIBILITA", label: "Accessibilità" },
+          ].map(({ key, label }) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setCategoryFilter(key)}
+              className={`px-2.5 py-1 rounded text-xs font-medium transition-colors cursor-pointer ${
+                categoryFilter === key
+                  ? "bg-cyan-950 text-cyan-300 border border-cyan-500/40"
+                  : "bg-slate-950/60 text-slate-400 hover:text-slate-200 border border-slate-800/80"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        <div className="relative">
+          <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Cerca testo o comune..."
+            className="pl-8 pr-7 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 w-full md:w-56"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery("")}
+              className="absolute right-2 top-2 text-slate-400 hover:text-white"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
       </div>
 
@@ -128,8 +205,18 @@ export default function CuratorTicketsPage() {
               </p>
 
               {ticket.page_url && (
-                <div className="text-xs text-slate-400">
-                  Riferimento URL: <span className="text-cyan-400 font-mono">{ticket.page_url}</span>
+                <div className="text-xs text-slate-400 flex items-center gap-2 pt-1">
+                  <span>Riferimento URL:</span>
+                  <a
+                    href={ticket.page_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-slate-800/90 hover:bg-slate-700 text-cyan-400 hover:text-cyan-300 font-mono text-[11px] transition-colors"
+                    title={`Apri ${ticket.page_url} in nuova scheda`}
+                  >
+                    <span>{ticket.page_url}</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
                 </div>
               )}
             </div>

@@ -10,23 +10,7 @@ import {
   ShieldAlert,
   Search,
 } from "lucide-react";
-
-interface QueueItem {
-  id: string;
-  ust_code: number;
-  municipality_name: string;
-  document_title: string;
-  mm_number: string | null;
-  statement_year: number;
-  statement_type: "CONSUNTIVO" | "PREVENTIVO" | "CREDITO";
-  status: "NEEDS_REVIEW" | "VALIDATED" | "APPROVED" | "PUBLISHED";
-  blocking_count: number;
-  warning_count: number;
-  confidence: number;
-  has_overrun: boolean;
-  contains_personal_data: boolean;
-  created_at: string;
-}
+import QueueTableClient, { QueueItem } from "./QueueTableClient";
 
 // Dataset di fallback certificato per sviluppo locale / offline
 const FALLBACK_QUEUE: QueueItem[] = [
@@ -229,6 +213,14 @@ export default async function CuratorQueuePage() {
     // Silenzioso in ambiente offline: usa FALLBACK_QUEUE
   }
 
+  // Calcolo KPI dinamici dai dati reali/fallback
+  const needsReviewCount = queueItems.filter((i) => i.status === "NEEDS_REVIEW").length;
+  const validatedCount = queueItems.filter((i) => i.status === "VALIDATED").length;
+  const overrunCount = queueItems.filter((i) => i.has_overrun).length;
+  const publishedCount = queueItems.filter(
+    (i) => i.status === "PUBLISHED" || i.status === "APPROVED"
+  ).length;
+
   return (
     <div className="p-8 max-w-7xl mx-auto w-full">
       {/* Header & Statistiche Coda */}
@@ -253,14 +245,14 @@ export default async function CuratorQueuePage() {
         </div>
       </div>
 
-      {/* KPI Cards di Coda */}
+      {/* KPI Cards di Coda Dinamiche */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-4 flex items-center gap-4">
           <div className="p-3 bg-amber-950/50 border border-amber-500/30 rounded-lg text-amber-400">
             <Clock className="w-5 h-5" />
           </div>
           <div>
-            <div className="text-xl font-bold text-white font-mono">2</div>
+            <div className="text-xl font-bold text-white font-mono">{needsReviewCount}</div>
             <div className="text-xs text-slate-400">Richiedono Revisione (NEEDS_REVIEW)</div>
           </div>
         </div>
@@ -270,7 +262,7 @@ export default async function CuratorQueuePage() {
             <CheckCircle2 className="w-5 h-5" />
           </div>
           <div>
-            <div className="text-xl font-bold text-white font-mono">1</div>
+            <div className="text-xl font-bold text-white font-mono">{validatedCount}</div>
             <div className="text-xs text-slate-400">Quadratura V01-V12 OK (VALIDATED)</div>
           </div>
         </div>
@@ -280,7 +272,7 @@ export default async function CuratorQueuePage() {
             <AlertTriangle className="w-5 h-5" />
           </div>
           <div>
-            <div className="text-xl font-bold text-white font-mono">1</div>
+            <div className="text-xl font-bold text-white font-mono">{overrunCount}</div>
             <div className="text-xs text-slate-400">Sorpassi Credito Rilevati (S01)</div>
           </div>
         </div>
@@ -290,146 +282,14 @@ export default async function CuratorQueuePage() {
             <FileText className="w-5 h-5" />
           </div>
           <div>
-            <div className="text-xl font-bold text-white font-mono">1</div>
+            <div className="text-xl font-bold text-white font-mono">{publishedCount}</div>
             <div className="text-xs text-slate-400">Pubblicati Online (PUBLISHED)</div>
           </div>
         </div>
       </div>
 
-      {/* Tabella Coda Revisioni */}
-      <div className="bg-slate-900/80 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
-        <div className="p-4 border-b border-slate-800 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
-            <FileText className="w-4 h-4 text-cyan-400" />
-            <span>Fascicoli in Coda di Elaborazione</span>
-          </div>
-
-          <div className="relative">
-            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5" />
-            <input
-              type="text"
-              placeholder="Cerca comune, MM o anno..."
-              className="pl-8 pr-3 py-1 bg-slate-950 border border-slate-800 rounded text-xs text-white focus:outline-none focus:border-cyan-500 w-60"
-            />
-          </div>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-sm">
-            <thead>
-              <tr className="bg-slate-950/60 border-b border-slate-800 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                <th className="py-3 px-4">Comune / Atto</th>
-                <th className="py-3 px-4">Anno / Tipo</th>
-                <th className="py-3 px-4">Stato Pipeline</th>
-                <th className="py-3 px-4 text-center">Controlli MCA2</th>
-                <th className="py-3 px-4 text-center">Confidenza</th>
-                <th className="py-3 px-4 text-center">Allerte</th>
-                <th className="py-3 px-4 text-right">Azione</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/60 font-sans">
-              {queueItems.map((item) => (
-                <tr key={item.id} className="hover:bg-slate-800/40 transition-colors">
-                  <td className="py-3.5 px-4">
-                    <div className="font-medium text-white flex items-center gap-2">
-                      <span>{item.municipality_name}</span>
-                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">
-                        UST {item.ust_code}
-                      </span>
-                    </div>
-                    <div className="text-xs text-slate-400 truncate max-w-sm mt-0.5">
-                      {item.document_title}
-                    </div>
-                  </td>
-
-                  <td className="py-3.5 px-4">
-                    <div className="font-mono text-xs text-slate-200">{item.statement_year}</div>
-                    <div className="text-[11px] text-cyan-400/80 font-medium">{item.statement_type}</div>
-                  </td>
-
-                  <td className="py-3.5 px-4">
-                    {item.status === "NEEDS_REVIEW" && (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-950/60 border border-amber-500/40 text-amber-300">
-                        <Clock className="w-3 h-3" />
-                        <span>NEEDS_REVIEW</span>
-                      </span>
-                    )}
-                    {item.status === "VALIDATED" && (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-cyan-950/60 border border-cyan-500/40 text-cyan-300">
-                        <CheckCircle2 className="w-3 h-3" />
-                        <span>VALIDATED</span>
-                      </span>
-                    )}
-                    {item.status === "PUBLISHED" && (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-950/60 border border-emerald-500/40 text-emerald-300">
-                        <CheckCircle2 className="w-3 h-3" />
-                        <span>PUBLISHED</span>
-                      </span>
-                    )}
-                  </td>
-
-                  <td className="py-3.5 px-4 text-center">
-                    {item.blocking_count > 0 ? (
-                      <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-red-950 border border-red-500/40 text-red-400">
-                        {item.blocking_count} BLOCKING
-                      </span>
-                    ) : item.warning_count > 0 ? (
-                      <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-amber-950 border border-amber-500/40 text-amber-400">
-                        {item.warning_count} WARNING
-                      </span>
-                    ) : (
-                      <span className="font-mono text-xs text-emerald-400 flex items-center justify-center gap-1">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>12/12 OK</span>
-                      </span>
-                    )}
-                  </td>
-
-                  <td className="py-3.5 px-4 text-center">
-                    <span className="font-mono text-xs text-slate-300">
-                      {(item.confidence * 100).toFixed(0)}%
-                    </span>
-                  </td>
-
-                  <td className="py-3.5 px-4 text-center">
-                    <div className="flex items-center justify-center gap-1.5">
-                      {item.has_overrun && (
-                        <span
-                          title="Rilevato sorpasso di credito d'opera su Allegato f (S01)"
-                          className="p-1 rounded bg-red-950/80 border border-red-500/40 text-red-400"
-                        >
-                          <AlertTriangle className="w-3.5 h-3.5" />
-                        </span>
-                      )}
-                      {item.contains_personal_data && (
-                        <span
-                          title="Attenzione: contiene dati personali (nLPD)"
-                          className="p-1 rounded bg-purple-950/80 border border-purple-500/40 text-purple-400"
-                        >
-                          <ShieldAlert className="w-3.5 h-3.5" />
-                        </span>
-                      )}
-                      {!item.has_overrun && !item.contains_personal_data && (
-                        <span className="text-slate-600 text-xs">-</span>
-                      )}
-                    </div>
-                  </td>
-
-                  <td className="py-3.5 px-4 text-right">
-                    <Link
-                      href={`/admin/review/${item.id}`}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-cyan-600/90 hover:bg-cyan-500 text-white transition-colors cursor-pointer"
-                    >
-                      <span>Revisiona</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      {/* Tabella Coda Revisioni Reattiva con Ricerca e Filtri */}
+      <QueueTableClient initialItems={queueItems} />
     </div>
   );
 }

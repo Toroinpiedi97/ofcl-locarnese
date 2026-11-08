@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { UploadCloud, CheckCircle2, AlertCircle, FileText, Lock } from "lucide-react";
+import { useState, useCallback } from "react";
+import { UploadCloud, CheckCircle2, AlertCircle, FileText, Lock, X } from "lucide-react";
 import { MUNICIPALITIES } from "@/data/municipalities";
 import { uploadDocumentManualAction } from "./actions";
 
@@ -12,8 +12,24 @@ export default function CuratorUploadPage() {
   const [mmNumber, setMmNumber] = useState("");
   const [notes, setNotes] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [feedback, setFeedback] = useState<{ text: string; type: "ok" | "err" } | null>(null);
+
+  const validateAndSetFile = useCallback((selectedFile: File) => {
+    if (!selectedFile.name.toLowerCase().endsWith(".pdf") && selectedFile.type !== "application/pdf") {
+      setFeedback({ text: "Il file deve essere in formato PDF valido (.pdf).", type: "err" });
+      setFile(null);
+      return;
+    }
+    if (selectedFile.size > 50 * 1024 * 1024) {
+      setFeedback({ text: "La dimensione del file supera il limite consentito di 50 MB.", type: "err" });
+      setFile(null);
+      return;
+    }
+    setFile(selectedFile);
+    setFeedback(null);
+  }, []);
 
   async function handleUpload(e: React.FormEvent) {
     e.preventDefault();
@@ -175,25 +191,73 @@ export default function CuratorUploadPage() {
           {/* Area File Drop / Select */}
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
-              File PDF Ufficiale (max 150 MB)
+              File PDF Ufficiale (max 50 MB)
             </label>
-            <div className="border-2 border-dashed border-slate-700 hover:border-cyan-500 rounded-xl p-8 text-center transition-colors bg-slate-950/60">
+            <div
+              onDragOver={(e) => {
+                e.preventDefault();
+                setIsDragging(true);
+              }}
+              onDragLeave={(e) => {
+                e.preventDefault();
+                setIsDragging(false);
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                setIsDragging(false);
+                const dropped = e.dataTransfer.files?.[0];
+                if (dropped) validateAndSetFile(dropped);
+              }}
+              className={`border-2 border-dashed rounded-xl p-8 text-center transition-all ${
+                isDragging
+                  ? "border-cyan-400 bg-cyan-950/30 scale-[1.01]"
+                  : "border-slate-700 hover:border-cyan-500/80 bg-slate-950/60"
+              }`}
+            >
               <input
                 type="file"
                 accept=".pdf,application/pdf"
                 id="pdf-file-input"
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
+                onChange={(e) => {
+                  const selected = e.target.files?.[0];
+                  if (selected) validateAndSetFile(selected);
+                }}
                 className="hidden"
               />
-              <label htmlFor="pdf-file-input" className="cursor-pointer flex flex-col items-center">
-                <FileText className="w-10 h-10 text-cyan-400 mb-3" />
-                <span className="text-sm font-medium text-white">
-                  {file ? file.name : "Trascina qui il file PDF o fai clic per selezionarlo"}
-                </span>
-                <span className="text-xs text-slate-500 mt-1">
-                  {file ? `${(file.size / (1024 * 1024)).toFixed(2)} MB` : "Formato accettato: solo documenti digitali PDF validi (%PDF-)"}
-                </span>
-              </label>
+              {file ? (
+                <div className="flex flex-col items-center">
+                  <div className="p-3 bg-emerald-950/80 border border-emerald-500/40 rounded-full text-emerald-400 mb-3">
+                    <CheckCircle2 className="w-8 h-8" />
+                  </div>
+                  <span className="text-sm font-semibold text-white tracking-tight">
+                    {file.name}
+                  </span>
+                  <span className="text-xs font-mono text-cyan-400 mt-1">
+                    {(file.size / (1024 * 1024)).toFixed(2)} MB · File pronto per l&apos;invio
+                  </span>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setFile(null);
+                    }}
+                    className="mt-3 px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                    <span>Rimuovi file</span>
+                  </button>
+                </div>
+              ) : (
+                <label htmlFor="pdf-file-input" className="cursor-pointer flex flex-col items-center">
+                  <FileText className="w-10 h-10 text-cyan-400 mb-3" />
+                  <span className="text-sm font-medium text-white">
+                    Trascina qui il file PDF o fai clic per selezionarlo
+                  </span>
+                  <span className="text-xs text-slate-500 mt-1">
+                    Formato accettato: solo documenti digitali PDF validi (%PDF-, max 50 MB)
+                  </span>
+                </label>
+              )}
             </div>
           </div>
 
