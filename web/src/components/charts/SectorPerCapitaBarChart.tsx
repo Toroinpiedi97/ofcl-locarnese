@@ -37,6 +37,7 @@ export function SectorPerCapitaBarChart({
   className,
 }: SectorPerCapitaBarChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const chartRef = useRef<HTMLDivElement>(null);
   const containerWidth = useContainerWidth(containerRef);
   const isNarrow = containerWidth > 0 && containerWidth < 420;
 
@@ -94,8 +95,10 @@ export function SectorPerCapitaBarChart({
 
   // Esportazione client-side
   async function handleExport(format: ExportFormat) {
-    if (!containerRef.current) return;
-    const svgEl = containerRef.current.querySelector("svg");
+    const svgEl =
+      chartRef.current?.querySelector<SVGSVGElement>("svg[role='img']") ||
+      chartRef.current?.querySelector<SVGSVGElement>("svg") ||
+      containerRef.current?.querySelector<SVGSVGElement>("svg[role='img']");
     if (!svgEl) return;
 
     try {
@@ -272,6 +275,7 @@ export function SectorPerCapitaBarChart({
 
       {/* 2. Grafico Nivo Bar Orizzontale Flessibile & Responsive */}
       <div
+        ref={chartRef}
         className="w-full flex-1 overflow-y-auto overflow-x-hidden relative min-w-0"
         style={{ height: computedHeight, minHeight: 220 }}
       >

@@ -29,11 +29,18 @@ export async function exportSvgElement(
 
   // 1. Clona l'SVG per calcolare e incorporare gli stili computati
   const clonedSvg = svgElement.cloneNode(true) as SVGSVGElement;
-  
-  // Assicura dimensioni esplicite
+
+  // Calcola le dimensioni native effettive dell'SVG del grafico
+  const attrW = parseFloat(svgElement.getAttribute("width") || "");
+  const attrH = parseFloat(svgElement.getAttribute("height") || "");
   const bbox = svgElement.getBoundingClientRect();
-  const width = Math.max(bbox.width, 600);
-  const height = Math.max(bbox.height, 350);
+  const width = Math.round(attrW > 0 ? attrW : bbox.width > 0 ? bbox.width : 800);
+  const height = Math.round(attrH > 0 ? attrH : bbox.height > 0 ? bbox.height : 400);
+
+  // Assicura viewBox per mantenere la fedeltà e il rapporto d'aspetto vettoriale
+  if (!clonedSvg.getAttribute("viewBox")) {
+    clonedSvg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+  }
 
   clonedSvg.setAttribute("width", String(width));
   clonedSvg.setAttribute("height", String(height));
@@ -46,6 +53,15 @@ export async function exportSvgElement(
     .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
   `;
   clonedSvg.insertBefore(styleElement, clonedSvg.firstChild);
+
+  // Sfondo solido per visualizzatori esterni (sia formato SVG che raster PNG/JPEG)
+  if (backgroundColor && backgroundColor !== "transparent") {
+    const bgRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    bgRect.setAttribute("width", "100%");
+    bgRect.setAttribute("height", "100%");
+    bgRect.setAttribute("fill", backgroundColor);
+    clonedSvg.insertBefore(bgRect, styleElement.nextSibling);
+  }
 
   // Serializza l'SVG in stringa XML
   const serializer = new XMLSerializer();
@@ -65,7 +81,7 @@ export async function exportSvgElement(
 
     img.onload = () => {
       try {
-        const scale = window.devicePixelRatio || 2; // Alta risoluzione Retina (2x)
+        const scale = Math.max(window.devicePixelRatio || 2, 2); // Alta risoluzione Retina (minimo 2x)
         const canvas = document.createElement("canvas");
         canvas.width = width * scale;
         canvas.height = height * scale;

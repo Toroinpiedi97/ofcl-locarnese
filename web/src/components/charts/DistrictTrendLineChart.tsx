@@ -33,6 +33,7 @@ export function DistrictTrendLineChart({
   className,
 }: DistrictTrendLineChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const chartContainerRef = useRef<HTMLDivElement>(null);
   const containerWidth = useContainerWidth(containerRef);
   const isNarrow = containerWidth > 0 && containerWidth < 420;
 
@@ -75,10 +76,12 @@ export function DistrictTrendLineChart({
     return { seriesData: list, colorsList: colors };
   }, [municipalities, showDistrictAverage]);
 
-  // Gestione esportazione client-side diretta da DOM SVG
+  // Gestione esportazione client-side diretta da DOM SVG del grafico
   async function handleExport(format: ExportFormat) {
-    if (!containerRef.current) return;
-    const svgEl = containerRef.current.querySelector("svg");
+    const svgEl =
+      chartContainerRef.current?.querySelector<SVGSVGElement>("svg[role='img']") ||
+      chartContainerRef.current?.querySelector<SVGSVGElement>("svg") ||
+      containerRef.current?.querySelector<SVGSVGElement>("svg[role='img']");
     if (!svgEl) return;
 
     try {
@@ -184,95 +187,97 @@ export function DistrictTrendLineChart({
         </svg>
 
         {/* Nivo ResponsiveLine che occupa dinamicamente tutto lo spazio */}
-        <ResponsiveLine
-          data={seriesData}
-          ariaLabel="Grafico andamento spese e ricavi storici 2019-2026"
-          theme={nivoOflTheme}
-          colors={colorsList}
-          margin={{ top: 14, right: isNarrow ? 14 : 18, bottom: isNarrow ? 38 : 32, left: isNarrow ? 44 : 52 }}
-          xScale={{ type: "point" }}
-          yScale={{
-            type: "linear",
-            min: "auto",
-            max: "auto",
-            stacked: false,
-          }}
-          markers={
-            selectedYear
-              ? [
-                  {
-                    axis: "x" as const,
-                    value: String(parseFiscalYear(selectedYear)),
-                    lineStyle: {
-                      stroke: "#0284c7",
-                      strokeWidth: 2,
-                      strokeDasharray: "4 4",
+        <div ref={chartContainerRef} className="w-full h-full min-w-0">
+          <ResponsiveLine
+            data={seriesData}
+            ariaLabel="Grafico andamento spese e ricavi storici 2019-2026"
+            theme={nivoOflTheme}
+            colors={colorsList}
+            margin={{ top: 14, right: isNarrow ? 14 : 18, bottom: isNarrow ? 38 : 32, left: isNarrow ? 44 : 52 }}
+            xScale={{ type: "point" }}
+            yScale={{
+              type: "linear",
+              min: "auto",
+              max: "auto",
+              stacked: false,
+            }}
+            markers={
+              selectedYear
+                ? [
+                    {
+                      axis: "x" as const,
+                      value: String(parseFiscalYear(selectedYear)),
+                      lineStyle: {
+                        stroke: "#0284c7",
+                        strokeWidth: 2,
+                        strokeDasharray: "4 4",
+                      },
+                      legend: selectedYear.includes("2026") ? "01.2026 Prev." : `${selectedYear} Cons.`,
+                      legendOrientation: "vertical" as const,
+                      legendPosition: "top-left" as const,
+                      textStyle: { fill: "#0369a1", fontSize: 10, fontWeight: 700 },
                     },
-                    legend: selectedYear.includes("2026") ? "01.2026 Prev." : `${selectedYear} Cons.`,
-                    legendOrientation: "vertical" as const,
-                    legendPosition: "top-left" as const,
-                    textStyle: { fill: "#0369a1", fontSize: 10, fontWeight: 700 },
-                  },
-                ]
-              : undefined
-          }
-          curve="monotoneX"
-          axisTop={null}
-          axisRight={null}
-          axisBottom={{
-            tickSize: 4,
-            tickPadding: 6,
-            tickRotation: isNarrow ? -30 : 0,
-          }}
-          axisLeft={{
-            tickSize: 4,
-            tickPadding: 6,
-            tickRotation: 0,
-            format: (v: number | string) => formatCompactNumber(v),
-            legend: isNarrow ? "" : "CHF / ab.",
-            legendOffset: -42,
-            legendPosition: "middle",
-          }}
-          enableGridX={false}
-          enableGridY={true}
-          lineWidth={2.8}
-          pointSize={6}
-          pointColor={{ from: "color" }}
-          pointBorderWidth={2}
-          pointBorderColor="#ffffff"
-          pointLabelYOffset={-12}
-          useMesh={true}
-          enableSlices="x"
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          sliceTooltip={({ slice }: { slice: { points: readonly any[] } }) => (
-            <div className="rounded-xl bg-slate-900/95 text-white p-2.5 text-xs font-mono shadow-2xl border border-slate-700 min-w-[200px]">
-              <div className="font-bold border-b border-slate-700 pb-1 mb-1.5 text-slate-300 flex items-center justify-between">
-                <span>Esercizio {slice.points[0]?.data.x}</span>
-                <span className="text-[10px] text-slate-400">Spesa pro capite</span>
-              </div>
-              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-              {slice.points.map((pt: any) => (
-                <div key={pt.id} className="flex items-center justify-between gap-4 py-0.5">
-                  <span className="flex items-center gap-1.5">
-                    <span
-                      className="w-2.5 h-2.5 rounded-full shrink-0"
-                      style={{
-                        backgroundColor:
-                          pt.seriesColor ?? pt.serieColor ?? pt.color,
-                      }}
-                    />
-                    <span className="text-slate-300 font-sans font-medium text-xs">
-                      {pt.seriesId ?? pt.serieId ?? pt.id}:
-                    </span>
-                  </span>
-                  <span className="font-bold text-cyan-400 font-mono">
-                    CHF {Number(pt.data.yFormatted ?? pt.data.y).toLocaleString("de-CH")}
-                  </span>
+                  ]
+                : undefined
+            }
+            curve="monotoneX"
+            axisTop={null}
+            axisRight={null}
+            axisBottom={{
+              tickSize: 4,
+              tickPadding: 6,
+              tickRotation: isNarrow ? -30 : 0,
+            }}
+            axisLeft={{
+              tickSize: 4,
+              tickPadding: 6,
+              tickRotation: 0,
+              format: (v: number | string) => formatCompactNumber(v),
+              legend: isNarrow ? "" : "CHF / ab.",
+              legendOffset: -42,
+              legendPosition: "middle",
+            }}
+            enableGridX={false}
+            enableGridY={true}
+            lineWidth={2.8}
+            pointSize={6}
+            pointColor={{ from: "color" }}
+            pointBorderWidth={2}
+            pointBorderColor="#ffffff"
+            pointLabelYOffset={-12}
+            useMesh={true}
+            enableSlices="x"
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            sliceTooltip={({ slice }: { slice: { points: readonly any[] } }) => (
+              <div className="rounded-xl bg-slate-900/95 text-white p-2.5 text-xs font-mono shadow-2xl border border-slate-700 min-w-[200px]">
+                <div className="font-bold border-b border-slate-700 pb-1 mb-1.5 text-slate-300 flex items-center justify-between">
+                  <span>Esercizio {slice.points[0]?.data.x}</span>
+                  <span className="text-[10px] text-slate-400">Spesa pro capite</span>
                 </div>
-              ))}
-            </div>
-          )}
-        />
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {slice.points.map((pt: any) => (
+                  <div key={pt.id} className="flex items-center justify-between gap-4 py-0.5">
+                    <span className="flex items-center gap-1.5">
+                      <span
+                        className="w-2.5 h-2.5 rounded-full shrink-0"
+                        style={{
+                          backgroundColor:
+                            pt.seriesColor ?? pt.serieColor ?? pt.color,
+                        }}
+                      />
+                      <span className="text-slate-300 font-sans font-medium text-xs">
+                        {pt.seriesId ?? pt.serieId ?? pt.id}:
+                      </span>
+                    </span>
+                    <span className="font-bold text-cyan-400 font-mono">
+                      CHF {Number(pt.data.yFormatted ?? pt.data.y).toLocaleString("de-CH")}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          />
+        </div>
       </div>
     </div>
   );

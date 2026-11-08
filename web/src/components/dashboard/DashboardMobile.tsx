@@ -174,7 +174,7 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
       </div>
 
       {/* Selettore Anno Mobile Compatto (2024, 2025, 01.2026) */}
-      <div className="flex items-center justify-between p-2 px-2.5 sm:px-3 rounded-2xl ofl-card shadow-xs flex-wrap gap-2">
+      <div className="flex items-center justify-between p-2 px-2.5 sm:px-3 rounded-2xl ofl-card shadow-xs flex-wrap gap-1.5 sm:gap-2">
         <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
           <Calendar className="w-3.5 h-3.5 text-sky-700" />
           <span>Esercizio:</span>
@@ -189,7 +189,7 @@ export function DashboardMobile({ municipalities }: DashboardMobileProps) {
                 type="button"
                 onClick={() => setSelectedYear(yr)}
                 className={cn(
-                  "px-2 sm:px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all font-mono flex items-center gap-1 cursor-pointer",
+                  "px-2 sm:px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all font-mono flex items-center gap-0.5 sm:gap-1 cursor-pointer",
                   isSel
                     ? "bg-white text-[#0F3854] shadow-xs border border-slate-200"
                     : "text-slate-500 hover:text-slate-900"
