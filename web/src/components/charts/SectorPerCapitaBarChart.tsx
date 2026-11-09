@@ -95,11 +95,18 @@ export function SectorPerCapitaBarChart({
 
   // Esportazione client-side
   async function handleExport(format: ExportFormat) {
+    const chartEl = chartRef.current;
+    if (!chartEl) return;
+
     const svgEl =
-      chartRef.current?.querySelector<SVGSVGElement>("svg[role='img']") ||
-      chartRef.current?.querySelector<SVGSVGElement>("svg") ||
-      containerRef.current?.querySelector<SVGSVGElement>("svg[role='img']");
-    if (!svgEl) return;
+      chartEl.querySelector<SVGSVGElement>("svg[role='img']") ||
+      chartEl.querySelector<SVGSVGElement>("svg:not([aria-hidden='true'])") ||
+      chartEl.querySelector<SVGSVGElement>("svg");
+
+    if (!svgEl || svgEl.closest("button") || svgEl.classList.contains("lucide")) {
+      console.warn("Nessun SVG contabile valido trovato per l'esportazione");
+      return;
+    }
 
     try {
       setIsExporting(true);
