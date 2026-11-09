@@ -138,5 +138,27 @@ test.describe("Portale Pubblico OFCL (/) - Desktop & Mobile Master-Detail", () =
     await expect(closeMenuBtn).toBeVisible();
     await closeMenuBtn.click();
     await expect(menuDrawer).not.toBeVisible();
+
+    // 4. Verifica Toggle Circolare '+' (Floating Action Speed Dial a 4 Opzioni)
+    const fabToggle = page.getByRole("button", { name: "Apri opzioni rapide (+)" });
+    await expect(fabToggle).toBeVisible();
+
+    // Clic per aprire le 4 opzioni rotonde
+    await fabToggle.click();
+    const speedDialMenu = page.getByRole("menu", { name: "Opzioni rapide" });
+    await expect(speedDialMenu).toBeVisible();
+
+    // Verifica la presenza dei 4 bottoni / opzioni
+    await expect(speedDialMenu.getByRole("menuitem", { name: "Panoramica" })).toBeVisible();
+    await expect(speedDialMenu.getByRole("menuitem", { name: "Confronta" })).toBeVisible();
+    await expect(speedDialMenu.getByRole("menuitem", { name: "19 Comuni" })).toBeVisible();
+    await expect(speedDialMenu.getByRole("menuitem", { name: "Segnala" })).toBeVisible();
+
+    // Clic per chiudere: torna ad essere solo un '+'
+    const fabClose = page.getByRole("button", { name: "Chiudi opzioni rapide" });
+    await expect(fabClose).toBeVisible();
+    await fabClose.click();
+    await expect(speedDialMenu).not.toBeVisible();
+    await expect(page.getByRole("button", { name: "Apri opzioni rapide (+)" })).toBeVisible();
   });
 });

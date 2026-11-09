@@ -52,7 +52,7 @@ export function CivicAppShell({ children }: CivicAppShellProps) {
       <CivicSidebar onOpenSearch={() => setSearchOpen(true)} />
 
       {/* Canvas Principale Satinato Trasparente */}
-      <div className="ofl-canvas flex-1 flex flex-col justify-between min-w-0 min-h-dvh relative z-10 pb-20 lg:pb-0">
+      <div className="ofl-canvas flex-1 flex flex-col justify-between min-w-0 min-h-dvh relative z-10 pb-8 lg:pb-0">
         <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
           {children}
         </main>

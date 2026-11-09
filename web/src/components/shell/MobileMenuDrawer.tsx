@@ -147,7 +147,7 @@ export function MobileMenuDrawer({
       role="dialog"
       aria-modal="true"
       aria-label="Menu di navigazione principale"
-      className="fixed inset-0 z-50 flex justify-end lg:hidden animate-in fade-in duration-200 select-none"
+      className="fixed inset-0 z-50 flex justify-start lg:hidden animate-in fade-in duration-200 select-none"
     >
       {/* Sfondo Oscurato Touch-Friendly */}
       <div
@@ -156,8 +156,8 @@ export function MobileMenuDrawer({
         aria-hidden="true"
       />
 
-      {/* Pannello Scorrevole Laterale Satinato */}
-      <div className="relative w-5/6 max-w-sm h-full bg-white/95 backdrop-blur-2xl border-l border-slate-200 shadow-2xl flex flex-col z-10">
+      {/* Pannello Scorrevole Laterale Satinato da Sinistra */}
+      <div className="relative w-5/6 max-w-sm h-full bg-white/95 backdrop-blur-2xl border-r border-slate-200 shadow-2xl flex flex-col z-10 animate-in slide-in-from-left duration-200">
         {/* Header Drawer */}
         <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
           <Link

@@ -18,24 +18,35 @@ export function MobileTopBar({ onOpenSearch, onOpenMenu }: MobileTopBarProps) {
       className="sticky top-0 left-0 right-0 z-40 bg-white/92 backdrop-blur-xl border-b border-slate-200/90 px-3.5 py-2 pt-[calc(0.5rem+env(safe-area-inset-top,0px))] flex items-center justify-between lg:hidden shadow-xs select-none"
       aria-label="Barra superiore mobile"
     >
-      {/* Marchio Istituzionale OFL Fisso */}
-      <Link href="/" className="flex items-center gap-2.5 active:opacity-80 transition-opacity">
-        <div className="w-7 h-8 rounded-b-xl rounded-t-md bg-[#0F3854] text-white flex flex-col items-center justify-between p-0.5 shrink-0 shadow-xs">
-          <span className="font-mono text-[7px] font-bold">+ TI</span>
-          <span className="text-sky-300 text-[10px] leading-none">☩</span>
-          <span className="w-full h-1 bg-red-600 rounded-b-lg"></span>
-        </div>
-        <div className="flex flex-col">
-          <span className="text-sm font-extrabold tracking-tight text-slate-900 leading-tight">
-            OFL
-          </span>
-          <span className="text-[9px] text-slate-500 font-mono tracking-tight leading-none">
-            Locarnese MCA2
-          </span>
-        </div>
-      </Link>
+      {/* Sinistra: Hamburger Menu + Marchio Istituzionale OFL */}
+      <div className="flex items-center gap-1.5">
+        <button
+          type="button"
+          onClick={onOpenMenu}
+          aria-label="Apri menu navigazione"
+          className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-slate-700 hover:text-slate-950 hover:bg-slate-100 active:scale-95 transition-all cursor-pointer"
+        >
+          <Menu className="w-5 h-5 stroke-[2.2]" />
+        </button>
 
-      {/* Azioni Rapide: Cerca Cmd+K, Switch IT/DE, Hamburger Menu */}
+        <Link href="/" className="flex items-center gap-2 active:opacity-80 transition-opacity">
+          <div className="w-7 h-8 rounded-b-xl rounded-t-md bg-[#0F3854] text-white flex flex-col items-center justify-between p-0.5 shrink-0 shadow-xs">
+            <span className="font-mono text-[7px] font-bold">+ TI</span>
+            <span className="text-sky-300 text-[10px] leading-none">☩</span>
+            <span className="w-full h-1 bg-red-600 rounded-b-lg"></span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-sm font-extrabold tracking-tight text-slate-900 leading-tight">
+              OFL
+            </span>
+            <span className="text-[9px] text-slate-500 font-mono tracking-tight leading-none">
+              Locarnese MCA2
+            </span>
+          </div>
+        </Link>
+      </div>
+
+      {/* Destra: Azioni Rapide Cerca Cmd+K e Switch IT/DE */}
       <div className="flex items-center gap-2">
         {/* Pulsante Cerca Rapido */}
         <button
@@ -76,16 +87,6 @@ export function MobileTopBar({ onOpenSearch, onOpenMenu }: MobileTopBarProps) {
             DE
           </button>
         </div>
-
-        {/* Bottone Hamburger Menu */}
-        <button
-          type="button"
-          onClick={onOpenMenu}
-          aria-label="Apri menu navigazione"
-          className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-slate-700 hover:text-slate-950 hover:bg-slate-100 active:scale-95 transition-all cursor-pointer"
-        >
-          <Menu className="w-5 h-5 stroke-[2.2]" />
-        </button>
       </div>
     </header>
   );
