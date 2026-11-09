@@ -30,8 +30,12 @@ test.describe("Esportazione Grafici OFCL", () => {
     const downloadPath = await download.path();
     expect(downloadPath).toBeTruthy();
     if (downloadPath) {
+      await download.saveAs("/tmp/ofcl-sample-download.svg");
       const content = fs.readFileSync(downloadPath, "utf-8");
-      expect(content).toContain("Grafico andamento spese");
+      expect(content).toContain("Andamento Spese e Ricavi Correnti");
+      expect(content).toContain("Fonte: Rendiconti e Consuntivi Ufficiali MCA2");
+      expect(content).toContain("ofcl.ch");
+      expect(content).toContain("art. 192 LOC");
       expect(content).not.toContain("lucide-download");
       expect(content).toContain("<path");
     }
@@ -64,6 +68,7 @@ test.describe("Esportazione Grafici OFCL", () => {
     const downloadPath = await download.path();
     expect(downloadPath).toBeTruthy();
     if (downloadPath) {
+      await download.saveAs("/tmp/ofcl-sample-download.png");
       const stats = fs.statSync(downloadPath);
       // Il file PNG del grafico reale contiene diversi kilobyte di dati (molto più di una semplice icona di 14px)
       expect(stats.size).toBeGreaterThan(5000);
@@ -97,6 +102,10 @@ test.describe("Esportazione Grafici OFCL", () => {
     expect(downloadPath).toBeTruthy();
     if (downloadPath) {
       const content = fs.readFileSync(downloadPath, "utf-8");
+      expect(content).toContain("Spesa per Settore MCA2");
+      expect(content).toContain("Fonte: Rendiconto e Consuntivo Ufficiale");
+      expect(content).toContain("ofcl.ch");
+      expect(content).toContain("art. 192 LOC");
       expect(content).not.toContain("lucide-folder-tree");
       expect(content).toContain("<rect");
     }

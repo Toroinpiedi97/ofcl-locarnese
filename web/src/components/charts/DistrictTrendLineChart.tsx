@@ -93,11 +93,18 @@ export function DistrictTrendLineChart({
 
     try {
       setIsExporting(true);
-      const names = municipalities.map((m) => m.slug).join("-vs-") || "distretto";
+      const namesList = municipalities.map((m) => m.name).join(" vs ") || "Distretto di Locarno";
+      const slugs = municipalities.map((m) => m.slug).join("-vs-") || "distretto";
+      const sub = `${namesList}${showDistrictAverage ? " (con Media Distretto)" : ""} · Spese correnti MCA2 (CHF / abitante)`;
+
       await exportSvgElement(svgEl as unknown as SVGSVGElement, {
-        filename: `ofcl-andamento-spese-${names}-2019-2026`,
+        filename: `ofcl-andamento-spese-${slugs}-2019-2026`,
         format,
         backgroundColor: "#ffffff",
+        title: "Andamento Spese e Ricavi Correnti (2019–2026)",
+        subtitle: sub,
+        source: "Fonte: Rendiconti e Consuntivi Ufficiali MCA2 / Sezione enti locali (SEL) Canton Ticino",
+        legalNotice: "Elaborazione dati aperti: ofcl.ch · Trasparenza conti pubblici comunali ex art. 192 LOC",
       });
       setDownloadSuccess(format.toUpperCase());
       setTimeout(() => setDownloadSuccess(null), 2000);

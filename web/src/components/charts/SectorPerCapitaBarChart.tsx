@@ -111,10 +111,21 @@ export function SectorPerCapitaBarChart({
     try {
       setIsExporting(true);
       const levelSlug = drilldownPath.join("-") || "dicasteri";
+      const levelLabel =
+        drilldownPath.length === 0
+          ? "Dicasteri principali (Livello 1 MCA2)"
+          : drilldownPath.length === 1
+          ? `Settore ${drilldownPath[0]} (Livello 2 MCA2)`
+          : `Gruppo ${drilldownPath.join(" > ")} (Livello 3 MCA2)`;
+
       await exportSvgElement(svgEl as unknown as SVGSVGElement, {
         filename: `ofcl-spesa-mca2-${currentMunicipality.slug}-livello-${levelSlug}`,
         format,
         backgroundColor: "#ffffff",
+        title: `Spesa per Settore MCA2 – ${currentMunicipality.name} (${selectedYear})`,
+        subtitle: `${levelLabel} · Spesa netta per abitante in CHF (MCA2)`,
+        source: `Fonte: Rendiconto e Consuntivo Ufficiale ${selectedYear} (${currentMunicipality.name}) / Sezione enti locali (SEL)`,
+        legalNotice: "Elaborazione dati aperti: ofcl.ch · Trasparenza conti pubblici comunali ex art. 192 LOC",
       });
       setDownloadSuccess(format.toUpperCase());
       setTimeout(() => setDownloadSuccess(null), 2000);
