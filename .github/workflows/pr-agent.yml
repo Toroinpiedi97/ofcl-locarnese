@@ -1,0 +1,72 @@
+name: PR Agent
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: pr-agent-${{ github.event.pull_request.number || github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  pr_agent_job:
+    name: AI PR Review & Commands
+    if: >-
+      github.event.sender.type != 'Bot' &&
+      (
+        github.event_name != 'issue_comment' ||
+        (
+          github.event.issue.pull_request != null &&
+          contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association)
+        )
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - name: Detect configured LLM provider
+        id: llm
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
+          ANTHROPIC_KEY: ${{ secrets.ANTHROPIC_KEY }}
+        run: |
+          if [ -n "$GEMINI_API_KEY" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+            {
+              echo "config.model=gemini/gemini-2.5-flash"
+              echo "config.fallback_models=[]"
+              echo "GOOGLE_AI_STUDIO.GEMINI_API_KEY=$GEMINI_API_KEY"
+            } >> "$GITHUB_ENV"
+            echo "Provider selezionato: Google Gemini"
+          elif [ -n "$ANTHROPIC_KEY" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+            {
+              echo "config.model=anthropic/claude-sonnet-4-20250514"
+              echo "config.fallback_models=[]"
+              echo "ANTHROPIC.KEY=$ANTHROPIC_KEY"
+            } >> "$GITHUB_ENV"
+            echo "Provider selezionato: Anthropic Claude"
+          elif [ -n "$OPENAI_KEY" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+            echo "OPENAI_KEY=$OPENAI_KEY" >> "$GITHUB_ENV"
+            echo "Provider selezionato: OpenAI"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::PR-Agent saltato: configura uno dei secrets GEMINI_API_KEY, ANTHROPIC_KEY o OPENAI_KEY nelle impostazioni del repository."
+          fi
+
+      - name: Run PR Agent
+        id: pragent
+        if: steps.llm.outputs.configured == 'true'
+        uses: The-PR-Agent/pr-agent@e673a02076ce09a4726c3d0c3cc85780e59ca52b # v0.50.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github_action_config.auto_review: "true"
+          github_action_config.auto_describe: "true"
+          github_action_config.auto_improve: "false"

@@ -1,0 +1,19 @@
+[config]
+response_language = "it-IT"
+repo_context_files = ["AGENTS.md"]
+
+[pr_reviewer]
+require_security_review = true
+require_tests_review = true
+extra_instructions = """
+Verifica sempre il rispetto dei vincoli critici del progetto OFCL:
+1. Precisione contabile MCA2 al centesimo esatto (0.01 CHF, usa Decimal, mai arrotondamenti a 0.05 CHF o float).
+2. Isolamento totale da Corfin (C-01): nessun riferimento a istanze Supabase esterne o DB non autorizzati.
+3. Gestione errori esplicita: nessuna eccezione silenziata con pass, validazione UUID/input prima delle transazioni.
+4. Conformità legale/scraping (C-02/C-04): rispetto di robots.txt, filtro dati personali nLPD, zero stemmi araldici comunali.
+"""
+
+[pr_code_suggestions]
+extra_instructions = """
+Privilegia soluzioni minimali, YAGNI e senza dipendenze superflue. Segnala eventuale dead code, race condition o fallback impliciti non tracciati.
+"""
