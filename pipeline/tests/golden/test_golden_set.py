@@ -41,11 +41,19 @@ def test_golden_brione_consuntivo_2025_exact_match() -> None:
     """
     Verifica L3: Errore 0.00 CHF (100.0% accuracy) sul Consuntivo 2025 di Brione s/Minusio (GS-01).
     """
-    pdf_path = DATA_PDFS_DIR / "5096" / "168f1f85c51701560f1cb3d06cb74f9ce981337517ba6ff1c7f5b26047505aee.pdf"
+    pdf_path = (
+        DATA_PDFS_DIR
+        / "5096"
+        / "168f1f85c51701560f1cb3d06cb74f9ce981337517ba6ff1c7f5b26047505aee.pdf"
+    )
     if not pdf_path.exists():
         pytest.skip(f"Golden PDF non presente localmente: {pdf_path}")
 
-    expected_path = GOLDEN_DIR / "expected" / "168f1f85c51701560f1cb3d06cb74f9ce981337517ba6ff1c7f5b26047505aee.json"
+    expected_path = (
+        GOLDEN_DIR
+        / "expected"
+        / "168f1f85c51701560f1cb3d06cb74f9ce981337517ba6ff1c7f5b26047505aee.json"
+    )
     with open(expected_path, encoding="utf-8") as f:
         expected = json.load(f)
 
@@ -69,7 +77,9 @@ def test_golden_brione_consuntivo_2025_exact_match() -> None:
             assert extracted_val is not None
             expected_decimal = Decimal(exp_val)
             delta = abs(extracted_val - expected_decimal)
-            assert delta == Decimal("0.00"), f"Errore centesimale su {metric}: estratto {extracted_val} != atteso {expected_decimal}"
+            assert delta == Decimal("0.00"), (
+                f"Errore centesimale su {metric}: estratto {extracted_val} != atteso {expected_decimal}"
+            )
 
         exp_ci = expected["riassunto_generale"]["conto_investimenti"]
         for metric, exp_val in exp_ci.items():
@@ -78,7 +88,9 @@ def test_golden_brione_consuntivo_2025_exact_match() -> None:
             assert extracted_val is not None
             expected_decimal = Decimal(exp_val)
             delta = abs(extracted_val - expected_decimal)
-            assert delta == Decimal("0.00"), f"Errore centesimale su {metric}: estratto {extracted_val} != atteso {expected_decimal}"
+            assert delta == Decimal("0.00"), (
+                f"Errore centesimale su {metric}: estratto {extracted_val} != atteso {expected_decimal}"
+            )
 
         exp_cf = expected["riassunto_generale"]["conto_finanziamento"]
         for metric, exp_val in exp_cf.items():
@@ -87,7 +99,9 @@ def test_golden_brione_consuntivo_2025_exact_match() -> None:
             assert extracted_val is not None
             expected_decimal = Decimal(exp_val)
             delta = abs(extracted_val - expected_decimal)
-            assert delta == Decimal("0.00"), f"Errore centesimale su {metric}: estratto {extracted_val} != atteso {expected_decimal}"
+            assert delta == Decimal("0.00"), (
+                f"Errore centesimale su {metric}: estratto {extracted_val} != atteso {expected_decimal}"
+            )
 
         exp_bil = expected["riassunto_generale"]["bilancio"]
         for metric, exp_val in exp_bil.items():
@@ -96,7 +110,9 @@ def test_golden_brione_consuntivo_2025_exact_match() -> None:
             assert extracted_val is not None
             expected_decimal = Decimal(exp_val)
             delta = abs(extracted_val - expected_decimal)
-            assert delta == Decimal("0.00"), f"Errore centesimale su {metric}: estratto {extracted_val} != atteso {expected_decimal}"
+            assert delta == Decimal("0.00"), (
+                f"Errore centesimale su {metric}: estratto {extracted_val} != atteso {expected_decimal}"
+            )
 
         # 3. Indicatori SEL (Art. 22 lett. o RGFCC)
         sel_pages = report.sections.get("lett_o", [12, 13])
@@ -110,10 +126,18 @@ def test_golden_brione_consuntivo_2025_exact_match() -> None:
         credit_items, credit_totals = extractor.extract_controllo_crediti(pdf, f_pages)
 
         exp_cred = expected["controllo_crediti"]
-        assert credit_totals["totale_investimenti_votati"].amount_chf == Decimal(exp_cred["totale_investimenti_votati"])
-        assert credit_totals["totale_crediti_consumati_01_01"].amount_chf == Decimal(exp_cred["totale_crediti_consumati_01_01"])
-        assert credit_totals["totale_spese_lorde_esercizio"].amount_chf == Decimal(exp_cred["totale_spese_lorde_esercizio"])
-        assert credit_totals["totale_crediti_consumati_31_12"].amount_chf == Decimal(exp_cred["totale_crediti_consumati_31_12"])
+        assert credit_totals["totale_investimenti_votati"].amount_chf == Decimal(
+            exp_cred["totale_investimenti_votati"]
+        )
+        assert credit_totals["totale_crediti_consumati_01_01"].amount_chf == Decimal(
+            exp_cred["totale_crediti_consumati_01_01"]
+        )
+        assert credit_totals["totale_spese_lorde_esercizio"].amount_chf == Decimal(
+            exp_cred["totale_spese_lorde_esercizio"]
+        )
+        assert credit_totals["totale_crediti_consumati_31_12"].amount_chf == Decimal(
+            exp_cred["totale_crediti_consumati_31_12"]
+        )
 
         # Controllo sorpasso Jacomello
         jacomello_exp = exp_cred["tornante_jacomello"]

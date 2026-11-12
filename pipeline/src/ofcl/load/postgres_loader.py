@@ -6,8 +6,27 @@ Conformità: docs/spec/07-validation-engine.md, docs/spec/04-data-model.md.
 from __future__ import annotations
 
 import os
+import uuid
+from typing import Any
 
 from ofcl.extract.table_extractor import CreditWorkItem, ExtractedCell
+from ofcl.seed_ref import FORBIDDEN_CORFIN_REF, enforce_corfin_guardrail
+
+NIL_UUID = uuid.UUID("00000000-0000-0000-0000-000000000000")
+
+
+def _validate_uuid(val: Any, field_name: str) -> str:
+    """Valida che val sia un UUID valido e non nullo. Restituisce la stringa canonica dell'UUID."""
+    if not val or not str(val).strip():
+        raise ValueError(f"Campo '{field_name}' obbligatorio: stringa vuota o None non permessa")
+    clean_str = str(val).strip()
+    try:
+        parsed = uuid.UUID(clean_str)
+    except (ValueError, AttributeError, TypeError) as exc:
+        raise ValueError(f"Campo '{field_name}' non è un UUID valido: {clean_str!r}") from exc
+    if parsed == NIL_UUID:
+        raise ValueError(f"Campo '{field_name}' non può essere un UUID nullo ({NIL_UUID})")
+    return str(parsed)
 
 
 class PostgresLoader:
@@ -15,6 +34,16 @@ class PostgresLoader:
 
     def __init__(self, database_url: str | None = None) -> None:
         self.database_url = database_url or os.environ.get("DATABASE_URL")
+        self._assert_write_allowed()
+
+    def _assert_write_allowed(self) -> None:
+        """Verifica i guardrail ambientali e di stringa di connessione (C-01 Corfin isolation)."""
+        enforce_corfin_guardrail()
+        if self.database_url and FORBIDDEN_CORFIN_REF in self.database_url:
+            raise RuntimeError(
+                "[CRITICAL C-01 VIOLATION] Rilevato riferimento a Corfin in database_url. "
+                "Operazione bloccata."
+            )
 
     def save_ledger_cells(
         self,
@@ -30,7 +59,9 @@ class PostgresLoader:
         Allineato alla migrazione 0002 (version_id, side 'SPESA', bbox numeric[], mandatory columns).
         Ritorna il numero di righe inserite.
         """
-        actual_version_id = version_id or document_version_id or ""
+        self._assert_write_allowed()
+        actual_version_id = _validate_uuid(version_id or document_version_id, "version_id")
+        clean_entity_id = _validate_uuid(entity_id, "entity_id")
         cells = cells or {}
 
         if not self.database_url:
@@ -58,50 +89,48 @@ class PostgresLoader:
         """
 
         count = 0
-        with psycopg.connect(self.database_url) as conn:
-            with conn.cursor() as cur:
-                for metric_key, cell in cells.items():
-                    statement = "CE"
-                    side = "SALDO"
+        with psycopg.connect(self.database_url) as conn, conn.transaction(), conn.cursor() as cur:
+            for metric_key, cell in cells.items():
+                statement = "CE"
+                side = "SALDO"
 
-                    if "investimenti" in metric_key:
-                        statement = "CI"
+                if "investimenti" in metric_key:
+                    statement = "CI"
 
-                    if "uscite" in metric_key or "spese" in metric_key:
-                        side = "SPESA"
-                    elif "entrate" in metric_key or "ricavi" in metric_key:
-                        side = "RICAVO"
-                    elif "attivi" in metric_key or "patrimoniali" in metric_key:
-                        statement = "BIL"
-                        side = "ATTIVO"
-                    elif "passivi" in metric_key or "terzi" in metric_key or "proprio" in metric_key:
-                        statement = "BIL"
-                        side = "PASSIVO"
+                if "uscite" in metric_key or "spese" in metric_key:
+                    side = "SPESA"
+                elif "entrate" in metric_key or "ricavi" in metric_key:
+                    side = "RICAVO"
+                elif "attivi" in metric_key or "patrimoniali" in metric_key:
+                    statement = "BIL"
+                    side = "ATTIVO"
+                elif "passivi" in metric_key or "terzi" in metric_key or "proprio" in metric_key:
+                    statement = "BIL"
+                    side = "PASSIVO"
 
-                    bbox_list = [float(round(c, 2)) for c in cell.bbox] if cell.bbox else None
-                    cur.execute(
-                        query,
-                        (
-                            actual_version_id,
-                            entity_id,
-                            statement,
-                            "RIASSUNTO",
-                            metric_key,
-                            cell.raw_text or metric_key,
-                            "CURRENT",
-                            statement_year,
-                            "ACTUAL",
-                            side,
-                            cell.amount_chf,
-                            cell.raw_text,
-                            cell.page,
-                            bbox_list,
-                            "DETERMINISTIC",
-                            "gecoti_v3",
-                        ),
-                    )
-                    count += 1
-            conn.commit()
+                bbox_list = [float(round(c, 2)) for c in cell.bbox] if cell.bbox else None
+                cur.execute(
+                    query,
+                    (
+                        actual_version_id,
+                        clean_entity_id,
+                        statement,
+                        "RIASSUNTO",
+                        metric_key,
+                        cell.raw_text or metric_key,
+                        "CURRENT",
+                        statement_year,
+                        "ACTUAL",
+                        side,
+                        cell.amount_chf,
+                        cell.raw_text,
+                        cell.page,
+                        bbox_list,
+                        "DETERMINISTIC",
+                        "gecoti_v3",
+                    ),
+                )
+                count += 1
 
         return count
 
@@ -119,7 +148,9 @@ class PostgresLoader:
         Allineato alla migrazione 0002 (version_id, credit_id, fiscal_year, used_at_0101, spent_year, spent_total, amount_voted, residual, page, method).
         Overrun è calcolato automaticamente dal DB (residual < 0).
         """
-        actual_version_id = version_id or document_version_id or ""
+        self._assert_write_allowed()
+        actual_version_id = _validate_uuid(version_id or document_version_id, "version_id")
+        clean_entity_id = _validate_uuid(entity_id, "entity_id") if entity_id is not None else None
         items = items or []
 
         if not self.database_url:
@@ -131,77 +162,75 @@ class PostgresLoader:
             return len(items)
 
         count = 0
-        with psycopg.connect(self.database_url) as conn:
-            with conn.cursor() as cur:
-                for it in items:
-                    # 1. Recupera o crea anagrafica credito in core.investment_credit
+        with psycopg.connect(self.database_url) as conn, conn.transaction(), conn.cursor() as cur:
+            for it in items:
+                # 1. Recupera o crea anagrafica credito in core.investment_credit
+                cur.execute(
+                    """
+                    SELECT id FROM core.investment_credit
+                    WHERE ust_code = %s AND account_full = %s
+                    LIMIT 1
+                    """,
+                    (ust_code, it.account_code),
+                )
+                row = cur.fetchone()
+                if row:
+                    credit_id = row[0]
+                else:
                     cur.execute(
                         """
-                        SELECT id FROM core.investment_credit
-                        WHERE ust_code = %s AND account_full = %s
-                        LIMIT 1
-                        """,
-                        (ust_code, it.account_code),
-                    )
-                    row = cur.fetchone()
-                    if row:
-                        credit_id = row[0]
-                    else:
-                        cur.execute(
-                            """
-                            INSERT INTO core.investment_credit (
-                                ust_code, entity_id, account_full, mm_number, title, amount_voted
-                            )
-                            VALUES (%s, %s, %s, %s, %s, %s)
-                            RETURNING id
-                            """,
-                            (
-                                ust_code,
-                                entity_id,
-                                it.account_code,
-                                it.mm_no or None,
-                                it.description or "Credito d'opera",
-                                it.voted_credit,
-                            ),
+                        INSERT INTO core.investment_credit (
+                            ust_code, entity_id, account_full, mm_number, title, amount_voted
                         )
-                        inserted = cur.fetchone()
-                        credit_id = inserted[0] if inserted else None
-
-                    if not credit_id:
-                        continue
-
-                    # 2. Inserimento snapshot credito
-                    cur.execute(
-                        """
-                        INSERT INTO core.credit_snapshot (
-                            version_id, credit_id, fiscal_year, used_at_0101,
-                            spent_year, spent_total, amount_voted, residual,
-                            page, method
-                        )
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                        ON CONFLICT (version_id, credit_id) DO UPDATE SET
-                            used_at_0101 = EXCLUDED.used_at_0101,
-                            spent_year = EXCLUDED.spent_year,
-                            spent_total = EXCLUDED.spent_total,
-                            amount_voted = EXCLUDED.amount_voted,
-                            residual = EXCLUDED.residual,
-                            page = EXCLUDED.page,
-                            method = EXCLUDED.method
+                        VALUES (%s, %s, %s, %s, %s, %s)
+                        RETURNING id
                         """,
                         (
-                            actual_version_id,
-                            credit_id,
-                            year,
-                            it.spent_prev,
-                            it.spent_year,
-                            it.spent_total,
+                            ust_code,
+                            clean_entity_id,
+                            it.account_code,
+                            it.mm_no or None,
+                            it.description or "Credito d'opera",
                             it.voted_credit,
-                            it.remaining_credit,
-                            it.page,
-                            "DETERMINISTIC",
                         ),
                     )
-                    count += 1
-            conn.commit()
+                    inserted = cur.fetchone()
+                    credit_id = inserted[0] if inserted else None
+
+                if not credit_id:
+                    continue
+
+                # 2. Inserimento snapshot credito
+                cur.execute(
+                    """
+                    INSERT INTO core.credit_snapshot (
+                        version_id, credit_id, fiscal_year, used_at_0101,
+                        spent_year, spent_total, amount_voted, residual,
+                        page, method
+                    )
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    ON CONFLICT (version_id, credit_id) DO UPDATE SET
+                        used_at_0101 = EXCLUDED.used_at_0101,
+                        spent_year = EXCLUDED.spent_year,
+                        spent_total = EXCLUDED.spent_total,
+                        amount_voted = EXCLUDED.amount_voted,
+                        residual = EXCLUDED.residual,
+                        page = EXCLUDED.page,
+                        method = EXCLUDED.method
+                    """,
+                    (
+                        actual_version_id,
+                        credit_id,
+                        year,
+                        it.spent_prev,
+                        it.spent_year,
+                        it.spent_total,
+                        it.voted_credit,
+                        it.remaining_credit,
+                        it.page,
+                        "DETERMINISTIC",
+                    ),
+                )
+                count += 1
 
         return count

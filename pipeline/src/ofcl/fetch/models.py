@@ -63,4 +63,3 @@ class DownloadResult:
     etag: str | None = None
     last_modified: str | None = None
     error: str | None = None
-

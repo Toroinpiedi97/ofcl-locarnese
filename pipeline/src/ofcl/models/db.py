@@ -18,6 +18,7 @@ from pydantic import BaseModel, Field, HttpUrl
 # SCHEMA: ref
 # =========================================================
 
+
 class MunicipalityRecord(BaseModel):
     ust_code: int = Field(ge=5091, le=5399)
     slug: str
@@ -97,7 +98,9 @@ class IndicatorScaleRecord(BaseModel):
 
 class CivicBenefitDefRecord(BaseModel):
     code: str
-    quadrant: Literal["A_TARIFFE", "B_FAMIGLIE", "C_TERZA_ETA", "D_CLIMA_MOBILITA", "E_FISCO_SPORTELLO"]
+    quadrant: Literal[
+        "A_TARIFFE", "B_FAMIGLIE", "C_TERZA_ETA", "D_CLIMA_MOBILITA", "E_FISCO_SPORTELLO"
+    ]
     label_it: str
     unit_hint: str
     sort_order: int = 100
@@ -121,6 +124,7 @@ class MunicipalCivicItemRecord(BaseModel):
 # =========================================================
 # SCHEMA: raw
 # =========================================================
+
 
 class RawSourceRecord(BaseModel):
     id: UUID | None = None
@@ -166,16 +170,29 @@ class RawDocumentVersionRecord(BaseModel):
     storage_path: str
     fetched_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     published_at: datetime | None = None
-    status: Literal["DOWNLOADED", "CLASSIFIED", "EXTRACTED", "VALIDATED", "NEEDS_REVIEW", "APPROVED", "PUBLISHED", "SUPERSEDED", "REJECTED"] = "DOWNLOADED"
+    status: Literal[
+        "DOWNLOADED",
+        "CLASSIFIED",
+        "EXTRACTED",
+        "VALIDATED",
+        "NEEDS_REVIEW",
+        "APPROVED",
+        "PUBLISHED",
+        "SUPERSEDED",
+        "REJECTED",
+    ] = "DOWNLOADED"
 
 
 # =========================================================
 # SCHEMA: core
 # =========================================================
 
+
 class CoreClassificationRecord(BaseModel):
     version_id: UUID
-    doc_type: Literal["PREVENTIVO", "CONSUNTIVO", "PIANO_FINANZIARIO", "CREDITO_OPERA", "REGOLAMENTO", "ALTRO"]
+    doc_type: Literal[
+        "PREVENTIVO", "CONSUNTIVO", "PIANO_FINANZIARIO", "CREDITO_OPERA", "REGOLAMENTO", "ALTRO"
+    ]
     fiscal_year: int
     mm_number: str | None = None
     budget_stage: Literal["PROPOSTA", "EMENDATO", "APPROVATO"] | None = None
@@ -237,10 +254,19 @@ class CoreCreditSnapshotRecord(BaseModel):
 # SCHEMA: audit
 # =========================================================
 
+
 class AuditCuratorActionRecord(BaseModel):
     id: int | None = None
     actor: UUID
-    action: Literal["APPROVE", "REJECT", "CORRECT_VALUE", "OVERRIDE_BLOCKING", "PUBLISH", "UNPUBLISH", "MARK_PERSONAL_DATA"]
+    action: Literal[
+        "APPROVE",
+        "REJECT",
+        "CORRECT_VALUE",
+        "OVERRIDE_BLOCKING",
+        "PUBLISH",
+        "UNPUBLISH",
+        "MARK_PERSONAL_DATA",
+    ]
     target_table: str
     target_id: str
     before: dict[str, Any] | None = None

@@ -124,7 +124,9 @@ def extract_civic_page(
     time_tag = soup.find("time")
     if time_tag:
         dt_attr = time_tag.get("datetime")
-        pub_date = parse_swiss_italian_date(str(dt_attr) if dt_attr else time_tag.get_text(" ", strip=True))
+        pub_date = parse_swiss_italian_date(
+            str(dt_attr) if dt_attr else time_tag.get_text(" ", strip=True)
+        )
     if pub_date is None:
         pub_date = parse_swiss_italian_date(page_url)
 
@@ -146,16 +148,24 @@ def extract_civic_page(
             el.decompose()
             continue
         raw_cls = el.get("class")
-        classes = " ".join(str(c) for c in raw_cls) if isinstance(raw_cls, list) else str(raw_cls or "")
+        classes = (
+            " ".join(str(c) for c in raw_cls) if isinstance(raw_cls, list) else str(raw_cls or "")
+        )
         el_id = str(el.get("id") or "")
-        if _NOISE_CLASS_ID_RE.search(f"{classes} {el_id}") and el.name not in ("body", "main", "article"):
+        if _NOISE_CLASS_ID_RE.search(f"{classes} {el_id}") and el.name not in (
+            "body",
+            "main",
+            "article",
+        ):
             el.decompose()
 
     # 3. Individuazione del contenitore principale
     container = (
         soup.find("article")
         or soup.find("main")
-        or soup.find("div", class_=re.compile(r"entry-content|post-content|contenuto|content", re.IGNORECASE))
+        or soup.find(
+            "div", class_=re.compile(r"entry-content|post-content|contenuto|content", re.IGNORECASE)
+        )
         or soup.body
         or soup
     )

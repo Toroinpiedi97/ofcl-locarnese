@@ -242,13 +242,17 @@ async def test_crawler_check_canary_anti_drift(tmp_path: Path) -> None:
 
     async with httpx.AsyncClient(transport=transport) as client:
         # Canarino valido
-        ok, code, err = await crawler.check_canary({"canary_url": "https://example.ch/canary-ok"}, client)
+        ok, code, err = await crawler.check_canary(
+            {"canary_url": "https://example.ch/canary-ok"}, client
+        )
         assert ok is True
         assert code == 200
         assert err is None
 
         # Canarino in drift (404 Not Found)
-        drift_ok, drift_code, drift_err = await crawler.check_canary({"canary_url": "https://example.ch/canary-broken"}, client)
+        drift_ok, drift_code, drift_err = await crawler.check_canary(
+            {"canary_url": "https://example.ch/canary-broken"}, client
+        )
         assert drift_ok is False
         assert drift_code == 404
         assert "HTTP 404" in str(drift_err)

@@ -43,8 +43,25 @@ async def run_regional_backfill(
         target_usts = BATCHES[batch]
     else:
         target_usts = [
-            5091, 5096, 5097, 5108, 5112, 5113, 5115, 5117, 5118, 5120,
-            5121, 5125, 5131, 5136, 5138, 5396, 5397, 5398, 5399,
+            5091,
+            5096,
+            5097,
+            5108,
+            5112,
+            5113,
+            5115,
+            5117,
+            5118,
+            5120,
+            5121,
+            5125,
+            5131,
+            5136,
+            5138,
+            5396,
+            5397,
+            5398,
+            5399,
         ]
 
     started_at = datetime.now(UTC)
@@ -57,11 +74,18 @@ async def run_regional_backfill(
 
     results: list[dict[str, Any]] = []
     total_discovered: int = 0
-    by_kind: dict[str, int] = {"CONSUNTIVO": 0, "PREVENTIVO": 0, "CREDITO_INVESTIMENTO": 0, "ALTRO": 0}
+    by_kind: dict[str, int] = {
+        "CONSUNTIVO": 0,
+        "PREVENTIVO": 0,
+        "CREDITO_INVESTIMENTO": 0,
+        "ALTRO": 0,
+    }
     skipped_privacy_nlpd: int = 0
     manual_intake_locarno: int = 0
 
-    async with httpx.AsyncClient(headers={"User-Agent": "OFCL-Bot/1.0 (+https://ofcl.ch/bot; info@ofcl.ch)"}) as client:
+    async with httpx.AsyncClient(
+        headers={"User-Agent": "OFCL-Bot/1.0 (+https://ofcl.ch/bot; info@ofcl.ch)"}
+    ) as client:
         for ust in target_usts:
             mun = crawler.get_municipality_by_ust(ust)
             if not mun:
@@ -70,26 +94,30 @@ async def run_regional_backfill(
             # Gestione specifica Città di Locarno (5113) ex robots.txt
             if ust == 5113:
                 manual_intake_locarno += 2
-                results.append({
-                    "ust_code": 5113,
-                    "municipality_name": "Locarno",
-                    "title": "Consuntivo 2024 Città di Locarno (Gestione Separata Enti)",
-                    "kind": "CONSUNTIVO",
-                    "fiscal_year": 2024,
-                    "status": "MANUAL_UPLOAD",
-                    "intake_method": "MANUAL_UPLOAD",
-                    "note": "Download automatico escluso da robots.txt; caricato tramite /admin/upload",
-                })
-                results.append({
-                    "ust_code": 5113,
-                    "municipality_name": "Locarno",
-                    "title": "Preventivo 2025 Città di Locarno e Moltiplicatore d'Imposta (90% PF / 97% PG)",
-                    "kind": "PREVENTIVO",
-                    "fiscal_year": 2025,
-                    "status": "MANUAL_UPLOAD",
-                    "intake_method": "MANUAL_UPLOAD",
-                    "note": "Download automatico escluso da robots.txt; caricato tramite /admin/upload",
-                })
+                results.append(
+                    {
+                        "ust_code": 5113,
+                        "municipality_name": "Locarno",
+                        "title": "Consuntivo 2024 Città di Locarno (Gestione Separata Enti)",
+                        "kind": "CONSUNTIVO",
+                        "fiscal_year": 2024,
+                        "status": "MANUAL_UPLOAD",
+                        "intake_method": "MANUAL_UPLOAD",
+                        "note": "Download automatico escluso da robots.txt; caricato tramite /admin/upload",
+                    }
+                )
+                results.append(
+                    {
+                        "ust_code": 5113,
+                        "municipality_name": "Locarno",
+                        "title": "Preventivo 2025 Città di Locarno e Moltiplicatore d'Imposta (90% PF / 97% PG)",
+                        "kind": "PREVENTIVO",
+                        "fiscal_year": 2025,
+                        "status": "MANUAL_UPLOAD",
+                        "intake_method": "MANUAL_UPLOAD",
+                        "note": "Download automatico escluso da robots.txt; caricato tramite /admin/upload",
+                    }
+                )
                 continue
 
             # Scansione automatica per i 18 Comuni automatizzabili
@@ -108,27 +136,31 @@ async def run_regional_backfill(
 
                     if doc.contains_personal_data:
                         skipped_privacy_nlpd += 1
-                        results.append({
-                            "ust_code": ust,
-                            "municipality_name": mun["name"],
-                            "title": doc.title,
-                            "kind": k,
-                            "fiscal_year": doc.fiscal_year,
-                            "status": "SKIPPED_PRIVACY",
-                            "url": doc.doc_url,
-                            "note": "Escluso ex lege: rilevati dati personali nLPD",
-                        })
+                        results.append(
+                            {
+                                "ust_code": ust,
+                                "municipality_name": mun["name"],
+                                "title": doc.title,
+                                "kind": k,
+                                "fiscal_year": doc.fiscal_year,
+                                "status": "SKIPPED_PRIVACY",
+                                "url": doc.doc_url,
+                                "note": "Escluso ex lege: rilevati dati personali nLPD",
+                            }
+                        )
                     else:
-                        results.append({
-                            "ust_code": ust,
-                            "municipality_name": mun["name"],
-                            "title": doc.title,
-                            "kind": k,
-                            "fiscal_year": doc.fiscal_year,
-                            "status": "DISCOVERED",
-                            "url": doc.doc_url,
-                            "intake_method": "CRAWLER",
-                        })
+                        results.append(
+                            {
+                                "ust_code": ust,
+                                "municipality_name": mun["name"],
+                                "title": doc.title,
+                                "kind": k,
+                                "fiscal_year": doc.fiscal_year,
+                                "status": "DISCOVERED",
+                                "url": doc.doc_url,
+                                "intake_method": "CRAWLER",
+                            }
+                        )
             except Exception as exc:  # noqa: BLE001
                 logger.error("Errore backfill per comune %s (UST %d): %s", mun["name"], ust, exc)
 
@@ -152,4 +184,3 @@ async def run_regional_backfill(
     }
 
     return report
-

@@ -34,20 +34,22 @@ _FISCAL_YEAR_PATTERNS = [
 ]
 _MM_NUM_RE = re.compile(r"\bMM\s*(?:N[°o.]?\s*)?(\d{1,4}(?:[-/]\d{2,4})?)\b", re.IGNORECASE)
 
-_NAV_TITLES: frozenset[str] = frozenset({
-    "messaggi municipali",
-    "messaggi",
-    "albo",
-    "albo comunale",
-    "atti",
-    "sedute",
-    "risoluzioni",
-    "documenti",
-    "archivio",
-    "home",
-    "contatti",
-    "mappa del sito",
-})
+_NAV_TITLES: frozenset[str] = frozenset(
+    {
+        "messaggi municipali",
+        "messaggi",
+        "albo",
+        "albo comunale",
+        "atti",
+        "sedute",
+        "risoluzioni",
+        "documenti",
+        "archivio",
+        "home",
+        "contatti",
+        "mappa del sito",
+    }
+)
 
 
 def _clean_href(tag: Any) -> str:
@@ -98,7 +100,9 @@ def extract_year_and_mm(text: str) -> tuple[int | None, str | None]:
     return fiscal_year, mm_number
 
 
-def _should_skip_non_accounting(doc_kind: DocKind, mm_num: str | None, year: int | None, href: str, title: str) -> bool:
+def _should_skip_non_accounting(
+    doc_kind: DocKind, mm_num: str | None, year: int | None, href: str, title: str
+) -> bool:
     if title.lower().strip() in _NAV_TITLES:
         return True
     low_h = href.lower()
@@ -113,7 +117,9 @@ def _should_skip_non_accounting(doc_kind: DocKind, mm_num: str | None, year: int
         and "seduta" not in low_h
     ):
         return True
-    return bool(doc_kind == "ALTRO" and mm_num is None and "pdf" not in low_h and "pdf" not in low_t)
+    return bool(
+        doc_kind == "ALTRO" and mm_num is None and "pdf" not in low_h and "pdf" not in low_t
+    )
 
 
 class AssoloConnector:
@@ -264,7 +270,9 @@ class WordPressConnector:
     @staticmethod
     def _is_wp_candidate_href(href: str) -> bool:
         low_href = href.lower()
-        is_pdf = low_href.endswith(".pdf") or "/files/" in low_href or "/wp-content/uploads/" in low_href
+        is_pdf = (
+            low_href.endswith(".pdf") or "/files/" in low_href or "/wp-content/uploads/" in low_href
+        )
         is_doc_page = (
             "/documenti/" in low_href
             or "preventiv" in low_href
@@ -306,7 +314,8 @@ class WordPressConnector:
                 pdf_links = [
                     a
                     for a in art.find_all("a", href=True)
-                    if _clean_href(a).lower().endswith(".pdf") or "/files/" in _clean_href(a).lower()
+                    if _clean_href(a).lower().endswith(".pdf")
+                    or "/files/" in _clean_href(a).lower()
                 ]
                 target_anchors = pdf_links if pdf_links else art.find_all("a", href=True)
 
@@ -341,7 +350,11 @@ class WordPressConnector:
                         "link",
                         "continua a leggere",
                     }
-                    if link_text and len(link_text) >= 5 and link_text.lower() not in generic_titles:
+                    if (
+                        link_text
+                        and len(link_text) >= 5
+                        and link_text.lower() not in generic_titles
+                    ):
                         doc_title = link_text
                     elif title:
                         doc_title = title
@@ -469,15 +482,19 @@ class WordPressConnector:
             return []
 
         resolved: list[DiscoveredDocument] = []
-        generic_labels = {"scarica", "download", "allegato", "pdf", "messaggio", "apri", "documento"}
+        generic_labels = {
+            "scarica",
+            "download",
+            "allegato",
+            "pdf",
+            "messaggio",
+            "apri",
+            "documento",
+        }
 
         for pdf_url, label in extracted.pdf_links:
             clean_label = label.strip()
-            if (
-                not clean_label
-                or len(clean_label) < 5
-                or clean_label.lower() in generic_labels
-            ):
+            if not clean_label or len(clean_label) < 5 or clean_label.lower() in generic_labels:
                 final_title = parent_doc.title
             elif parent_doc.mm_number and parent_doc.mm_number.lower() not in clean_label.lower():
                 final_title = f"{parent_doc.title} — {clean_label}"
@@ -534,7 +551,11 @@ class WordPressConnector:
                 src_url = str(m.get("source_url", "")).strip()
                 mime = str(m.get("mime_type", "")).lower()
                 parent_id = m.get("post")
-                if src_url and (mime == "application/pdf" or src_url.lower().endswith(".pdf")) and isinstance(parent_id, int):
+                if (
+                    src_url
+                    and (mime == "application/pdf" or src_url.lower().endswith(".pdf"))
+                    and isinstance(parent_id, int)
+                ):
                     media_by_post.setdefault(parent_id, []).append(src_url)
 
         documents: list[DiscoveredDocument] = []
@@ -558,7 +579,9 @@ class WordPressConnector:
                 for m_url in media_by_post[post_id]:
                     pdf_urls.append((m_url, title))
 
-            deep_personal = contains_personal_data(title) or contains_personal_data(civic.clean_markdown)
+            deep_personal = contains_personal_data(title) or contains_personal_data(
+                civic.clean_markdown
+            )
             base_kind = classify_doc_kind(title)
             base_year, base_mm = extract_year_and_mm(title)
 
@@ -586,7 +609,8 @@ class WordPressConnector:
                             published_date=pub_date,
                             mm_number=mm_num or base_mm,
                             fiscal_year=year or base_year,
-                            contains_personal_data=deep_personal or contains_personal_data(doc_title),
+                            contains_personal_data=deep_personal
+                            or contains_personal_data(doc_title),
                             summary_md=civic.clean_markdown or None,
                             metadata={"is_direct_pdf": True, "source": "wp_rest"},
                         )
@@ -728,7 +752,15 @@ class OrselinaConnector:
             label = a.get_text(" ", strip=True).lower()
             if any(
                 kw in label or kw in href.lower()
-                for kw in ("messagg", "albo", "conti", "consuntiv", "preventiv", "node=329", "node=326")
+                for kw in (
+                    "messagg",
+                    "albo",
+                    "conti",
+                    "consuntiv",
+                    "preventiv",
+                    "node=329",
+                    "node=326",
+                )
             ):
                 seen.add(full)
                 signed_Nodes.append(full)
@@ -762,7 +794,11 @@ class OrselinaConnector:
 
         for a in soup.find_all("a", href=True):
             href = _clean_href(a)
-            if "downdoc.php" not in href and "id_doc=" not in href and not href.lower().endswith(".pdf"):
+            if (
+                "downdoc.php" not in href
+                and "id_doc=" not in href
+                and not href.lower().endswith(".pdf")
+            ):
                 continue
 
             if active_rif and "rif=" not in href:
@@ -775,7 +811,14 @@ class OrselinaConnector:
             seen_urls.add(full_url)
 
             title = a.get_text(separator=" ", strip=True)
-            generic_titles = {"scarica", "download", "apri", "documento", "scarica documento", "leggi"}
+            generic_titles = {
+                "scarica",
+                "download",
+                "apri",
+                "documento",
+                "scarica documento",
+                "leggi",
+            }
             if not title or len(title) < 5 or title.lower() in generic_titles:
                 parent = a.find_parent(["tr", "li", "div"])
                 if parent:

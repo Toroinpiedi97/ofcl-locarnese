@@ -12,19 +12,37 @@ from decimal import Decimal
 from ofcl.extract.chf_parser import parse_chf
 
 _AMOUNT_VOTED_PATTERNS = [
-    re.compile(r"credito\s+(?:quadro\s+)?(?:di\s+)?(?:fr\.?|chf)?\s*([0-9'’]+(?:\.[0-9]{2})?)", re.IGNORECASE),
-    re.compile(r"importo\s+(?:complessivo\s+)?(?:di\s+)?(?:fr\.?|chf)?\s*([0-9'’]+(?:\.[0-9]{2})?)", re.IGNORECASE),
-    re.compile(r"spesa\s+(?:lorda\s+)?(?:di\s+)?(?:fr\.?|chf)?\s*([0-9'’]+(?:\.[0-9]{2})?)", re.IGNORECASE),
+    re.compile(
+        r"credito\s+(?:quadro\s+)?(?:di\s+)?(?:fr\.?|chf)?\s*([0-9'’]+(?:\.[0-9]{2})?)",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"importo\s+(?:complessivo\s+)?(?:di\s+)?(?:fr\.?|chf)?\s*([0-9'’]+(?:\.[0-9]{2})?)",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"spesa\s+(?:lorda\s+)?(?:di\s+)?(?:fr\.?|chf)?\s*([0-9'’]+(?:\.[0-9]{2})?)", re.IGNORECASE
+    ),
 ]
 
 _SUBSIDY_PATTERNS = [
-    re.compile(r"sussidi[oi]?\s+(?:cantonale|paloc|fer|previsto)?\s*(?:di\s+)?(?:fr\.?|chf)?\s*([0-9'’]+(?:\.[0-9]{2})?)", re.IGNORECASE),
-    re.compile(r"contribut[oi]\s+(?:di\s+)?(?:fr\.?|chf)?\s*([0-9'’]+(?:\.[0-9]{2})?)", re.IGNORECASE),
+    re.compile(
+        r"sussidi[oi]?\s+(?:cantonale|paloc|fer|previsto)?\s*(?:di\s+)?(?:fr\.?|chf)?\s*([0-9'’]+(?:\.[0-9]{2})?)",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"contribut[oi]\s+(?:di\s+)?(?:fr\.?|chf)?\s*([0-9'’]+(?:\.[0-9]{2})?)", re.IGNORECASE
+    ),
 ]
 
 _NET_PATTERNS = [
-    re.compile(r"(?:onere|spesa)\s+nett[ao]\s+(?:a\s+carico\s+del\s+comune\s+)?(?:di\s+)?(?:fr\.?|chf)?\s*([0-9'’]+(?:\.[0-9]{2})?)", re.IGNORECASE),
-    re.compile(r"costo\s+netto\s+(?:di\s+)?(?:fr\.?|chf)?\s*([0-9'’]+(?:\.[0-9]{2})?)", re.IGNORECASE),
+    re.compile(
+        r"(?:onere|spesa)\s+nett[ao]\s+(?:a\s+carico\s+del\s+comune\s+)?(?:di\s+)?(?:fr\.?|chf)?\s*([0-9'’]+(?:\.[0-9]{2})?)",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"costo\s+netto\s+(?:di\s+)?(?:fr\.?|chf)?\s*([0-9'’]+(?:\.[0-9]{2})?)", re.IGNORECASE
+    ),
 ]
 
 
@@ -99,7 +117,11 @@ class CreditMmExtractor:
 
         # 4. Regime IVA
         low = text.lower()
-        vat_included = "iva inclusa" in low or "iva compresa" in low or ("iva" not in low and "escl" not in low)
+        vat_included = (
+            "iva inclusa" in low
+            or "iva compresa" in low
+            or ("iva" not in low and "escl" not in low)
+        )
 
         # 5. Categoria d'opera
         category = None

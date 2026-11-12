@@ -15,7 +15,13 @@ import pytest
 from ofcl.extract.table_extractor import TableExtractor
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-BRIONE_PDF = REPO_ROOT / "data" / "raw_pdfs" / "5096" / "168f1f85c51701560f1cb3d06cb74f9ce981337517ba6ff1c7f5b26047505aee.pdf"
+BRIONE_PDF = (
+    REPO_ROOT
+    / "data"
+    / "raw_pdfs"
+    / "5096"
+    / "168f1f85c51701560f1cb3d06cb74f9ce981337517ba6ff1c7f5b26047505aee.pdf"
+)
 
 
 @pytest.mark.skipif(not BRIONE_PDF.exists(), reason="PDF reale Brione non presente localmente")
@@ -92,3 +98,97 @@ def test_extract_controllo_crediti_brione_2025() -> None:
     assert totals["totale_crediti_consumati_01_01"].amount_chf == Decimal("3168583.15")
     assert totals["totale_spese_lorde_esercizio"].amount_chf == Decimal("823840.43")
     assert totals["totale_crediti_consumati_31_12"].amount_chf == Decimal("3992423.58")
+
+
+def test_layout_loader_gecoti_v3() -> None:
+    from ofcl.extract.layout_loader import load_and_validate_layout
+
+    layout_dir = REPO_ROOT / "registry" / "layouts" / "gecoti_v3"
+    cfg = load_and_validate_layout(layout_dir)
+    assert cfg.layout_family == "GECOTI_V3"
+    assert len(cfg.rg_config.columns) == 3
+    assert cfg.sel_config.min_x < cfg.sel_config.max_x
+    assert len(cfg.sel_config.indicator_order) == 8
+    assert "totale_investimenti_votati" in cfg.cc_config.summary_rows_re
+
+
+def test_layout_loader_missing_dir(tmp_path: Path) -> None:
+    from ofcl.extract.layout_loader import LayoutConfigError, load_and_validate_layout
+
+    with pytest.raises(LayoutConfigError, match="Directory layout non trovata"):
+        load_and_validate_layout(tmp_path / "nonexistent")
+
+
+def test_layout_loader_min_max_violation(tmp_path: Path) -> None:
+    import yaml
+
+    from ofcl.extract.layout_loader import LayoutConfigError, load_and_validate_layout
+
+    # Crea un layout dir fittizio con min_x >= max_x
+    bad_dir = tmp_path / "bad_layout"
+    bad_dir.mkdir()
+    rg_data = {
+        "layout_family": "BAD",
+        "section": "lett_a",
+        "title_pattern": "test",
+        "columns": [{"id": "col1", "name": "Col 1", "min_x": 500.0, "max_x": 400.0}],
+        "rows": {"spese": "spese"},
+    }
+    (bad_dir / "riassunto_generale.yaml").write_text(yaml.safe_dump(rg_data), encoding="utf-8")
+    with pytest.raises(LayoutConfigError, match="Invariante min_x < max_x violato"):
+        load_and_validate_layout(bad_dir)
+
+
+def test_table_extractor_synthetic_mock() -> None:
+    extractor = TableExtractor("GECOTI_V3")
+
+    class MockPage:
+        def extract_words(self) -> list[dict[str, object]]:
+            # Riga "spese operative" con importo a x0=300
+            return [
+                {"text": "Spese", "top": 150.0, "bottom": 160.0, "x0": 50.0, "x1": 90.0},
+                {"text": "operative", "top": 150.0, "bottom": 160.0, "x0": 95.0, "x1": 150.0},
+                {
+                    "text": "1'234'567.80",
+                    "top": 150.0,
+                    "bottom": 160.0,
+                    "x0": 300.0,
+                    "x1": 380.0,
+                },
+            ]
+
+        def extract_tables(self) -> list[list[list[str]]]:
+            return [
+                [
+                    [
+                        "01.01.2024",
+                        "MM 12",
+                        "615.5010.200",
+                        "Rifacimento strada",
+                        "100'000.00",
+                        "20'000.00",
+                        "30'000.00",
+                        "50'000.00",
+                        "50'000.00",
+                        "Opera regolare",
+                    ]
+                ]
+            ]
+
+    class MockPDF:
+        def __init__(self) -> None:
+            self.pages = [MockPage()]
+
+    pdf = MockPDF()
+    # 1. Riassunto Generale
+    rg_cells = extractor.extract_riassunto_generale(pdf, [1])  # type: ignore[arg-type]
+    assert "spese_operative" in rg_cells
+    assert rg_cells["spese_operative"].amount_chf == Decimal("1234567.80")
+
+    # 2. Controllo Crediti
+    cred_items, _ = extractor.extract_controllo_crediti(pdf, [1])  # type: ignore[arg-type]
+    assert len(cred_items) == 1
+    assert cred_items[0].account_code == "615.5010.200"
+    assert cred_items[0].voted_credit == Decimal("100000.00")
+    assert cred_items[0].remaining_credit == Decimal("50000.00")
+    assert cred_items[0].has_overrun is False

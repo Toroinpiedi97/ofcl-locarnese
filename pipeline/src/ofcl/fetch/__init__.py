@@ -16,9 +16,7 @@ def _sanitize_no_proxy_for_httpx() -> None:
         val = os.environ.get(env_key)
         if val and ("::1" in val or "[" in val):
             parts = [
-                p.strip()
-                for p in val.split(",")
-                if p.strip() and "::1" not in p and "[" not in p
+                p.strip() for p in val.split(",") if p.strip() and "::1" not in p and "[" not in p
             ]
             os.environ[env_key] = ",".join(parts)
 

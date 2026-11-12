@@ -102,7 +102,9 @@ class ValidationContext:
     computed_indicators: dict[str, Decimal] = field(default_factory=dict)
 
 
-def validate_mca2_document(ctx: ValidationContext) -> tuple[list[ValidationCheck], list[FinancialSignal]]:
+def validate_mca2_document(
+    ctx: ValidationContext,
+) -> tuple[list[ValidationCheck], list[FinancialSignal]]:
     """Esegue tutte le 12 verifiche formali (V01..V12) e genera i segnali finanziari (S01..S04)."""
     checks: list[ValidationCheck] = []
     signals: list[FinancialSignal] = []
@@ -268,7 +270,10 @@ def validate_mca2_document(ctx: ValidationContext) -> tuple[list[ValidationCheck
                         title="Spesa d'investimento senza credito CC formale",
                         description=f"L'opera '{row.description}' ({row.account_code}) registra uscite per {row.spent_year} CHF senza credito votato dal CC (delega esecutiva o spesa vincolata).",
                         severity="INFO",
-                        metadata={"account_code": row.account_code, "spent_year": str(row.spent_year)},
+                        metadata={
+                            "account_code": row.account_code,
+                            "spent_year": str(row.spent_year),
+                        },
                     )
                 )
         else:
@@ -314,7 +319,10 @@ def validate_mca2_document(ctx: ValidationContext) -> tuple[list[ValidationCheck
 
     # --- V11: Coerenza Totale Investimenti Crediti vs Uscite Conto Investimenti ---
     if ctx.totale_spese_lorde_crediti > ZERO and ctx.uscite_investimenti_ba_5 > ZERO:
-        delta_cred_ci = abs(ctx.totale_spese_lorde_crediti.quantize(ZERO) - ctx.uscite_investimenti_ba_5.quantize(ZERO))
+        delta_cred_ci = abs(
+            ctx.totale_spese_lorde_crediti.quantize(ZERO)
+            - ctx.uscite_investimenti_ba_5.quantize(ZERO)
+        )
         checks.append(
             ValidationCheck(
                 rule_code="V11",
@@ -424,4 +432,3 @@ def validate_riassunto_generale(data: RiassuntoGeneraleInput) -> list[Validation
     )
     checks, _ = validate_mca2_document(ctx)
     return [c for c in checks if c.rule_code in ("V01", "V02", "V03", "V04", "V05", "V06", "V07")]
-

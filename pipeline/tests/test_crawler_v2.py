@@ -130,7 +130,10 @@ def test_swiss_italian_date_and_fit_markdown_cleaner() -> None:
     assert "Testo nascosto" not in extract.clean_markdown
     assert "CHF 70'000.--" in extract.clean_markdown
     assert len(extract.pdf_links) == 1
-    assert extract.pdf_links[0][0] == "https://centovalli.swiss/wp-content/uploads/2026/05/MM-296-Strade.pdf"
+    assert (
+        extract.pdf_links[0][0]
+        == "https://centovalli.swiss/wp-content/uploads/2026/05/MM-296-Strade.pdf"
+    )
 
 
 @pytest.mark.asyncio
@@ -407,7 +410,9 @@ async def test_per_host_autothrottle_retry_and_robots(tmp_path: Path) -> None:
         if "/rate-limited" in u:
             attempts += 1
             if attempts == 1:
-                return httpx.Response(429, headers={"Retry-After": "0.05"}, text="Too Many Requests")
+                return httpx.Response(
+                    429, headers={"Retry-After": "0.05"}, text="Too Many Requests"
+                )
             return httpx.Response(200, text="OK dopo retry")
         return httpx.Response(200, text="OK")
 
@@ -418,9 +423,13 @@ async def test_per_host_autothrottle_retry_and_robots(tmp_path: Path) -> None:
         assert await guard.can_fetch("https://comune-test.ch/pubblico/albo", client) is True
         assert await guard.can_fetch("https://comune-test.ch/privato/segreto.pdf", client) is False
         # Guardrail C-02 Locarno sempre attivo
-        assert await guard.can_fetch("https://www.locarno.ch/files/documenti/MM.pdf", client) is False
+        assert (
+            await guard.can_fetch("https://www.locarno.ch/files/documenti/MM.pdf", client) is False
+        )
 
-        eff_delay = await guard.get_effective_delay("https://comune-test.ch/pubblico/albo", 2.0, client)
+        eff_delay = await guard.get_effective_delay(
+            "https://comune-test.ch/pubblico/albo", 2.0, client
+        )
         assert eff_delay == 4.0
 
         resp = await throttler.request(client, "GET", "https://comune-test.ch/rate-limited")
@@ -445,7 +454,13 @@ async def test_state_store_etag_304_and_resume(tmp_path: Path) -> None:
             "cms_family": "ASSOLO",
             "active": True,
             "robots": {"crawl_delay_s": 2},
-            "sources": [{"kind": "MM_INDEX", "url": "https://www.ascona.ch/Messaggi", "strategy": "assolo_list"}],
+            "sources": [
+                {
+                    "kind": "MM_INDEX",
+                    "url": "https://www.ascona.ch/Messaggi",
+                    "strategy": "assolo_list",
+                }
+            ],
         }
     ]
     reg_file = tmp_path / "comuni.yaml"
@@ -503,6 +518,36 @@ async def test_state_store_etag_304_and_resume(tmp_path: Path) -> None:
         assert r2.status == "NOT_MODIFIED"
         assert r2.sha256 == r1.sha256
 
-    # Verifica che lo state_file sia stato scritto su disco
+    # Verifica che lo state_file sia stato scritto su disco con schema_version
     saved_json = json.loads(state_file.read_text(encoding="utf-8"))
+    assert saved_json.get("schema_version") == 1
     assert doc.doc_url in saved_json["urls"]
+
+
+@pytest.mark.asyncio
+async def test_crawler_unified_gateway_validates_scheme(tmp_path: Path) -> None:
+    reg_file = tmp_path / "comuni.yaml"
+    reg_file.write_text("[]", encoding="utf-8")
+    crawler = CorteseCrawler(reg_file, tmp_path / "raw_pdfs")
+
+    async with httpx.AsyncClient() as client:
+        with pytest.raises(ValueError, match="Schema URL non valido"):
+            await crawler._request(client, "GET", "ftp://example.com/file.pdf")
+
+        with pytest.raises(ValueError, match="Schema URL non valido"):
+            await crawler._request(client, "GET", "file:///etc/passwd")
+
+
+@pytest.mark.asyncio
+async def test_http_disk_cache_atomic_and_schema_version(tmp_path: Path) -> None:
+    cache = HttpDiskCache(tmp_path / "cache", enabled=True)
+    cache.put("https://example.ch/test", 200, "hello world", "https://example.ch/test")
+
+    cached = cache.get("https://example.ch/test")
+    assert cached is not None
+    assert cached["text"] == "hello world"
+
+    # Verifica schema_version nel file salvato
+    key_file = next((tmp_path / "cache").glob("*.json"))
+    raw = json.loads(key_file.read_text(encoding="utf-8"))
+    assert raw["schema_version"] == 1

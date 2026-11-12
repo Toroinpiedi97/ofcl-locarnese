@@ -126,40 +126,54 @@ def build_opendata_package(output_dir: Path) -> Path:
         ust_code = int(m["ust_code"])
         consuntivo = VERIFIED_CONSUNTIVI_2025.get(ust_code)
         if consuntivo:
-            bilanci_rows.append({
-                "ust_code": ust_code,
-                "comune": m["name"],
-                "anno": 2025,
-                "tipo_atto": "CONSUNTIVO",
-                "moltiplicatore_pf": m["history"].get("2025", {"pf": m["pf"]})["pf"],
-                "moltiplicatore_pg": m["history"].get("2025", {"pg": m["pg"]})["pg"],
-                **consuntivo,
-            })
+            bilanci_rows.append(
+                {
+                    "ust_code": ust_code,
+                    "comune": m["name"],
+                    "anno": 2025,
+                    "tipo_atto": "CONSUNTIVO",
+                    "moltiplicatore_pf": m["history"].get("2025", {"pf": m["pf"]})["pf"],
+                    "moltiplicatore_pg": m["history"].get("2025", {"pg": m["pg"]})["pg"],
+                    **consuntivo,
+                }
+            )
         else:
-            bilanci_rows.append({
-                "ust_code": ust_code,
-                "comune": m["name"],
-                "anno": 2025,
-                "tipo_atto": "PREVENTIVO",
-                "moltiplicatore_pf": m["history"].get("2025", {"pf": m["pf"]})["pf"],
-                "moltiplicatore_pg": m["history"].get("2025", {"pg": m["pg"]})["pg"],
-                "spese_correnti_chf": "",
-                "ricavi_correnti_chf": "",
-                "risultato_ordinario_chf": "",
-                "autofinanziamento_chf": "",
-                "investimenti_netti_chf": "",
-                "debito_netto_pc_chf": "",
-                "conformita_sel": "in attesa",
-            })
+            bilanci_rows.append(
+                {
+                    "ust_code": ust_code,
+                    "comune": m["name"],
+                    "anno": 2025,
+                    "tipo_atto": "PREVENTIVO",
+                    "moltiplicatore_pf": m["history"].get("2025", {"pf": m["pf"]})["pf"],
+                    "moltiplicatore_pg": m["history"].get("2025", {"pg": m["pg"]})["pg"],
+                    "spese_correnti_chf": "",
+                    "ricavi_correnti_chf": "",
+                    "risultato_ordinario_chf": "",
+                    "autofinanziamento_chf": "",
+                    "investimenti_netti_chf": "",
+                    "debito_netto_pc_chf": "",
+                    "conformita_sel": "in attesa",
+                }
+            )
 
     _export_csv_variants(
         output_dir,
         "bilanci_mca2",
         bilanci_rows,
         fieldnames=[
-            "ust_code", "comune", "anno", "tipo_atto", "moltiplicatore_pf", "moltiplicatore_pg",
-            "spese_correnti_chf", "ricavi_correnti_chf", "risultato_ordinario_chf",
-            "autofinanziamento_chf", "investimenti_netti_chf", "debito_netto_pc_chf", "conformita_sel",
+            "ust_code",
+            "comune",
+            "anno",
+            "tipo_atto",
+            "moltiplicatore_pf",
+            "moltiplicatore_pg",
+            "spese_correnti_chf",
+            "ricavi_correnti_chf",
+            "risultato_ordinario_chf",
+            "autofinanziamento_chf",
+            "investimenti_netti_chf",
+            "debito_netto_pc_chf",
+            "conformita_sel",
         ],
     )
 
@@ -193,25 +207,34 @@ def build_opendata_package(output_dir: Path) -> Path:
                 computed["SELF_FINANCING_CAPACITY"] = round(autofin / ricavi * 100, 1)
         for ind_code, name, unit in sel_catalog:
             val = computed.get(ind_code)
-            sel_rows.append({
-                "ust_code": ust_code,
-                "comune": m["name"],
-                "anno": 2025,
-                "indicatore_codice": ind_code,
-                "indicatore_nome": name,
-                "valore": val,
-                "unita": unit,
-                "conforme_sel": None,
-                "stato": "calcolato" if val is not None else "non_disponibile",
-            })
+            sel_rows.append(
+                {
+                    "ust_code": ust_code,
+                    "comune": m["name"],
+                    "anno": 2025,
+                    "indicatore_codice": ind_code,
+                    "indicatore_nome": name,
+                    "valore": val,
+                    "unita": unit,
+                    "conforme_sel": None,
+                    "stato": "calcolato" if val is not None else "non_disponibile",
+                }
+            )
 
     _export_csv_variants(
         output_dir,
         "indicatori_sel",
         sel_rows,
         fieldnames=[
-            "ust_code", "comune", "anno", "indicatore_codice", "indicatore_nome",
-            "valore", "unita", "conforme_sel", "stato",
+            "ust_code",
+            "comune",
+            "anno",
+            "indicatore_codice",
+            "indicatore_nome",
+            "valore",
+            "unita",
+            "conforme_sel",
+            "stato",
         ],
     )
 
@@ -219,28 +242,38 @@ def build_opendata_package(output_dir: Path) -> Path:
     civic_rows: list[dict[str, Any]] = []
     for m in DISTRICT_MUNICIPALITIES:
         ct = m.get("civic_tariffs", {})
-        civic_rows.append({
-            "ust_code": m["ust_code"],
-            "comune": m["name"],
-            "circolo": m["circle"],
-            "abitanti": m["pop"],
-            "tassa_base_rifiuti": ct.get("waste_base_fee", m["waste"]),
-            "sacco_35l_chf": f"{float(ct.get('waste_bag_35l_chf', 1.3)):.2f}",
-            "imposta_immobiliare": f"{float(ct.get('real_estate_tax_permille', 0.0)):.1f} ‰",
-            "tassa_cani_annua_chf": f"{float(ct.get('dog_tax_chf', 100.0)):.2f}",
-            "assegno_nascita_chf": f"{float(ct.get('birth_bonus_chf', 3000.0)):.2f}",
-            "mensa_scolastica_pasto_chf": f"{float(ct.get('canteen_meal_chf', 8.5)):.2f}",
-            "fondo_clima_attivo": bool(ct.get("climate_fund_active", True)),
-        })
+        civic_rows.append(
+            {
+                "ust_code": m["ust_code"],
+                "comune": m["name"],
+                "circolo": m["circle"],
+                "abitanti": m["pop"],
+                "tassa_base_rifiuti": ct.get("waste_base_fee", m["waste"]),
+                "sacco_35l_chf": f"{float(ct.get('waste_bag_35l_chf', 1.3)):.2f}",
+                "imposta_immobiliare": f"{float(ct.get('real_estate_tax_permille', 0.0)):.1f} ‰",
+                "tassa_cani_annua_chf": f"{float(ct.get('dog_tax_chf', 100.0)):.2f}",
+                "assegno_nascita_chf": f"{float(ct.get('birth_bonus_chf', 3000.0)):.2f}",
+                "mensa_scolastica_pasto_chf": f"{float(ct.get('canteen_meal_chf', 8.5)):.2f}",
+                "fondo_clima_attivo": bool(ct.get("climate_fund_active", True)),
+            }
+        )
 
     _export_csv_variants(
         output_dir,
         "tariffe_sussidi_comunali",
         civic_rows,
         fieldnames=[
-            "ust_code", "comune", "circolo", "abitanti", "tassa_base_rifiuti", "sacco_35l_chf",
-            "imposta_immobiliare", "tassa_cani_annua_chf", "assegno_nascita_chf",
-            "mensa_scolastica_pasto_chf", "fondo_clima_attivo",
+            "ust_code",
+            "comune",
+            "circolo",
+            "abitanti",
+            "tassa_base_rifiuti",
+            "sacco_35l_chf",
+            "imposta_immobiliare",
+            "tassa_cani_annua_chf",
+            "assegno_nascita_chf",
+            "mensa_scolastica_pasto_chf",
+            "fondo_clima_attivo",
         ],
     )
 
@@ -363,7 +396,9 @@ def build_opendata_package(output_dir: Path) -> Path:
             if p.is_file() and p.name != zip_path.name:
                 zf.write(p, arcname=p.name)
 
-    logger.info("Open Data Package generato con successo in %s (zip: %s)", output_dir, zip_path.name)
+    logger.info(
+        "Open Data Package generato con successo in %s (zip: %s)", output_dir, zip_path.name
+    )
     return output_dir
 
 

@@ -2,6 +2,10 @@ layout_family: "GECOTI_V3"
 section: "lett_o"
 title_pattern: "indicatori\\s+finanziari"
 
+column_x_range:
+  min_x: 430.0
+  max_x: 490.0
+
 indicators:
   tasso_indebitamento_netto_pct:
     label: "Tasso di indebitamento netto"

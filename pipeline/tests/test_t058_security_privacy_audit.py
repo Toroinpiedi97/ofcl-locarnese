@@ -46,7 +46,12 @@ def test_t058_rls_on_all_application_tables() -> None:
 
 def test_t058_feedback_ticket_rls_policy() -> None:
     """Verifica che audit.feedback_ticket abbia la policy riservata al curatore autenticato."""
-    migration_file = REPO_ROOT / "supabase" / "migrations" / "20261101000004_civic_deepdive_feedback_and_full_rls.sql"
+    migration_file = (
+        REPO_ROOT
+        / "supabase"
+        / "migrations"
+        / "20261101000004_civic_deepdive_feedback_and_full_rls.sql"
+    )
     sql = migration_file.read_text(encoding="utf-8")
 
     assert "alter table audit.feedback_ticket enable row level security" in sql.lower()
@@ -62,6 +67,7 @@ def test_t058_guardrail_c01_zero_corfin_references() -> None:
     corfin_id = "vrqnbdcsavgpdgijpiic"
 
     import os
+
     for var in ["DATABASE_URL", "SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_URL", "POSTGRES_URL"]:
         val = os.environ.get(var, "")
         assert corfin_domain not in val and corfin_id not in val, f"Variabile {var} punta a Corfin!"
@@ -78,7 +84,9 @@ def test_t058_guardrail_c01_zero_corfin_references() -> None:
                 line = line.strip()
                 if line.startswith("#") or not line:
                     continue
-                assert corfin_domain not in line and corfin_id not in line, f"{cfg} assegna valori collegati a Corfin: {line}"
+                assert corfin_domain not in line and corfin_id not in line, (
+                    f"{cfg} assegna valori collegati a Corfin: {line}"
+                )
 
 
 def test_t058_zero_pii_in_documents_catalog() -> None:

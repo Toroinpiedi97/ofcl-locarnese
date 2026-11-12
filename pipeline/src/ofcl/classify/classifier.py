@@ -159,11 +159,21 @@ def classify_text_metadata(
     doc_type: DocType = "ALTRO"
     if "piano finanziario" in low or "piano economico" in low:
         doc_type = "PIANO_FINANZIARIO"
-    elif "consuntiv" in low or "rendiconto" in low or "conti del comune" in low or "conto consuntivo" in low:
+    elif (
+        "consuntiv" in low
+        or "rendiconto" in low
+        or "conti del comune" in low
+        or "conto consuntivo" in low
+    ):
         doc_type = "CONSUNTIVO"
     elif "preventiv" in low:
         doc_type = "PREVENTIVO"
-    elif "credito" in low or "richiesta di credito" in low or "credito d'opera" in low or "credito suppletorio" in low:
+    elif (
+        "credito" in low
+        or "richiesta di credito" in low
+        or "credito d'opera" in low
+        or "credito suppletorio" in low
+    ):
         doc_type = "CREDITO_OPERA"
     elif "regolamento" in low or "ordinanza" in low or "tariffario" in low or "tassa" in low:
         doc_type = "REGOLAMENTO"
@@ -193,7 +203,9 @@ def classify_text_metadata(
     # 3. Estrazione MM e Canonical MM
     mm_match = _MM_RAW_RE.search(title)
     mm_number = f"MM {mm_match.group(1)}" if mm_match else None
-    canonical = canonical_mm(mm_number, mode=numbering_mode, ref_year=fiscal_year) if mm_number else None
+    canonical = (
+        canonical_mm(mm_number, mode=numbering_mode, ref_year=fiscal_year) if mm_number else None
+    )
 
     # 4. Budget stage
     stage: BudgetStage = "PROPOSTA"
@@ -283,7 +295,11 @@ def inspect_and_classify_pdf(
             refined_type = initial.doc_type
             if "piano finanziario" in low_pdf:
                 refined_type = "PIANO_FINANZIARIO"
-            elif "consuntivo" in low_pdf or "conto consuntivo" in low_pdf or "conti comunali" in low_pdf:
+            elif (
+                "consuntivo" in low_pdf
+                or "conto consuntivo" in low_pdf
+                or "conti comunali" in low_pdf
+            ):
                 refined_type = "CONSUNTIVO"
             elif "preventivo" in low_pdf or "conto preventivo" in low_pdf:
                 refined_type = "PREVENTIVO"

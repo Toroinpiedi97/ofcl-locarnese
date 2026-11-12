@@ -71,7 +71,6 @@ QA_SAMPLE_RECORDS: list[dict[str, Any]] = [
         "expected_val": Decimal(682),
         "unit": "ab",
     },
-
     # --- CIRCOLO DELLE ISOLE ---
     {
         "ust_code": 5091,
@@ -136,7 +135,6 @@ QA_SAMPLE_RECORDS: list[dict[str, Any]] = [
         "expected_val": Decimal("75.00"),
         "unit": "%",
     },
-
     # --- CIRCOLO DELLA NAVEGNA ---
     {
         "ust_code": 5096,
@@ -228,7 +226,6 @@ QA_SAMPLE_RECORDS: list[dict[str, Any]] = [
         "expected_val": Decimal("88.00"),
         "unit": "%",
     },
-
     # --- CIRCOLO DELLA MELEZZA ---
     {
         "ust_code": 5396,
@@ -257,7 +254,6 @@ QA_SAMPLE_RECORDS: list[dict[str, Any]] = [
         "expected_val": Decimal("120.00"),
         "unit": "%",
     },
-
     # --- CIRCOLO DEL GAMBAROGNO ---
     {
         "ust_code": 5398,
@@ -286,7 +282,6 @@ QA_SAMPLE_RECORDS: list[dict[str, Any]] = [
         "expected_val": Decimal("-90000.00"),
         "unit": "CHF",
     },
-
     # --- CIRCOLO DELLA VERZASCA ---
     {
         "ust_code": 5399,
@@ -387,16 +382,22 @@ def test_nfr05_zero_discrepancies() -> None:
         key = (item["ust_code"], item["metric"])
         actual = published.get(key)
 
-        assert actual is not None, f"Dato pubblicato non trovato per {item['municipality']} {item['metric']}"
+        assert actual is not None, (
+            f"Dato pubblicato non trovato per {item['municipality']} {item['metric']}"
+        )
 
         delta = abs(actual - expected)
         if delta != Decimal("0.00"):
-            discrepancies.append({
-                "municipality": item["municipality"],
-                "metric": item["metric"],
-                "expected": expected,
-                "actual": actual,
-                "delta": delta,
-            })
+            discrepancies.append(
+                {
+                    "municipality": item["municipality"],
+                    "metric": item["metric"],
+                    "expected": expected,
+                    "actual": actual,
+                    "delta": delta,
+                }
+            )
 
-    assert len(discrepancies) == 0, f"Rilevate {len(discrepancies)} discrepanze contabili: {discrepancies}"
+    assert len(discrepancies) == 0, (
+        f"Rilevate {len(discrepancies)} discrepanze contabili: {discrepancies}"
+    )

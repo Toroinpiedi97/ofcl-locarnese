@@ -17,29 +17,31 @@ from pathlib import Path
 import yaml
 
 # Fallback predefinito se il file di configurazione non è accessibile
-_DEFAULT_SENSITIVE_KEYWORDS: frozenset[str] = frozenset({
-    "naturalizzazione",
-    "attinenza",
-    "cittadinanza",
-    "condono",
-    "sgravio fiscale",
-    "tassazione",
-    "reclamo fiscale",
-    "aiuto sociale",
-    "soccorso d'inverno",
-    "assistenza",
-    "curatela",
-    "tutela",
-    "esproprio",
-    "espropriazione",
-    "diffida",
-    "sanzione",
-    "ingiunzione",
-    "contravvenzione",
-    "multa",
-    "dati personali",
-    "domanda di grazia",
-})
+_DEFAULT_SENSITIVE_KEYWORDS: frozenset[str] = frozenset(
+    {
+        "naturalizzazione",
+        "attinenza",
+        "cittadinanza",
+        "condono",
+        "sgravio fiscale",
+        "tassazione",
+        "reclamo fiscale",
+        "aiuto sociale",
+        "soccorso d'inverno",
+        "assistenza",
+        "curatela",
+        "tutela",
+        "esproprio",
+        "espropriazione",
+        "diffida",
+        "sanzione",
+        "ingiunzione",
+        "contravvenzione",
+        "multa",
+        "dati personali",
+        "domanda di grazia",
+    }
+)
 
 
 def _get_glossario_keywords() -> frozenset[str]:

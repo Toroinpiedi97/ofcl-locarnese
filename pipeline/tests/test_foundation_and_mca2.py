@@ -83,8 +83,8 @@ def test_statpop_population_19_comuni_coverage() -> None:
 
     # Sanity check su comuni chiave
     assert POPULATION_STATPOP_2019_2026[5113][2025] == 16463  # Locarno
-    assert POPULATION_STATPOP_2019_2026[5091][2025] == 5290   # Ascona
-    assert POPULATION_STATPOP_2019_2026[5115][2025] == 6780   # Losone
+    assert POPULATION_STATPOP_2019_2026[5091][2025] == 5290  # Ascona
+    assert POPULATION_STATPOP_2019_2026[5115][2025] == 6780  # Losone
 
 
 def test_parse_chf_exact_formats() -> None:

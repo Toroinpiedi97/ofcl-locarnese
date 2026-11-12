@@ -40,18 +40,26 @@ async def run_audit_and_update() -> None:
             docs = await crawler.scan_municipality(m, client, max_docs_per_source=10)
             if docs:
                 canary = docs[0].doc_url
-                print(f"  -> {ust} {name:22} [{cms:12}] OK: {len(docs)} docs trovati | Canary: {canary}")
+                print(
+                    f"  -> {ust} {name:22} [{cms:12}] OK: {len(docs)} docs trovati | Canary: {canary}"
+                )
             else:
                 # Fallback: primo URL della fonte principale
                 canary = m["sources"][0]["url"]
-                print(f"  -> {ust} {name:22} [{cms:12}] WARN: 0 docs trovati | Canary fallback: {canary}")
+                print(
+                    f"  -> {ust} {name:22} [{cms:12}] WARN: 0 docs trovati | Canary fallback: {canary}"
+                )
 
             m["verified_at"] = now_iso
             m["canary_url"] = canary
 
     # Salva il file comuni.yaml aggiornato
-    registry_path.write_text(yaml.dump(raw_data, allow_unicode=True, sort_keys=False), encoding="utf-8")
-    print(f"\n[AUDIT OK] Aggiornato {registry_path} per {len(raw_data)}/19 Comuni con verified_at={now_iso}")
+    registry_path.write_text(
+        yaml.dump(raw_data, allow_unicode=True, sort_keys=False), encoding="utf-8"
+    )
+    print(
+        f"\n[AUDIT OK] Aggiornato {registry_path} per {len(raw_data)}/19 Comuni con verified_at={now_iso}"
+    )
 
 
 if __name__ == "__main__":

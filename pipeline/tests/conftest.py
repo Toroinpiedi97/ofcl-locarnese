@@ -1,4 +1,5 @@
 """Pytest configuration and environment sanitization for OFCL test suite."""
+
 import os
 
 # httpx bug workaround: httpx parses NO_PROXY with URLPattern which fails on bracketed IPv6 '[::1]'

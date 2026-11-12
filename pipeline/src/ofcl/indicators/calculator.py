@@ -66,7 +66,9 @@ class SelIndicatorsCalculator:
     """Calcola gli 8 indicatori finanziari SEL con relative scale di valutazione cantonali."""
 
     @staticmethod
-    def calculate_all(data: SelInputData, reported: dict[str, Decimal] | None = None) -> dict[str, IndicatorResult]:
+    def calculate_all(
+        data: SelInputData, reported: dict[str, Decimal] | None = None
+    ) -> dict[str, IndicatorResult]:
         reported = reported or {}
         results: dict[str, IndicatorResult] = {}
 
@@ -78,7 +80,9 @@ class SelIndicatorsCalculator:
         val_debt_ratio: Decimal | None = None
         band_debt_ratio: EvaluationBand = "N_A"
         if data.gettito_fiscale_base > Decimal("0.00"):
-            val_debt_ratio = ((debito_netto / data.gettito_fiscale_base) * Decimal(100)).quantize(Decimal("0.1"))
+            val_debt_ratio = ((debito_netto / data.gettito_fiscale_base) * Decimal(100)).quantize(
+                Decimal("0.1")
+            )
             if val_debt_ratio < Decimal("100.0"):
                 band_debt_ratio = "BUONO"
             elif val_debt_ratio <= Decimal("150.0"):
@@ -87,7 +91,11 @@ class SelIndicatorsCalculator:
                 band_debt_ratio = "ECCESSIVO"
 
         rep_1 = reported.get("tasso_indebitamento_netto_pct")
-        delta_1 = (val_debt_ratio - rep_1).quantize(Decimal("0.1")) if val_debt_ratio is not None and rep_1 is not None else None
+        delta_1 = (
+            (val_debt_ratio - rep_1).quantize(Decimal("0.1"))
+            if val_debt_ratio is not None and rep_1 is not None
+            else None
+        )
         results["NET_DEBT_RATIO"] = IndicatorResult(
             code="NET_DEBT_RATIO",
             name="Tasso di indebitamento netto",
@@ -104,7 +112,9 @@ class SelIndicatorsCalculator:
         val_self_fin: Decimal | None = None
         band_self_fin: EvaluationBand = "N_A"
         if data.investimenti_netti_ba > Decimal("0.00"):
-            val_self_fin = ((data.autofinanziamento / data.investimenti_netti_ba) * Decimal(100)).quantize(Decimal("0.1"))
+            val_self_fin = (
+                (data.autofinanziamento / data.investimenti_netti_ba) * Decimal(100)
+            ).quantize(Decimal("0.1"))
             if val_self_fin > Decimal("100.0"):
                 band_self_fin = "BUONO"
             elif val_self_fin >= Decimal("70.0"):
@@ -113,7 +123,11 @@ class SelIndicatorsCalculator:
                 band_self_fin = "DEBOLE"
 
         rep_2 = reported.get("grado_autofinanziamento_pct")
-        delta_2 = (val_self_fin - rep_2).quantize(Decimal("0.1")) if val_self_fin is not None and rep_2 is not None else None
+        delta_2 = (
+            (val_self_fin - rep_2).quantize(Decimal("0.1"))
+            if val_self_fin is not None and rep_2 is not None
+            else None
+        )
         results["SELF_FINANCING_DEGREE"] = IndicatorResult(
             code="SELF_FINANCING_DEGREE",
             name="Grado di autofinanziamento",
@@ -130,7 +144,9 @@ class SelIndicatorsCalculator:
         band_interest: EvaluationBand = "N_A"
         if data.ricavi_correnti > Decimal("0.00"):
             interessi_netti = data.spese_interessi_340 - data.ricavi_interessi_440
-            val_interest = ((interessi_netti / data.ricavi_correnti) * Decimal(100)).quantize(Decimal("0.1"))
+            val_interest = ((interessi_netti / data.ricavi_correnti) * Decimal(100)).quantize(
+                Decimal("0.1")
+            )
             if val_interest <= Decimal("4.0"):
                 band_interest = "BUONO"
             elif val_interest <= Decimal("9.0"):
@@ -139,7 +155,11 @@ class SelIndicatorsCalculator:
                 band_interest = "ECCESSIVO"
 
         rep_3 = reported.get("quota_spese_interessi_pct")
-        delta_3 = (val_interest - rep_3).quantize(Decimal("0.1")) if val_interest is not None and rep_3 is not None else None
+        delta_3 = (
+            (val_interest - rep_3).quantize(Decimal("0.1"))
+            if val_interest is not None and rep_3 is not None
+            else None
+        )
         results["INTEREST_BURDEN_RATIO"] = IndicatorResult(
             code="INTEREST_BURDEN_RATIO",
             name="Quota spese per interessi",
@@ -155,7 +175,9 @@ class SelIndicatorsCalculator:
         val_debt_pc: Decimal | None = None
         band_debt_pc: EvaluationBand = "N_A"
         if data.popolazione_residente > 0:
-            val_debt_pc = (debito_netto / Decimal(data.popolazione_residente)).quantize(Decimal("1.00"))
+            val_debt_pc = (debito_netto / Decimal(data.popolazione_residente)).quantize(
+                Decimal("1.00")
+            )
             if val_debt_pc < Decimal("1000.00"):
                 band_debt_pc = "BASSO"
             elif val_debt_pc <= Decimal("3000.00"):
@@ -166,7 +188,11 @@ class SelIndicatorsCalculator:
                 band_debt_pc = "ECCESSIVO"
 
         rep_4 = reported.get("debito_netto_pro_capite_chf")
-        delta_4 = (val_debt_pc - rep_4).quantize(Decimal("1.00")) if val_debt_pc is not None and rep_4 is not None else None
+        delta_4 = (
+            (val_debt_pc - rep_4).quantize(Decimal("1.00"))
+            if val_debt_pc is not None and rep_4 is not None
+            else None
+        )
         results["NET_DEBT_PER_CAPITA"] = IndicatorResult(
             code="NET_DEBT_PER_CAPITA",
             name="Debito pubblico netto pro capite",
@@ -182,7 +208,9 @@ class SelIndicatorsCalculator:
         val_invest: Decimal | None = None
         band_invest: EvaluationBand = "N_A"
         if data.uscite_consolidate > Decimal("0.00"):
-            val_invest = ((data.investimenti_lordi_ba / data.uscite_consolidate) * Decimal(100)).quantize(Decimal("0.1"))
+            val_invest = (
+                (data.investimenti_lordi_ba / data.uscite_consolidate) * Decimal(100)
+            ).quantize(Decimal("0.1"))
             if val_invest > Decimal("30.0"):
                 band_invest = "MOLTO_ELEVATO"
             elif val_invest >= Decimal("20.0"):
@@ -193,7 +221,11 @@ class SelIndicatorsCalculator:
                 band_invest = "RIDOTTO"
 
         rep_5 = reported.get("quota_investimenti_pct")
-        delta_5 = (val_invest - rep_5).quantize(Decimal("0.1")) if val_invest is not None and rep_5 is not None else None
+        delta_5 = (
+            (val_invest - rep_5).quantize(Decimal("0.1"))
+            if val_invest is not None and rep_5 is not None
+            else None
+        )
         results["INVESTMENT_RATIO"] = IndicatorResult(
             code="INVESTMENT_RATIO",
             name="Quota degli investimenti",
@@ -209,7 +241,9 @@ class SelIndicatorsCalculator:
         val_equity: Decimal | None = None
         band_equity: EvaluationBand = "N_A"
         if data.totale_passivi > Decimal("0.00"):
-            val_equity = ((data.capitale_proprio / data.totale_passivi) * Decimal(100)).quantize(Decimal("0.1"))
+            val_equity = ((data.capitale_proprio / data.totale_passivi) * Decimal(100)).quantize(
+                Decimal("0.1")
+            )
             if val_equity > Decimal("40.0"):
                 band_equity = "ECCESSIVO"
             elif val_equity >= Decimal("20.0"):
@@ -220,7 +254,11 @@ class SelIndicatorsCalculator:
                 band_equity = "DEBOLE"
 
         rep_6 = reported.get("quota_capitale_proprio_pct")
-        delta_6 = (val_equity - rep_6).quantize(Decimal("0.1")) if val_equity is not None and rep_6 is not None else None
+        delta_6 = (
+            (val_equity - rep_6).quantize(Decimal("0.1"))
+            if val_equity is not None and rep_6 is not None
+            else None
+        )
         results["EQUITY_RATIO"] = IndicatorResult(
             code="EQUITY_RATIO",
             name="Quota di capitale proprio",
@@ -236,7 +274,9 @@ class SelIndicatorsCalculator:
         val_service: Decimal | None = None
         band_service: EvaluationBand = "N_A"
         if data.ricavi_correnti > Decimal("0.00"):
-            val_service = ((data.oneri_finanziari / data.ricavi_correnti) * Decimal(100)).quantize(Decimal("0.1"))
+            val_service = ((data.oneri_finanziari / data.ricavi_correnti) * Decimal(100)).quantize(
+                Decimal("0.1")
+            )
             if val_service < Decimal("5.0"):
                 band_service = "DEBOLE"
             elif val_service <= Decimal("15.0"):
@@ -245,7 +285,11 @@ class SelIndicatorsCalculator:
                 band_service = "ALTO"
 
         rep_7 = reported.get("quota_oneri_finanziari_pct")
-        delta_7 = (val_service - rep_7).quantize(Decimal("0.1")) if val_service is not None and rep_7 is not None else None
+        delta_7 = (
+            (val_service - rep_7).quantize(Decimal("0.1"))
+            if val_service is not None and rep_7 is not None
+            else None
+        )
         results["CAPITAL_SERVICE_RATIO"] = IndicatorResult(
             code="CAPITAL_SERVICE_RATIO",
             name="Quota degli oneri finanziari",
@@ -262,7 +306,9 @@ class SelIndicatorsCalculator:
         val_capacity: Decimal | None = None
         band_capacity: EvaluationBand = "N_A"
         if data.ricavi_correnti > Decimal("0.00"):
-            val_capacity = ((data.autofinanziamento / data.ricavi_correnti) * Decimal(100)).quantize(Decimal("0.1"))
+            val_capacity = (
+                (data.autofinanziamento / data.ricavi_correnti) * Decimal(100)
+            ).quantize(Decimal("0.1"))
             if val_capacity > Decimal("20.0"):
                 band_capacity = "BUONO"
             elif val_capacity >= Decimal("10.0"):
@@ -271,7 +317,11 @@ class SelIndicatorsCalculator:
                 band_capacity = "DEBOLE"
 
         rep_8 = reported.get("capacita_autofinanziamento_pct")
-        delta_8 = (val_capacity - rep_8).quantize(Decimal("0.1")) if val_capacity is not None and rep_8 is not None else None
+        delta_8 = (
+            (val_capacity - rep_8).quantize(Decimal("0.1"))
+            if val_capacity is not None and rep_8 is not None
+            else None
+        )
         results["SELF_FINANCING_CAPACITY"] = IndicatorResult(
             code="SELF_FINANCING_CAPACITY",
             name="Capacità di autofinanziamento",

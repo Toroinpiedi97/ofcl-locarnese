@@ -4,8 +4,8 @@ title_pattern: "riassunto\\s+del\\s+(?:consuntivo|preventivo)"
 columns:
   - id: "col_0"
     name: "consuntivo_t"
-    min_x: 300.0
-    max_x: 480.0
+    min_x: 250.0
+    max_x: 460.0
   - id: "col_1"
     name: "preventivo_t"
     min_x: 480.0

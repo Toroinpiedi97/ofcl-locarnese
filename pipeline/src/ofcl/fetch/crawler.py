@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import asyncio
 import hashlib
+import logging
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -39,6 +40,8 @@ from ofcl.fetch.state_store import CrawlStateStore, HttpDiskCache
 from ofcl.fetch.throttler import PerHostAutoThrottler
 from ofcl.seed_ref import enforce_corfin_guardrail
 from ofcl.storage.r2 import upload_pdf_to_r2
+
+logger = logging.getLogger(__name__)
 
 USER_AGENT = "OFCL-Bot/1.0 (+https://ofcl.ch/bot; info@ofcl.ch)"
 MAX_PDF_SIZE_BYTES = 150 * 1024 * 1024  # 150 MB
@@ -80,6 +83,12 @@ class CorteseCrawler:
             fast_mode=self.fast_mode,
         )
 
+        # Contatori metriche operativi
+        self.sources_scanned: int = 0
+        self.sources_failed: int = 0
+        self.uploads_failed: int = 0
+        self.robots_denied: int = 0
+
         loaded = yaml.safe_load(registry_yaml_path.read_text(encoding="utf-8"))
         self.municipalities: list[dict[str, Any]] = loaded if isinstance(loaded, list) else []
 
@@ -90,6 +99,97 @@ class CorteseCrawler:
                 return m
         return None
 
+    async def _request(
+        self,
+        client: httpx.AsyncClient,
+        method: str,
+        url: str,
+        *,
+        respect_robots: bool = True,
+        use_cache: bool = True,
+        min_delay_s: float = 0.0,
+        headers: dict[str, str] | None = None,
+        timeout: float = 30.0,
+        **kwargs: Any,
+    ) -> httpx.Response:
+        """
+        Gateway HTTP unificato.
+        1. Validazione schema URL.
+        2. Controllo robots.txt (con guardrail specifici).
+        3. Consultazione HttpDiskCache (se GET).
+        4. AutoThrottling per host e rispetto Crawl-delay.
+        5. Esecuzione richiesta HTTP.
+        6. Controllo redirect cross-host contro robots.txt.
+        7. Aggiornamento HttpDiskCache.
+        """
+        parsed = urlparse(url)
+        if parsed.scheme not in ("http", "https"):
+            raise ValueError(f"Schema URL non valido o non supportato: {url!r}")
+
+        # 2. Controllo Robots.txt preventivo
+        if (
+            respect_robots
+            and self.obey_robots
+            and not await self.robots_guard.can_fetch(url, client)
+        ):
+            self.robots_denied += 1
+            req = httpx.Request(method, url)
+            return httpx.Response(status_code=403, request=req, text="")
+
+        # 3. Consultazione cache per richieste GET
+        if use_cache and method.upper() == "GET":
+            cached = self.http_cache.get(url)
+            if cached is not None:
+                req = httpx.Request(method, url)
+                return httpx.Response(
+                    status_code=int(cached.get("status_code", 200)),
+                    request=req,
+                    text=str(cached.get("text", "")),
+                    headers={"x-ofcl-cache": "HIT"},
+                )
+
+        # 4. Calcolo del delay effettivo per host
+        effective_delay = (
+            0.0
+            if self.fast_mode
+            else (
+                await self.robots_guard.get_effective_delay(url, min_delay_s, client)
+                if respect_robots and self.obey_robots
+                else min_delay_s
+            )
+        )
+
+        req_headers = {"User-Agent": USER_AGENT, **(headers or {})}
+        resp = await self.throttler.request(
+            client,
+            method,
+            url,
+            min_delay_s=effective_delay,
+            headers=req_headers,
+            timeout=timeout,
+            **kwargs,
+        )
+
+        # 5. Verifica eventuale redirect cross-host
+        final_url_str = str(resp.url)
+        final_host = urlparse(final_url_str).netloc.lower()
+        orig_host = parsed.netloc.lower()
+        if (
+            final_host != orig_host
+            and respect_robots
+            and self.obey_robots
+            and not await self.robots_guard.can_fetch(final_url_str, client)
+        ):
+            self.robots_denied += 1
+            req = httpx.Request(method, final_url_str)
+            return httpx.Response(status_code=403, request=req, text="")
+
+        # 6. Aggiornamento cache
+        if use_cache and method.upper() == "GET" and resp.status_code == 200 and resp.text:
+            self.http_cache.put(url, resp.status_code, resp.text, final_url_str)
+
+        return resp
+
     async def _fetch_text_polite(
         self,
         url: str,
@@ -98,58 +198,60 @@ class CorteseCrawler:
         min_delay_s: float,
     ) -> tuple[int, str, str]:
         """
-        Scarica una pagina HTML/JSON passando da HttpDiskCache (se attiva),
-        RobotsGuard e PerHostAutoThrottler.
-        Restituisce `(status_code, text, final_url)`.
+        Scarica una pagina HTML/JSON attraverso il gateway _request.
+        Restituisce (status_code, text, final_url).
         """
-        cached = self.http_cache.get(url)
-        if cached is not None:
-            return (
-                int(cached.get("status_code", 200)),
-                str(cached.get("text", "")),
-                str(cached.get("final_url", url)),
-            )
-
-        if not await self.robots_guard.can_fetch(url, client):
-            return 403, "", url
-
-        effective_min_delay = (
-            0.0
-            if self.fast_mode
-            else await self.robots_guard.get_effective_delay(url, min_delay_s, client)
-        )
-        resp = await self.throttler.request(
+        resp = await self._request(
             client,
             "GET",
             url,
-            min_delay_s=effective_min_delay,
-            headers={"User-Agent": USER_AGENT},
-            timeout=30.0,
+            respect_robots=True,
+            use_cache=True,
+            min_delay_s=min_delay_s,
         )
-        final_url = str(resp.url)
-        text = resp.text if resp.status_code == 200 else ""
-        if resp.status_code == 200 and text:
-            self.http_cache.put(url, resp.status_code, text, final_url)
-        return resp.status_code, text, final_url
+        return resp.status_code, resp.text, str(resp.url)
 
     async def check_canary(
         self,
         m: dict[str, Any],
         client: httpx.AsyncClient,
     ) -> tuple[bool, int, str | None]:
-        """Verifica la salute dell'URL canarino (Guardrail C-13 anti-drift)."""
+        """Verifica la salute dell'URL canarino (Guardrail C-13 anti-drift) tramite _request."""
         canary_url = m.get("canary_url")
         if not canary_url:
             return True, 200, None
 
         try:
-            resp = await client.head(canary_url, timeout=15.0, follow_redirects=True)
+            resp = await self._request(
+                client,
+                "HEAD",
+                canary_url,
+                respect_robots=True,
+                use_cache=False,
+                timeout=15.0,
+                follow_redirects=True,
+            )
             if resp.status_code == 405:  # Method Not Allowed -> fallback GET
-                resp = await client.get(canary_url, timeout=15.0, follow_redirects=True)
+                resp = await self._request(
+                    client,
+                    "GET",
+                    canary_url,
+                    respect_robots=True,
+                    use_cache=False,
+                    timeout=15.0,
+                    follow_redirects=True,
+                )
             if resp.status_code < 400:
                 return True, resp.status_code, None
             return False, resp.status_code, f"HTTP {resp.status_code}"
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
+            logger.warning(
+                "Canary check fallito per %s (%s): %s",
+                m.get("name"),
+                canary_url,
+                exc,
+                exc_info=True,
+            )
             return False, 0, str(exc)
 
     async def _scan_assolo_source(
@@ -349,6 +451,7 @@ class CorteseCrawler:
 
         for src in m.get("sources", []):
             url = str(src["url"])
+            self.sources_scanned += 1
             try:
                 docs: list[DiscoveredDocument] = []
                 if cms_family == "ASSOLO":
@@ -400,7 +503,16 @@ class CorteseCrawler:
 
                 discovered.extend(docs[:max_docs_per_source])
 
-            except Exception:  # noqa: BLE001, S112
+            except Exception as exc:
+                self.sources_failed += 1
+                logger.warning(
+                    "Errore scansione fonte %s per UST %s (%s): %s",
+                    url,
+                    ust_code,
+                    slug,
+                    exc,
+                    exc_info=True,
+                )
                 continue
 
         return discovered
@@ -422,6 +534,14 @@ class CorteseCrawler:
         5. Calcolo SHA-256 e salvataggio in data/raw_pdfs/{ust_code}/{sha256}.pdf.
         6. Upload e deduplicazione su Cloudflare R2 (se abilitato).
         """
+        parsed_doc = urlparse(doc.doc_url)
+        if parsed_doc.scheme not in ("http", "https"):
+            return DownloadResult(
+                doc=doc,
+                status="ERROR",
+                error=f"Schema URL non supportato: {doc.doc_url}",
+            )
+
         # 1. Esclude preventivamente i documenti con dati personali nLPD
         if doc.contains_personal_data:
             return DownloadResult(
@@ -434,11 +554,21 @@ class CorteseCrawler:
         if doc.metadata.get("locarno_disallow_guard") or not await self.robots_guard.can_fetch(
             doc.doc_url, client
         ):
+            self.robots_denied += 1
             return DownloadResult(
                 doc=doc,
                 status="SKIPPED_GUARD",
                 error="Download automatico escluso da robots.txt: richiede autorizzazione scritta",
             )
+
+        # 3. Throttling preventivo per host prima dello streaming
+        effective_min_delay = (
+            0.0
+            if self.fast_mode
+            else await self.robots_guard.get_effective_delay(doc.doc_url, 1.0, client)
+        )
+        host = parsed_doc.netloc.lower() or "default"
+        await self.throttler.acquire(host, min_delay_s=effective_min_delay)
 
         # Recupera eventuale stato precedente dallo store se non passato esplicitamente
         prior_state = self.state_store.get(doc.doc_url)
@@ -546,8 +676,15 @@ class CorteseCrawler:
                 if self.sync_r2:
                     try:
                         r2_key = upload_pdf_to_r2(target_path, doc.ust_code, sha256)
-                    except Exception:  # noqa: BLE001, S110
-                        pass
+                    except Exception as exc:
+                        self.uploads_failed += 1
+                        logger.warning(
+                            "Upload R2 fallito per %s (UST %s): %s",
+                            target_path,
+                            doc.ust_code,
+                            exc,
+                            exc_info=True,
+                        )
 
                 final_status: DownloadStatus = "CACHED" if already_cached else "DOWNLOADED"
                 self.state_store.update_url(
@@ -600,7 +737,9 @@ class CorteseCrawler:
         )
 
         results: list[DownloadResult] = []
-        download_delay = 0.0 if self.fast_mode else float(m.get("robots", {}).get("crawl_delay_s", 2))
+        download_delay = (
+            0.0 if self.fast_mode else float(m.get("robots", {}).get("crawl_delay_s", 2))
+        )
 
         for i, doc in enumerate(discovered):
             if dry_run:
@@ -722,6 +861,10 @@ class CorteseCrawler:
             "dry_run": dry_run,
             "target_municipalities_count": len(target_comuni),
             "total_discovered_docs": len(all_results),
+            "sources_scanned": self.sources_scanned,
+            "sources_failed": self.sources_failed,
+            "uploads_failed": self.uploads_failed,
+            "robots_denied": self.robots_denied,
             "status_counts": status_counts,
             "canary_checks": canary_reports,
             "selector_relocations": selector_relocations,

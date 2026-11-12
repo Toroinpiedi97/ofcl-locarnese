@@ -53,7 +53,9 @@ def test_v01_v12_all_passed_on_balanced_context() -> None:
     )
 
     checks, signals = validate_mca2_document(ctx)
-    assert all(c.passed for c in checks), f"Controlli falliti: {[c for c in checks if not c.passed]}"
+    assert all(c.passed for c in checks), (
+        f"Controlli falliti: {[c for c in checks if not c.passed]}"
+    )
     assert len(signals) == 0
 
 

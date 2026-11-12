@@ -86,6 +86,17 @@ class PerHostAutoThrottler:
         except ValueError:
             return fallback_s
 
+    async def acquire(self, host: str, min_delay_s: float = 2.0) -> None:
+        """Attende il delay necessario prima di iniziare un'operazione verso un host."""
+        required_delay = self.compute_delay(host, min_delay_s)
+        stats = self._get_stats(host)
+        if required_delay > 0 and stats.last_request_finished_at > 0:
+            elapsed = time.monotonic() - stats.last_request_finished_at
+            remaining = required_delay - elapsed
+            if remaining > 0:
+                await asyncio.sleep(remaining)
+                stats.last_delay_applied_s = remaining
+
     async def request(
         self,
         client: httpx.AsyncClient,
@@ -95,6 +106,7 @@ class PerHostAutoThrottler:
         min_delay_s: float = 2.0,
         headers: dict[str, str] | None = None,
         timeout: float = 30.0,
+        **kwargs: Any,
     ) -> httpx.Response:
         """Esegue una richiesta HTTP rispettando il lock per-host, AutoThrottle e Retry."""
         host = urlparse(url).netloc.lower() or "default"
@@ -102,15 +114,10 @@ class PerHostAutoThrottler:
         stats = self._get_stats(host)
 
         async with self._global_sem, host_lock:
-            required_delay = self.compute_delay(host, min_delay_s)
-            if required_delay > 0 and stats.last_request_finished_at > 0:
-                elapsed = time.monotonic() - stats.last_request_finished_at
-                remaining = required_delay - elapsed
-                if remaining > 0:
-                    await asyncio.sleep(remaining)
-                    stats.last_delay_applied_s = remaining
+            await self.acquire(host, min_delay_s)
 
             last_exc: Exception | None = None
+            req_kwargs = {"follow_redirects": True, **kwargs}
             for attempt in range(self.max_retries + 1):
                 t0 = time.monotonic()
                 try:
@@ -119,7 +126,7 @@ class PerHostAutoThrottler:
                         url,
                         headers=headers,
                         timeout=timeout,
-                        follow_redirects=True,
+                        **req_kwargs,
                     )
                     latency = max(0.001, time.monotonic() - t0)
                     stats.requests_count += 1

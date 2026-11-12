@@ -18,12 +18,15 @@ Funzionalità:
 from __future__ import annotations
 
 import hashlib
+import logging
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Literal
 
 import pdfplumber
+
+logger = logging.getLogger(__name__)
 
 LayoutFamily = Literal[
     "GECOTI_V3",
@@ -103,11 +106,15 @@ class PdfInspector:
 
     def __init__(self, pdf_path: Path) -> None:
         self.pdf_path = pdf_path
-        self.sha256 = compute_sha256(pdf_path)
+        self.sha256: str = ""
 
     def inspect(self, *, max_pages_for_detection: int = 5) -> PdfInspectionReport:
         """Esegue l'ispezione completa del PDF, indicizzando le sezioni art. 22 RGFCC."""
+        if not self.pdf_path.exists():
+            raise FileNotFoundError(f"File PDF non trovato: {self.pdf_path}")
+
         try:
+            self.sha256 = compute_sha256(self.pdf_path)
             with pdfplumber.open(self.pdf_path) as pdf:
                 page_count = len(pdf.pages)
                 if page_count == 0:
@@ -121,7 +128,9 @@ class PdfInspector:
 
                 # 1. Verifica Text Layer sulle prime pagine
                 detection_pages = min(page_count, max_pages_for_detection)
-                first_pages_text = [pdf.pages[i].extract_text() or "" for i in range(detection_pages)]
+                first_pages_text = [
+                    pdf.pages[i].extract_text() or "" for i in range(detection_pages)
+                ]
                 combined_first = "\n".join(first_pages_text)
                 has_text_layer = len(combined_first.strip()) >= 80
 
@@ -192,7 +201,10 @@ class PdfInspector:
                         not matched_section
                         and "lett_f" in sections
                         and page_num == sections["lett_f"][-1] + 1
-                        and ("credito consumato" in text.lower() or "totale investimenti" in text.lower())
+                        and (
+                            "credito consumato" in text.lower()
+                            or "totale investimenti" in text.lower()
+                        )
                     ):
                         sections["lett_f"].append(page_num)
 
@@ -212,14 +224,19 @@ class PdfInspector:
                     sections=sections,
                     metadata=metadata,
                 )
-        except Exception as err:  # noqa: BLE001
+        except Exception as err:
+            logger.exception("Errore durante l'ispezione del PDF %s", self.pdf_path)
             return PdfInspectionReport(
                 pdf_path=self.pdf_path,
                 sha256=self.sha256,
                 page_count=0,
                 has_text_layer=False,
                 layout_family="SCAN_IMAGE",
-                metadata={"error": str(err)},
+                metadata={
+                    "error": str(err),
+                    "error_type": type(err).__name__,
+                    "error_code": "CORRUPT_OR_UNREADABLE_PDF",
+                },
             )
 
 

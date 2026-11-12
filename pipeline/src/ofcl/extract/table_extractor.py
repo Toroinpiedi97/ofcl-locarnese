@@ -13,9 +13,9 @@ from pathlib import Path
 from typing import Any
 
 import pdfplumber
-import yaml
 
 from ofcl.extract.chf_parser import parse_chf
+from ofcl.extract.layout_loader import LayoutConfig, load_and_validate_layout
 
 LAYOUTS_DIR = Path(__file__).resolve().parent.parent.parent.parent.parent / "registry" / "layouts"
 
@@ -66,11 +66,7 @@ class TableExtractor:
     def __init__(self, layout_family: str = "GECOTI_V3") -> None:
         self.layout_family = layout_family
         self.layout_path = LAYOUTS_DIR / layout_family.lower()
-
-        # Carica configurazione Riassunto Generale
-        rg_yaml = self.layout_path / "riassunto_generale.yaml"
-        with open(rg_yaml, encoding="utf-8") as f:
-            self.rg_config = yaml.safe_load(f)
+        self.layout: LayoutConfig = load_and_validate_layout(self.layout_path)
 
     def extract_riassunto_generale(
         self,
@@ -82,6 +78,8 @@ class TableExtractor:
         Estrae i valori di Consuntivo T (col_0), Preventivo T (col_1) e Consuntivo T-1 (col_2).
         """
         cells: dict[str, ExtractedCell] = {}
+
+        col0 = self.layout.rg_config.get_column("consuntivo_t")
 
         for page_num in page_numbers:
             if page_num > len(pdf.pages):
@@ -105,12 +103,14 @@ class TableExtractor:
                 line.sort(key=lambda x: x["x0"])
                 line_text = " ".join(x["text"] for x in line)
 
-                for row_key, row_pat in self.rg_config["rows"].items():
+                for row_key, row_re in self.layout.rg_config.rows_re.items():
                     if row_key in cells:
                         continue
-                    if re.search(row_pat, line_text, re.IGNORECASE):
+                    if row_re.search(line_text):
                         # Assegnazione colonne basata sull'allineamento a destra Ge.Co.Ti.
-                        col0_words = [x for x in line if x["x1"] <= 450 and x["x0"] >= 250]
+                        col0_words = [
+                            x for x in line if col0.min_x <= x["x0"] and x["x1"] <= col0.max_x
+                        ]
                         if col0_words:
                             raw_str = " ".join(x["text"] for x in col0_words)
                             val = parse_chf(raw_str)
@@ -122,7 +122,7 @@ class TableExtractor:
                             )
                             cells[row_key] = ExtractedCell(
                                 metric_key=row_key,
-                                col_name="consuntivo_t",
+                                col_name=col0.id,
                                 page=page_num,
                                 bbox=bbox,
                                 raw_text=raw_str,
@@ -139,8 +139,10 @@ class TableExtractor:
     ) -> dict[str, ExtractedCell]:
         """
         Estrae gli 8 indicatori SEL ufficiali dal prospetto di Analisi Finanziaria (lett. o).
+        Guidato dalla configurazione validata indicatori_sel.yaml.
         """
         indicators: dict[str, ExtractedCell] = {}
+        sel_cfg = self.layout.sel_config
 
         for page_num in page_numbers:
             if page_num > len(pdf.pages):
@@ -148,21 +150,14 @@ class TableExtractor:
             page = pdf.pages[page_num - 1]
             words = page.extract_words()
 
-            # Gli indicatori SEL in Ge.Co.Ti. sono posizionati verticalmente con i numeri nella colonna x in [430, 490]
-            val_words = [w for w in words if 430 <= w["x0"] <= 490 and w["top"] > 120]
+            # Gli indicatori SEL in Ge.Co.Ti. sono posizionati verticalmente con i numeri nella colonna specificata
+            val_words = [
+                w for w in words if sel_cfg.min_x <= w["x0"] <= sel_cfg.max_x and w["top"] > 120
+            ]
 
             # Associazione alle righe SEL tramite ordinamento verticale
-            # Ordine standard MCA2 Ge.Co.Ti. degli indicatori:
-            order_keys = [
-                "tasso_indebitamento_netto_pct",
-                "grado_autofinanziamento_pct",
-                "quota_spese_interessi_pct",
-                "debito_netto_pro_capite_chf",
-                "quota_investimenti_pct",
-                "quota_capitale_proprio_pct",
-                "quota_indebitamento_lordo_pct",
-                "quota_oneri_finanziari_pct",
-            ]
+            # Ordine definito in indicatori_sel.yaml
+            order_keys = sel_cfg.indicator_order
 
             # Raggruppa i blocchi di valore per Y
             grouped_vals: list[list[dict[str, Any]]] = []
@@ -217,11 +212,13 @@ class TableExtractor:
         """
         Estrae le singole opere e i totali dalla Tabella di Controllo Crediti (Allegato f).
         Gestisce normalizzazione multi-riga e rileva sorpassi di spesa (remaining_credit < 0).
+        Totali estratti tramite configurazione validata summary_rows_re.
         """
         items: list[CreditWorkItem] = []
         totals: dict[str, ExtractedCell] = {}
 
         account_re = re.compile(r"^\d{3}\.\d{4}\.\d{3}$")
+        summary_rows_re = self.layout.cc_config.summary_rows_re
 
         for page_num in page_numbers:
             if page_num > len(pdf.pages):
@@ -275,8 +272,10 @@ class TableExtractor:
                             try:
                                 supp_val = parse_chf(cells_clean[4]) or Decimal("0.00")
                                 items[-1].voted_credit += supp_val
-                                items[-1].remaining_credit = (items[-1].voted_credit - items[-1].spent_total).quantize(Decimal("0.01"))
-                                items[-1].has_overrun = (items[-1].remaining_credit < Decimal("0.00"))
+                                items[-1].remaining_credit = (
+                                    items[-1].voted_credit - items[-1].spent_total
+                                ).quantize(Decimal("0.01"))
+                                items[-1].has_overrun = items[-1].remaining_credit < Decimal("0.00")
                                 items[-1].notes += f" [Suppletorio {supp_val} CHF]"
                             except ValueError:
                                 pass
@@ -284,75 +283,27 @@ class TableExtractor:
                             # Continuazione testo descrizione
                             items[-1].description += f" {cells_clean[3]}"
 
-                    # 2. Riconoscimento righe di totale a fine tabella
+                    # 2. Riconoscimento righe di totale tramite configurazione summary_rows
                     full_row_str = " ".join(cells_clean).lower()
-                    if "totale investimenti votati" in full_row_str:
-                        # Trova il valore numerico
-                        for c in cells_clean:
-                            if c and any(d.isdigit() for d in c) and not c.startswith("TOT"):
-                                try:
-                                    v = parse_chf(c)
-                                    totals["totale_investimenti_votati"] = ExtractedCell(
-                                        metric_key="totale_investimenti_votati",
-                                        col_name="totale",
-                                        page=page_num,
-                                        bbox=(0.0, 0.0, 0.0, 0.0),
-                                        raw_text=c,
-                                        amount_chf=v,
-                                    )
-                                    break
-                                except ValueError:
-                                    pass
-
-                    elif "totale crediti consumati al 01.01" in full_row_str:
-                        for c in cells_clean:
-                            if c and any(d.isdigit() for d in c) and not c.startswith("TOT"):
-                                try:
-                                    v = parse_chf(c)
-                                    totals["totale_crediti_consumati_01_01"] = ExtractedCell(
-                                        metric_key="totale_crediti_consumati_01_01",
-                                        col_name="totale",
-                                        page=page_num,
-                                        bbox=(0.0, 0.0, 0.0, 0.0),
-                                        raw_text=c,
-                                        amount_chf=v,
-                                    )
-                                    break
-                                except ValueError:
-                                    pass
-
-                    elif "totale investimenti lordi" in full_row_str:
-                        for c in cells_clean:
-                            if c and any(d.isdigit() for d in c) and not c.startswith("TOT"):
-                                try:
-                                    v = parse_chf(c)
-                                    totals["totale_spese_lorde_esercizio"] = ExtractedCell(
-                                        metric_key="totale_spese_lorde_esercizio",
-                                        col_name="totale",
-                                        page=page_num,
-                                        bbox=(0.0, 0.0, 0.0, 0.0),
-                                        raw_text=c,
-                                        amount_chf=v,
-                                    )
-                                    break
-                                except ValueError:
-                                    pass
-
-                    elif "totale crediti consumati al 31.12" in full_row_str:
-                        for c in cells_clean:
-                            if c and any(d.isdigit() for d in c) and not c.startswith("TOT"):
-                                try:
-                                    v = parse_chf(c)
-                                    totals["totale_crediti_consumati_31_12"] = ExtractedCell(
-                                        metric_key="totale_crediti_consumati_31_12",
-                                        col_name="totale",
-                                        page=page_num,
-                                        bbox=(0.0, 0.0, 0.0, 0.0),
-                                        raw_text=c,
-                                        amount_chf=v,
-                                    )
-                                    break
-                                except ValueError:
-                                    pass
+                    for metric_key, summary_re in summary_rows_re.items():
+                        if metric_key in totals:
+                            continue
+                        if summary_re.search(full_row_str):
+                            for c in cells_clean:
+                                if c and any(d.isdigit() for d in c) and not c.startswith("TOT"):
+                                    try:
+                                        v = parse_chf(c)
+                                        totals[metric_key] = ExtractedCell(
+                                            metric_key=metric_key,
+                                            col_name="totale",
+                                            page=page_num,
+                                            bbox=(0.0, 0.0, 0.0, 0.0),
+                                            raw_text=c,
+                                            amount_chf=v,
+                                        )
+                                        break
+                                    except ValueError:
+                                        pass
+                            break
 
         return items, totals

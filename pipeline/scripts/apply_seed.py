@@ -9,10 +9,11 @@ from pathlib import Path
 
 import psycopg
 
-FORBIDDEN_CORFIN_REF = "vrqnbdcsavgpdgijpiic"
+from ofcl.seed_ref import enforce_corfin_guardrail
 
 
 def main() -> None:
+    enforce_corfin_guardrail()
     db_url = os.environ.get("DATABASE_URL")
     if not db_url:
         # Carica da file .env se presente
@@ -27,9 +28,7 @@ def main() -> None:
         print("[ERROR] DATABASE_URL non configurata o incompleta.", file=sys.stderr)
         sys.exit(1)
 
-    if FORBIDDEN_CORFIN_REF in db_url:
-        print("[CRITICAL] Guardrail C-01 violation! Tentativo di connessione a Corfin.", file=sys.stderr)
-        sys.exit(1)
+    enforce_corfin_guardrail()
 
     repo_root = Path(__file__).resolve().parents[2]
     seed_file = repo_root / "supabase" / "seed.sql"
