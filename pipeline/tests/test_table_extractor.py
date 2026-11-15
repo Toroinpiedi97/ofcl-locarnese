@@ -110,6 +110,10 @@ def test_layout_loader_gecoti_v3() -> None:
     assert cfg.sel_config.min_x < cfg.sel_config.max_x
     assert len(cfg.sel_config.indicator_order) == 8
     assert "totale_investimenti_votati" in cfg.cc_config.summary_rows_re
+    assert cfg.natura_config is not None
+    assert len(cfg.natura_config.columns) == 3
+    assert cfg.dicasteri_config is not None
+    assert len(cfg.dicasteri_config.columns) == 6
 
 
 def test_layout_loader_missing_dir(tmp_path: Path) -> None:
@@ -192,3 +196,97 @@ def test_table_extractor_synthetic_mock() -> None:
     assert cred_items[0].voted_credit == Decimal("100000.00")
     assert cred_items[0].remaining_credit == Decimal("50000.00")
     assert cred_items[0].has_overrun is False
+
+
+def test_extract_multicolumn_natura_and_dicasteri_synthetic() -> None:
+    extractor = TableExtractor("GECOTI_V3")
+
+    class PageRiassunto:
+        def extract_words(self) -> list[dict[str, object]]:
+            return [
+                {"text": "Spese", "top": 140.0, "bottom": 150.0, "x0": 50.0, "x1": 90.0},
+                {"text": "operative", "top": 140.0, "bottom": 150.0, "x0": 95.0, "x1": 160.0},
+                {"text": "1'000'000.00", "top": 140.0, "bottom": 150.0, "x0": 330.0, "x1": 420.0},
+                {"text": "950'000.00", "top": 140.0, "bottom": 150.0, "x0": 510.0, "x1": 590.0},
+                {"text": "920'000.00", "top": 140.0, "bottom": 150.0, "x0": 680.0, "x1": 760.0},
+            ]
+
+    class PageNatura:
+        def extract_words(self) -> list[dict[str, object]]:
+            return [
+                {"text": "30", "top": 140.0, "bottom": 150.0, "x0": 35.0, "x1": 55.0},
+                {"text": "Spese", "top": 140.0, "bottom": 150.0, "x0": 115.0, "x1": 155.0},
+                {"text": "personale", "top": 140.0, "bottom": 150.0, "x0": 160.0, "x1": 220.0},
+                {"text": "600'000.00", "top": 140.0, "bottom": 150.0, "x0": 330.0, "x1": 420.0},
+                {"text": "580'000.00", "top": 140.0, "bottom": 150.0, "x0": 510.0, "x1": 590.0},
+                {"text": "3010", "top": 160.0, "bottom": 170.0, "x0": 35.0, "x1": 65.0},
+                {"text": "Stipendi", "top": 160.0, "bottom": 170.0, "x0": 115.0, "x1": 170.0},
+                {"text": "450'000.00", "top": 160.0, "bottom": 170.0, "x0": 330.0, "x1": 420.0},
+                {"text": "40", "top": 180.0, "bottom": 190.0, "x0": 35.0, "x1": 55.0},
+                {"text": "Ricavi", "top": 180.0, "bottom": 190.0, "x0": 115.0, "x1": 160.0},
+                {"text": "fiscali", "top": 180.0, "bottom": 190.0, "x0": 165.0, "x1": 210.0},
+                {"text": "1'100'000.00", "top": 180.0, "bottom": 190.0, "x0": 330.0, "x1": 420.0},
+            ]
+
+    class PageDicasteri:
+        def extract_words(self) -> list[dict[str, object]]:
+            return [
+                {"text": "Ricapitolazione", "top": 60.0, "bottom": 70.0, "x0": 35.0, "x1": 130.0},
+                {"text": "Conto", "top": 60.0, "bottom": 70.0, "x0": 135.0, "x1": 175.0},
+                {"text": "Economico", "top": 60.0, "bottom": 70.0, "x0": 180.0, "x1": 240.0},
+                {"text": "0", "top": 140.0, "bottom": 150.0, "x0": 35.0, "x1": 45.0},
+                {"text": "Amministrazione", "top": 140.0, "bottom": 150.0, "x0": 115.0, "x1": 215.0},
+                {"text": "400'000.00", "top": 140.0, "bottom": 150.0, "x0": 280.0, "x1": 355.0},
+                {"text": "50'000.00", "top": 140.0, "bottom": 150.0, "x0": 390.0, "x1": 455.0},
+                {"text": "380'000.00", "top": 140.0, "bottom": 150.0, "x0": 485.0, "x1": 555.0},
+                {"text": "011", "top": 160.0, "bottom": 170.0, "x0": 35.0, "x1": 55.0},
+                {"text": "Municipio", "top": 160.0, "bottom": 170.0, "x0": 115.0, "x1": 180.0},
+                {"text": "120'000.00", "top": 160.0, "bottom": 170.0, "x0": 280.0, "x1": 355.0},
+            ]
+
+    class MockPDF:
+        def __init__(self) -> None:
+            self.pages = [PageRiassunto(), PageNatura(), PageDicasteri()]
+
+    pdf = MockPDF()
+
+    rg_multi = extractor.extract_riassunto_generale_multicolumn(pdf, [1])  # type: ignore[arg-type]
+    assert len(rg_multi) == 3
+    by_role = {it.column_role: it for it in rg_multi}
+    assert by_role["CURRENT"].amount_chf == Decimal("1000000.00")
+    assert by_role["CURRENT"].value_kind == "ACTUAL"
+    assert by_role["PRIOR_BUDGET"].amount_chf == Decimal("950000.00")
+    assert by_role["PRIOR_BUDGET"].value_kind == "BUDGET"
+    assert by_role["PRIOR_ACTUAL"].amount_chf == Decimal("920000.00")
+
+    natura_items = extractor.extract_ricapitolazione_natura(pdf, [2])  # type: ignore[arg-type]
+    assert len(natura_items) == 4
+    nat_30_cur = next(
+        i for i in natura_items if i.account_code == "30" and i.column_role == "CURRENT"
+    )
+    assert nat_30_cur.statement == "CE"
+    assert nat_30_cur.side == "SPESA"
+    assert nat_30_cur.label_raw == "Spese personale"
+    assert nat_30_cur.amount_chf == Decimal("600000.00")
+    nat_40 = next(i for i in natura_items if i.account_code == "40")
+    assert nat_40.side == "RICAVO"
+    assert nat_40.amount_chf == Decimal("1100000.00")
+
+    dic_items = extractor.extract_ricapitolazione_dicasteri(pdf, [3])  # type: ignore[arg-type]
+    assert len(dic_items) == 4
+    dic_0_spesa = next(
+        i
+        for i in dic_items
+        if i.function_code == "0" and i.column_role == "CURRENT" and i.side == "SPESA"
+    )
+    assert dic_0_spesa.view_kind == "FUNZIONE"
+    assert dic_0_spesa.label_raw == "Amministrazione"
+    assert dic_0_spesa.amount_chf == Decimal("400000.00")
+    dic_0_ricavo = next(
+        i
+        for i in dic_items
+        if i.function_code == "0" and i.column_role == "CURRENT" and i.side == "RICAVO"
+    )
+    assert dic_0_ricavo.amount_chf == Decimal("50000.00")
+    dic_011 = next(i for i in dic_items if i.function_code == "011")
+    assert dic_011.amount_chf == Decimal("120000.00")

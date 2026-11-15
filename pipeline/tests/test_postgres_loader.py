@@ -10,7 +10,7 @@ from decimal import Decimal
 
 import pytest
 
-from ofcl.extract.table_extractor import ExtractedCell
+from ofcl.extract.table_extractor import ExtractedCell, LedgerRowItem
 from ofcl.load.postgres_loader import PostgresLoader, _validate_uuid
 from ofcl.seed_ref import FORBIDDEN_CORFIN_REF
 
@@ -74,3 +74,47 @@ def test_postgres_loader_dry_run_success() -> None:
     }
     saved = loader.save_ledger_cells(version_id=valid_vid, entity_id=valid_eid, cells=cells)
     assert saved == 1
+
+
+def test_save_ledger_items_dry_run_and_validation() -> None:
+    loader = PostgresLoader()
+    valid_vid = str(uuid.uuid4())
+    valid_eid = str(uuid.uuid4())
+    items = [
+        LedgerRowItem(
+            statement="CE",
+            view_kind="NATURA",
+            function_code=None,
+            account_code="3010",
+            label_raw="Stipendi",
+            column_role="CURRENT",
+            value_kind="ACTUAL",
+            side="SPESA",
+            amount_chf=Decimal("450000.00"),
+            amount_raw="450'000.00",
+            page=8,
+            bbox=(300.0, 140.0, 400.0, 150.0),
+        ),
+        LedgerRowItem(
+            statement="CE",
+            view_kind="FUNZIONE",
+            function_code="011",
+            account_code=None,
+            label_raw="Municipio",
+            column_role="PRIOR_BUDGET",
+            value_kind="BUDGET",
+            side="SPESA",
+            amount_chf=Decimal("120000.00"),
+            amount_raw="120'000.00",
+            page=10,
+            bbox=(480.0, 160.0, 560.0, 170.0),
+        ),
+    ]
+    assert loader.save_ledger_items(version_id=valid_vid, entity_id=valid_eid, items=items) == 2
+
+    with pytest.raises(ValueError, match="non può essere un UUID nullo"):
+        loader.save_ledger_items(
+            version_id="00000000-0000-0000-0000-000000000000",
+            entity_id=valid_eid,
+            items=items,
+        )

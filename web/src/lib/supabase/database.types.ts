@@ -142,6 +142,63 @@ export type Database = {
         };
         Update: Partial<Database["core"]["Tables"]["investment_credit"]["Insert"]>;
       };
+      social_post_draft: {
+        Row: {
+          id: string;
+          signal_code:
+            | "S05_CREDIT_OVERRUN"
+            | "S06_TARIFF_GAP"
+            | "S07_TAX_MULTIPLIER"
+            | "S08_PEER_COST_OUTLIER"
+            | "S09_BUDGET_DIVERGENCE"
+            | "S10_FUN_FACT";
+          dedup_key: string;
+          ust_code: number | null;
+          ref_year: number;
+          title: string;
+          question_for_municipality: string;
+          verified_payload: Json;
+          slides_json: Json;
+          caption_draft: string;
+          hashtags: string[];
+          source_urls: string[];
+          generation_mode: "DETERMINISTIC" | "AI_ASSISTED" | "CURATOR_EDITED";
+          status: "DRAFT" | "APPROVED" | "PUBLISHED" | "ARCHIVED";
+          reviewed_by: string | null;
+          reviewed_at: string | null;
+          review_note: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          signal_code:
+            | "S05_CREDIT_OVERRUN"
+            | "S06_TARIFF_GAP"
+            | "S07_TAX_MULTIPLIER"
+            | "S08_PEER_COST_OUTLIER"
+            | "S09_BUDGET_DIVERGENCE"
+            | "S10_FUN_FACT";
+          dedup_key: string;
+          ust_code?: number | null;
+          ref_year: number;
+          title: string;
+          question_for_municipality: string;
+          verified_payload: Json;
+          slides_json: Json;
+          caption_draft: string;
+          hashtags?: string[];
+          source_urls: string[];
+          generation_mode?: "DETERMINISTIC" | "AI_ASSISTED" | "CURATOR_EDITED";
+          status?: "DRAFT" | "APPROVED" | "PUBLISHED" | "ARCHIVED";
+          reviewed_by?: string | null;
+          reviewed_at?: string | null;
+          review_note?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["core"]["Tables"]["social_post_draft"]["Insert"]>;
+      };
     };
   };
   ref: {
@@ -558,6 +615,72 @@ export type Database = {
           residual: number | null;
           overrun: number | null;
           page: number | null;
+        };
+      };
+      peer_cost_outliers: {
+        Row: {
+          ust_code: number;
+          municipality_slug: string;
+          municipality_name: string;
+          population_used: number | null;
+          population_band: string;
+          ref_year: number;
+          statement: string;
+          view_kind: string;
+          function_code: string | null;
+          account_code: string | null;
+          code_level: number;
+          canonical_label: string | null;
+          side: string;
+          amount_chf: number;
+          amount_per_capita: number;
+          district_peer_count: number;
+          district_median_pc: number;
+          band_peer_count: number;
+          band_min_pc: number;
+          band_p25_pc: number;
+          band_median_pc: number;
+          band_p75_pc: number;
+          band_max_pc: number;
+          rank_in_band_desc: number;
+          delta_vs_band_median_pc: number | null;
+          delta_vs_band_median_pct: number | null;
+          delta_vs_district_median_pct: number | null;
+          outlier_direction: "HIGH" | "LOW" | "NORMAL" | "INSUFFICIENT_PEERS";
+          perimeter_note: string | null;
+          mm_number: string | null;
+          page: number | null;
+          origin_url: string | null;
+        };
+      };
+      budget_vs_actual_divergences: {
+        Row: {
+          ust_code: number;
+          municipality_slug: string;
+          municipality_name: string;
+          population_used: number | null;
+          population_band: string;
+          ref_year: number;
+          statement: string;
+          view_kind: string;
+          function_code: string | null;
+          account_code: string | null;
+          detail_code: string | null;
+          code_level: number;
+          canonical_label: string | null;
+          side: string;
+          budget_chf: number;
+          actual_chf: number;
+          delta_chf: number;
+          delta_pct: number | null;
+          delta_per_capita: number | null;
+          is_significant_divergence: boolean;
+          actual_mm_number: string | null;
+          actual_page: number | null;
+          actual_origin_url: string | null;
+          budget_mm_number: string | null;
+          budget_page: number | null;
+          budget_origin_url: string | null;
         };
       };
     };

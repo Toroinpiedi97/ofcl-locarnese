@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShieldCheck, FileCheck, UploadCloud, MessageSquareText, ExternalLink, LogOut } from "lucide-react";
+import { ShieldCheck, FileCheck, UploadCloud, MessageSquareText, Camera, ExternalLink, LogOut } from "lucide-react";
 
 export default function AdminLayout({
   children,
@@ -42,6 +42,13 @@ export default function AdminLayout({
             >
               <MessageSquareText className="w-4 h-4 text-amber-400" />
               <span>Segnalazioni Civiche</span>
+            </Link>
+            <Link
+              href="/admin/social"
+              className="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-2 transition-colors"
+            >
+              <Camera className="w-4 h-4 text-pink-400" />
+              <span>Post Instagram</span>
             </Link>
           </nav>
         </div>

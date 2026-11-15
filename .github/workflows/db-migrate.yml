@@ -1,0 +1,56 @@
+name: DB Migrate & pgTAP Verification (ofcl-prod)
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_pgtap:
+        description: "Esegui la suite negativa RLS pgTAP al termine delle migrazioni"
+        required: true
+        default: true
+        type: boolean
+
+jobs:
+  migrate-and-verify:
+    name: Apply 0005-0006 & Verify RLS (pgTAP)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Step 1 NON NEGOZIABILE: Guardrail C-01 (Isolamento Totale Corfin)
+      - name: Guardrail C-01 · Verifica Isolamento Codice e Target DB
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::DATABASE_URL secret non configurata."
+            exit 1
+          fi
+          node scripts/check-not-corfin.mjs
+
+      - name: Ensure PostgreSQL Client (psql)
+        run: |
+          if ! command -v psql >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y postgresql-client
+          fi
+
+      - name: Apply Idempotent Migrations (0005 & 0006)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 --single-transaction -f supabase/migrations/20261114000005_ledger_normalization_and_outliers.sql
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 --single-transaction -f supabase/migrations/20261115000006_social_post_drafts.sql
+
+      - name: Verify Schema & RLS Negative Suite (pgTAP)
+        if: ${{ inputs.run_pgtap }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c "CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;"
+          PGOPTIONS="--search-path=public,extensions" psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/rls_security.test.sql

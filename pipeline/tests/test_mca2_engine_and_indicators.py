@@ -165,3 +165,77 @@ def test_sel_indicators_calculator_all_8_and_bands() -> None:
     r8 = results["SELF_FINANCING_CAPACITY"]
     assert r8.value == Decimal("14.6")
     assert r8.band == "MEDIO"
+
+
+def test_v13_v14_pass_exact_zero_delta() -> None:
+    """Verifica che V13 (Natura) e V14 (Dicasteri) passino con delta 0.00 CHF."""
+    ctx = ValidationContext(
+        spese_operative=Decimal("3000000.00"),
+        ricavi_operativi=Decimal("3200000.00"),
+        risultato_operativo_dichiarato=Decimal("200000.00"),
+        spese_finanziarie_34=Decimal("40000.00"),
+        ricavi_finanziari_44=Decimal("60000.00"),
+        risultato_finanziario_dichiarato=Decimal("20000.00"),
+        risultato_ordinario_dichiarato=Decimal("220000.00"),
+        risultato_totale_esercizio_dichiarato=Decimal("220000.00"),
+        addebiti_interni_39=Decimal("100000.00"),
+        accrediti_interni_49=Decimal("100000.00"),
+        natura_spese_2digit={
+            "30": Decimal("1200000.00"),
+            "31": Decimal("900000.00"),
+            "33": Decimal("300000.00"),
+            "36": Decimal("600000.00"),
+        },
+        natura_ricavi_2digit={
+            "40": Decimal("2500000.00"),
+            "42": Decimal("500000.00"),
+            "46": Decimal("200000.00"),
+        },
+        dicasteri_1digit_spese={
+            "0": Decimal("500000.00"),
+            "2": Decimal("1400000.00"),
+            "6": Decimal("700000.00"),
+            "9": Decimal("540000.00"),  # Totale = 3'140'000.00 (incl. 34 + 39)
+        },
+        dicasteri_1digit_ricavi={
+            "0": Decimal("50000.00"),
+            "6": Decimal("110000.00"),
+            "9": Decimal("3200000.00"),  # Totale = 3'360'000.00 (incl. 44 + 49)
+        },
+    )
+
+    checks, _ = validate_mca2_document(ctx)
+    v13 = next(c for c in checks if c.rule_code == "V13")
+    v14 = next(c for c in checks if c.rule_code == "V14")
+    assert v13.passed is True
+    assert v13.delta == Decimal("0.00")
+    assert v14.passed is True
+    assert v14.delta == Decimal("0.00")
+
+
+def test_v13_v14_fail_blocking_on_one_cent_mismatch() -> None:
+    """Verifica che anche 0.01 CHF di scarto su V13 o V14 blocchi con severity BLOCKING."""
+    ctx = ValidationContext(
+        spese_operative=Decimal("1000.00"),
+        ricavi_operativi=Decimal("1200.00"),
+        risultato_operativo_dichiarato=Decimal("200.00"),
+        spese_finanziarie_34=Decimal("0.00"),
+        ricavi_finanziari_44=Decimal("0.00"),
+        risultato_finanziario_dichiarato=Decimal("0.00"),
+        risultato_ordinario_dichiarato=Decimal("200.00"),
+        risultato_totale_esercizio_dichiarato=Decimal("200.00"),
+        natura_spese_2digit={"30": Decimal("999.99")},
+        natura_ricavi_2digit={"40": Decimal("1200.00")},
+        dicasteri_1digit_spese={"0": Decimal("1000.01")},
+        dicasteri_1digit_ricavi={"9": Decimal("1200.00")},
+    )
+
+    checks, _ = validate_mca2_document(ctx)
+    v13 = next(c for c in checks if c.rule_code == "V13")
+    v14 = next(c for c in checks if c.rule_code == "V14")
+    assert v13.passed is False
+    assert v13.severity == "BLOCKING"
+    assert v13.delta == Decimal("0.01")
+    assert v14.passed is False
+    assert v14.severity == "BLOCKING"
+    assert v14.delta == Decimal("0.01")

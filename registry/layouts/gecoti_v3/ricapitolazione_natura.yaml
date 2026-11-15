@@ -1,0 +1,28 @@
+layout_family: "GECOTI_V3"
+section: "lett_c"
+title_pattern: "(?:ricapitolazione|ripartizione)\\s+per\\s+genere\\s+di\\s+conto"
+
+code_x_range:
+  min_x: 20.0
+  max_x: 110.0
+
+code_patterns:
+  level_2: "^(3[0-9]|4[0-9]|5[0-9]|6[0-9])$"
+  level_4: "^(3[0-9]{3}|4[0-9]{3}|5[0-9]{3}|6[0-9]{3})$"
+
+columns:
+  - id: "col_0"
+    name: "consuntivo_t"
+    column_role: "CURRENT"
+    min_x: 250.0
+    max_x: 460.0
+  - id: "col_1"
+    name: "preventivo_t"
+    column_role: "PRIOR_BUDGET"
+    min_x: 480.0
+    max_x: 640.0
+  - id: "col_2"
+    name: "consuntivo_t_minus_1"
+    column_role: "PRIOR_ACTUAL"
+    min_x: 640.0
+    max_x: 820.0
