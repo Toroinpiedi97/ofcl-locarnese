@@ -4,7 +4,7 @@
 -- ==============================================================================
 
 begin;
-select plan(12);
+select plan(16);
 
 -- 1. Verifica che RLS sia abilitata su tutte le tabelle critiche
 select tables_are(
@@ -15,7 +15,7 @@ select tables_are(
 
 select tables_are(
   'core',
-  ARRAY['classification', 'ledger_value', 'investment_credit', 'credit_snapshot', 'asset_snapshot', 'indicator_value', 'validation_result'],
+  ARRAY['classification', 'ledger_value', 'investment_credit', 'credit_snapshot', 'asset_snapshot', 'indicator_value', 'validation_result', 'social_post_draft'],
   'Tutte le tabelle core devono esistere'
 );
 
@@ -41,6 +41,13 @@ select throws_ok(
   '42501',
   null,
   'anon non può accedere a core.ledger_value'
+);
+
+select throws_ok(
+  'SELECT count(*) FROM core.social_post_draft',
+  '42501',
+  null,
+  'anon non può accedere a core.social_post_draft'
 );
 
 select throws_ok(
@@ -84,6 +91,21 @@ select lives_ok(
 select lives_ok(
   'SELECT count(*) FROM api.municipalities',
   'anon può consultare la vista api.municipalities'
+);
+
+select lives_ok(
+  'SELECT count(*) FROM api.ledger_normalized',
+  'anon può consultare la vista api.ledger_normalized'
+);
+
+select lives_ok(
+  'SELECT count(*) FROM api.peer_cost_outliers',
+  'anon può consultare la vista api.peer_cost_outliers'
+);
+
+select lives_ok(
+  'SELECT count(*) FROM api.budget_vs_actual_divergences',
+  'anon può consultare la vista api.budget_vs_actual_divergences'
 );
 
 select * from finish();

@@ -1,0 +1,50 @@
+layout_family: "GECOTI_V3"
+section: "lett_d"
+title_pattern: "(?:ricapitolazione\\s+per\\s+dicaster|classificazione\\s+funzionale)"
+
+code_x_range:
+  min_x: 20.0
+  max_x: 110.0
+
+code_patterns:
+  level_1: "^([0-9])$"
+  level_2: "^([0-9]{2})$"
+  level_3: "^([0-9]{3})$"
+
+columns:
+  - id: "col_0"
+    name: "consuntivo_t_spese"
+    column_role: "CURRENT"
+    side: "SPESA"
+    min_x: 250.0
+    max_x: 370.0
+  - id: "col_1"
+    name: "consuntivo_t_ricavi"
+    column_role: "CURRENT"
+    side: "RICAVO"
+    min_x: 370.0
+    max_x: 470.0
+  - id: "col_2"
+    name: "preventivo_t_spese"
+    column_role: "PRIOR_BUDGET"
+    side: "SPESA"
+    min_x: 475.0
+    max_x: 565.0
+  - id: "col_3"
+    name: "preventivo_t_ricavi"
+    column_role: "PRIOR_BUDGET"
+    side: "RICAVO"
+    min_x: 565.0
+    max_x: 655.0
+  - id: "col_4"
+    name: "consuntivo_t_minus_1_spese"
+    column_role: "PRIOR_ACTUAL"
+    side: "SPESA"
+    min_x: 660.0
+    max_x: 745.0
+  - id: "col_5"
+    name: "consuntivo_t_minus_1_ricavi"
+    column_role: "PRIOR_ACTUAL"
+    side: "RICAVO"
+    min_x: 745.0
+    max_x: 830.0

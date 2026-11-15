@@ -26,6 +26,7 @@ from ofcl.extract.table_extractor import ExtractedCell, TableExtractor
 from ofcl.fetch.backfill import run_regional_backfill
 from ofcl.fetch.crawler import CorteseCrawler
 from ofcl.fetch.state_store import CrawlStateStore, HttpDiskCache
+from ofcl.insights import detect_all_social_insights, polish_candidate_with_llm
 from ofcl.load.postgres_loader import PostgresLoader
 from ofcl.seed_ref import enforce_corfin_guardrail
 from ofcl.validate.mca2_engine import CreditRowInput, ValidationContext, validate_mca2_document
@@ -327,6 +328,17 @@ def cmd_extract(args: argparse.Namespace) -> int:
     with pdfplumber.open(pdf_path) as pdf:
         rg_pages = inspection.sections.get("lett_a", [])
         rg_cells = extractor.extract_riassunto_generale(pdf, rg_pages) if rg_pages else {}
+        rg_items = (
+            extractor.extract_riassunto_generale_multicolumn(pdf, rg_pages) if rg_pages else []
+        )
+
+        c_pages = inspection.sections.get("lett_c", [])
+        natura_items = extractor.extract_ricapitolazione_natura(pdf, c_pages) if c_pages else []
+
+        d_pages = inspection.sections.get("lett_d", [])
+        dicasteri_items = (
+            extractor.extract_ricapitolazione_dicasteri(pdf, d_pages) if d_pages else []
+        )
 
         ind_pages = inspection.sections.get("lett_o", [])
         ind_cells = extractor.extract_indicatori_sel(pdf, ind_pages) if ind_pages else {}
@@ -337,7 +349,10 @@ def cmd_extract(args: argparse.Namespace) -> int:
         )
 
     print("\n--- Risultato Estrazione OFCL ---")
-    print(f"Riassunto Generale: {len(rg_cells)} celle estratte")
+    print(
+        f"Riassunto Generale: {len(rg_cells)} celle correnti, "
+        f"{len(rg_items)} righe multi-colonna estratte"
+    )
     for k in [
         "spese_operative",
         "ricavi_operativi",
@@ -347,6 +362,9 @@ def cmd_extract(args: argparse.Namespace) -> int:
     ]:
         if k in rg_cells:
             print(f"  - {k}: {rg_cells[k].amount_chf} CHF (p.{rg_cells[k].page})")
+
+    print(f"Ricapitolazione Natura (lett. c): {len(natura_items)} righe estratte")
+    print(f"Ricapitolazione Dicasteri (lett. d): {len(dicasteri_items)} righe estratte")
 
     print(f"Indicatori SEL: {len(ind_cells)} indicatori estratti")
     for k, cell in ind_cells.items():
@@ -361,13 +379,25 @@ def cmd_extract(args: argparse.Namespace) -> int:
 
     if args.db:
         loader = PostgresLoader()
-        saved = loader.save_ledger_cells(args.version_id, args.entity_id, rg_cells, 2025)
-        print(f"Persistenza DB: {saved} celle salvate")
+        all_items = rg_items + natura_items + dicasteri_items
+        if all_items:
+            saved = loader.save_ledger_items(
+                version_id=args.version_id,
+                entity_id=args.entity_id,
+                items=all_items,
+                base_fiscal_year=2025,
+            )
+        else:
+            saved = loader.save_ledger_cells(args.version_id, args.entity_id, rg_cells, 2025)
+        print(f"Persistenza DB: {saved} righe contabili salvate")
 
     if args.output_json:
         out_data = {
             "sha256": inspection.sha256,
             "riassunto_generale": {k: v.to_dict() for k, v in rg_cells.items()},
+            "riassunto_multicolumn": [it.to_dict() for it in rg_items],
+            "natura": [it.to_dict() for it in natura_items],
+            "dicasteri": [it.to_dict() for it in dicasteri_items],
             "indicatori_sel": {k: v.to_dict() for k, v in ind_cells.items()},
             "crediti_count": len(cred_items),
             "crediti_totali": {k: v.to_dict() for k, v in cred_totals.items()},
@@ -382,7 +412,7 @@ def cmd_extract(args: argparse.Namespace) -> int:
 
 
 def cmd_validate(args: argparse.Namespace) -> int:
-    """Esecuzione delle 12 verifiche contabili MCA2 e rilevamento segnali."""
+    """Esecuzione delle 14 verifiche contabili MCA2 (V01-V14) e rilevamento segnali."""
     import pdfplumber
 
     pdf_path = Path(args.pdf)
@@ -404,6 +434,12 @@ def cmd_validate(args: argparse.Namespace) -> int:
 
     with pdfplumber.open(pdf_path) as pdf:
         rg_cells = extractor.extract_riassunto_generale(pdf, inspection.sections.get("lett_a", []))
+        natura_items = extractor.extract_ricapitolazione_natura(
+            pdf, inspection.sections.get("lett_c", [])
+        )
+        dicasteri_items = extractor.extract_ricapitolazione_dicasteri(
+            pdf, inspection.sections.get("lett_d", [])
+        )
         ind_cells = extractor.extract_indicatori_sel(pdf, inspection.sections.get("lett_o", []))
         cred_items, cred_totals = extractor.extract_controllo_crediti(
             pdf, inspection.sections.get("lett_f", [])
@@ -422,6 +458,43 @@ def cmd_validate(args: argparse.Namespace) -> int:
         )
         for it in cred_items
     ]
+
+    natura_spese_2digit = {
+        it.account_code: it.amount_chf
+        for it in natura_items
+        if it.column_role == "CURRENT"
+        and it.statement == "CE"
+        and it.side == "SPESA"
+        and it.account_code
+        and len(it.account_code) == 2
+    }
+    natura_ricavi_2digit = {
+        it.account_code: it.amount_chf
+        for it in natura_items
+        if it.column_role == "CURRENT"
+        and it.statement == "CE"
+        and it.side == "RICAVO"
+        and it.account_code
+        and len(it.account_code) == 2
+    }
+    dicasteri_1digit_spese = {
+        it.function_code: it.amount_chf
+        for it in dicasteri_items
+        if it.column_role == "CURRENT"
+        and it.statement == "CE"
+        and it.side == "SPESA"
+        and it.function_code
+        and len(it.function_code) == 1
+    }
+    dicasteri_1digit_ricavi = {
+        it.function_code: it.amount_chf
+        for it in dicasteri_items
+        if it.column_role == "CURRENT"
+        and it.statement == "CE"
+        and it.side == "RICAVO"
+        and it.function_code
+        and len(it.function_code) == 1
+    }
 
     zero = Decimal("0.00")
     ctx = ValidationContext(
@@ -493,11 +566,15 @@ def cmd_validate(args: argparse.Namespace) -> int:
         reported_indicators={
             k: v.amount_chf for k, v in ind_cells.items() if v.amount_chf is not None
         },
+        natura_spese_2digit=natura_spese_2digit,
+        natura_ricavi_2digit=natura_ricavi_2digit,
+        dicasteri_1digit_spese=dicasteri_1digit_spese,
+        dicasteri_1digit_ricavi=dicasteri_1digit_ricavi,
     )
 
     checks, signals = validate_mca2_document(ctx)
 
-    print("\n--- Report di Quadratura Contabile MCA2 (V01-V12) ---")
+    print("\n--- Report di Quadratura Contabile MCA2 (V01-V14) ---")
     blocking_failed = [c for c in checks if not c.passed and c.severity == "BLOCKING"]
     warnings_failed = [c for c in checks if not c.passed and c.severity == "WARNING"]
     if warnings_failed:
@@ -602,6 +679,90 @@ def cmd_backfill(args: argparse.Namespace) -> int:
     print(f"Esclusioni privacy nLPD: {stats['skipped_privacy_nlpd']}")
     print(f"Intake manuale (Locarno): {stats['manual_intake_locarno']}")
     print(f"Durata: {report['duration_seconds']}s")
+    return 0
+
+
+def cmd_insights(args: argparse.Namespace) -> int:
+    """Genera bozze Instagram deterministiche S05-S10 da dati certificati o DB."""
+    enforce_corfin_guardrail()
+    municipalities: list[dict[str, Any]] = []
+    credits_rows: list[dict[str, Any]] = []
+    outlier_rows: list[dict[str, Any]] = []
+    divergence_rows: list[dict[str, Any]] = []
+
+    if args.input_json:
+        raw = json.loads(Path(args.input_json).read_text(encoding="utf-8"))
+        municipalities = raw.get("municipalities", [])
+        credits_rows = raw.get("credits", [])
+        outlier_rows = raw.get("outliers", [])
+        divergence_rows = raw.get("divergences", [])
+    else:
+        db_url = os.environ.get("DATABASE_URL") or os.environ.get("POSTGRES_URL")
+        if db_url:
+            import psycopg
+            from psycopg.rows import dict_row
+
+            with psycopg.connect(db_url, row_factory=dict_row) as conn, conn.cursor() as cur:
+                cur.execute("SELECT * FROM api.municipalities")
+                municipalities = [dict(r) for r in cur.fetchall()]
+                cur.execute("SELECT * FROM api.credits")
+                credits_rows = [
+                    {
+                        "ust_code": r["ust_code"],
+                        "municipality_name": r["municipality_name"],
+                        "account_code": r.get("account_full") or "",
+                        "description": r.get("title") or "",
+                        "mm_reference": r.get("mm_number") or "Consuntivo",
+                        "fiscal_year": r.get("last_snapshot_year") or args.year,
+                        "voted_credit_chf": r.get("amount_voted") or 0,
+                        "spent_total_chf": r.get("spent_total") or 0,
+                        "residual_chf": r.get("residual") or 0,
+                        "pct_used": (
+                            round(float(r["spent_total"]) / float(r["amount_voted"]) * 100, 2)
+                            if r.get("amount_voted")
+                            else 0
+                        ),
+                        "page_ref": r.get("page") or 1,
+                    }
+                    for r in cur.fetchall()
+                ]
+                cur.execute(
+                    "SELECT * FROM api.peer_cost_outliers WHERE outlier_direction IN ('HIGH', 'LOW')"
+                )
+                outlier_rows = [dict(r) for r in cur.fetchall()]
+                cur.execute(
+                    "SELECT * FROM api.budget_vs_actual_divergences WHERE is_significant_divergence = true"
+                )
+                divergence_rows = [dict(r) for r in cur.fetchall()]
+
+    candidates = detect_all_social_insights(
+        municipalities=municipalities,
+        credits_rows=credits_rows,
+        outlier_rows=outlier_rows,
+        divergence_rows=divergence_rows,
+        ref_year=args.year,
+    )
+    if args.polish_ai:
+        candidates = [polish_candidate_with_llm(c) for c in candidates]
+
+    print(f"--- OFCL Social Insights ({len(candidates)} candidati generati) ---")
+    for c in candidates:
+        print(f"  [{c.signal_code}] {c.title} ({c.generation_mode})")
+
+    if args.db:
+        loader = PostgresLoader()
+        saved = loader.save_social_drafts(candidates)
+        print(f"Persistenza DB: {saved} nuove bozze salvate in core.social_post_draft")
+
+    if args.output_json:
+        out_p = Path(args.output_json)
+        out_p.parent.mkdir(parents=True, exist_ok=True)
+        out_p.write_text(
+            json.dumps([c.to_dict() for c in candidates], indent=2, ensure_ascii=False, default=_json_default),
+            encoding="utf-8",
+        )
+        print(f"Bozze salvate in: {out_p}")
+
     return 0
 
 
@@ -752,6 +913,26 @@ def main() -> None:
         help="Percorso report JSON",
     )
 
+    # Subcommand: insights
+    insights_parser = subparsers.add_parser(
+        "insights", help="Generazione bozze social S05-S10 da anomalie, divergenze e outlier"
+    )
+    insights_parser.add_argument("--year", type=int, default=2026, help="Anno di riferimento")
+    insights_parser.add_argument(
+        "--input-json", type=str, default=None, help="Dataset JSON opzionale (altrimenti legge DB)"
+    )
+    insights_parser.add_argument(
+        "--output-json", type=str, default=None, help="Salva le bozze generate in JSON"
+    )
+    insights_parser.add_argument(
+        "--db", action="store_true", help="Inserisce nuove bozze in core.social_post_draft"
+    )
+    insights_parser.add_argument(
+        "--polish-ai",
+        action="store_true",
+        help="Rifinisce i testi tramite LLM se OPENAI_API_KEY è configurata",
+    )
+
     args = parser.parse_args()
 
     if args.subcommand == "crawl":
@@ -766,6 +947,8 @@ def main() -> None:
         sys.exit(cmd_export_opendata(args))
     elif args.subcommand == "backfill":
         sys.exit(cmd_backfill(args))
+    elif args.subcommand == "insights":
+        sys.exit(cmd_insights(args))
 
 
 if __name__ == "__main__":

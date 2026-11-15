@@ -121,6 +121,25 @@ test.describe("Console Curatore OFCL (/admin) - Flusso E2E", () => {
     await expect(page.getByText("Brione sopra Minusio")).toBeVisible();
   });
 
+  test("T042c: Studio Post Instagram (/admin/social) con anteprima SVG 4:5 e approvazione", async ({ page }) => {
+    await page.goto("/admin/social");
+
+    await expect(page.getByRole("heading", { name: "Studio Post Instagram & Spunti Civici" })).toBeVisible();
+    await expect(page.locator("svg[aria-label*='Anteprima slide']")).toBeVisible();
+
+    // Filtra per segnale S05 (Sorpassi Credito)
+    await page.getByRole("button", { name: "S05 Sorpassi" }).click();
+    await expect(page.getByText("Brione sopra Minusio").first()).toBeVisible();
+
+    // Passa alla slide 3 (Domanda) e verifica aggiornamento preview SVG
+    await page.getByRole("button", { name: /3\.\s*QUESTION/i }).click();
+    await expect(page.locator("svg[aria-label*='Anteprima slide 3']")).toBeVisible();
+
+    // Approva bozza e verifica feedback
+    await page.getByRole("button", { name: "Approva Bozza" }).click();
+    await expect(page.getByText(/Stato bozza aggiornato a APPROVED/)).toBeVisible();
+  });
+
   test("T056: Traguardo SC-001 - Copertura 19/19 Comuni con Consuntivi e Preventivi pubblicati", async ({
     page,
   }) => {

@@ -90,6 +90,33 @@ class ControlloCreditiConfig:
 
 
 @dataclass(frozen=True)
+class RecapColumnDef:
+    """Definizione geometrica e semantica di una colonna per lett. c / lett. d."""
+
+    id: str
+    name: str
+    column_role: str
+    min_x: float
+    max_x: float
+    side: str | None = None
+
+
+@dataclass(frozen=True)
+class RecapTableConfig:
+    """Configurazione validata per tabelle analitiche (Ricapitolazione Natura o Dicasteri)."""
+
+    layout_family: str
+    section: str
+    title_pattern: str
+    title_re: re.Pattern[str]
+    code_min_x: float
+    code_max_x: float
+    code_patterns: dict[str, str]
+    code_patterns_re: dict[str, re.Pattern[str]]
+    columns: list[RecapColumnDef]
+
+
+@dataclass(frozen=True)
 class LayoutConfig:
     """Configurazione completa e convalidata per una famiglia di layout."""
 
@@ -98,6 +125,8 @@ class LayoutConfig:
     rg_config: RiassuntoGeneraleConfig
     sel_config: IndicatoriSelConfig
     cc_config: ControlloCreditiConfig
+    natura_config: RecapTableConfig | None = None
+    dicasteri_config: RecapTableConfig | None = None
 
 
 def _compile_re(pattern: str, desc: str) -> re.Pattern[str]:
@@ -280,6 +309,13 @@ def load_and_validate_layout(layout_dir: Path) -> LayoutConfig:
         summary_rows_re=summary_rows_re,
     )
 
+    natura_config = _load_recap_config_if_exists(
+        layout_dir / "ricapitolazione_natura.yaml", layout_family, "lett_c"
+    )
+    dicasteri_config = _load_recap_config_if_exists(
+        layout_dir / "ricapitolazione_dicasteri.yaml", layout_family, "lett_d"
+    )
+
     logger.info("Caricato e validato layout %s da %s", layout_family, layout_dir)
     return LayoutConfig(
         layout_family=layout_family,
@@ -287,4 +323,77 @@ def load_and_validate_layout(layout_dir: Path) -> LayoutConfig:
         rg_config=rg_config,
         sel_config=sel_config,
         cc_config=cc_config,
+        natura_config=natura_config,
+        dicasteri_config=dicasteri_config,
+    )
+
+
+def _load_recap_config_if_exists(
+    file_path: Path, layout_family: str, default_section: str
+) -> RecapTableConfig | None:
+    if not file_path.exists():
+        return None
+    raw = _load_yaml_file(file_path)
+    section = str(raw.get("section", default_section)).strip()
+    title_pat = str(raw.get("title_pattern", "")).strip()
+    title_re = _compile_re(title_pat or section, f"{layout_family} {file_path.name} title")
+
+    code_x = raw.get("code_x_range", {})
+    code_min_x = float(code_x.get("min_x", 20.0))
+    code_max_x = float(code_x.get("max_x", 110.0))
+    if code_min_x >= code_max_x:
+        raise LayoutConfigError(
+            f"Invariante code_x_range min_x < max_x violato in {file_path} ({code_min_x} >= {code_max_x})"
+        )
+
+    raw_patterns = raw.get("code_patterns")
+    if not isinstance(raw_patterns, dict) or not raw_patterns:
+        raise LayoutConfigError(f"'code_patterns' deve essere un mapping non vuoto in {file_path}")
+    code_patterns: dict[str, str] = {}
+    code_patterns_re: dict[str, re.Pattern[str]] = {}
+    for p_key, p_val in raw_patterns.items():
+        pat_str = str(p_val).strip()
+        code_patterns[str(p_key)] = pat_str
+        code_patterns_re[str(p_key)] = _compile_re(pat_str, f"{layout_family} {section} {p_key}")
+
+    raw_cols = raw.get("columns")
+    if not isinstance(raw_cols, list) or not raw_cols:
+        raise LayoutConfigError(f"'columns' deve essere una lista non vuota in {file_path}")
+
+    cols: list[RecapColumnDef] = []
+    seen_ids: set[str] = set()
+    for col in raw_cols:
+        if not isinstance(col, dict) or "id" not in col or "name" not in col:
+            raise LayoutConfigError(f"Colonna malformata in {file_path}: {col}")
+        c_id = str(col["id"]).strip()
+        if c_id in seen_ids:
+            raise LayoutConfigError(f"ID colonna duplicato in {file_path}: {c_id}")
+        seen_ids.add(c_id)
+        min_x = float(col["min_x"])
+        max_x = float(col["max_x"])
+        if min_x >= max_x:
+            raise LayoutConfigError(
+                f"Invariante min_x < max_x violato per colonna {c_id} in {file_path} ({min_x} >= {max_x})"
+            )
+        cols.append(
+            RecapColumnDef(
+                id=c_id,
+                name=str(col["name"]).strip(),
+                column_role=str(col.get("column_role", "CURRENT")).strip(),
+                min_x=min_x,
+                max_x=max_x,
+                side=str(col["side"]).strip() if col.get("side") else None,
+            )
+        )
+
+    return RecapTableConfig(
+        layout_family=layout_family,
+        section=section,
+        title_pattern=title_pat,
+        title_re=title_re,
+        code_min_x=code_min_x,
+        code_max_x=code_max_x,
+        code_patterns=code_patterns,
+        code_patterns_re=code_patterns_re,
+        columns=cols,
     )

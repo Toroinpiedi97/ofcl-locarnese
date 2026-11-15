@@ -101,6 +101,12 @@ class ValidationContext:
     reported_indicators: dict[str, Decimal] = field(default_factory=dict)
     computed_indicators: dict[str, Decimal] = field(default_factory=dict)
 
+    # 7. Ricapitolazioni Analitiche (lett_c Natura e lett_d Dicasteri)
+    natura_spese_2digit: dict[str, Decimal] = field(default_factory=dict)
+    natura_ricavi_2digit: dict[str, Decimal] = field(default_factory=dict)
+    dicasteri_1digit_spese: dict[str, Decimal] = field(default_factory=dict)
+    dicasteri_1digit_ricavi: dict[str, Decimal] = field(default_factory=dict)
+
 
 def validate_mca2_document(
     ctx: ValidationContext,
@@ -358,6 +364,77 @@ def validate_mca2_document(
             message=f"V12 - Coerenza Indicatori SEL (Reported vs Computed): delta massimo {max_ind_delta}",
         )
     )
+
+    # --- V13: Quadratura Ricapitolazione per Natura (lett_c vs lett_a) ---
+    if ctx.natura_spese_2digit or ctx.natura_ricavi_2digit:
+        nat_spese_op = sum(
+            (ctx.natura_spese_2digit.get(k, ZERO) for k in ("30", "31", "33", "35", "36", "37")),
+            ZERO,
+        ).quantize(ZERO)
+        nat_ricavi_op = sum(
+            (ctx.natura_ricavi_2digit.get(k, ZERO) for k in ("40", "41", "42", "43", "45", "46")),
+            ZERO,
+        ).quantize(ZERO)
+        exp_spese_op = ctx.spese_operative.quantize(ZERO)
+        exp_ricavi_op = ctx.ricavi_operativi.quantize(ZERO)
+        delta_nat = (abs(nat_spese_op - exp_spese_op) + abs(nat_ricavi_op - exp_ricavi_op)).quantize(
+            ZERO
+        )
+        checks.append(
+            ValidationCheck(
+                rule_code="V13",
+                severity="BLOCKING",
+                passed=(delta_nat == ZERO),
+                expected=(exp_spese_op + exp_ricavi_op).quantize(ZERO),
+                actual=(nat_spese_op + nat_ricavi_op).quantize(ZERO),
+                delta=delta_nat,
+                message=(
+                    f"V13 - Quadratura Natura (lett_c vs lett_a): "
+                    f"spese {nat_spese_op}/{exp_spese_op}, ricavi {nat_ricavi_op}/{exp_ricavi_op} "
+                    f"(delta {delta_nat} CHF)"
+                ),
+            )
+        )
+
+    # --- V14: Quadratura Ricapitolazione per Dicasteri (lett_d vs CE lett_a) ---
+    if ctx.dicasteri_1digit_spese or ctx.dicasteri_1digit_ricavi:
+        sum_dic_spese = sum(ctx.dicasteri_1digit_spese.values(), ZERO).quantize(ZERO)
+        sum_dic_ricavi = sum(ctx.dicasteri_1digit_ricavi.values(), ZERO).quantize(ZERO)
+        net_dic = (sum_dic_ricavi - sum_dic_spese).quantize(ZERO)
+
+        tot_ric_ce_net_int = (
+            ctx.ricavi_operativi + ctx.ricavi_finanziari_44 + ctx.ricavi_straordinari_48
+        ).quantize(ZERO)
+        tot_spe_ce_net_int = (
+            ctx.spese_operative + ctx.spese_finanziarie_34 + ctx.spese_straordinarie_38
+        ).quantize(ZERO)
+        exp_net_ce = (tot_ric_ce_net_int - tot_spe_ce_net_int).quantize(ZERO)
+
+        delta_net = abs(net_dic - exp_net_ce).quantize(ZERO)
+        if ctx.addebiti_interni_39 > ZERO or ctx.accrediti_interni_49 > ZERO:
+            exp_tot_sp = (tot_spe_ce_net_int + ctx.addebiti_interni_39).quantize(ZERO)
+            exp_tot_ric = (tot_ric_ce_net_int + ctx.accrediti_interni_49).quantize(ZERO)
+            delta_gross = (abs(sum_dic_spese - exp_tot_sp) + abs(sum_dic_ricavi - exp_tot_ric)).quantize(
+                ZERO
+            )
+            v14_delta = max(delta_net, delta_gross)
+        else:
+            v14_delta = delta_net
+
+        checks.append(
+            ValidationCheck(
+                rule_code="V14",
+                severity="BLOCKING",
+                passed=(v14_delta == ZERO),
+                expected=exp_net_ce,
+                actual=net_dic,
+                delta=v14_delta,
+                message=(
+                    f"V14 - Quadratura Dicasteri (lett_d vs lett_a): "
+                    f"saldo netto dicasteri {net_dic} CHF vs CE {exp_net_ce} CHF (delta {v14_delta} CHF)"
+                ),
+            )
+        )
 
     # --- Segnali S03 & S04 su soglie critiche SEL ---
     debt_ratio = ctx.computed_indicators.get("tasso_indebitamento_netto_pct")

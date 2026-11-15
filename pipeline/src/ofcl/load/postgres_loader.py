@@ -9,7 +9,7 @@ import os
 import uuid
 from typing import Any
 
-from ofcl.extract.table_extractor import CreditWorkItem, ExtractedCell
+from ofcl.extract.table_extractor import CreditWorkItem, ExtractedCell, LedgerRowItem
 from ofcl.seed_ref import FORBIDDEN_CORFIN_REF, enforce_corfin_guardrail
 
 NIL_UUID = uuid.UUID("00000000-0000-0000-0000-000000000000")
@@ -134,6 +134,88 @@ class PostgresLoader:
 
         return count
 
+    def save_ledger_items(
+        self,
+        version_id: str | None = None,
+        entity_id: str = "",
+        items: list[LedgerRowItem] | None = None,
+        base_fiscal_year: int = 2025,
+        parser_version: str = "gecoti_v3",
+        replace_existing: bool = True,
+    ) -> int:
+        """
+        Salva righe analitiche (RIASSUNTO multi-colonna, NATURA lett_c, FUNZIONE lett_d) in core.ledger_value.
+        Esegue sostituzione idempotente per version_id nella stessa transazione.
+        """
+        self._assert_write_allowed()
+        actual_version_id = _validate_uuid(version_id, "version_id")
+        clean_entity_id = _validate_uuid(entity_id, "entity_id")
+        items = items or []
+
+        if not self.database_url:
+            return len(items)
+
+        try:
+            import psycopg
+        except ImportError:
+            return len(items)
+
+        insert_sql = """
+        INSERT INTO core.ledger_value (
+            version_id, entity_id, statement, view_kind,
+            function_code, account_code, detail_code, label_raw,
+            column_role, ref_year, value_kind, side,
+            amount_chf, amount_raw, page, bbox, method, parser_version
+        )
+        VALUES (
+            %s, %s, %s, %s,
+            %s, %s, %s, %s,
+            %s, %s, %s, %s,
+            %s, %s, %s, %s, %s, %s
+        )
+        """
+
+        count = 0
+        with psycopg.connect(self.database_url) as conn, conn.transaction(), conn.cursor() as cur:
+            if replace_existing:
+                cur.execute(
+                    "DELETE FROM core.ledger_value WHERE version_id = %s",
+                    (actual_version_id,),
+                )
+            for item in items:
+                ref_year = (
+                    base_fiscal_year - 1
+                    if item.column_role == "PRIOR_ACTUAL"
+                    else base_fiscal_year
+                )
+                bbox_list = [float(round(c, 2)) for c in item.bbox] if item.bbox else None
+                cur.execute(
+                    insert_sql,
+                    (
+                        actual_version_id,
+                        clean_entity_id,
+                        item.statement,
+                        item.view_kind,
+                        item.function_code,
+                        item.account_code,
+                        None,
+                        item.label_raw,
+                        item.column_role,
+                        ref_year,
+                        item.value_kind,
+                        item.side,
+                        item.amount_chf,
+                        item.amount_raw,
+                        item.page,
+                        bbox_list,
+                        "DETERMINISTIC",
+                        parser_version,
+                    ),
+                )
+                count += 1
+
+        return count
+
     def save_credits_snapshot(
         self,
         version_id: str | None = None,
@@ -234,3 +316,61 @@ class PostgresLoader:
                 count += 1
 
         return count
+
+    def save_social_drafts(self, drafts: list[Any] | None = None) -> int:
+        """
+        Salva le bozze social generate in core.social_post_draft.
+        Usa ON CONFLICT (dedup_key) DO NOTHING per preservare eventuali revisioni umane esistenti.
+        """
+        self._assert_write_allowed()
+        drafts = drafts or []
+        if not drafts:
+            return 0
+        if not self.database_url:
+            return len(drafts)
+
+        try:
+            import json
+
+            import psycopg
+        except ImportError:
+            return len(drafts)
+
+        sql = """
+        INSERT INTO core.social_post_draft (
+            signal_code, dedup_key, ust_code, ref_year, title,
+            question_for_municipality, verified_payload, slides_json,
+            caption_draft, hashtags, source_urls, generation_mode, status
+        )
+        VALUES (
+            %s, %s, %s, %s, %s,
+            %s, %s::jsonb, %s::jsonb,
+            %s, %s, %s, %s, 'DRAFT'
+        )
+        ON CONFLICT (dedup_key) DO NOTHING
+        """
+
+        inserted = 0
+        with psycopg.connect(self.database_url) as conn, conn.transaction(), conn.cursor() as cur:
+            for d in drafts:
+                payload = d.to_dict() if hasattr(d, "to_dict") else dict(d)
+                cur.execute(
+                    sql,
+                    (
+                        payload["signal_code"],
+                        payload["dedup_key"],
+                        payload.get("ust_code"),
+                        int(payload["ref_year"]),
+                        payload["title"],
+                        payload["question_for_municipality"],
+                        json.dumps(payload["verified_payload"], ensure_ascii=False),
+                        json.dumps(payload["slides_json"], ensure_ascii=False),
+                        payload["caption_draft"],
+                        payload.get("hashtags", []),
+                        payload["source_urls"],
+                        payload.get("generation_mode", "DETERMINISTIC"),
+                    ),
+                )
+                inserted += cur.rowcount
+
+        return inserted
