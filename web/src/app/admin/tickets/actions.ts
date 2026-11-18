@@ -1,8 +1,9 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
-import { MUNICIPALITIES } from "@/data/municipalities";
 import { revalidatePath } from "next/cache";
+import { getAdminDbClient, getCuratorSession } from "@/lib/admin-auth";
+import { hasLiveSupabaseConfig } from "@/lib/admin-session-edge";
+import { MUNICIPALITIES } from "@/data/municipalities";
 
 export interface FeedbackTicketDto {
   id: string;
@@ -16,9 +17,17 @@ export interface FeedbackTicketDto {
 }
 
 export async function fetchLiveTicketsAction(): Promise<FeedbackTicketDto[]> {
+  const session = await getCuratorSession();
+  if (!session.authenticated) {
+    return [];
+  }
+  if (!hasLiveSupabaseConfig()) {
+    return [];
+  }
+
   try {
-    const supabase = await createClient();
-    const { data, error } = await supabase
+    const db = await getAdminDbClient();
+    const { data, error } = await db
       .schema("audit")
       .from("feedback_ticket")
       .select("*")
@@ -62,26 +71,36 @@ export async function updateTicketStatusAction(
   ticketId: string,
   newStatus: "NEW" | "IN_REVIEW" | "RESOLVED" | "DISMISSED"
 ): Promise<{ success: boolean; message?: string }> {
-  try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  const session = await getCuratorSession();
+  if (!session.authenticated) {
+    return {
+      success: false,
+      message: "Non autorizzato: sessione curatore richiesta.",
+    };
+  }
 
-    const updatePayload: Record<string, unknown> = {
+  if (session.via === "dev_sandbox" && !hasLiveSupabaseConfig()) {
+    return { success: true };
+  }
+
+  try {
+    const db = await getAdminDbClient();
+    const updatePayload: {
+      status: "NEW" | "IN_REVIEW" | "RESOLVED" | "DISMISSED";
+      resolved_at?: string | null;
+      resolved_by?: string | null;
+    } = {
       status: newStatus,
     };
     if (newStatus === "RESOLVED" || newStatus === "DISMISSED") {
       updatePayload.resolved_at = new Date().toISOString();
-      if (user?.id) {
-        updatePayload.resolved_by = user.id;
-      }
+      updatePayload.resolved_by = session.actorId;
     }
 
-    const { error } = await supabase
+    const { error } = await db
       .schema("audit")
       .from("feedback_ticket")
-      .update(updatePayload as any)
+      .update(updatePayload)
       .eq("id", ticketId);
 
     if (error) {
@@ -93,7 +112,8 @@ export async function updateTicketStatusAction(
   } catch (err: unknown) {
     return {
       success: false,
-      message: err instanceof Error ? err.message : "Errore aggiornamento ticket",
+      message:
+        err instanceof Error ? err.message : "Errore aggiornamento ticket",
     };
   }
 }

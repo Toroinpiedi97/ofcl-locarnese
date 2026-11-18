@@ -2,7 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { createClient } from "@/lib/supabase/server";
+import { getAdminDbClient, getCuratorSession } from "@/lib/admin-auth";
+import {
+  hasLiveSupabaseConfig,
+  isOfflineDevSandbox,
+} from "@/lib/admin-session-edge";
 import { getPublicCreditsDataset, getDistrictDataset } from "@/lib/data/mca2-dal";
 import { MUNICIPALITIES } from "@/data/municipalities";
 import {
@@ -38,33 +42,6 @@ const SaveDraftSchema = z.object({
   generation_mode: z.enum(["DETERMINISTIC", "AI_ASSISTED", "CURATOR_EDITED"]),
   review_note: z.string().max(500).nullable().optional(),
 });
-
-async function requireCuratorUser() {
-  const supabase = await createClient();
-  let {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (
-    !user &&
-    (process.env.ALLOW_DEV_ADMIN === "true" || process.env.PLAYWRIGHT_TEST === "1")
-  ) {
-    user = {
-      id: "00000000-0000-0000-0000-000000000001",
-      app_metadata: { role: "curator" },
-      user_metadata: {},
-      aud: "authenticated",
-      created_at: new Date().toISOString(),
-    } as never;
-  }
-
-  const role = (user?.app_metadata as { role?: string } | undefined)?.role;
-  if (!user || (role !== "curator" && role !== "admin")) {
-    return { supabase, user: null, authorized: false as const };
-  }
-
-  return { supabase, user, authorized: true as const };
-}
 
 function mapDbRowToDto(row: {
   id: string;
@@ -121,34 +98,60 @@ function mapDbRowToDto(row: {
 }
 
 /**
- * Carica la coda di bozze Instagram da core.social_post_draft
- * con fallback deterministico locale se il database non è raggiungibile o vuoto.
+ * Carica la coda di bozze Instagram da core.social_post_draft.
+ * In produzione con Supabase configurato restituisce SOLO i dati reali del DB (mai bozze finte).
+ * Solo nella sandbox E2E offline genera le bozze deterministiche locali.
  */
 export async function fetchSocialDraftsAction(): Promise<{
   drafts: SocialDraftDto[];
   source: "SUPABASE" | "DETERMINISTIC_FALLBACK";
+  dbError?: string | null;
 }> {
-  try {
-    const { supabase, authorized } = await requireCuratorUser();
-    if (!authorized) {
-      return { drafts: [], source: "DETERMINISTIC_FALLBACK" };
-    }
+  const session = await getCuratorSession();
+  if (!session.authenticated) {
+    return {
+      drafts: [],
+      source: hasLiveSupabaseConfig() ? "SUPABASE" : "DETERMINISTIC_FALLBACK",
+      dbError: "Sessione curatore non autenticata.",
+    };
+  }
 
-    const { data, error } = await supabase
-      .schema("core")
-      .from("social_post_draft")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(100);
+  const sandboxMode = isOfflineDevSandbox();
+  const liveDbMode = hasLiveSupabaseConfig() && !sandboxMode;
 
-    if (!error && data && data.length > 0) {
+  if (liveDbMode) {
+    try {
+      const db = await getAdminDbClient();
+      const { data, error } = await db
+        .schema("core")
+        .from("social_post_draft")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(100);
+
+      if (error) {
+        return {
+          drafts: [],
+          source: "SUPABASE",
+          dbError: `Errore lettura core.social_post_draft: ${error.message}`,
+        };
+      }
+
       return {
-        drafts: data.map(mapDbRowToDto),
+        drafts: (data || []).map(mapDbRowToDto),
         source: "SUPABASE",
+        dbError: null,
+      };
+    } catch (err) {
+      return {
+        drafts: [],
+        source: "SUPABASE",
+        dbError:
+          err instanceof Error
+            ? err.message
+            : "Errore di connessione a Supabase.",
       };
     }
-  } catch {
-    // Prosegue sul fallback deterministico certificato
   }
 
   const [municipalities, credits] = await Promise.all([
@@ -159,6 +162,7 @@ export async function fetchSocialDraftsAction(): Promise<{
   return {
     drafts: generateSocialInsightsFromData({ municipalities, credits }),
     source: "DETERMINISTIC_FALLBACK",
+    dbError: null,
   };
 }
 
@@ -171,14 +175,17 @@ export async function generateSocialDraftsAction(): Promise<{
   message: string;
   drafts: SocialDraftDto[];
 }> {
-  const { supabase, authorized } = await requireCuratorUser();
-  if (!authorized) {
+  const session = await getCuratorSession();
+  if (!session.authenticated) {
     return {
       success: false,
-      message: "Non autorizzato: privilegio 'curator' richiesto.",
+      message: "Non autorizzato: sessione curatore richiesta.",
       drafts: [],
     };
   }
+
+  const sandboxMode = isOfflineDevSandbox();
+  const liveDbMode = hasLiveSupabaseConfig() && !sandboxMode;
 
   const [municipalities, credits] = await Promise.all([
     getDistrictDataset(),
@@ -188,63 +195,66 @@ export async function generateSocialDraftsAction(): Promise<{
   let peerOutliers: PeerCostOutlierRow[] = [];
   let budgetDivergences: BudgetDivergenceRow[] = [];
 
-  try {
-    const [outliersRes, divRes] = await Promise.all([
-      supabase
-        .schema("api")
-        .from("peer_cost_outliers")
-        .select("*")
-        .in("outlier_direction", ["HIGH", "LOW"])
-        .limit(40),
-      supabase
-        .schema("api")
-        .from("budget_vs_actual_divergences")
-        .select("*")
-        .eq("is_significant_divergence", true)
-        .limit(40),
-    ]);
+  if (liveDbMode) {
+    try {
+      const db = await getAdminDbClient();
+      const [outliersRes, divRes] = await Promise.all([
+        db
+          .schema("api")
+          .from("peer_cost_outliers")
+          .select("*")
+          .in("outlier_direction", ["HIGH", "LOW"])
+          .limit(40),
+        db
+          .schema("api")
+          .from("budget_vs_actual_divergences")
+          .select("*")
+          .eq("is_significant_divergence", true)
+          .limit(40),
+      ]);
 
-    if (!outliersRes.error && outliersRes.data) {
-      peerOutliers = outliersRes.data.map((r) => ({
-        ust_code: r.ust_code,
-        municipality_name: r.municipality_name,
-        municipality_slug: r.municipality_slug,
-        ref_year: r.ref_year,
-        statement: r.statement,
-        code_level: r.code_level,
-        account_code: r.account_code || r.function_code || "-",
-        account_label: r.canonical_label || "Voce MCA2",
-        per_capita_chf: Number(r.amount_per_capita),
-        district_median_per_capita_chf: Number(r.district_median_pc),
-        delta_pct_vs_median:
-          r.delta_vs_district_median_pct !== null
-            ? Number(r.delta_vs_district_median_pct)
-            : null,
-        amount_chf: Number(r.amount_chf),
-        residents: Number(r.population_used ?? 0),
-        page: r.page,
-        origin_url: r.origin_url,
-      }));
-    }
+      if (!outliersRes.error && outliersRes.data) {
+        peerOutliers = outliersRes.data.map((r) => ({
+          ust_code: r.ust_code,
+          municipality_name: r.municipality_name,
+          municipality_slug: r.municipality_slug,
+          ref_year: r.ref_year,
+          statement: r.statement,
+          code_level: r.code_level,
+          account_code: r.account_code || r.function_code || "-",
+          account_label: r.canonical_label || "Voce MCA2",
+          per_capita_chf: Number(r.amount_per_capita),
+          district_median_per_capita_chf: Number(r.district_median_pc),
+          delta_pct_vs_median:
+            r.delta_vs_district_median_pct !== null
+              ? Number(r.delta_vs_district_median_pct)
+              : null,
+          amount_chf: Number(r.amount_chf),
+          residents: Number(r.population_used ?? 0),
+          page: r.page,
+          origin_url: r.origin_url,
+        }));
+      }
 
-    if (!divRes.error && divRes.data) {
-      budgetDivergences = divRes.data.map((r) => ({
-        ust_code: r.ust_code,
-        municipality_name: r.municipality_name,
-        municipality_slug: r.municipality_slug,
-        ref_year: r.ref_year,
-        account_code: r.account_code || r.function_code || "-",
-        account_label: r.canonical_label || "Voce MCA2",
-        actual_chf: Number(r.actual_chf),
-        budget_chf: Number(r.budget_chf),
-        delta_chf: Number(r.delta_chf),
-        delta_pct: r.delta_pct !== null ? Number(r.delta_pct) : null,
-        page_actual: r.actual_page,
-        origin_url: r.actual_origin_url,
-      }));
+      if (!divRes.error && divRes.data) {
+        budgetDivergences = divRes.data.map((r) => ({
+          ust_code: r.ust_code,
+          municipality_name: r.municipality_name,
+          municipality_slug: r.municipality_slug,
+          ref_year: r.ref_year,
+          account_code: r.account_code || r.function_code || "-",
+          account_label: r.canonical_label || "Voce MCA2",
+          actual_chf: Number(r.actual_chf),
+          budget_chf: Number(r.budget_chf),
+          delta_chf: Number(r.delta_chf),
+          delta_pct: r.delta_pct !== null ? Number(r.delta_pct) : null,
+          page_actual: r.actual_page,
+          origin_url: r.actual_origin_url,
+        }));
+      }
+    } catch {
+      // Le viste analitiche potrebbero non essere ancora popolate: prosegui con i dataset pubblici live
     }
-  } catch {
-    // Viste DB non ancora popolate: usa dataset certificato locale
   }
 
   const generated = generateSocialInsightsFromData({
@@ -254,45 +264,69 @@ export async function generateSocialDraftsAction(): Promise<{
     budgetDivergences,
   });
 
-  try {
-    const insertRows = generated.map((g) => ({
-      signal_code: g.signal_code,
-      dedup_key: g.dedup_key,
-      ust_code: g.ust_code,
-      ref_year: g.ref_year,
-      title: g.title,
-      question_for_municipality: g.question_for_municipality,
-      verified_payload: g.verified_payload as unknown as Json,
-      slides_json: g.slides_json as unknown as Json,
-      caption_draft: g.caption_draft,
-      hashtags: g.hashtags,
-      source_urls: g.source_urls.length > 0 ? g.source_urls : ["https://ofcl.ch"],
-      generation_mode: "DETERMINISTIC" as const,
-      status: "DRAFT" as const,
-    }));
+  if (liveDbMode) {
+    try {
+      const db = await getAdminDbClient();
+      const insertRows = generated.map((g) => ({
+        signal_code: g.signal_code,
+        dedup_key: g.dedup_key,
+        ust_code: g.ust_code,
+        ref_year: g.ref_year,
+        title: g.title,
+        question_for_municipality: g.question_for_municipality,
+        verified_payload: g.verified_payload as unknown as Json,
+        slides_json: g.slides_json as unknown as Json,
+        caption_draft: g.caption_draft,
+        hashtags: g.hashtags,
+        source_urls: g.source_urls.length > 0 ? g.source_urls : ["https://ofcl.ch"],
+        generation_mode: "DETERMINISTIC" as const,
+        status: "DRAFT" as const,
+      }));
 
-    const { error } = await supabase
-      .schema("core")
-      .from("social_post_draft")
-      .upsert(insertRows, { onConflict: "dedup_key", ignoreDuplicates: true });
+      const { error } = await db
+        .schema("core")
+        .from("social_post_draft")
+        .upsert(insertRows, { onConflict: "dedup_key", ignoreDuplicates: true });
 
-    if (!error) {
-      const { data: liveRows } = await supabase
+      if (error) {
+        return {
+          success: false,
+          message: `Errore salvataggio bozze su Supabase: ${error.message}`,
+          drafts: [],
+        };
+      }
+
+      const { data: liveRows, error: fetchErr } = await db
         .schema("core")
         .from("social_post_draft")
         .select("*")
         .order("created_at", { ascending: false })
         .limit(100);
 
+      if (fetchErr) {
+        return {
+          success: false,
+          message: `Bozze salvate ma errore di rilettura: ${fetchErr.message}`,
+          drafts: [],
+        };
+      }
+
       revalidatePath("/admin/social");
       return {
         success: true,
-        message: `Rilevazione completata: ${generated.length} spunti analizzati e sincronizzati in coda.`,
-        drafts: liveRows ? liveRows.map(mapDbRowToDto) : generated,
+        message: `Rilevazione completata: ${generated.length} spunti analizzati e sincronizzati in core.social_post_draft.`,
+        drafts: (liveRows || []).map(mapDbRowToDto),
+      };
+    } catch (err) {
+      return {
+        success: false,
+        message:
+          err instanceof Error
+            ? err.message
+            : "Errore sincronizzazione Supabase per bozze social.",
+        drafts: [],
       };
     }
-  } catch {
-    // Modalità sandbox offline
   }
 
   revalidatePath("/admin/social");
@@ -310,11 +344,11 @@ export async function generateSocialDraftsAction(): Promise<{
 export async function saveSocialDraftAction(
   payload: z.infer<typeof SaveDraftSchema>
 ): Promise<{ success: boolean; message: string; caption_draft?: string }> {
-  const { supabase, user, authorized } = await requireCuratorUser();
-  if (!authorized || !user) {
+  const session = await getCuratorSession();
+  if (!session.authenticated) {
     return {
       success: false,
-      message: "Non autorizzato: privilegio 'curator' richiesto.",
+      message: "Non autorizzato: sessione curatore richiesta.",
     };
   }
 
@@ -335,9 +369,10 @@ export async function saveSocialDraftAction(
       parsed.data.id
     );
 
-  if (isUuid) {
+  if (isUuid && hasLiveSupabaseConfig()) {
     try {
-      const { error } = await supabase
+      const db = await getAdminDbClient();
+      const { error } = await db
         .schema("core")
         .from("social_post_draft")
         .update({
@@ -348,17 +383,24 @@ export async function saveSocialDraftAction(
           hashtags: parsed.data.hashtags,
           generation_mode: parsed.data.generation_mode,
           review_note: parsed.data.review_note ?? null,
-          reviewed_by: user.id,
+          reviewed_by: session.actorId,
           reviewed_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         })
         .eq("id", parsed.data.id);
 
       if (error) {
-        return { success: false, message: `Errore salvataggio DB: ${error.message}` };
+        return {
+          success: false,
+          message: `Errore salvataggio DB: ${error.message}`,
+        };
       }
-    } catch {
-      // Ignora in sandbox senza Postgres attivo
+    } catch (err) {
+      return {
+        success: false,
+        message:
+          err instanceof Error ? err.message : "Errore salvataggio su Supabase.",
+      };
     }
   }
 
@@ -379,11 +421,11 @@ export async function updateSocialDraftStatusAction(
   nextStatus: SocialDraftStatus,
   reviewNote?: string
 ): Promise<{ success: boolean; message: string }> {
-  const { supabase, user, authorized } = await requireCuratorUser();
-  if (!authorized || !user) {
+  const session = await getCuratorSession();
+  if (!session.authenticated) {
     return {
       success: false,
-      message: "Non autorizzato: privilegio 'curator' richiesto.",
+      message: "Non autorizzato: sessione curatore richiesta.",
     };
   }
 
@@ -392,31 +434,47 @@ export async function updateSocialDraftStatusAction(
       draftId
     );
 
-  if (isUuid) {
+  if (isUuid && hasLiveSupabaseConfig()) {
     try {
+      const db = await getAdminDbClient();
+      const { data: prevRow } = await db
+        .schema("core")
+        .from("social_post_draft")
+        .select("status")
+        .eq("id", draftId)
+        .maybeSingle();
+
       if (nextStatus === "APPROVED" || nextStatus === "PUBLISHED") {
-        await supabase
+        const { error: auditErr } = await db
           .schema("audit")
           .from("curator_action")
           .insert({
-            actor: user.id,
+            actor: session.actorId,
             action: nextStatus === "APPROVED" ? "APPROVE" : "PUBLISH",
             target_table: "core.social_post_draft",
             target_id: draftId,
-            before: null,
+            before: prevRow ? { status: prevRow.status } : null,
             after: { status: nextStatus },
             reason:
-              reviewNote?.trim() ||
-              `Revisione editoriale completata su /admin/social (${nextStatus}).`,
+              reviewNote && reviewNote.trim().length >= 10
+                ? reviewNote.trim()
+                : `Revisione editoriale completata su /admin/social (${nextStatus})${reviewNote?.trim() ? `: ${reviewNote.trim()}` : ""}.`,
           });
+
+        if (auditErr) {
+          return {
+            success: false,
+            message: `Errore audit social: ${auditErr.message}`,
+          };
+        }
       }
 
-      const { error } = await supabase
+      const { error } = await db
         .schema("core")
         .from("social_post_draft")
         .update({
           status: nextStatus,
-          reviewed_by: user.id,
+          reviewed_by: session.actorId,
           reviewed_at: new Date().toISOString(),
           review_note: reviewNote?.trim() || null,
           updated_at: new Date().toISOString(),
@@ -424,10 +482,19 @@ export async function updateSocialDraftStatusAction(
         .eq("id", draftId);
 
       if (error) {
-        return { success: false, message: `Errore aggiornamento stato: ${error.message}` };
+        return {
+          success: false,
+          message: `Errore aggiornamento stato: ${error.message}`,
+        };
       }
-    } catch {
-      // Modalità sandbox offline
+    } catch (err) {
+      return {
+        success: false,
+        message:
+          err instanceof Error
+            ? err.message
+            : "Errore aggiornamento stato su Supabase.",
+      };
     }
   }
 
@@ -460,8 +527,8 @@ export async function polishSocialDraftAiAction(input: {
   generation_mode: SocialGenerationMode;
   message: string;
 }> {
-  const { authorized } = await requireCuratorUser();
-  if (!authorized) {
+  const session = await getCuratorSession();
+  if (!session.authenticated) {
     return {
       success: false,
       usedLlm: false,
@@ -470,7 +537,7 @@ export async function polishSocialDraftAiAction(input: {
       caption_draft: input.caption_draft,
       slides_json: input.slides_json,
       generation_mode: "DETERMINISTIC",
-      message: "Non autorizzato: privilegio 'curator' richiesto.",
+      message: "Non autorizzato: sessione curatore richiesta.",
     };
   }
 
@@ -522,7 +589,9 @@ export async function polishSocialDraftAiAction(input: {
         const content = json.choices?.[0]?.message?.content;
         if (content) {
           const parsed = JSON.parse(content) as Record<string, string>;
-          const nextCaptionRaw = String(parsed.caption_draft || input.caption_draft);
+          const nextCaptionRaw = String(
+            parsed.caption_draft || input.caption_draft
+          );
           const nextCaption = nextCaptionRaw.includes("192 LOC")
             ? nextCaptionRaw
             : `${nextCaptionRaw.trim()}\n\n${ART_192_DISCLAIMER}`;
@@ -592,7 +661,6 @@ export async function polishSocialDraftAiAction(input: {
     }
   }
 
-  // Fallback editoriale deterministico (senza chiave API esterna)
   const refinedCaption = input.caption_draft.includes("💬")
     ? input.caption_draft
     : input.caption_draft.replace(

@@ -2,11 +2,18 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "@/lib/supabase/database.types";
 import { bucketForPath, clientIpFrom, consume } from "@/lib/guardrails";
+import {
+  CURATOR_COOKIE_NAME,
+  hasLiveSupabaseConfig,
+  isOfflineDevSandbox,
+  isSupabaseUserCurator,
+  verifyCuratorCookieEdge,
+} from "@/lib/admin-session-edge";
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  // Guardrail di quota giornaliera: API pubbliche e download open data.
+  // 1. Guardrail di quota giornaliera: API pubbliche e download open data.
   const bucket = bucketForPath(pathname);
   if (bucket) {
     if (request.method === "OPTIONS") return NextResponse.next();
@@ -29,12 +36,10 @@ export async function middleware(request: NextRequest) {
         }
       );
     }
-    // Nessuna chiamata a Supabase Auth per endpoint pubblici.
     return NextResponse.next();
   }
 
-  // Le pagine pubbliche non hanno sessione: evita un round-trip a Supabase
-  // Auth su ogni richiesta (consumo quota Auth + latenza).
+  // 2. Le pagine pubbliche non hanno sessione: evita overhead Auth.
   if (!pathname.startsWith("/admin")) {
     return NextResponse.next();
   }
@@ -45,77 +50,85 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const isPublicAdminRoute =
+    pathname === "/admin/login" ||
+    pathname === "/admin/mfa-setup" ||
+    pathname === "/admin/verify-mfa";
 
-  if (!supabaseUrl || !supabaseKey) {
+  // 3. Bypass esplicito SOLO per E2E / sviluppo locale offline
+  if (isOfflineDevSandbox()) {
     return response;
   }
 
-  const supabase = createServerClient<Database>(supabaseUrl, supabaseKey, {
-    cookies: {
-      getAll() {
-        return request.cookies.getAll();
-      },
-      setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value }) =>
-          request.cookies.set(name, value)
-        );
-        response = NextResponse.next({
-          request,
-        });
-        cookiesToSet.forEach(({ name, value, options }) =>
-          response.cookies.set(name, value, options)
-        );
-      },
-    },
-  });
-
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // Protezione dedicata alla Console Curatore (/admin/*)
-  if (pathname.startsWith("/admin")) {
-    const isPublicAdminRoute =
-      pathname === "/admin/login" ||
-      pathname === "/admin/mfa-setup" ||
-      pathname === "/admin/verify-mfa";
-
-    // Bypass di emergenza per sviluppo locale offline se esplicitamente abilitato
-    if (process.env.ALLOW_DEV_ADMIN === "true") {
-      return response;
-    }
-
-    if (!user) {
-      if (!isPublicAdminRoute) {
+  // 4. Verifica sessione tramite cookie HMAC (CURATOR_PASSWORD / ADMIN_PASSWORD)
+  const passwordCookie = request.cookies.get(CURATOR_COOKIE_NAME)?.value;
+  if (passwordCookie) {
+    const validSession = await verifyCuratorCookieEdge(passwordCookie);
+    if (validSession) {
+      if (isPublicAdminRoute) {
         const url = request.nextUrl.clone();
-        url.pathname = "/admin/login";
-        url.searchParams.set("redirectTo", pathname);
+        url.pathname = "/admin/queue";
+        url.search = "";
         return NextResponse.redirect(url);
       }
       return response;
     }
+  }
 
-    // 1. Controllo Ruolo Server-Side (app_metadata.role === 'curator')
-    const role = (user.app_metadata as { role?: string })?.role;
-    if (role !== "curator" && role !== "admin") {
-      return new NextResponse(
-        "Accesso Negato: il tuo account non dispone dei privilegi di curatore certificato OFCL (Ruolo mancante: 'curator').",
-        { status: 403 }
-      );
-    }
+  // 5. Verifica tramite Supabase Auth (se configurata)
+  if (hasLiveSupabaseConfig()) {
+    const supabase = createServerClient<Database>(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll();
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value }) =>
+              request.cookies.set(name, value)
+            );
+            response = NextResponse.next({
+              request,
+            });
+            cookiesToSet.forEach(({ name, value, options }) =>
+              response.cookies.set(name, value, options)
+            );
+          },
+        },
+      }
+    );
 
-    // 2. Controllo Obbligo MFA TOTP (Assurance Level AAL2)
-    const { data: mfaData, error: mfaError } =
-      await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-    if (!mfaError && mfaData) {
-      // Se l'utente ha configurato il TOTP ma è ancora a livello AAL1 (solo password)
+    if (user) {
+      if (!isSupabaseUserCurator(user)) {
+        return new NextResponse(
+          "Accesso Negato: il tuo account non dispone dei privilegi di curatore certificato OFCL.",
+          { status: 403 }
+        );
+      }
+
+      let currentLevel: string | null = "aal1";
+      let nextLevel: string | null = "aal1";
+      try {
+        const { data: mfaData, error: mfaError } =
+          await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+        if (!mfaError && mfaData) {
+          currentLevel = mfaData.currentLevel;
+          nextLevel = mfaData.nextLevel;
+        }
+      } catch {
+        // MFA non attivo sul progetto: resta su aal1
+      }
+
+      // Richiede TOTP solo se l'utente ha effettivamente configurato un fattore (nextLevel === 'aal2')
       if (
-        mfaData.nextLevel === "aal2" &&
-        mfaData.currentLevel !== "aal2" &&
+        nextLevel === "aal2" &&
+        currentLevel !== "aal2" &&
         pathname !== "/admin/verify-mfa"
       ) {
         const url = request.nextUrl.clone();
@@ -123,23 +136,34 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(url);
       }
 
-      // Se l'utente non ha ancora configurato l'MFA TOTP
-      if (mfaData.nextLevel === "aal1" && pathname !== "/admin/mfa-setup") {
+      // Solo se ENFORCE_CURATOR_MFA=true forza la configurazione TOTP
+      if (
+        process.env.ENFORCE_CURATOR_MFA === "true" &&
+        nextLevel === "aal1" &&
+        pathname !== "/admin/mfa-setup"
+      ) {
         const url = request.nextUrl.clone();
         url.pathname = "/admin/mfa-setup";
         return NextResponse.redirect(url);
       }
-    }
 
-    // Se già loggato e verificato, non serve rivedere login o verify-mfa
-    if (
-      (pathname === "/admin/login" || pathname === "/admin/verify-mfa") &&
-      mfaData?.currentLevel === "aal2"
-    ) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/admin/queue";
-      return NextResponse.redirect(url);
+      if (pathname === "/admin/login" || pathname === "/admin/verify-mfa") {
+        const url = request.nextUrl.clone();
+        url.pathname = "/admin/queue";
+        url.search = "";
+        return NextResponse.redirect(url);
+      }
+
+      return response;
     }
+  }
+
+  // 6. Fail-closed: qualsiasi richiesta /admin/* non autenticata viene reindirizzata al login
+  if (!isPublicAdminRoute) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/admin/login";
+    url.searchParams.set("redirectTo", pathname);
+    return NextResponse.redirect(url);
   }
 
   return response;

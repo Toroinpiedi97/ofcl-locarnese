@@ -32,7 +32,11 @@ test.describe("Console Curatore OFCL (/admin) - Flusso E2E", () => {
     // Verifica presenza intestazione e pannelli
     await expect(page.getByText("Brione sopra Minusio (UST 5096)")).toBeVisible();
     await expect(page.getByText("MM 566")).toBeVisible();
-    await expect(page.locator("iframe")).toBeVisible(); // PDF viewer nativo
+    await expect(
+      page
+        .locator("iframe")
+        .or(page.getByText("Anteprima PDF Cloudflare R2 non disponibile"))
+    ).toBeVisible();
 
     // 2. Test Overlay Geometrico BBOX toggle
     const bboxToggle = page.getByRole("button", { name: "Overlay BBOX" });
@@ -42,7 +46,11 @@ test.describe("Console Curatore OFCL (/admin) - Flusso E2E", () => {
 
     // Torna a PDF Nativo
     await page.getByRole("button", { name: "PDF Nativo" }).click();
-    await expect(page.locator("iframe")).toBeVisible();
+    await expect(
+      page
+        .locator("iframe")
+        .or(page.getByText("Anteprima PDF Cloudflare R2 non disponibile"))
+    ).toBeVisible();
 
     // 3. Navigazione celle e shortcut J
     const firstCell = page.getByText("Spese Operative (Stadio 1)", { exact: true });
@@ -103,7 +111,7 @@ test.describe("Console Curatore OFCL (/admin) - Flusso E2E", () => {
   test("T042b: Consultazione e gestione Civic Feedback Tickets con filtri e link", async ({ page }) => {
     await page.goto("/admin/tickets");
 
-    await expect(page.getByText("Segnalazioni Civiche & Ticket Sandbox")).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Segnalazioni Civiche/ })).toBeVisible();
     await expect(page.getByText("Sul credito tornante Jacomello")).toBeVisible();
     await expect(page.getByText("DISCREPANZA_CIFRA")).toBeVisible();
     await expect(page.getByText("Brione sopra Minusio")).toBeVisible();

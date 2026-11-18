@@ -20,6 +20,7 @@ from pathlib import Path
 from typing import Any
 
 from ofcl.export.datapackage_builder import build_opendata_package
+from ofcl.extract.batch_processor import enrich_crawl_report_with_extractions
 from ofcl.extract.layout_loader import LayoutConfigError
 from ofcl.extract.pdf_inspector import inspect_pdf
 from ofcl.extract.table_extractor import ExtractedCell, TableExtractor
@@ -27,6 +28,7 @@ from ofcl.fetch.backfill import run_regional_backfill
 from ofcl.fetch.crawler import CorteseCrawler
 from ofcl.fetch.state_store import CrawlStateStore, HttpDiskCache
 from ofcl.insights import detect_all_social_insights, polish_candidate_with_llm
+from ofcl.load.http_ingest import push_crawl_ingest_http, push_social_drafts_http
 from ofcl.load.postgres_loader import PostgresLoader
 from ofcl.seed_ref import enforce_corfin_guardrail
 from ofcl.validate.mca2_engine import CreditRowInput, ValidationContext, validate_mca2_document
@@ -70,7 +72,15 @@ def save_pipeline_run_to_db(stage: str, git_sha: str, report: dict[str, Any]) ->
         import psycopg
 
         status = "OK"
-        if report.get("status_counts", {}).get("ERROR", 0) > 0:
+        if (
+            report.get("sources_scanned", 0) > 0
+            and report.get("sources_failed", 0) >= report.get("sources_scanned", 0)
+        ):
+            status = "FAILED"
+        elif (
+            report.get("status_counts", {}).get("ERROR", 0) > 0
+            or report.get("sources_failed", 0) > 0
+        ):
             status = "PARTIAL"
 
         with psycopg.connect(db_url) as conn, conn.cursor() as cur:
@@ -86,7 +96,7 @@ def save_pipeline_run_to_db(stage: str, git_sha: str, report: dict[str, Any]) ->
                     report.get("started_at"),
                     report.get("finished_at"),
                     status,
-                    json.dumps(report),
+                    json.dumps(report, default=_json_default),
                 ),
             )
             row = cur.fetchone()
@@ -98,7 +108,7 @@ def save_pipeline_run_to_db(stage: str, git_sha: str, report: dict[str, Any]) ->
 
 
 def save_crawl_documents_to_db(report: dict[str, Any]) -> tuple[int, int]:
-    """Salva i documenti e le versioni scoperte in raw.document e raw.document_version."""
+    """Salva i documenti e le versioni scoperte in raw.document, raw.document_version e core.classification."""
     enforce_corfin_guardrail()
     db_url = os.environ.get("DATABASE_URL") or os.environ.get("POSTGRES_URL")
     if not db_url:
@@ -128,7 +138,7 @@ def save_crawl_documents_to_db(report: dict[str, Any]) -> tuple[int, int]:
                     VALUES (%s, %s, %s, 'CRAWLER', %s)
                     ON CONFLICT (ust_code, origin_url) DO UPDATE
                     SET title_raw = coalesce(EXCLUDED.title_raw, raw.document.title_raw),
-                        contains_personal_data = EXCLUDED.contains_personal_data
+                        contains_personal_data = raw.document.contains_personal_data OR EXCLUDED.contains_personal_data
                     RETURNING id;
                     """,
                     (ust_code, origin_url, title_raw, contains_privacy),
@@ -145,23 +155,69 @@ def save_crawl_documents_to_db(report: dict[str, Any]) -> tuple[int, int]:
                     and size_bytes > 0
                     and storage_path
                 ):
+                    target_ver_status = item.get("extracted_status") or "DOWNLOADED"
                     cur.execute(
                         """
-                        INSERT INTO raw.document_version (document_id, sha256, storage_path, bytes, mime, fetched_at, status)
-                        VALUES (%s, %s, %s, %s, 'application/pdf', now(), 'DOWNLOADED')
+                        INSERT INTO raw.document_version (
+                            document_id, sha256, storage_path, bytes, mime,
+                            pages, has_text_layer, fetched_at, status
+                        )
+                        VALUES (%s, %s, %s, %s, 'application/pdf', %s, %s, now(), %s)
                         ON CONFLICT (sha256) DO UPDATE
-                        SET storage_path = EXCLUDED.storage_path
+                        SET storage_path = EXCLUDED.storage_path,
+                            pages = coalesce(EXCLUDED.pages, raw.document_version.pages),
+                            has_text_layer = coalesce(EXCLUDED.has_text_layer, raw.document_version.has_text_layer),
+                            status = CASE
+                                WHEN raw.document_version.status IN ('APPROVED', 'PUBLISHED') THEN raw.document_version.status
+                                ELSE EXCLUDED.status
+                            END
                         RETURNING id;
                         """,
-                        (doc_id, sha256, storage_path, size_bytes),
+                        (
+                            doc_id,
+                            sha256,
+                            storage_path,
+                            size_bytes,
+                            item.get("pages"),
+                            item.get("has_text_layer"),
+                            target_ver_status,
+                        ),
                     )
                     ver_row = cur.fetchone()
                     if ver_row:
+                        ver_id = ver_row[0]
                         versions_count += 1
+                        cls = item.get("classification")
+                        if isinstance(cls, dict):
+                            cur.execute(
+                                """
+                                INSERT INTO core.classification (
+                                    version_id, doc_type, fiscal_year, mm_number,
+                                    layout_family, method, confidence
+                                )
+                                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                                ON CONFLICT (version_id) DO UPDATE
+                                SET doc_type = EXCLUDED.doc_type,
+                                    fiscal_year = coalesce(EXCLUDED.fiscal_year, core.classification.fiscal_year),
+                                    mm_number = coalesce(EXCLUDED.mm_number, core.classification.mm_number),
+                                    layout_family = coalesce(EXCLUDED.layout_family, core.classification.layout_family),
+                                    confidence = GREATEST(core.classification.confidence, EXCLUDED.confidence);
+                                """,
+                                (
+                                    ver_id,
+                                    cls.get("doc_type", "ALTRO"),
+                                    cls.get("fiscal_year"),
+                                    cls.get("mm_number"),
+                                    cls.get("layout_family"),
+                                    cls.get("method", "RULES"),
+                                    cls.get("confidence", 0.75),
+                                ),
+                            )
 
             conn.commit()
     except Exception as exc:  # noqa: BLE001
         print(f"[WARN] Errore salvataggio documenti su DB: {exc}", file=sys.stderr)
+        return 0, 0
 
     return docs_count, versions_count
 
@@ -222,19 +278,71 @@ def cmd_crawl(args: argparse.Namespace) -> int:
         )
     )
 
-    # Persistenza opzionale in raw.document e raw.document_version
-    docs_saved, versions_saved = save_crawl_documents_to_db(report)
-    if docs_saved > 0 or versions_saved > 0:
+    # Ispezione, classificazione ed estrazione tabulati sui PDF fisici scaricati
+    if not args.dry_run and not getattr(args, "no_extract", False):
+        enrichment_stats = enrich_crawl_report_with_extractions(report, raw_dir)
+        report["enrichment_stats"] = enrichment_stats
         print(
-            f"[ofcl crawl] DB salvati: {docs_saved} raw.document, {versions_saved} raw.document_version"
+            "[ofcl crawl] Arricchimento PDF: "
+            f"ispezionati={enrichment_stats['inspected']}, "
+            f"classificati={enrichment_stats['classified']}, "
+            f"estratti={enrichment_stats['extracted']}, "
+            f"validati={enrichment_stats['validated']}, "
+            f"da_revisionare={enrichment_stats['needs_review']}"
         )
 
-    # Persistenza opzionale in raw.pipeline_run
     git_sha = get_git_sha()
-    run_id = save_pipeline_run_to_db("CRAWL", git_sha, report)
-    if run_id:
-        report["db_run_id"] = run_id
-        print(f"[ofcl crawl] Registrato in raw.pipeline_run ID: {run_id}")
+    docs_saved = 0
+    versions_saved = 0
+    run_id: str | None = None
+
+    # 1. Tentativo diretto PostgreSQL (se DATABASE_URL è raggiungibile, es. locale o IPv4 pooler)
+    if not getattr(args, "ingest_http", False):
+        docs_saved, versions_saved = save_crawl_documents_to_db(report)
+        if docs_saved > 0 or versions_saved > 0:
+            print(
+                f"[ofcl crawl] DB diretto salvati: {docs_saved} raw.document, "
+                f"{versions_saved} raw.document_version"
+            )
+        run_id = save_pipeline_run_to_db("CRAWL", git_sha, report)
+        if run_id:
+            report["db_run_id"] = run_id
+            print(f"[ofcl crawl] Registrato in raw.pipeline_run ID: {run_id}")
+
+    # 2. Fallback / canale esplicito HTTPS verso /api/internal/crawl-ingest (IPv4-safe)
+    can_http_ingest = bool(
+        os.environ.get("SITE_URL") and os.environ.get("REVALIDATE_SECRET")
+    )
+    need_http_ingest = getattr(args, "ingest_http", False) or (
+        can_http_ingest and run_id is None
+    )
+    if need_http_ingest:
+        try:
+            http_res = push_crawl_ingest_http(
+                stage="CRAWL",
+                git_sha=git_sha,
+                report=report,
+            )
+            if http_res.get("run_id"):
+                report["db_run_id"] = http_res["run_id"]
+            print(
+                "[ofcl crawl] HTTPS Ingest completato: "
+                f"run_id={http_res.get('run_id')}, "
+                f"docs={http_res['docs_upserted']}, "
+                f"versions={http_res['versions_upserted']}, "
+                f"cls={http_res['classifications_upserted']}, "
+                f"ledger={http_res['ledger_rows_inserted']}, "
+                f"checks={http_res['validation_rows_inserted']}"
+            )
+            if http_res.get("warnings"):
+                print(
+                    f"[WARN] Segnalazioni ingest: {http_res['warnings'][:5]}",
+                    file=sys.stderr,
+                )
+        except Exception as exc:  # noqa: BLE001
+            print(f"[ERRORE] Fallito HTTPS ingest su SITE_URL: {exc}", file=sys.stderr)
+            if getattr(args, "ingest_http", False):
+                return 1
 
     # Output report su file o console
     if args.output_json:
@@ -682,6 +790,25 @@ def cmd_backfill(args: argparse.Namespace) -> int:
     return 0
 
 
+def _fetch_insights_via_http(site_url: str) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Recupera i dataset pubblici `/api/v1/comuni` e `/api/v1/crediti` via HTTPS IPv4-safe."""
+    import httpx
+
+    base = site_url.strip().rstrip("/")
+    with httpx.Client(timeout=30.0, follow_redirects=True) as client:
+        comuni_resp = client.get(f"{base}/api/v1/comuni")
+        comuni_resp.raise_for_status()
+        comuni_json = comuni_resp.json()
+        municipalities = list(comuni_json.get("data") or [])
+
+        crediti_resp = client.get(f"{base}/api/v1/crediti")
+        crediti_resp.raise_for_status()
+        crediti_json = crediti_resp.json()
+        credits_rows = list(crediti_json.get("data") or [])
+
+    return municipalities, credits_rows
+
+
 def cmd_insights(args: argparse.Namespace) -> int:
     """Genera bozze Instagram deterministiche S05-S10 da dati certificati o DB."""
     enforce_corfin_guardrail()
@@ -698,42 +825,74 @@ def cmd_insights(args: argparse.Namespace) -> int:
         divergence_rows = raw.get("divergences", [])
     else:
         db_url = os.environ.get("DATABASE_URL") or os.environ.get("POSTGRES_URL")
-        if db_url:
-            import psycopg
-            from psycopg.rows import dict_row
+        db_loaded = False
+        if db_url and not getattr(args, "ingest_http", False):
+            try:
+                import psycopg
+                from psycopg.rows import dict_row
 
-            with psycopg.connect(db_url, row_factory=dict_row) as conn, conn.cursor() as cur:
-                cur.execute("SELECT * FROM api.municipalities")
-                municipalities = [dict(r) for r in cur.fetchall()]
-                cur.execute("SELECT * FROM api.credits")
-                credits_rows = [
-                    {
-                        "ust_code": r["ust_code"],
-                        "municipality_name": r["municipality_name"],
-                        "account_code": r.get("account_full") or "",
-                        "description": r.get("title") or "",
-                        "mm_reference": r.get("mm_number") or "Consuntivo",
-                        "fiscal_year": r.get("last_snapshot_year") or args.year,
-                        "voted_credit_chf": r.get("amount_voted") or 0,
-                        "spent_total_chf": r.get("spent_total") or 0,
-                        "residual_chf": r.get("residual") or 0,
-                        "pct_used": (
-                            round(float(r["spent_total"]) / float(r["amount_voted"]) * 100, 2)
-                            if r.get("amount_voted")
-                            else 0
-                        ),
-                        "page_ref": r.get("page") or 1,
-                    }
-                    for r in cur.fetchall()
-                ]
-                cur.execute(
-                    "SELECT * FROM api.peer_cost_outliers WHERE outlier_direction IN ('HIGH', 'LOW')"
+                with psycopg.connect(db_url, row_factory=dict_row) as conn, conn.cursor() as cur:
+                    cur.execute("SELECT * FROM api.municipalities")
+                    municipalities = [dict(r) for r in cur.fetchall()]
+                    cur.execute("SELECT * FROM api.credits")
+                    credits_rows = [
+                        {
+                            "ust_code": r["ust_code"],
+                            "municipality_name": r["municipality_name"],
+                            "account_code": r.get("account_full") or "",
+                            "description": r.get("title") or "",
+                            "mm_reference": r.get("mm_number") or "Consuntivo",
+                            "fiscal_year": r.get("last_snapshot_year") or args.year,
+                            "voted_credit_chf": r.get("amount_voted") or 0,
+                            "spent_total_chf": r.get("spent_total") or 0,
+                            "residual_chf": r.get("residual") or 0,
+                            "pct_used": (
+                                round(float(r["spent_total"]) / float(r["amount_voted"]) * 100, 2)
+                                if r.get("amount_voted")
+                                else 0
+                            ),
+                            "page_ref": r.get("page") or 1,
+                        }
+                        for r in cur.fetchall()
+                    ]
+                    cur.execute(
+                        "SELECT * FROM api.peer_cost_outliers WHERE outlier_direction IN ('HIGH', 'LOW')"
+                    )
+                    outlier_rows = [dict(r) for r in cur.fetchall()]
+                    cur.execute(
+                        "SELECT * FROM api.budget_vs_actual_divergences WHERE is_significant_divergence = true"
+                    )
+                    divergence_rows = [dict(r) for r in cur.fetchall()]
+                db_loaded = True
+            except Exception as exc:  # noqa: BLE001
+                print(
+                    f"[WARN] Lettura DB diretta per insights non disponibile ({exc}), uso fallback HTTPS.",
+                    file=sys.stderr,
                 )
-                outlier_rows = [dict(r) for r in cur.fetchall()]
-                cur.execute(
-                    "SELECT * FROM api.budget_vs_actual_divergences WHERE is_significant_divergence = true"
-                )
-                divergence_rows = [dict(r) for r in cur.fetchall()]
+
+        if not db_loaded or not municipalities:
+            site_url = os.environ.get("SITE_URL", "").strip()
+            if site_url:
+                try:
+                    http_muns, http_creds = _fetch_insights_via_http(site_url)
+                    if not municipalities:
+                        municipalities = http_muns
+                    if not credits_rows:
+                        credits_rows = http_creds
+                except Exception as exc:  # noqa: BLE001
+                    print(
+                        f"[ERRORE] Impossibile caricare dataset insights da {site_url}: {exc}",
+                        file=sys.stderr,
+                    )
+                    if not municipalities and not credits_rows:
+                        return 1
+
+    # Normalizza eventuali record DB grezzi con moltiplicatore PF mancante per evitare errori Decimal(None)
+    municipalities = [
+        m
+        for m in municipalities
+        if m.get("tax_multiplier_pf") is not None and m.get("tax_multiplier_pg") is not None
+    ]
 
     candidates = detect_all_social_insights(
         municipalities=municipalities,
@@ -750,9 +909,28 @@ def cmd_insights(args: argparse.Namespace) -> int:
         print(f"  [{c.signal_code}] {c.title} ({c.generation_mode})")
 
     if args.db:
-        loader = PostgresLoader()
-        saved = loader.save_social_drafts(candidates)
-        print(f"Persistenza DB: {saved} nuove bozze salvate in core.social_post_draft")
+        saved: int | None = None
+        if not getattr(args, "ingest_http", False):
+            try:
+                loader = PostgresLoader()
+                saved = loader.save_social_drafts(candidates)
+                print(f"Persistenza DB diretta: {saved} nuove bozze salvate in core.social_post_draft")
+            except Exception as exc:  # noqa: BLE001
+                print(
+                    f"[WARN] Persistenza DB diretta fallita ({exc}), tento ingest HTTPS.",
+                    file=sys.stderr,
+                )
+                saved = None
+
+        if saved is None or getattr(args, "ingest_http", False):
+            try:
+                inserted = push_social_drafts_http(candidates)
+                print(
+                    f"Persistenza HTTPS (/api/internal/crawl-ingest): {inserted} bozze sincronizzate."
+                )
+            except Exception as exc:  # noqa: BLE001
+                print(f"[ERRORE] Fallito salvataggio bozze social via HTTPS: {exc}", file=sys.stderr)
+                return 1
 
     if args.output_json:
         out_p = Path(args.output_json)
@@ -837,6 +1015,16 @@ def main() -> None:
         "--http-cache",
         action="store_true",
         help="Abilita la cache disco HTML in data/.http_cache per sviluppo/debug",
+    )
+    crawl_parser.add_argument(
+        "--no-extract",
+        action="store_true",
+        help="Salta ispezione geometrica ed estrazione tabelle MCA2 sui PDF scaricati",
+    )
+    crawl_parser.add_argument(
+        "--ingest-http",
+        action="store_true",
+        help="Forza la sincronizzazione dei risultati via HTTPS verso /api/internal/crawl-ingest",
     )
 
     # Subcommand: inspect-pdf
@@ -931,6 +1119,11 @@ def main() -> None:
         "--polish-ai",
         action="store_true",
         help="Rifinisce i testi tramite LLM se OPENAI_API_KEY è configurata",
+    )
+    insights_parser.add_argument(
+        "--ingest-http",
+        action="store_true",
+        help="Usa il canale HTTPS (/api/v1/* + /api/internal/crawl-ingest) al posto del DB diretto",
     )
 
     args = parser.parse_args()

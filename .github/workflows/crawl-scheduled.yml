@@ -39,7 +39,12 @@ jobs:
         working-directory: pipeline
 
       - name: Scansione Cortese 19 Portali Comunali (Crawl v2)
-        run: uv run ofcl crawl --ust all --max-docs 20 --concurrency 6 --max-pages 3
+        run: |
+          EXTRA_FLAGS=""
+          if [ -n "${SITE_URL}" ] && [ -n "${REVALIDATE_SECRET}" ]; then
+            EXTRA_FLAGS="--ingest-http"
+          fi
+          uv run ofcl crawl --ust all --max-docs 20 --concurrency 6 --max-pages 3 ${EXTRA_FLAGS}
         working-directory: pipeline
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -47,6 +52,13 @@ jobs:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
+
+      - name: Generazione Bozze Social (Insights S05-S10)
+        if: env.REVALIDATE_SECRET != '' && env.SITE_URL != ''
+        run: uv run ofcl insights --db --ingest-http --year 2026
+        working-directory: pipeline
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Generazione Pacchetti Open Data Frictionless
         run: uv run ofcl export-opendata --out-dir ../web/public/data/opendata

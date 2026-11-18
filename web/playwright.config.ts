@@ -20,6 +20,8 @@ export default defineConfig({
     env: {
       NEXT_PUBLIC_DEV_MODE: "true",
       OFCL_ENVIRONMENT: "development",
+      ALLOW_DEV_ADMIN: "true",
+      PLAYWRIGHT_TEST: "1",
     },
   },
   projects: [

@@ -2,19 +2,27 @@ import { S3Client, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { consume } from "@/lib/guardrails";
 
-const accountId = process.env.R2_ACCOUNT_ID;
-const accessKeyId = process.env.R2_ACCESS_KEY_ID;
-const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
-const bucketName = process.env.R2_BUCKET_NAME || "ofcl-raw-pdfs";
+const endpointUrl =
+  process.env.R2_ENDPOINT_URL?.trim() ||
+  (process.env.R2_ACCOUNT_ID?.trim()
+    ? `https://${process.env.R2_ACCOUNT_ID.trim()}.r2.cloudflarestorage.com`
+    : "");
+const accessKeyId = process.env.R2_ACCESS_KEY_ID?.trim();
+const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY?.trim();
+const bucketName = process.env.R2_BUCKET_NAME?.trim() || "ofcl-raw-pdfs";
+
+export function isR2Configured(): boolean {
+  return Boolean(endpointUrl && accessKeyId && secretAccessKey);
+}
 
 function getS3Client(): S3Client | null {
-  if (!accountId || !accessKeyId || !secretAccessKey) {
+  if (!endpointUrl || !accessKeyId || !secretAccessKey) {
     return null;
   }
 
   return new S3Client({
     region: "auto",
-    endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+    endpoint: endpointUrl,
     credentials: {
       accessKeyId,
       secretAccessKey,
@@ -48,11 +56,16 @@ export async function uploadPdfToR2(
 /**
  * Genera un URL firmato temporaneo (Presigned URL) per visualizzare in sicurezza
  * il documento PDF originale da Cloudflare R2 nella console curatore (default: 15 min).
+ * Restituisce null se R2 non è configurato o la chiave è assente.
  */
 export async function getPresignedPdfUrl(
-  r2Key: string,
+  r2Key: string | null | undefined,
   expiresInSeconds: number = 900
-): Promise<string> {
+): Promise<string | null> {
+  if (!r2Key) {
+    return null;
+  }
+
   // Guardrail quota R2 (operazioni Class B): oltre il tetto giornaliero non si firma
   const guard = consume("r2_presign", "console-curatore");
   if (!guard.ok) {
@@ -60,8 +73,7 @@ export async function getPresignedPdfUrl(
   }
   const s3 = getS3Client();
   if (!s3) {
-    // In assenza di credenziali R2 (ambiente dev locale offline), restituisce un URL fittizio o locale
-    return `/api/mock-pdf?key=${encodeURIComponent(r2Key)}`;
+    return null;
   }
 
   const command = new GetObjectCommand({

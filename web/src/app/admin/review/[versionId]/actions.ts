@@ -1,7 +1,8 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
 import { revalidatePath, revalidateTag } from "next/cache";
+import { getAdminDbClient, getCuratorSession } from "@/lib/admin-auth";
+import { hasLiveSupabaseConfig } from "@/lib/admin-session-edge";
 
 export interface ActionResult {
   success: boolean;
@@ -21,44 +22,59 @@ export async function saveLedgerCorrectionAction(
   if (!reason || reason.trim().length < 10) {
     return {
       success: false,
-      message: "Motivazione non valida: è richiesta una giustificazione di almeno 10 caratteri (vincolo MCA2 audit).",
+      message:
+        "Motivazione non valida: è richiesta una giustificazione di almeno 10 caratteri (vincolo MCA2 audit).",
     };
   }
 
-  const supabase = await createClient();
-  let {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // In test o dev locale senza Supabase Auth attivo, consenti sessione mock se esplicitamente autorizzato
-  if (!user && (process.env.ALLOW_DEV_ADMIN === "true" || process.env.PLAYWRIGHT_TEST === "1")) {
-    user = {
-      id: "00000000-0000-0000-0000-000000000001",
-      app_metadata: { role: "curator" },
-      user_metadata: {},
-      aud: "authenticated",
-      created_at: new Date().toISOString(),
-    } as any;
+  const parsedAmount = Number(newAmountChf.replace(/['\s]/g, "").replace(",", "."));
+  if (!Number.isFinite(parsedAmount)) {
+    return {
+      success: false,
+      message: "Importo CHF non valido.",
+    };
   }
 
-  // 1. Verifica ruolo curatore/admin
-  const role = (user?.app_metadata as { role?: string })?.role;
-  if (role !== "curator" && role !== "admin") {
-    return { success: false, message: "Non autorizzato: privilegio 'curator' richiesto." };
+  const session = await getCuratorSession();
+  if (!session.authenticated) {
+    return {
+      success: false,
+      message: "Non autorizzato: sessione curatore richiesta.",
+    };
+  }
+
+  if (session.via === "dev_sandbox" && !hasLiveSupabaseConfig()) {
+    return {
+      success: true,
+      message: "Rettifica salvata e tracciata con successo (Sandbox E2E).",
+    };
   }
 
   try {
-    // 2. Scrittura obbligatoria in audit.curator_action (action: 'CORRECT_VALUE', campi before/after)
-    const { error: auditError } = await supabase
+    const db = await getAdminDbClient();
+    const targetIdNum = Number(ledgerValueId);
+    let beforeAmount: number | null = null;
+
+    if (!Number.isNaN(targetIdNum)) {
+      const { data: existingRow } = await db
+        .schema("core")
+        .from("ledger_value")
+        .select("amount_chf")
+        .eq("id", targetIdNum)
+        .maybeSingle();
+      beforeAmount = existingRow?.amount_chf ?? null;
+    }
+
+    const { error: auditError } = await db
       .schema("audit")
       .from("curator_action")
       .insert({
-        actor: user!.id,
+        actor: session.actorId,
         action: "CORRECT_VALUE",
         target_table: "core.ledger_value",
         target_id: ledgerValueId,
-        before: null,
-        after: { amount_chf: newAmountChf, version_id: versionId },
+        before: beforeAmount !== null ? { amount_chf: beforeAmount } : null,
+        after: { amount_chf: parsedAmount, version_id: versionId },
         reason: reason.trim(),
       });
 
@@ -66,80 +82,160 @@ export async function saveLedgerCorrectionAction(
       return { success: false, message: `Errore audit: ${auditError.message}` };
     }
 
-    // 3. Aggiornamento in core.ledger_value (protetto dal trigger transazionale)
-    const targetIdNum = Number(ledgerValueId);
-    if (!isNaN(targetIdNum)) {
-      const { error: updateError } = await supabase
+    if (!Number.isNaN(targetIdNum)) {
+      const { error: updateError } = await db
         .schema("core")
         .from("ledger_value")
         .update({
-          amount_chf: Number(newAmountChf),
+          amount_chf: parsedAmount,
+          method: "MANUAL",
         })
         .eq("id", targetIdNum);
 
       if (updateError) {
-        return { success: false, message: `Errore rettifica: ${updateError.message}` };
+        return {
+          success: false,
+          message: `Errore rettifica: ${updateError.message}`,
+        };
       }
     }
 
     revalidatePath(`/admin/review/${versionId}`);
-    return { success: true, message: "Rettifica salvata e tracciata con successo." };
+    return {
+      success: true,
+      message: "Rettifica salvata e tracciata con successo.",
+    };
   } catch (err: unknown) {
     return {
       success: false,
-      message: err instanceof Error ? err.message : "Errore durante il salvataggio della rettifica",
+      message:
+        err instanceof Error
+          ? err.message
+          : "Errore durante il salvataggio della rettifica",
     };
   }
 }
 
 /**
  * Approva e pubblica online il fascicolo documentale.
+ * Blocca la pubblicazione se sono presenti controlli BLOCKING falliti senza override motivato
+ * oppure se il documento contiene dati personali nLPD.
  */
-export async function approveAndPublishAction(versionId: string): Promise<ActionResult> {
-  const supabase = await createClient();
-  let {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user && (process.env.ALLOW_DEV_ADMIN === "true" || process.env.PLAYWRIGHT_TEST === "1")) {
-    user = {
-      id: "00000000-0000-0000-0000-000000000001",
-      app_metadata: { role: "curator" },
-      user_metadata: {},
-      aud: "authenticated",
-      created_at: new Date().toISOString(),
-    } as any;
+export async function approveAndPublishAction(
+  versionId: string,
+  overrideReason?: string
+): Promise<ActionResult> {
+  const session = await getCuratorSession();
+  if (!session.authenticated) {
+    return {
+      success: false,
+      message: "Non autorizzato: sessione curatore richiesta.",
+    };
   }
 
-  const role = (user?.app_metadata as { role?: string })?.role;
-  if (role !== "curator" && role !== "admin") {
-    return { success: false, message: "Non autorizzato: privilegio 'curator' richiesto." };
+  if (session.via === "dev_sandbox" && !hasLiveSupabaseConfig()) {
+    return {
+      success: true,
+      message:
+        "Fascicolo pubblicato con successo sul portale pubblico OFCL (Sandbox E2E).",
+    };
   }
 
   try {
-    // Traccia in audit con action: 'PUBLISH' e before/after
-    const { error: auditError } = await supabase
+    const db = await getAdminDbClient();
+
+    const [{ data: verData, error: verErr }, { data: checks }] =
+      await Promise.all([
+        db
+          .schema("raw")
+          .from("document_version")
+          .select(
+            "id, status, document:document_id (id, contains_personal_data)"
+          )
+          .eq("id", versionId)
+          .maybeSingle(),
+        db
+          .schema("core")
+          .from("validation_result")
+          .select("rule_code, severity, passed")
+          .eq("version_id", versionId),
+      ]);
+
+    if (verErr || !verData) {
+      return {
+        success: false,
+        message: verErr?.message || "Versione documento non trovata.",
+      };
+    }
+
+    const docObj = Array.isArray(verData.document)
+      ? verData.document[0]
+      : verData.document;
+
+    if (docObj?.contains_personal_data) {
+      return {
+        success: false,
+        message:
+          "Pubblicazione bloccata (Guardrail nLPD): il fascicolo è marcato con dati personali.",
+      };
+    }
+
+    const failedBlocking = (checks || []).filter(
+      (c) => !c.passed && c.severity === "BLOCKING"
+    );
+    if (failedBlocking.length > 0) {
+      if (!overrideReason || overrideReason.trim().length < 10) {
+        return {
+          success: false,
+          message: `Pubblicazione bloccata: ${failedBlocking.length} controlli BLOCKING falliti (${failedBlocking.map((c) => c.rule_code).join(", ")}).`,
+        };
+      }
+
+      const { error: ovErr } = await db
+        .schema("audit")
+        .from("curator_action")
+        .insert({
+          actor: session.actorId,
+          action: "OVERRIDE_BLOCKING",
+          target_table: "raw.document_version",
+          target_id: versionId,
+          before: { failed_rules: failedBlocking.map((c) => c.rule_code) },
+          after: { override_approved: true },
+          reason: overrideReason.trim(),
+        });
+      if (ovErr) {
+        return { success: false, message: `Errore audit override: ${ovErr.message}` };
+      }
+    }
+
+    const { error: auditError } = await db
       .schema("audit")
       .from("curator_action")
       .insert({
-        actor: user!.id,
+        actor: session.actorId,
         action: "PUBLISH",
         target_table: "raw.document_version",
         target_id: versionId,
-        before: { status: "NEEDS_REVIEW" },
+        before: { status: verData.status },
         after: { status: "PUBLISHED" },
-        reason: "Documento approvato dal curatore dopo verifica delle quadrature contabili MCA2.",
+        reason:
+          "Documento approvato dal curatore dopo verifica delle quadrature contabili MCA2.",
       });
 
     if (auditError) {
-      return { success: false, message: `Errore audit: ${auditError.message}` };
+      return {
+        success: false,
+        message: `Errore audit: ${auditError.message}`,
+      };
     }
 
-    // Aggiorna stato versione
-    const { error } = await supabase
+    const { error } = await db
       .schema("raw")
       .from("document_version")
-      .update({ status: "PUBLISHED" })
+      .update({
+        status: "PUBLISHED",
+        published_at: new Date().toISOString(),
+      })
       .eq("id", versionId);
 
     if (error) {
@@ -148,13 +244,101 @@ export async function approveAndPublishAction(versionId: string): Promise<Action
 
     revalidatePath(`/admin/review/${versionId}`);
     revalidatePath("/admin/queue");
+    revalidatePath("/documenti");
     revalidatePath("/");
     revalidateTag("mca2-data", "max");
-    return { success: true, message: "Fascicolo pubblicato con successo sul portale pubblico OFCL." };
+    return {
+      success: true,
+      message: "Fascicolo pubblicato con successo sul portale pubblico OFCL.",
+    };
   } catch (err: unknown) {
     return {
       success: false,
-      message: err instanceof Error ? err.message : "Errore durante la pubblicazione",
+      message:
+        err instanceof Error
+          ? err.message
+          : "Errore durante la pubblicazione",
+    };
+  }
+}
+
+/**
+ * Rifiuta o archivia un fascicolo dalla coda di revisione (es. documento non contabile / fuori perimetro).
+ */
+export async function rejectDocumentAction(
+  versionId: string,
+  reason: string
+): Promise<ActionResult> {
+  if (!reason || reason.trim().length < 10) {
+    return {
+      success: false,
+      message:
+        "Motivazione non valida: inserisci almeno 10 caratteri per tracciare il rifiuto in audit.",
+    };
+  }
+
+  const session = await getCuratorSession();
+  if (!session.authenticated) {
+    return {
+      success: false,
+      message: "Non autorizzato: sessione curatore richiesta.",
+    };
+  }
+
+  if (session.via === "dev_sandbox" && !hasLiveSupabaseConfig()) {
+    return {
+      success: true,
+      message: "Fascicolo marcato come REJECTED (Sandbox E2E).",
+    };
+  }
+
+  try {
+    const db = await getAdminDbClient();
+    const { data: verData } = await db
+      .schema("raw")
+      .from("document_version")
+      .select("status")
+      .eq("id", versionId)
+      .maybeSingle();
+
+    const { error: auditError } = await db
+      .schema("audit")
+      .from("curator_action")
+      .insert({
+        actor: session.actorId,
+        action: "REJECT",
+        target_table: "raw.document_version",
+        target_id: versionId,
+        before: { status: verData?.status ?? null },
+        after: { status: "REJECTED" },
+        reason: reason.trim(),
+      });
+
+    if (auditError) {
+      return { success: false, message: `Errore audit: ${auditError.message}` };
+    }
+
+    const { error } = await db
+      .schema("raw")
+      .from("document_version")
+      .update({ status: "REJECTED" })
+      .eq("id", versionId);
+
+    if (error) {
+      return { success: false, message: error.message };
+    }
+
+    revalidatePath(`/admin/review/${versionId}`);
+    revalidatePath("/admin/queue");
+    return {
+      success: true,
+      message: "Fascicolo rifiutato e archiviato (status: REJECTED).",
+    };
+  } catch (err: unknown) {
+    return {
+      success: false,
+      message:
+        err instanceof Error ? err.message : "Errore durante il rifiuto",
     };
   }
 }
@@ -168,45 +352,52 @@ export async function togglePiiAction(
   containsPii: boolean,
   reason: string
 ): Promise<ActionResult> {
-  const supabase = await createClient();
-  let {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user && (process.env.ALLOW_DEV_ADMIN === "true" || process.env.PLAYWRIGHT_TEST === "1")) {
-    user = {
-      id: "00000000-0000-0000-0000-000000000001",
-      app_metadata: { role: "curator" },
-      user_metadata: {},
-      aud: "authenticated",
-      created_at: new Date().toISOString(),
-    } as any;
+  if (!reason || reason.trim().length < 10) {
+    return {
+      success: false,
+      message:
+        "Motivazione non valida: inserisci almeno 10 caratteri per il registro audit.",
+    };
   }
 
-  const role = (user?.app_metadata as { role?: string })?.role;
-  if (role !== "curator" && role !== "admin") {
-    return { success: false, message: "Non autorizzato: privilegio 'curator' richiesto." };
+  const session = await getCuratorSession();
+  if (!session.authenticated) {
+    return {
+      success: false,
+      message: "Non autorizzato: sessione curatore richiesta.",
+    };
+  }
+
+  if (session.via === "dev_sandbox" && !hasLiveSupabaseConfig()) {
+    return {
+      success: true,
+      message: `Flag PII aggiornato a: ${containsPii} (Sandbox E2E)`,
+    };
   }
 
   try {
-    const { error: auditError } = await supabase
+    const db = await getAdminDbClient();
+    const { error: auditError } = await db
       .schema("audit")
       .from("curator_action")
       .insert({
-        actor: user!.id,
+        actor: session.actorId,
         action: "MARK_PERSONAL_DATA",
         target_table: "raw.document",
         target_id: documentId,
         before: { contains_personal_data: !containsPii },
         after: { contains_personal_data: containsPii },
-        reason: reason || (containsPii ? "Escluso preventivamente per tutela nLPD" : "Verificato: non contiene PII"),
+        reason: reason.trim(),
       });
 
     if (auditError) {
-      return { success: false, message: `Errore audit: ${auditError.message}` };
+      return {
+        success: false,
+        message: `Errore audit: ${auditError.message}`,
+      };
     }
 
-    const { error } = await supabase
+    const { error } = await db
       .schema("raw")
       .from("document")
       .update({ contains_personal_data: containsPii })
@@ -217,11 +408,16 @@ export async function togglePiiAction(
     }
 
     revalidatePath(`/admin/review/${versionId}`);
-    return { success: true, message: `Flag PII aggiornato a: ${containsPii}` };
+    revalidatePath("/admin/queue");
+    return {
+      success: true,
+      message: `Flag PII aggiornato a: ${containsPii}`,
+    };
   } catch (err: unknown) {
     return {
       success: false,
-      message: err instanceof Error ? err.message : "Errore aggiornamento PII",
+      message:
+        err instanceof Error ? err.message : "Errore aggiornamento PII",
     };
   }
 }

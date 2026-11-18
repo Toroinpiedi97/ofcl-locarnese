@@ -876,6 +876,8 @@ class CorteseCrawler:
                     "title": r.doc.title,
                     "kind": r.doc.doc_kind,
                     "fiscal_year": r.doc.fiscal_year,
+                    "mm_number": r.doc.mm_number,
+                    "page_url": r.doc.page_url,
                     "published_date": (
                         r.doc.published_date.isoformat() if r.doc.published_date else None
                     ),

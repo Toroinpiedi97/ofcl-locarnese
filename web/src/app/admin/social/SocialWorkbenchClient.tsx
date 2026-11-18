@@ -37,6 +37,7 @@ import {
 interface SocialWorkbenchClientProps {
   initialDrafts: SocialDraftDto[];
   initialSource: "SUPABASE" | "DETERMINISTIC_FALLBACK";
+  initialDbError?: string | null;
 }
 
 const STATUS_BADGES: Record<
@@ -64,6 +65,7 @@ const STATUS_BADGES: Record<
 export function SocialWorkbenchClient({
   initialDrafts,
   initialSource,
+  initialDbError = null,
 }: SocialWorkbenchClientProps) {
   const [drafts, setDrafts] = useState<SocialDraftDto[]>(initialDrafts);
   const [selectedId, setSelectedId] = useState<string>(
@@ -80,7 +82,7 @@ export function SocialWorkbenchClient({
   const [feedbackBanner, setFeedbackBanner] = useState<{
     kind: "ok" | "warn" | "error";
     text: string;
-  } | null>(null);
+  } | null>(initialDbError ? { kind: "error", text: initialDbError } : null);
 
   const svgRef = useRef<SVGSVGElement | null>(null);
 

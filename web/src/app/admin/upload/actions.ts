@@ -2,8 +2,10 @@
 
 import { createHash } from "crypto";
 import { revalidatePath } from "next/cache";
+import { getAdminDbClient, getCuratorSession } from "@/lib/admin-auth";
+import { hasLiveSupabaseConfig } from "@/lib/admin-session-edge";
 import { uploadPdfToR2 } from "@/lib/r2";
-import { createClient } from "@/lib/supabase/server";
+import { MUNICIPALITIES } from "@/data/municipalities";
 
 export interface UploadManualResult {
   success: boolean;
@@ -15,12 +17,28 @@ export interface UploadManualResult {
 export async function uploadDocumentManualAction(
   formData: FormData
 ): Promise<UploadManualResult> {
+  const session = await getCuratorSession();
+  if (!session.authenticated) {
+    return {
+      success: false,
+      message: "Non autorizzato: sessione curatore richiesta.",
+    };
+  }
+
   const file = formData.get("file") as File | null;
-  const ustCode = Number(formData.get("municipality") || 5113);
+  const ustCode = Number(formData.get("municipality") || 0);
   const statementType = String(formData.get("statementType") || "CONSUNTIVO");
   const fiscalYear = Number(formData.get("year") || 2025);
   const mmNumber = String(formData.get("mmNumber") || "").trim();
   const notes = String(formData.get("notes") || "").trim();
+
+  if (!MUNICIPALITIES.some((m) => m.ust_code === ustCode)) {
+    return { success: false, message: "Codice Comune UST non valido." };
+  }
+
+  if (!Number.isInteger(fiscalYear) || fiscalYear < 2015 || fiscalYear > 2035) {
+    return { success: false, message: "Anno fiscale non valido." };
+  }
 
   if (!file || file.size === 0) {
     return { success: false, message: "Seleziona un file PDF valido." };
@@ -36,55 +54,78 @@ export async function uploadDocumentManualAction(
   const arrayBuffer = await file.arrayBuffer();
   const bytes = new Uint8Array(arrayBuffer);
 
-  // Guardrail verifica magic bytes %PDF-
   const headerAscii = Buffer.from(bytes.slice(0, 5)).toString("ascii");
   if (!headerAscii.startsWith("%PDF-")) {
     return {
       success: false,
-      message: "Formato file non valido: il documento non inizia con l'intestazione standard '%PDF-'.",
+      message:
+        "Formato file non valido: il documento non inizia con l'intestazione standard '%PDF-'.",
     };
   }
 
-  // 1. Calcolo SHA-256 immutabile (Guardrail C-04)
   const sha256 = createHash("sha256").update(bytes).digest("hex");
   const storagePath = `pdf/${ustCode}/${sha256}.pdf`;
 
-  try {
-    // 2. Caricamento su Cloudflare R2 (se credenziali R2 attive)
-    const r2Res = await uploadPdfToR2(storagePath, bytes);
+  if (session.via === "dev_sandbox" && !hasLiveSupabaseConfig()) {
+    return {
+      success: true,
+      sha256,
+      message: `Fascicolo '${file.name}' verificato in Sandbox E2E (SHA-256: ${sha256.slice(0, 12)}…).`,
+    };
+  }
 
-    // 3. Registrazione in PostgreSQL (raw.document, raw.document_version, core.classification)
-    const supabase = await createClient();
+  try {
+    const r2Res = await uploadPdfToR2(storagePath, bytes);
+    const db = await getAdminDbClient();
+
     const docType =
       statementType === "PREVENTIVO"
         ? "PREVENTIVO"
         : statementType === "CREDITO"
-        ? "CREDITO_INVESTIMENTO"
-        : statementType === "PIANO_FIN"
-        ? "PIANO_FINANZIARIO"
-        : "CONSUNTIVO";
+          ? "CREDITO_INVESTIMENTO"
+          : statementType === "PIANO_FIN"
+            ? "PIANO_FINANZIARIO"
+            : "CONSUNTIVO";
 
     const titleRaw = `${mmNumber ? `MM ${mmNumber} ` : ""}${docType} ${fiscalYear} - ${file.name}${
       notes ? ` (${notes})` : ""
     }`;
 
-    const { data: docRow, error: docErr } = await supabase
+    const { data: docRow, error: docErr } = await db
       .schema("raw")
       .from("document")
-      .insert({
-        ust_code: ustCode,
-        origin_url: `manual://upload/${ustCode}/${sha256}`,
-        title_raw: titleRaw,
-        acquisition: "MANUAL_UPLOAD",
-        contains_personal_data: false,
-      })
+      .upsert(
+        {
+          ust_code: ustCode,
+          origin_url: `manual://upload/${ustCode}/${sha256}`,
+          title_raw: titleRaw,
+          acquisition: "MANUAL_UPLOAD",
+          contains_personal_data: false,
+        },
+        { onConflict: "ust_code,origin_url" }
+      )
       .select("id")
       .maybeSingle();
 
-    let versionId: string | undefined;
+    if (docErr || !docRow?.id) {
+      return {
+        success: false,
+        sha256,
+        message: `Errore salvataggio raw.document: ${docErr?.message || "nessun ID restituito"}`,
+      };
+    }
 
-    if (!docErr && docRow?.id) {
-      const { data: verRow } = await supabase
+    const { data: existingVer } = await db
+      .schema("raw")
+      .from("document_version")
+      .select("id, status")
+      .eq("sha256", sha256)
+      .maybeSingle();
+
+    let versionId = existingVer?.id;
+
+    if (!versionId) {
+      const { data: verRow, error: verErr } = await db
         .schema("raw")
         .from("document_version")
         .insert({
@@ -94,24 +135,42 @@ export async function uploadDocumentManualAction(
           bytes: file.size,
           mime: "application/pdf",
           status: "NEEDS_REVIEW",
-        } as any)
+        })
         .select("id")
         .maybeSingle();
 
-      if (verRow?.id) {
-        versionId = verRow.id;
-        await supabase
-          .schema("core" as any)
-          .from("classification")
-          .insert({
-            version_id: verRow.id,
-            doc_type: docType,
-            fiscal_year: fiscalYear,
-            mm_number: mmNumber || null,
-            method: "MANUAL",
-            confidence: 1.0,
-          });
+      if (verErr || !verRow?.id) {
+        return {
+          success: false,
+          sha256,
+          message: `Errore salvataggio raw.document_version: ${verErr?.message || "nessun ID restituito"}`,
+        };
       }
+      versionId = verRow.id;
+    }
+
+    const { error: clsErr } = await db
+      .schema("core")
+      .from("classification")
+      .upsert(
+        {
+          version_id: versionId,
+          doc_type: docType,
+          fiscal_year: fiscalYear,
+          mm_number: mmNumber || null,
+          method: "MANUAL",
+          confidence: 1.0,
+        },
+        { onConflict: "version_id" }
+      );
+
+    if (clsErr) {
+      return {
+        success: false,
+        sha256,
+        versionId,
+        message: `Versione creata ma errore classificazione: ${clsErr.message}`,
+      };
     }
 
     revalidatePath("/admin/queue");
@@ -121,17 +180,17 @@ export async function uploadDocumentManualAction(
       sha256,
       versionId,
       message: `Fascicolo '${file.name}' caricato con successo ${
-        r2Res.uploadedToR2 ? "su Cloudflare R2" : "(SHA-256 verificato)"
-      } con provenienza MANUAL_UPLOAD (Atto: MM ${mmNumber || "n.d."} · SHA-256: ${sha256.slice(0, 12)}…).`,
+        r2Res.uploadedToR2 ? "su Cloudflare R2" : "(R2 non configurato, solo metadati DB)"
+      } · Stato: NEEDS_REVIEW · SHA-256: ${sha256.slice(0, 12)}…`,
     };
   } catch (err: unknown) {
     return {
-      success: true,
+      success: false,
       sha256,
-      message: `Fascicolo '${file.name}' registrato con SHA-256 ${sha256.slice(
-        0,
-        12
-      )}… e provenienza MANUAL_UPLOAD (Atto: MM ${mmNumber || "n.d."}).`,
+      message:
+        err instanceof Error
+          ? `Errore upload manuale: ${err.message}`
+          : "Errore imprevisto durante il salvataggio del fascicolo.",
     };
   }
 }
